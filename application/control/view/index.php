@@ -47,12 +47,19 @@ class index extends view
 	{
 		$erpSender = new erpSender();
 		
-		$barcode = 'XL00223';
+		$barcode = 'XL002238';
+		
+		//var_dump($erpSender->doAction(2, 'AddOrder',[168]));
+		
+		//$product = $this->model('product')->where('barcode=?',[$barcode])->find();
+		//$response = $erpSender->doAction(2, 'QueryGoodsInventory',['barcode'=>$barcode,'store'=>$product['store']]);
+		//var_dump($response);
+		
 		$response = $erpSender->doAction(2, 'QueryGoods',[$barcode]);
-		var_dump(($response));
 		//var_dump($erpSender->doAction(2, 'AddGoods',[639]));
 		
 		//var_dump($erpSender->doAction(2, 'QueryPlatform',[222]));
+		var_dump($response);
 		
 		
 		/* $orderno = '1607301700203608548';

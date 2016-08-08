@@ -49,7 +49,7 @@ class order extends base
 			if (!empty(floatval($swift['money'])) && $swift['money'] > 0)
 			{
 				//应该退还的佣金
-				$swift_money = number_format(($order['goodsamount'] - $extra_money) / $order['goodsamount'] * $swift['money']);
+				$swift_money = number_format(($order['goodsamount'] - $extra_money) / $order['goodsamount'] * $swift['money'],2,'.','');
 				if (!empty(floatval($swift_money)) && $swift_money > 0)
 				{
 					if(!$this->model('user')->where('id=?',[$swift['uid']])->increase('money',-$swift_money))

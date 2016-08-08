@@ -36,8 +36,12 @@ class orderModel extends model
 		{
 			if(!empty($post['orderno']))
 			{
-				$this->table('suborder_store','left join','suborder_store.main_orderno=order.orderno');
-				$this->where('order.orderno like ? or concat(replace(suborder_store.date,"-",""),suborder_store.id) like ?',['%'.trim($post['orderno']).'%','%'.trim($post['orderno']).'%']);
+				//修复搜索主订单号，数据显示异常的问题，
+				//$this->table('suborder_store','left join','suborder_store.main_orderno=order.orderno');
+				//$this->where('order.orderno like ? or concat(replace(suborder_store.date,"-",""),suborder_store.id) like ?',['%'.trim($post['orderno']).'%','%'.trim($post['orderno']).'%']);
+				
+				$this->where('order.orderno like ? or order.orderno = (select main_orderno from suborder_store where order.orderno=suborder_store.main_orderno and concat(replace(suborder_store.date,"-",""),suborder_store.id) like ? limit 1)',['%'.trim($post['orderno']).'%','%'.trim($post['orderno']).'%']);
+				
 			}
 			if (!empty($post['createtime_from']))
 			{

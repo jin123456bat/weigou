@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<!--[if IE 8]>
+<html lang="en" class="ie8 no-js"> <![endif]-->
+<!--[if IE 9]>
+<html lang="en" class="ie9 no-js"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en">
+<!--<![endif]-->
+<!-- BEGIN HEAD -->
+
+<head>
+    <meta charset="utf-8"/>
+    <title>订单查看</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1" name="viewport"/>
+    <meta content="" name="description"/>
+    <meta content="" name="author"/>
+    <!-- BEGIN GLOBAL MANDATORY STYLES -->
+    <link href="{%$VIEW_ROOT%}/assets/global/css/font.css" rel="stylesheet" type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/global/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet"
+          type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/global/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet"
+          type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/global/plugins/uniform/css/uniform.default.css" rel="stylesheet" type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css" rel="stylesheet"
+          type="text/css"/>
+    <!-- END GLOBAL MANDATORY STYLES -->
+    <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css" rel="stylesheet"
+          type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css" rel="stylesheet"
+          type="text/css"/>
+    <!-- BEGIN THEME GLOBAL STYLES -->
+    <link href="{%$VIEW_ROOT%}/assets/global/plugins/datatables/datatables.min.css" rel="stylesheet" type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css"
+          rel="stylesheet" type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css"
+          rel="stylesheet" type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/global/plugins/select2/css/select2.min.css" rel="stylesheet" type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/global/plugins/select2/css/select2-bootstrap.min.css" rel="stylesheet"
+          type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/global/css/components.min.css" rel="stylesheet" id="style_components"
+          type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/global/css/plugins.min.css" rel="stylesheet" type="text/css"/>
+    <!-- END THEME GLOBAL STYLES -->
+    <!-- BEGIN THEME LAYOUT STYLES -->
+    <link href="{%$VIEW_ROOT%}/assets/layouts/layout/css/layout.min.css" rel="stylesheet" type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/layouts/layout/css/themes/darkblue.min.css" rel="stylesheet" type="text/css"
+          id="style_color"/>
+    <link href="{%$VIEW_ROOT%}/assets/layouts/layout/css/custom.min.css" rel="stylesheet" type="text/css"/>
+    <!-- END THEME LAYOUT STYLES -->
+    <link rel="shortcut icon" href="favicon.ico"/>
+</head>
+<link rel="shortcut icon" href="favicon.ico"/>
+</head>
+<!-- END HEAD -->
+
+<body class="page-header-fixed page-sidebar-closed-hide-logo page-container-bg-solid page-content-white">
+<!-- BEGIN HEADER -->
+<div class="page-header navbar navbar-fixed-top">
+    <!-- BEGIN HEADER INNER -->
+    <div class="page-header-inner ">
+        <!-- BEGIN LOGO -->
+        <div class="page-logo">
+            <a href="index.html">
+                <img src="{%$VIEW_ROOT%}/assets/layouts/layout/img/logo.png" alt="logo" class="logo-default"/> </a>
+
+            <div class="menu-toggler sidebar-toggler"></div>
+        </div>
+        <!-- END LOGO -->
+        <!-- BEGIN RESPONSIVE MENU TOGGLER -->
+        <a href="javascript:;" class="menu-toggler responsive-toggler" data-toggle="collapse"
+           data-target=".navbar-collapse"> </a>
+        <!-- END RESPONSIVE MENU TOGGLER -->
+        <!-- BEGIN TOP NAVIGATION MENU -->
+
+    </div>
+    <!-- END HEADER INNER -->
+</div>
+<!-- END HEADER -->
+<!-- BEGIN HEADER & CONTENT DIVIDER -->
+<div class="clearfix"></div>
+<!-- END HEADER & CONTENT DIVIDER -->
+<!-- BEGIN CONTAINER -->
+<div class="page-container">
+    <!-- BEGIN SIDEBAR -->
+    <div class="page-sidebar-wrapper">
+        <!-- BEGIN SIDEBAR -->
+        <!-- DOC: Set data-auto-scroll="false" to disable the sidebar from auto scrolling/focusing -->
+        <!-- DOC: Change data-auto-speed="200" to adjust the sub menu slide up/down speed -->
+        <div class="page-sidebar navbar-collapse collapse">
+            <!-- BEGIN SIDEBAR MENU -->
+            <!-- DOC: Apply "page-sidebar-menu-light" class right after "page-sidebar-menu" to enable light sidebar menu style(without borders) -->
+            <!-- DOC: Apply "page-sidebar-menu-hover-submenu" class right after "page-sidebar-menu" to enable hoverable(hover vs accordion) sub menu mode -->
+            <!-- DOC: Apply "page-sidebar-menu-closed" class right after "page-sidebar-menu" to collapse("page-sidebar-closed" class must be applied to the body element) the sidebar sub menu mode -->
+            <!-- DOC: Set data-auto-scroll="false" to disable the sidebar from auto scrolling/focusing -->
+            <!-- DOC: Set data-keep-expand="true" to keep the submenues expanded -->
+            <!-- DOC: Set data-auto-speed="200" to adjust the sub menu slide up/down speed -->
+            <ul class="page-sidebar-menu  page-header-fixed page-sidebar-menu-light " data-keep-expanded="false"
+                data-auto-scroll="true" data-slide-speed="200" style="padding-top: 20px">
+                <!-- DOC: To remove the sidebar toggler from the sidebar you just need to completely remove the below "sidebar-toggler-wrapper" LI element -->
+                <li class="sidebar-toggler-wrapper hide">
+                    <!-- BEGIN SIDEBAR TOGGLER BUTTON -->
+                    <div class="sidebar-toggler"></div>
+                    <!-- END SIDEBAR TOGGLER BUTTON -->
+                </li>
+                <!-- DOC: To remove the search box from the sidebar you just need to completely remove the below "sidebar-search-wrapper" LI element -->
+                <li class="sidebar-search-wrapper">
+                    <!-- BEGIN RESPONSIVE QUICK SEARCH FORM -->
+                    <!-- DOC: Apply "sidebar-search-bordered" class the below search form to have bordered search box -->
+                    <!-- DOC: Apply "sidebar-search-bordered sidebar-search-solid" class the below search form to have bordered & solid search box -->
+                    <form class="sidebar-search  " action="index.php?c=source&a=index" method="POST">
+                        <a href="javascript:;" class="remove">
+                            <i class="icon-close"></i>
+                        </a>
+
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="搜索...">
+                                    <span class="input-group-btn">
+                                        <a href="javascript:;" class="btn submit">
+                                            <i class="icon-magnifier"></i>
+                                        </a>
+                                    </span>
+                        </div>
+                    </form>
+                    <!-- END RESPONSIVE QUICK SEARCH FORM -->
+                </li>
+                <li class="">
+                    <a href="{%url c=source a=index%}" class="nav-link nav-toggle">
+                        <i class="icon-home"></i>
+                        <span class="title">仪表板</span>
+                        <span class="selected"></span>
+                    </a>
+                </li>
+                <li class="">
+                    <a href="{%url c=source a=source_user%}" class="nav-link nav-toggle">
+                        <i class="glyphicon glyphicon-user"></i>
+                        <span class="title">用户查看</span>
+                        <span class="selected"></span>
+                    </a>
+                </li>
+                <li class="">
+                    <a href="{%url c=source a=source_order%}" class="nav-link nav-toggle">
+                        <i class="icon-basket"></i>
+                        <span class="title">订单详情</span>
+                        <span class="selected"></span>
+                    </a>
+                </li>
+                <li class="nav-item start active open">
+                    <a href="{%url c=source a=source_viporder%}" class="nav-link nav-toggle">
+                        <i class="icon-basket"></i>
+                        <span class="title">VIP订单</span>
+                        <span class="selected"></span>
+                    </a>
+                </li>
+                {%if $data['type']==0%}
+                <li class="">
+                    <a href="{%url c=source a=source_under%}" class="nav-link nav-toggle">
+                        <i class="icon-social-dribbble"></i>
+                        <span class="title">渠道统计</span>
+                        <span class="selected"></span>
+                    </a>
+                </li>
+                {%/if%}
+                <li class="">
+                    <a href="{%url c=source a=source_source%}" class="nav-link nav-toggle">
+                        <i class="icon-social-dribbble"></i>
+                        <span class="title">渠道管理</span>
+                        <span class="selected"></span>
+                    </a>
+                </li>
+
+            </ul>
+            <!-- END SIDEBAR MENU -->
+            <!-- END SIDEBAR MENU -->
+        </div>
+        <!-- END SIDEBAR -->
+    </div>
+    <!-- END SIDEBAR -->
+    <!-- BEGIN CONTENT -->
+    <div class="page-content-wrapper">
+        <!-- BEGIN CONTENT BODY -->
+        <div class="page-content">
+            <!-- BEGIN PAGE HEADER-->
+            <!-- BEGIN THEME PANEL -->
+            <!-- END THEME PANEL -->
+            <!-- BEGIN PAGE BAR -->
+            <div class="page-bar">
+                <ul class="page-breadcrumb">
+                    <li>
+                        <a href="{%url c=source a=index%}">首页</a>
+                        <i class="fa fa-circle"></i>
+                    </li>
+                    <li>
+                        <span>订单</span>
+                    </li>
+                </ul>
+
+            </div>
+            <!-- END PAGE BAR -->
+            <!-- BEGIN PAGE TITLE-->
+            <h3 class="page-title"> VIP订单
+                <small>订单详情</small>
+            </h3>
+            <!-- END PAGE TITLE-->
+            <!-- END PAGE HEADER-->
+
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- Begin: life time stats -->
+                    <div class="portlet light portlet-fit portlet-datatable bordered">
+                        <div class="portlet-title">
+                            <div class="caption">
+                                <i class="icon-settings font-green"></i>
+                                <span class="caption-subject font-green sbold uppercase"> 订单列表 </span>
+                            </div>
+                        </div>
+                        <div class="portlet-body">
+                            <div class="table-container">
+
+                                <!--     <div class="table-actions-wrapper">
+                                        <button class="btn blue btn-sm" id="importWayBtn">导入物流单</button>
+                                        <span> </span>
+                                        <select class="table-group-action-input form-control input-inline input-small input-sm">
+                                            <option value="">请选择...</option>
+                                            <option value="export">导出EXCEL</option>
+                                        </select>
+                                        <button class="btn btn-sm btn-default table-group-action-submit">
+                                            <i class="fa fa-check"></i> 提交</button>
+                                    </div>
+                               -->
+                                <table class="table table-striped table-bordered table-hover" id="datatable_shipment">
+                                    <thead>
+                                    <tr role="row" class="heading">
+                                        <th width="2%">
+                                            <input type="checkbox" class="group-checkable">
+                                        </th>
+                                        <th width="5%"> 订单号</th>
+                                        <th width="15%"> 用户名</th>
+                                        <th width="15%"> 下单时间</th>
+                                        <th width="10%"> 应支付</th>
+                                        <th width="10%"> 支付信息</th>
+                                        <th width="10%"> VIP</th>
+                                        <th width="10%"> 操作</th>
+                                    </tr>
+                                    <tr role="row" class="filter">
+                                        <td></td>
+                                        <td>
+                                            <input type="text" class="form-control form-filter input-sm" name="orderno">
+                                        </td>
+                                        <td>
+                                            <select class="form-control form-filter input-sm select2"
+                                                    name="uid"></select>
+                                        </td>
+                                        <td>
+                                            <div class="input-group date date-picker1 margin-bottom-5"
+                                                 data-date-format="yyyy-mm-dd">
+                                                <input type="text" class="form-control form-filter input-sm" readonly
+                                                       name="createtime_from" placeholder="从">
+                                                            <span class="input-group-btn">
+                                                                <button class="btn btn-sm default" type="button">
+                                                                    <i class="fa fa-calendar"></i>
+                                                                </button>
+                                                            </span>
+                                            </div>
+                                            <div class="input-group date date-picker2" data-date-format="yyyy-mm-dd">
+                                                <input type="text" class="form-control form-filter input-sm" readonly
+                                                       name="createtime_to" placeholder="到">
+                                                            <span class="input-group-btn">
+                                                                <button class="btn btn-sm default" type="button">
+                                                                    <i class="fa fa-calendar"></i>
+                                                                </button>
+                                                            </span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            #
+                                        </td>
+                                        <td>
+                                            <select name="pay_status" class="form-control form-filter input-sm">
+                                                <option value="">全部</option>
+                                                <option value="1">已支付</option>
+                                                <option value="0">未支付</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <select name="vip" class="form-control form-filter input-sm">
+                                                <option value="">全部</option>
+                                                <option value="0-1">普通会员</option>
+                                                <option value="0-2">钻石会员</option>
+                                                <option value="1-2">升级会员</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <div class="margin-bottom-5">
+                                                <button class="btn btn-sm yellow filter-submit margin-bottom">
+                                                    <i class="fa fa-search"></i> 搜索
+                                                </button>
+                                            </div>
+                                            <button class="btn btn-sm red filter-cancel">
+                                                <i class="fa fa-times"></i> 重置
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End: life time stats -->
+                </div>
+
+
+            </div>
+
+        </div>
+        <!-- END CONTENT BODY -->
+    </div>
+    <!-- END CONTENT -->
+</div>
+<!-- END CONTAINER -->
+<!-- BEGIN FOOTER -->
+<div class="page-footer">
+    <div class="page-footer-inner">
+        2014 &copy; 淘微购.
+    </div>
+    <div class="scroll-to-top">
+        <i class="icon-arrow-up"></i>
+    </div>
+</div>
+
+<!--    <div id="session_id" style="display:none">{%$session_id%}</div> -->
+
+
+<!-- END FOOTER -->
+<!--[if lt IE 9]>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/respond.min.js"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/excanvas.min.js"></script>
+<![endif]-->
+<!-- BEGIN CORE PLUGINS -->
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/jquery.min.js" type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/js.cookie.min.js" type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js"
+        type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js"
+        type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/jquery.blockui.min.js" type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/uniform/jquery.uniform.min.js" type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js"
+        type="text/javascript"></script>
+<!-- END CORE PLUGINS -->
+<!-- BEGIN THEME GLOBAL SCRIPTS -->
+<script src="{%$VIEW_ROOT%}/assets/global/scripts/datatable.js" type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/datatables/datatables.min.js" type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js"
+        type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js"
+        type="text/javascript"></script>
+
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/select2/js/select2.full.min.js" type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-modal/js/bootstrap-modalmanager.js"
+        type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-modal/js/bootstrap-modal.js"
+        type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/scripts/app.js" type="text/javascript"></script>
+<!-- END THEME GLOBAL SCRIPTS -->
+<!-- BEGIN THEME LAYOUT SCRIPTS -->
+<script src="{%$VIEW_ROOT%}/assets/layouts/layout/scripts/layout.min.js" type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/layouts/layout/scripts/demo.min.js" type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/layouts/global/scripts/quick-sidebar.min.js" type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js"
+        charset="UTF-8" type="text/javascript"></script>
+
+<!-- END THEME LAYOUT SCRIPTS -->
+<!-- BEGIN PAGE LEVEL SCRIPTS -->
+<script type="text/javascript">
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': '{%$x_csrf_token%}'
+        }
+    });
+
+    $.fn.modal.defaults.spinner = $.fn.modalmanager.defaults.spinner =
+            '<div class="loading-spinner" style="width: 200px; margin-left: -100px;">' +
+            '<div class="progress progress-striped active">' +
+            '<div class="progress-bar progress-bar-success" role="progressbar" style="width: 100%;"></div>' +
+            '</div>' +
+            '</div>';
+
+    $.fn.select2.defaults.set("theme", "bootstrap");
+
+    $(document).on('click', '#importWayBtn', function () {
+        $('#importWayModal').modal('show');
+    });
+
+    $('#downloadWayTemplateFile').on('click', function () {
+        window.open('{%$VIEW_ROOT%}/import.xlsx', '');
+        return false;
+    });
+
+    $('#importWayModal').on('hide.bs.modal', function () {
+        $(this).find('#importWayResult').addClass('display-none').find('tbody').empty();
+        $(this).find('input').val('');
+    });
+
+    $('#importWayForm').on('submit', function () {
+        $('#importWayModal').modalmanager('loading');
+
+        var input = $(this).find('input[name=file]');
+        var file = input[0].files[0];
+        var formData = new FormData();
+        formData.append('file', file);
+        formData.append('recover', $(this).find('input[name=recover]:checked').length);
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '{%url m=ajax c=order a=importWay%}', true);
+        xhr.setRequestHeader('X-CSRF-TOKEN', '{%$x_csrf_token%}');
+        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        xhr.onload = function () {
+            $('#importWayModal').modalmanager('loading');
+            if (xhr.status == 200 && xhr.readyState == 4) {
+                $('#importWayForm').find('button[type=submit]').html('开始上传').removeAttr('disabled');
+                var response = xhr.response;
+                response = $.parseJSON(response);
+                if (response.code != 1) {
+                    App.alert({
+                        container: $('#importWayModal .modal-body'), // alerts parent container
+                        place: 'preppend', // append or prepent in container
+                        type: 'danger', // alert's type
+                        message: response.result,
+                        close: true,
+                        focus: false, // auto scroll to the alert after shown
+                        closeInSeconds: 3, // auto close after defined seconds
+                        icon: 'fa fa-remove' // put icon class before the message
+                    });
+                }
+                else if (response.code == 1) {
+                    response = response.body;
+                    $('#importWayResult').removeClass('display-none').find('tbody').empty();
+                    for (var i = 0; i < response.length; i++) {
+                        var tpl = '<tr ' + (response[i].success ? '' : 'class="danger"') + '><td>' + response[i].orderno + '</td><td>' + response[i].package + '</td><td>' + response[i].ship_time + '</td><td>' + response[i].ship_type + '</td><td>' + response[i].ship_number + '</td><td>' + (response[i].success ? '成功' : '失败') + '(' + response[i].result + ')</td><td></td></tr>';
+                        $('#importWayResult').append(tpl);
+                    }
+                }
+            }
+        };
+        xhr.onprogress = function (XMLHttpRequestProgressEvent) {
+            var loaded = XMLHttpRequestProgressEvent.loaded;
+            var total = XMLHttpRequestProgressEvent.total;
+
+            $('#importWayForm').find('button[type=submit]').html(Math.floor(100 * loaded / total) + '%').attr('disabled', 'disabled');
+        }
+        xhr.send(formData);
+        return false;
+    });
+
+    function formatRepo(user) {
+        if (!user.loading) {
+            var markup = "<table class='movie-result'><tr>";
+            markup += "<td valign='center'><img src='" + (user.gravatar == null ? 'http://placehold.it/50x50' : user.gravatar) + "' width='50' heigth='50' /></td>";
+            markup += "<td align='center' valign='center'><h5> " + user.name + "</h5>";
+            markup += "<div class='movie-synopsis'> " + user.telephone + "</div>";
+            markup += "</td></tr></table>"
+            return markup;
+        }
+    }
+
+    function formatRepoSelection(repo) {
+        return repo.name;
+    }
+
+    $(".select2").select2({
+        placeholder: '请选择用户',
+        allowClear: true,
+        language: {
+            noResults: function () {
+                return "没有找到任何匹配项";
+            },
+            inputTooShort: function () {
+                return '请输入用户名称';
+            },
+            searching: function () {
+                return '正在努力搜索...';
+            },
+            loadingMore: function () {
+                return '载入更多...';
+            },
+            inputTooLong: function () {
+                return '输入太多了...';
+            }
+        },
+        ajax: {
+            url: "{%url m=ajax c=user a=search%}",
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+                return {
+                    keywords: params.term, // search term
+                    length: params.page
+                };
+            },
+            processResults: function (data, page) {
+                return {
+                    results: data.body.data
+                };
+            },
+            cache: true
+        },
+        escapeMarkup: function (markup) {
+            return markup;
+        },
+        minimumInputLength: 1,
+        templateResult: formatRepo,
+        templateSelection: formatRepoSelection
+    });
+
+    //获取当前时间
+    function getNowFormatDate() {
+        var date = new Date();
+        var seperator1 = "-";
+        var seperator2 = ":";
+        var month = date.getMonth() + 1;
+        var strDate = date.getDate();
+        if (month >= 1 && month <= 9) {
+            month = "0" + month;
+        }
+        if (strDate >= 0 && strDate <= 9) {
+            strDate = "0" + strDate;
+        }
+        var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate
+                + " " + date.getHours() + seperator2 + date.getMinutes()
+                + seperator2 + date.getSeconds();
+        return currentdate;
+    }
+
+    //取消订单按钮
+    /*
+
+
+     $('#datatable_orders').on('click','.noteBtn',function(){
+     $('#noteForm').find('input[name=orderno]').val($(this).data('orderno'));
+     $.post('{%url m=ajax c=order a=note%}',{orderno:$(this).data('orderno')},function(response){
+     $('#noteForm').find('textarea').val(response.body.note);
+     $('#noteModal').modal('show');
+     });
+     });
+
+     $('#noteForm').on('submit',function(){
+     var note = $(this).find('textarea').val();
+     var orderno = $(this).find('input[name=orderno]').val();
+     $.post('{%url m=ajax c=order a=note%}',{orderno:orderno,note:note},function(response){
+     $('#noteModal').modal('hide');
+     $('button.noteBtn[data-orderno='+orderno+']').parents('tr').find('td:eq(10)').html(note);
+     });
+     return false;
+     });
+
+     //同步到erp按钮
+     $('#datatable_orders').on('click','.erp',function(){
+     var orderno = $(this).data('orderno');
+     var ths = $(this);
+     $.post('{%url m=ajax c=order a=erp%}',{orderno:orderno},function(response){
+     if(response.code==1)
+     {
+     ths.html('重推ERP');
+     }
+     else
+     {
+     App.alert({
+     container: $('#alert_container').val(), // alerts parent container
+     place: 'append', // append or prepent in container
+     type: 'danger', // alert's type
+     message: response.result,
+     close: true,
+     focus: false, // auto scroll to the alert after shown
+     closeInSeconds: 3, // auto close after defined seconds
+     icon:'fa fa-remove' // put icon class before the message
+     });
+     }
+     });
+     return false;
+     });
+
+     //推送支付单按钮
+     $('#datatable_orders').on('click','.payed',function(){
+     var orderno = $(this).data('orderno');
+     var ths = $(this);
+     $.post('{%url m=ajax c=order a=payed%}',{orderno:orderno},function(response){
+     if(response.code==1)
+     {
+     ths.html('重推支付');
+     }
+     else
+     {
+     App.alert({
+     container: $('#alert_container').val(), // alerts parent container
+     place: 'append', // append or prepent in container
+     type: 'danger', // alert's type
+     message: response.result,
+     close: true,
+     focus: false, // auto scroll to the alert after shown
+     closeInSeconds: 3, // auto close after defined seconds
+     icon:'fa fa-remove' // put icon class before the message
+     });
+     }
+     });
+     return false;
+     });
+     */
+    //订单详情
+    /*
+     $('#datatable_orders').on('click','.orderdetail',function(){
+     var orderno = $(this).data('orderno');
+     window.open('{%url c=admin a=orderdetail%}&orderno='+orderno,'');
+     return false;
+     });
+
+     //订单发货
+     $('#datatable_orders').on('click','.send',function(){
+     //载入动画
+     $('body').modalmanager('loading');
+     var orderno = $(this).data('orderno');
+     $('#sendModal').load('{%url c=order a=send%}',{orderno:orderno}, function(){
+     $('body').modalmanager('loading');
+     $('#sendModal').modal();
+     });
+     });
+     */
+    /*$('select[name=address_province]').on('change',function(){
+     $('select[name=address_city]').empty().append('<option value="">请选择...</option>');
+     $.get('{%url m=api c=common a=address%}',{type:'city',pid:$(this).val()},function(response){
+     for(var i=0;i<response.body.length;i++)
+     {
+     $('select[name=address_city]').append('<option value="'+response.body[i].id+'">'+response.body[i].name+'</option>');
+     }
+     });
+
+     });*/
+</script>
+<script src="{%$VIEW_ROOT%}/assets/pages/scripts/dashboard.js" type="text/javascript"></script>
+<!-- END PAGE LEVEL SCRIPTS -->
+<!-- BEGIN THEME LAYOUT SCRIPTS -->
+<script src="{%$VIEW_ROOT%}/assets/layouts/layout/scripts/layout.min.js" type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/layouts/layout/scripts/demo.min.js" type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/layouts/global/scripts/quick-sidebar.min.js" type="text/javascript"></script>
+<!-- END THEME LAYOUT SCRIPTS -->
+<script type="text/javascript">
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': '{%$x_csrf_token%}'
+        }
+    });
+</script>
+<script src="{%$VIEW_ROOT%}/assets/pages/scripts/source_viporder.js" type="text/javascript"></script>
+
+</body>
+
+</html>

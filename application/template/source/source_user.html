@@ -121,6 +121,37 @@
                                 <span class="selected"></span>
                             </a>
                         </li>
+                        <li class="">
+                            <a href="{%url c=source a=source_order%}" class="nav-link nav-toggle">
+                                <i class="icon-basket"></i>
+                                <span class="title">订单详情</span>
+                                <span class="selected"></span>
+                            </a>
+                        </li>
+                         {%if $data['type']==0%}
+ 			<li class="">
+                            <a href="{%url c=source a=source_viporder%}" class="nav-link nav-toggle">
+                                <i class="icon-basket"></i>
+                                <span class="title">VIP订单</span>
+                                <span class="selected"></span>
+                            </a>
+                        </li>
+                        <li class="">
+                            <a href="{%url c=source a=source_under%}" class="nav-link nav-toggle">
+                                <i class="icon-social-dribbble"></i>
+                                <span class="title">渠道统计</span>
+                                <span class="selected"></span>
+                            </a>
+                        </li>
+                         {%/if%}
+                        <li class="">
+                            <a href="{%url c=source a=source_source%}" class="nav-link nav-toggle">
+                                <i class="icon-social-dribbble"></i>
+                                <span class="title">渠道管理</span>
+                                <span class="selected"></span>
+                            </a>
+                        </li>
+                       
                     </ul>
                     <!-- END SIDEBAR MENU -->
                     <!-- END SIDEBAR MENU -->
@@ -139,7 +170,7 @@
                     <div class="page-bar">
                         <ul class="page-breadcrumb">
                             <li>
-                                <a href="index.php">首页</a>
+                                <a href="{%url c=source a=index%}">首页</a>
                                 <i class="fa fa-circle"></i>
                             </li>
                             <li>
@@ -155,7 +186,7 @@
                     </h3>
                     <!-- END PAGE TITLE-->
                     <!-- END PAGE HEADER-->
-                    
+                    <div id="userSwiftModal" class="modal container fade" tabindex="-1"></div>
                     <div class="row">
                  		  
 						    <div class="col-md-12">
@@ -187,19 +218,17 @@
                                                   
 													<th width="5%"> 头像 </th>
                                                     <th width="5%"> 用户名 </th>
-                                                   
                                                     <th width="5%"> 邀请码 </th>
                                                     <th width="10%"> 注册时间 </th>
-                                                    
                                                     <th width="5%"> VIP</th>
 													<th width="10%"> 导师 </th>
 													<th width="10%"> 上级导师 </th>
 													<th width="10%"> 推广人 </th>
+													<th width="10%"> 余额 </th>
 													<th width="10%"> 消费金额 </th>
 													<th width="10%"> 收益</th>
                                                     <th width="10%"> 介绍 </th>
                                                     <th width="5%"> 微信号 </th>
-                                                   
                                                     <th width="10%"> 操作</th>
                                                     
                                                    
@@ -257,9 +286,13 @@
 													<td>
 														<select class="form-control form-filter input-sm select2" name="oid"></select>
 													</td>
+													<td>
+                                                        <div class="margin-bottom-5">
+                                                            <input type="text" class="form-control form-filter input-sm" name="money_from" placeholder="从" /> </div>
+                                                        <input type="text" class="form-control form-filter input-sm" name="money_to" placeholder="到" />
+													</td>
 													
-													
-													<td id="money">
+													<td id="pay_money">
                                                         #
 													</td>
 													<td id="swift_money">
@@ -344,7 +377,11 @@
         <script src="{%$VIEW_ROOT%}/assets/layouts/layout/scripts/demo.min.js" type="text/javascript"></script>
         <script src="{%$VIEW_ROOT%}/assets/layouts/global/scripts/quick-sidebar.min.js" type="text/javascript"></script>
         <script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js" charset="UTF-8" type="text/javascript"></script>
+		{%if $data['type']==0%}
 		<script src="{%$VIEW_ROOT%}/assets/pages/scripts/source_user.js" type="text/javascript"></script>
+		{%else%}
+		<script src="{%$VIEW_ROOT%}/assets/pages/scripts/source_user2.js" type="text/javascript"></script>
+		{%/if%}
         <!-- END THEME LAYOUT SCRIPTS -->
         <!-- BEGIN PAGE LEVEL SCRIPTS -->
         <script type="text/javascript">
@@ -476,7 +513,7 @@
 			templateSelection: formatRepoSelection
 		});
 		
-	/*	$('#datatable_orders').on('click','.showSwiftBtn',function(){
+		$('#datatable_orders').on('click','.showSwiftBtn',function(){
 			$('body').modalmanager('loading');
             var btn = $(this);
 			$('#userSwiftModal').load('{%url c=swift a=detail%}',{uid:btn.data('id')}, function(){
@@ -492,7 +529,7 @@
 			  $('#userSwiftModal').modal();
 			});
 		});
-	*/	
+		
 		$('#datatable_orders').on('click','.remove',function(){
 			var ths = $(this);
 			$.post('{%url m=ajax c=user a=remove%}',{id:$(this).data('id')},function(response){
@@ -503,7 +540,7 @@
 			});
 		});
 		</script>
-		</script>
+		
         <script src="{%$VIEW_ROOT%}/assets/pages/scripts/dashboard.js" type="text/javascript"></script>
         <!-- END PAGE LEVEL SCRIPTS -->
         <!-- BEGIN THEME LAYOUT SCRIPTS -->

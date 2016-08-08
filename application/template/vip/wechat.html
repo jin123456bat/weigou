@@ -19,11 +19,11 @@ function onBridgeReady(){
 		function(res){     
 			if(res.err_msg == "get_brand_wcpay_request:ok" )
 			{
-				window.location = 'index.php?c=order&a=thankyou&id={%$id%}';
+				window.location = '{%url c=mobile a=index%}';
 			}
 			else
 			{
-				window.location = 'index.php?c=order&a=failed&id={%$id%}';
+				window.history.go(-1);
 			}
 	});
 }

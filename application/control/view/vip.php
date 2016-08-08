@@ -2,6 +2,7 @@
 namespace application\control\view;
 use system\core\view;
 use application\helper\pay;
+use application\message\json;
 class vip extends view
 {
 	function __construct()
@@ -40,32 +41,74 @@ class vip extends view
 				$pay->setCurrency('CNY');
 				if ($paytype == 'wechat')
 				{
+					//微信支付需要的参数
+					$notify_url = 'http://'.$_SERVER['HTTP_HOST'].'/gateway/wechat/vip_notify.php';
+					$pay->setNotifyUrl($notify_url);
 					$pay->createParameter('trade_type','JSAPI');
+					
 					$user = $this->model('user')->where('id=?',[$order['uid']])->find();
-					if (empty($user))
-						return '尚未绑定微信无法使用微信支付';
-					$pay->createParameter('openid',$user['wx_openid_web']);//用户的openid
+					$order_user_openid = $user['wx_openid_web'];
+					if (empty($order_user_openid))
+					{
+						//假如下单用户没有openid则使用当前登录的用户的openid来支付
+						$appid = $this->model('system')->get('appid','wechat');
+						$appsecret = $this->model('system')->get('appsecret','wechat');
+						$this->_wechat = new \application\helper\wechat($appid, $appsecret);
+						if ($this->get->code === NULL)
+						{
+							$location = $this->_wechat->getCode($this->http->url(), 'snsapi_base');
+							header('Location: '.$location,true,302);
+							exit();
+						}
+						else
+						{
+							$code = $this->get->code;
+							$codeinfo = $this->_wechat->getOpenid($code);
+							if (isset($codeinfo['openid']))
+							{
+								$openid = $codeinfo['openid'];
+							}
+						}
+					}
+					else
+					{
+						$openid = $order_user_openid;
+					}
+						
+						
+					$pay->createParameter('openid',$openid);//用户的openid
 					$appid = $this->model('system')->get('appid','wechat');
 					if (empty($appid))
-						return '尚未绑定公众账号，无法使用微信支付';
+						return new json(json::PARAMETER_ERROR,'尚未绑定公众账号，无法使用微信支付');
 					$pay->createParameter('appid',$appid);//公众号的appid
+				}
+				else
+				{
+					//支付宝需要的参数
+					$notify_url = 'http://'.$_SERVER['HTTP_HOST'].'/gateway/alipay/vip_notify.php';
+					$pay->setNotifyUrl($notify_url);
+					$return_url = $this->http->url('','mobile','account');//跳转到个人中心
+					$pay->setReturnUrl($return_url);
+					$pay->createParameter([
+						'service' => 'alipay.wap.create.direct.pay.by.user',
+						'payment_type' => 1,
+						'show_url' => $return_url,
+						'total_fee' => $order['payamount'],
+						'seller_id' => $partner,
+						'it_b_pay' => date('Y-m-d H:i',$_SERVER['REQUEST_TIME'] + $pay->getTimeout()),
+					]);
 				}
 				
 				$pay->setProductName('购买会员从V'.$order['vip_from'].'到V'.$order['vip_to']);
 				
-				$notify_url = 'http://'.$_SERVER['HTTP_HOST'].'/gateway/alipay/vip_notify.php';
-				$pay->setNotifyUrl($notify_url);
-				$pay->createParameter([
-					'service' => 'alipay.wap.create.direct.pay.by.user',
-					'payment_type' => 1,
-					'total_fee' => $order['payamount'],
-					'seller_id' => $partner,
-					'it_b_pay' => date('Y-m-d H:i',$_SERVER['REQUEST_TIME'] + $pay->getTimeout()),
-				]);
-				
 				$parameter = $pay->createPayParameter();
 				if (!$parameter)
-					return $pay->getLastError();
+				{
+					$msg = $pay->getLastError();
+					$this->assign('msg', $msg);
+					$this->setViewname('pay_failed');
+					return $this;
+				}
 				switch (strtolower($paytype))
 				{
 					case 'alipay':
@@ -86,6 +129,7 @@ class vip extends view
 						break;
 					case 'wechat':
 						$this->assign('data', $parameter);
+						$this->setViewname('wechat');
 						break;
 					default:
 				}

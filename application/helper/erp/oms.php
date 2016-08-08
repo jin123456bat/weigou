@@ -166,6 +166,7 @@ class oms extends erp
 		$xml = $this->createParameter($data, __FUNCTION__, __FUNCTION__);
 		$xml = $this->sendXml($xml);
 		$response = xmlToArray($xml);
+		var_dump($response);
 		if (isset($response['Goods']['Status']) && $response['Goods']['Status'] == 1)
 		{
 			$product = $response['Goods']['Data']['Goods'];
@@ -205,14 +206,20 @@ class oms extends erp
 		$data = [
 			'GoodsSerial' => $barcode,
 			'HouseId' => $store_id,
+			'StockGetTogether' => 'YES',
 		];
+		var_dump($data);
 		$xml = $this->createParameter($data, __FUNCTION__, __FUNCTION__);
+		$xml = $this->sendXml($xml);
+		var_dump($xml);
 		$response = xmlToArray($xml);
-		if (isset($response['Goods']['Status']) && $response['Goods']['Status'] == 1)
+		
+		var_dump($response);
+		/* if (isset($response['Goods']['Status']) && $response['Goods']['Status'] == 1)
 		{
-			
+			return $response;
 		}
-		return false;
+		return false; */
 	}
 	
 	function QueryPlatform($platForm = NULL)
@@ -224,6 +231,19 @@ class oms extends erp
 		var_dump($xml);
 		$response = $this->sendXml($xml);
 		var_dump($response);
+	}
+	
+	/**
+	 * 订单取消
+	 */
+	function CancelOrder($suborder_id)
+	{
+		$data = $this->model('suborder_store')->where('id=?',[$suborder_id])->find([
+			'concat(replace(suborder_store.data,"-",""),suborder_store.id) as CustomerCode',
+		]);
+		$xml = $this->createParameter($data, __FUNCTION__, __FUNCTION__);
+		$response = $this->sendXml($xml);
+		return $response;
 	}
 	
 	/**
@@ -292,7 +312,7 @@ class oms extends erp
 			'suborder_store.orderamount as OrderAmount',
 			'suborder_store.taxamount as TaxAmount',
 			'suborder_store.discount as DiscountAmount',
-			'concat(replace(suborder_store.date,"-",""),suborder_store.id) as CustomerCode',
+			'concat(replace(suborder_store.date,"-",""),suborder_store.id) as CustomerCode',//这边是订单号
 			'1 as SendType',//发货方式  包税 普通 直邮 默认为保税
 			'1 as CustomsID',//清关 浙江口岸
 			'0 as PayVirtual',//聚合支付
@@ -311,14 +331,12 @@ class oms extends erp
 		//承诺书
 		$data['UserProcotol'] = '本人承诺所购买商品系个人合理自用，现委托商家代理申报、代缴税款等通关事宜，本人保证遵守《海关法》和国家相关法律法规，保证所提供的身份信息和收货信息真实完整，无侵犯他人权益的行为，以上委托关系系如实填写，本人愿意接受海关、检验检疫机构及其他监管部门的监管，并承担相应法律责任.';
 		
-		
-		
 		$product = $this->model('suborder_store_product')
 		->table('order_product','left join','order_product.id=suborder_store_product.order_product_id')
 		->table('product','left join','product.id=order_product.pid')
 		->where('suborder_store_product.suborder_id=?',[$suborder_id])
 		->select([
-			'product.id as GoodsCommonid',
+		//	'product.id as GoodsCommonid',
 			'product.barcode as GoodsSerial',
 			'order_product.price as GoodsPayPrice',
 			'order_product.num as GoodsNum',
@@ -357,13 +375,47 @@ class oms extends erp
 	}
 	
 	/**
-	 * 物流查询
+	 * 订单物流轨迹查询
+	 * @param unknown $suborder_id
+	 */
+	function QueryLogistics($suborder_id)
+	{
+		$data = $this->model('suborder_store')->where('id=?',[$suborder_id])->find([
+			'concat(replace(suborder_store.data,"-",""),suborder_store.id) as CustomerCode',
+		]);
+		$xml = $this->createParameter($data, __FUNCTION__, __FUNCTION__);
+		$response = $this->sendXml($xml);
+		return $response;
+	}
+	
+	/**
+	 * 身份验证
+	 * @param unknown $name
+	 * @param unknown $identify
+	 */
+	function IdcardCheck($name,$identify)
+	{
+		$data = [
+			'CardName' => $name,
+			'Idcard' => $identify
+		];
+		$xml = $this->createParameter($data, __FUNCTION__.$data['CardName'].$data['Idcard'], __FUNCTION__);
+		$response = $this->sendXml($xml);
+		return $response;
+	}
+	
+	/**
+	 * 物流查询 查询仓库下可用的物流方式
 	 * @param unknown $HouseId
 	 */
-	function queryExpress($HouseId)
+	function QueryExpress($HouseId)
 	{
-		$str = '<?xml version="1.0" encoding="utf-8"?><OmsList UserName="'.$this->UserName.'"><Oms BusinessLogic="QueryExpress"><HouseID>'.$HouseId.'</HouseID><MD5Key>'.$this->sign('QueryExpress').'</MD5Key></Oms></OmsList>';
-		return $this->sendXml($str, $this->_xml_url);
+		$data = [
+			'HouseId' => $HouseId,
+		];
+		$xml = $this->createParameter($data, __FUNCTION__, __FUNCTION__);
+		$response = $this->sendXml($xml);
+		return $response;
 	}
 	
 	/**

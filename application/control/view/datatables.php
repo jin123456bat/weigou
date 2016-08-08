@@ -504,4 +504,23 @@ class datatables extends view
 		$resultObj->recordsTotal = $this->model('vip_order')->count();
 		return new json($resultObj);
 	}
+ function source_viporder()
+    {
+
+
+        //获取当前渠道的用户id
+
+        //生成json
+
+        //筛选
+        $resultObj = new \stdClass();
+        $resultObj->draw = $this->post('draw');
+        $resultObj->data = $this->model('vip_order')->vipdatatables($this->post(), $this->session->id);
+        $resultObj->recordsFiltered = count($resultObj->data);
+        if ($this->post('length') != -1) {
+            $resultObj->data = array_slice($resultObj->data, $this->post('start'), $this->post('length'));
+        }
+        $resultObj->recordsTotal = $this->model('vip_order')->vipcount($this->session->id);
+        return new json($resultObj);
+    }
 }
