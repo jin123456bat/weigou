@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>淘微购</title>
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-touch-fullscreen" content="yes" />
+    <meta name="full-screen" content="yes"/>
+    <meta name="screen-orientation" content="portrait"/>
+    <meta name="x5-fullscreen" content="true"/>
+    <link rel="stylesheet" type="text/css" href="{%$VIEW_ROOT%}/mobile/css/reset.css">
+    <link rel="stylesheet" type="text/css" href="{%$VIEW_ROOT%}/mobile/css/style.css">
+    <script type="text/javascript" src="{%$VIEW_ROOT%}/mobile/js/jquery-1.8.3.min.js"></script>
+    <script type="text/javascript" src="{%$VIEW_ROOT%}/mobile/js/resolution.js"></script>
+</head>
+<body style="background-color: #fff;">
+    <div id="header">
+        <header>
+            <a href="javascript:window.history.go(-1);" class="left_btn"><i class="icon back"></i></a>
+        </header>
+    </div>
+    <div class="sou-goods">
+    	{%section name=product loop=$product%}
+        <div class="sou-goods-itme clearfix" onClick="window.location = '{%url c=mobile a=product id=$product[product].id%}';">
+            <div class="left">
+                <img src="{%$product[product].image%}">
+            </div>
+            <div class="right">
+                {%if !empty($product[product].origin)%}<div class="sou-goods-line1"><img src="{%$product[product].origin.logo%}">{%/if%}
+                <p>{%if !empty($product[product].origin)%}{%$product[product].origin.name%}品牌{%/if%} {%if !empty($product[product].store)%}{%$product[product].store%}发货{%/if%}</p>
+                </div>
+                <div class="sou-goods-line2">{%$product[product].name%}</div>
+                <div class="sou-goods-line3">￥{%if isset($user) && $user.vip==1%}{%$product[product].v1price%}{%elseif isset($user) && $user.vip==2%}{%$product[product].v2price%}{%else%}{%$product[product].price%}{%/if%} <span> ￥{%$product[product].oldprice%}</span></div>
+            </div>
+        </div>
+        {%/section%}
+    </div>
+</body>
+<script type="text/javascript">
+
+
+</script>
+</html>

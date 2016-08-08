@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html>
+
+<head lang="en">
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>淘微购</title>
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-touch-fullscreen" content="yes" />
+    <meta name="full-screen" content="yes" />
+    <meta name="screen-orientation" content="portrait" />
+    <meta name="x5-fullscreen" content="true" />
+    <link rel="stylesheet" type="text/css" href="{%$VIEW_ROOT%}/mobile/css/reset.css">
+    <link rel="stylesheet" type="text/css" href="{%$VIEW_ROOT%}/mobile/css/style.css">
+    <link rel="stylesheet" type="text/css" href="{%$VIEW_ROOT%}/mobile/css/other.css">
+    <script type="text/javascript" src="{%$VIEW_ROOT%}/mobile/js/jquery-1.8.3.min.js"></script>
+    <script type="text/javascript" src="{%$VIEW_ROOT%}/mobile/js/resolution.js"></script>
+    <script type="text/javascript" src="{%$VIEW_ROOT%}/mobile/js/js.js"></script>
+</head>
+<style>
+.use_coupon {
+    cursor: pointer;
+}
+</style>
+
+<body>
+    <div id="header">
+        <header>
+            <h1>购物车</h1>
+            <a href="#" class="right_btn" onClick="edit(this)" edit="no">编辑</a>
+        </header>
+    </div>
+    <div id="content" style="padding-top: 50px;padding-bottom: 60px;">
+        <!--无商品-->
+        <div class="no_goods" style="display: none;">
+            <div class="pic">
+                <img src="{%$VIEW_ROOT%}/mobile/image/no_goods.png">
+            </div>
+            <div class="word">购物车没有商品哦！</div>
+            <a href="{%url c=mobile a=index%}" class="go_shopping">去逛逛</a>
+        </div>
+        <!--有商品-->
+        <div class="cart_box" style="padding-bottom:40px">
+            {%if isset($store) && !empty($store)%} {%section name=store loop=$store%}
+            <div class="goods_wrap active">
+                <div class="shop_name clearfix">
+                    <div class="choose choose_store" sele="yes"></div>
+                    <div class="name">{%$store[store].name%}发货</div>
+                </div>
+                {%section name=product loop=$store[store].product%}
+                <div class="goods flex_box active">
+                    <input type="hidden" name="outside" value="{%$store[store].product[product].outside|default:0%}">
+                    <input type="hidden" name="freetax" value="{%$store[store].product[product].freetax|default:0%}">
+                    <div class="choose choose_product" sele="yes"></div>
+                    <div class="row_up" onClick="javascript:window.location = '{%url c=mobile a=product id=$store[store].product[product].id%}';">
+                        <div class="row_up_right flex_box">
+                            <div class="cart_pic">
+                                <img src="{%$store[store].product[product].image%}">
+                            </div>
+                            <div class="cart_goods_infor flex_box">
+                                <div class="left">
+                                    <div class="word">{%$store[store].product[product].name%}</div>
+                                    <div class="word">{%$store[store].product[product].content%}</div>
+                                    <div id="number" class="number flex_box" style="display: none;">
+                                        <a id="count_down" class="inC flex" data-id="{%$store[store].product[product].id%}" data-content="{%$store[store].product[product].content%}">-</a>
+                                        <input id="goods_count" readonly name="goods_count" type="text" class="qty flex" value="{%$store[store].product[product].num%}">
+                                        <a id="count_up" class="deC flex" data-id="{%$store[store].product[product].id%}" data-content="{%$store[store].product[product].content%}">+</a>
+                                    </div>
+                                </div>
+                                <div class="right">
+                                    {%if $user.vip==1%}
+                                    <div class="word">￥
+                                        <font id="unitprice">{%$store[store].product[product].v1price%}</font>
+                                    </div>
+                                    {%elseif $user.vip==2%}
+                                    <div class="word">￥
+                                        <font id="unitprice">{%$store[store].product[product].v2price%}</font>
+                                    </div>
+                                    {%else%}
+                                    <div class="word">￥
+                                        <font id="unitprice">{%$store[store].product[product].price%}</font>
+                                    </div>
+                                    {%/if%}
+                                    <div class="word" id="goods_num">×{%$store[store].product[product].num%}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row_bottom">税率：
+                            <font id="tax">{%$store[store].product[product].tax * 100%}</font>%</div>
+                        <a class="del_btn" style="display: none;" data-id="{%$store[store].product[product].id%}" data-content="{%$store[store].product[product].content%}"></a>
+                    </div>
+                </div>
+                {%/section%}
+                <div class="count_wrap tishik">
+                    <div class="count">本仓关税：￥
+                        <font id="store_tax">{%$store[store].tax%}</font>
+                    </div>
+                    <div class="count">活动优惠：￥{%$store[store].discount%}</div>
+                    <div class="count">商品总计（不含税）：￥
+                        <font id="amount_num">{%$store[store].amount%}</font>
+                    </div>
+                    <div class="clearfix note2000" style="display:none;">
+                        <div style="border:1px solid #f32529;color:#f32529;width:64%;float:right;line-height:20px;font-size:12px;margin-top:5px;    padding: 0 5px;border-radius: 4px;">
+                            海关规定购买多件直供商品的总价不能超￥2000，请选择部分商品结算。
+                        </div>
+                    </div>
+                    <div class="clearfix note1000" style="display:none;">
+                        <div style="border:1px solid #f32529;color:#f32529;width:64%;float:right;line-height:20px;font-size:12px;margin-top:5px;    padding: 0 5px;border-radius: 4px;">
+                            海关规定购买多件直邮商品的总价不能超￥1000，请选择部分商品结算。
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {%/section%} {%/if%}
+            <!-- 新加的 -->
+            <!-- <div class="goods_wrap active" id="cart_downwrap">
+                <div class="goods flex_box active">
+                    <input type="hidden" name="outside" value="1">
+                    <input type="hidden" name="freetax" value="0">
+                    <div class="choose choose_product"></div>
+                    <div class="row_up" onClick="javascript:window.location = 'http://www.twillg.com/index.php?c=mobile&a=product&id=372';" style="border:none;">
+                        <div class="row_up_right flex_box">
+                            <div class="cart_pic">
+                                <div class="cart_downmask">
+                                    <div class="cart_downmask_item">已下架</div>
+                                </div>
+                                <img src="./application/upload/2016/06/16/c1b8b6cc02d62178d7183d2ae2bfe303wcqsK1F8aGMi.jpg">
+                            </div>
+                            <div class="cart_goods_infor flex_box">
+                                <div class="left">
+                                    <div class="word">【台湾-张君雅】张君雅甜甜圈-草莓味40g*6(包)</div>
+                                    <div class="word"></div>
+                                    <div id="number" class="number flex_box" style="display: none;">
+                                        <a id="count_down" class="inC flex" data-id="372" data-content="">-</a>
+                                        <input id="goods_count" readonly name="goods_count" type="text" class="qty flex" value="1">
+                                        <a id="count_up" class="deC flex" data-id="372" data-content="">+</a>
+                                    </div>
+                                </div>
+                                <div class="right">
+                                    <div class="word">￥
+                                        <font id="unitprice">35.42</font>
+                                    </div>
+                                    <div class="word" id="goods_num">×1</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row_bottom">税率：
+                            <font id="tax">0</font>%</div>
+                        <!-- <a class="del_btn" style="display: none;" data-id="372" data-content=""></a> -->
+                 <!--    </div>
+                </div>
+                <div class="cart_downbottom">
+                    <div class="cart_downbottom_btn">清空失效产品</div>
+                </div>
+            </div> -->
+        </div>
+        <div id="delete_confirm" style="display:none;">
+            <div class="confirm">确定删除宝贝</div>
+            <div class="cancel">取消</div>
+        </div>
+        <div id="black_bg" style="display: none">
+            <div id="payment_box" class="payment_box" style="display: none;">
+                <div class="title">
+                    <span class="arrow_left"></span>
+                </div>
+                <ul>
+                    <li class="clearfix" id="modifyAddress">
+                        <div class="left">收货地址</div>
+                        <div class="right">{%if empty($address)%}添加地址{%else%}{%$address[0].name%},{%$address[0].address%}{%/if%}</div>
+                        <span class="down"></span>
+                    </li>
+                    <li class="clearfix" id="selectCoupon" onClick="$('#coupon').slideToggle('slow'); return false;">
+                        <div class="left">优惠券</div>
+                        <div class="right">选择优惠券</div>
+                        <span class="down"></span>
+                    </li>
+                    <li class="clearfix" id="selectPayment" onClick="$('#payment_method').slideToggle('slow'); return false;">
+                        <div class="left">支付方式</div>
+                        <div class="right">{%if $isWechat%}微信支付{%else%}支付宝{%/if%}</div>
+                        <span class="down"></span>
+                    </li>
+                    <li class="clearfix" onClick="$('#amount').slideToggle('slow'); return false;">
+                        <div class="left">应付金额</div>
+                        <div class="right orderamount">￥163.00</div>
+                        <span class="down"></span>
+                    </li>
+                    <div class="look" style="float: right;margin-right: 10px;font-size:12px;">点击查看价格明细</div>
+                    <li style="margin-top: 18px;">
+                        <div class="agreement" onClick="$('#xieyi').slideToggle(); $.get('{%url c=page a=detail id=5%}',function(response){$('#geren_content').html(response)}); $.get('{%url c=page a=detail id=6%}',function(response){$('#fuwu_content').html(response)});">本人接受<a>《进口个人委托申报委托》与《淘微购服务协议》</a></div>
+                        <a class="long_btn" id="submit">确认支付</a>
+                    </li>
+                </ul>
+            </div>
+            <div id="address_box" class="address_box" style="display: none;">
+                <div class="title">
+                    收货地址
+                    <span class="up"></span>
+                </div>
+                <div class="have_address">
+                    <div class="min">
+                        {%section name=address loop=$address%}
+                        <div class="row flex_box {%if $smarty.section.address.first%}active{%/if%}" data-id="{%$address[address].id%}">
+                            <a href="{%url c=mobile a=edit_address%}">
+                                <div class="edit"></div>
+                            </a>
+                            <div class="address">
+                                <div class="line1">{%$address[address].name%}</div>
+                                <div class="line2"><span class="red">{%if $address[address].host==1%}[默认]{%/if%}</span>{%$address[address].province%}&nbsp;{%$address[address].city%}&nbsp;{%$address[address].county%}&nbsp;{%$address[address].address%}</div>
+                            </div>
+                        </div>
+                        {%/section%}
+                        <div class="tianjia">
+                            <div class="left">添加新地址</div>
+                        </div>
+                    </div>
+                    <a class="long_btn" id="selectAddress">确认</a>
+                </div>
+                <div id="addAddress" class="wrap" style="display: none;">
+                    <div class="row">
+                        <strong class="red">*</strong>
+                        <input type="text" name="name" placeholder="收货人姓名">
+                    </div>
+                    <div class="row">
+                        <strong class="red">*</strong>
+                        <input type="text" name="telephone" placeholder="手机号码">
+                    </div>
+                    <div class="row">
+                        <strong class="red">*</strong>
+                        <input type="text" name="identify" placeholder="身份证号码(跨境购物，海关特殊要求)">
+                    </div>
+                    <div class="row">
+                        <strong class="red">*</strong>
+                        <select name="province" id="province">
+                            <option value="">省份...</option>
+                            {%section name=province loop=$province%}
+                            <option value="{%$province[province].id%}">{%$province[province].name%}</option>
+                            {%/section%}
+                        </select>
+                    </div>
+                    <div class="row">
+                        <strong class="red">*</strong>
+                        <select name="city" id="city">
+                            <option value="">城市...</option>
+                        </select>
+                    </div>
+                    <div class="row">
+                        <strong class="red">*</strong>
+                        <select name="county" id="county">
+                            <option value="">地区...</option>
+                        </select>
+                    </div>
+                    <div class="row">
+                        <strong class="red">*</strong>
+                        <input type="text" name="address" placeholder="详细地址">
+                    </div>
+                    <div class="default" sel="no">设为默认地址</div>
+                    <a class="long_btn" id="saveAddress">保存</a>
+                </div>
+            </div>
+            <div id="payment_method" class="payment_method" style="display: none;">
+                <div class="title">
+                    支付方式
+                    <span class="up"></span>
+                </div>
+                <div class="wrap">
+                    <div class="row {%if !$isWechat%}active{%/if%}" data-type="alipay">
+                        <div class="left zhifu">支付宝</div>
+                    </div>
+                    <div class="row {%if $isWechat%}active{%/if%}" data-type="wechat">
+                        <div class="left weixin">微信支付</div>
+                    </div>
+                </div>
+                <a class="long_btn" id="closePaymentMethod">确认</a>
+            </div>
+            <div id="amount" style="display: none">
+                <div class="title">
+                    价格明细
+                    <span class="up"></span>
+                </div>
+                <div class="wrap">
+                    <div class="row clearfix">
+                        <div class="left">商品总价</div>
+                        <div class="right" id="goodsamount">￥0</div>
+                    </div>
+                    <div class="row clearfix">
+                        <div class="left">运费</div>
+                        <div class="right" id="feeamount">￥0</div>
+                    </div>
+                    <div class="row clearfix">
+                        <div class="left">税费</div>
+                        <div class="right" id="taxamount">￥0</div>
+                    </div>
+                    <div class="row clearfix">
+                        <div class="left">优惠</div>
+                        <div class="right" id="discount">￥0</div>
+                    </div>
+                    <div class="row clearfix">
+                        <div class="left">应付总额</div>
+                        <div class="right red" id="orderamount">￥0</div>
+                    </div>
+                </div>
+                <div class="agreement">本人接受<a>《进口个人委托申报委托》与《淘微购服务协议》</a></div>
+                <a class="long_btn" id="priceDetail" style="margin-top: 10px;">关闭</a>
+            </div>
+            <div id="coupon" style="display: none;">
+                <div class="title">
+                    优惠券
+                    <span class="up"></span>
+                </div>
+                <div class="wrap">
+                    <div class="tianjia" id="createCoupon">
+                        <div class="left">兑换优惠券</div>
+                    </div>
+                    <div class="coupon_wrap">
+                        <div class="top flex_box">
+                            <div class="flex active" onClick="tabb(this,1)">可用优惠券</div>
+                            <div class="flex" onClick="tabb(this,2)">不可用优惠券</div>
+                        </div>
+                        <div class="bottom">
+                            <div class="coupon_page1 contitem">
+                            </div>
+                            <div class="coupon_page2 contitem hide">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <a class="long_btn" onClick="$('#coupon').slideToggle();">确认</a>
+            </div>
+            <div id="xieyi" style="background-color: #fff; position: absolute; bottom: 0; left: 0; width: 100%; display:none;">
+                <div class="title" onClick="$('#xieyi').slideToggle();" style="padding: 10px; line-height: 30px; font-size: 14px; border-top: 1px solid #ccc; border-bottom: 1px solid #ccc; position: relative;">
+                    <span class="arrow_left" style="border-left: 2px solid #999;
+    border-bottom: 2px solid #999;
+    width: 9px;
+    height: 9px;
+    position: absolute;
+    left: 12px;
+    top: 22px;
+    transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+    -o-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);"></span> &nbsp;&nbsp;协议内容
+                </div>
+                <div class="title" style="padding: 10px; line-height: 30px; font-size: 14px; border-top: 1px solid #ccc; border-bottom: 1px solid #ccc; position: relative;">
+                    进口个人委托申报委托
+                </div>
+                <div class="wrap" id="geren_content" style="padding:10px;">
+                </div>
+                <div class="title" style="padding: 10px; line-height: 30px; font-size: 14px; border-top: 1px solid #ccc; border-bottom: 1px solid #ccc; position: relative;">淘微购服务协议</div>
+                <div class="wrap" id="fuwu_content" style="padding:10px;">
+                </div>
+                <input type="hidden" name="add_to_cart" value="">
+            </div>
+        </div>
+        {%include file='mobile/public/msg.html'%}
+        <div id="settlement" class="flex_box">
+            <div class="allSelect flex" onClick="selectAll(this);" selectall="yes">全选</div>
+            <div class="total_wrap flex3">
+                <div class="total">合计：<span class="red">￥<font id="totalamount">0</font></span></div>
+                <div class="gray">(含关税￥
+                    <font id="total_tax">0</font>，不含运费)</div>
+            </div>
+            <div class="settlement flex3">结算</div>
+        </div>
+        <div id="deleteAll" class="flex_box" style="display: none;">
+            <div class="allSelect flex" onClick="selectAll(this);" selectall="no">全选</div>
+            <div class="total_wrap flex3"></div>
+            <div class="deleteAll flex3">删除商品</div>
+        </div>
+        <div id="footer">
+            <footer>
+                <ul class="nav_inner">
+                    <li>
+                        <a href="{%url c=mobile a=index%}" class="a_item ">
+                            <div class="home"></div>
+                            <p>首页</p>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{%url c=mobile a=category%}" class="a_item ">
+                            <div class="classify"></div>
+                            <p>分类</p>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{%url c=mobile a=cart%}" class="a_item cur">
+                            <div class="car"></div>
+                            <p>购物车</p>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{%url c=mobile a=account%}" class="a_item ">
+                            <div class="mine"></div>
+                            <p>我的</p>
+                        </a>
+                    </li>
+                </ul>
+            </footer>
+        </div>
+</body>
+<script type="text/javascript">
+//清空失效产品
+// $(".cart_downbottom_btn").click(function() {
+//     // $("#cart_downwrap").hide();
+//     $("#delete_confirm").slideToggle();
+
+//     $(".confirm").click(function() {
+//         $("#cart_downwrap").hide();
+//         $("#delete_confirm").slideToggle();
+//     })
+//     $(".cancel").click(function() {
+//         $("#delete_confirm").slideToggle();
+//     })
+
+// })
+
+
+
+
+
+if ($(".cart_box").text().trim().length == 0)
+    $(".no_goods").show();
+// 设为默认地址
+$('.default').on('click', function() {
+    var sel = $(this).attr('sel');
+    if (sel == 'no') {
+        $(this).addClass('active');
+        $(this).attr('sel', 'yes');
+    } else {
+        $(this).removeClass('active');
+        $(this).attr('sel', 'no');
+    }
+});
+
+//时间戳转时间
+var unixtotime = function(unixTime, isFull, timeZone) {
+    if (typeof(timeZone) == 'number') {
+        unixTime = parseInt(unixTime) + parseInt(timeZone) * 60 * 60;
+    }
+    var time = new Date(unixTime * 1000);
+    var ymdhis = "";
+    ymdhis += time.getUTCFullYear() + "-";
+    ymdhis += (time.getUTCMonth() + 1) + "-";
+    ymdhis += time.getUTCDate();
+    if (isFull === true) {
+        ymdhis += " " + time.getUTCHours() + ":";
+        ymdhis += time.getUTCMinutes() + ":";
+        ymdhis += time.getUTCSeconds();
+    }
+    return ymdhis;
+}
+
+//计算所有商品的总价和税款
+var calculation = function() {
+    var store = $('.goods.active'); //只选择选择的商品
+    var tax_sum = 0;
+    var product_sum = 0;
+    $.each(store, function(index, value) {
+        var outside = parseInt($(value).find('input[name=outside]').val());
+        var freetax = parseInt($(value).find('input[name=freetax]').val());
+
+        var unitprice = parseFloat(parseFloat($(value).find('#unitprice').html()).toFixed(2));
+        var tax = parseFloat(parseFloat($(value).find('#tax').html()).toFixed(2)) / 100;
+        var count = parseFloat(parseFloat($(value).find('#goods_count').val()).toFixed(2));
+
+        var $current_product_tax = unitprice * tax * count;
+
+        if ((outside == 2 || outside == 3) && freetax == 0) {
+            if (outside == 3 && $current_product_tax <= 50) {
+                tax_sum += 0;
+            } else {
+                //仓库下的税款总计
+                tax_sum += $current_product_tax;
+            }
+        }
+
+        product_sum += unitprice * count;
+    });
+    $('#totalamount').html((tax_sum + product_sum).toFixed(2));
+    $('#total_tax').html(tax_sum.toFixed(2));
+}
+
+//计算仓库下的商品价格和税款
+var calculation_store = function() {
+    var store = $('.goods_wrap');
+
+    $('.settlement').removeClass('disabled');
+    $('.note2000').hide();
+    $('.note1000').hide();
+
+
+    $.each(store, function(index, value) {
+        var product = $(value).find('.goods.active'); //仓库下只计算选择的商品
+        var tax_sum = 0;
+        var product_sum = 0; //仓库下的商品总价
+        var product_num = 0; //仓库的的商品总数量
+
+        var zhi_product_sum = 0; //直邮商品总价
+        var zhi_product_num = 0; //直邮商品数量
+        $.each(product, function(index, value) {
+            var outside = parseInt($(value).find('input[name=outside]').val());
+            var freetax = parseInt($(value).find('input[name=freetax]').val());
+
+            var unitprice = parseFloat(parseFloat($(value).find('#unitprice').html()).toFixed(2));
+            var tax = parseFloat(parseFloat($(value).find('#tax').html()).toFixed(2)) / 100;
+            var count = parseFloat(parseFloat($(value).find('#goods_count').val()).toFixed(2));
+
+            var $current_product_tax = unitprice * tax * count;
+
+            if ((outside == 2 || outside == 3) && freetax == 0) {
+                if (outside == 3 && $current_product_tax <= 50) {
+                    tax_sum += 0;
+                } else {
+                    //仓库下的税款总计
+                    tax_sum += $current_product_tax;
+                }
+            }
+            //仓库下的商品数量总计
+            product_num += count;
+            //仓库下的商品总计
+            product_sum += unitprice * count;
+
+            if (outside == 3) {
+                //直邮商品总价总计
+                zhi_product_sum += unitprice * count;
+                zhi_product_num += count;
+            }
+        });
+
+        $(value).find('#store_tax').html(tax_sum.toFixed(2));
+        $(value).find('#amount_num').html(product_sum.toFixed(2));
+
+        if (product_sum > 2000 && product_num > 1) {
+            $('.settlement').addClass('disabled');
+            $('.note2000', $(value)).show();
+        }
+        if (zhi_product_sum > 1000 && zhi_product_num > 1) {
+            $('.settlement').addClass('disabled');
+            $('.note1000', $(value)).show();
+        }
+    });
+}
+
+var remove_product = function(id, content, num, callback) {
+    var data = {
+        id: id,
+        content: content,
+        num: -num,
+    }
+    $.post('{%url m=ajax c=cart a=add%}', data, function(response) {
+        if (response.code != 1) {
+            msg(response.result);
+        }
+    });
+    if (typeof callback == 'function') {
+        callback();
+    }
+    var store = $('.goods_wrap');
+    $.each(store, function(index, value) {
+        if ($(value).find('.goods').length == 0) {
+            $(value).remove();
+        }
+    });
+    calculation_store();
+    calculation();
+    return true;
+}
+
+function tabb(obj, n) {
+    $(obj).siblings().removeClass('active');
+    $(obj).addClass('active');
+    var statusCur = n;
+    $('.contitem').hide();
+    $('.coupon_page' + statusCur).show();
+}
+
+$(document).ready(function() {
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': '{%$x_csrf_token%}'
+        }
+    });
+
+    calculation();
+    calculation_store();
+
+    $('#payment_box .title').on('click', function() {
+        $('#payment_box').slideToggle();
+        $('#black_bg').hide();
+    });
+    $('#modifyAddress').on('click', function() {
+        $('#address_box').slideToggle();
+        return false;
+    });
+    $('.have_address .flex_box').live('click', function() {
+        $('.have_address .flex_box').removeClass('active');
+        $(this).addClass('active');
+    });
+    $('#selectAddress').on('click', function() {
+        $('#address_box').slideToggle();
+        var addressString = $('#address_box .have_address .active .line1').html() + ',' + $('#address_box .have_address .active .line2').html().split('&nbsp;').pop();
+        $('#modifyAddress .right').html(addressString);
+    });
+    $('#province').on('change', function() {
+        $.get('{%url m=api c=common a=address%}', {
+            type: 'city',
+            pid: $(this).val()
+        }, function(response) {
+            if (response.code == 1) {
+                $('#city').empty().append('<option>请选择</option>');
+                for (var i = 0; i < response.body.length; i++) {
+                    $('#city').append('<option value="' + response.body[i].id + '">' + response.body[i].name + '</option>');
+                }
+            }
+        });
+    });
+    $('#city').on('change', function() {
+        $.get('{%url m=api c=common a=address%}', {
+            type: 'county',
+            cid: $(this).val()
+        }, function(response) {
+            if (response.code == 1) {
+                $('#county').empty().append('<option>请选择</option>');
+                for (var i = 0; i < response.body.length; i++) {
+                    $('#county').append('<option value="' + response.body[i].id + '">' + response.body[i].name + '</option>');
+                }
+            }
+        });
+    });
+    $('#saveAddress').on('click', function() {
+        var data = {
+            name: $('#addAddress input[name=name]').val(),
+            telephone: $('#addAddress input[name=telephone]').val(),
+            identify: $('#addAddress input[name=identify]').val(),
+            province: $('#province').val(),
+            city: $('#city').val(),
+            county: $('#county').val(),
+            address: $('#addAddress input[name=address]').val(),
+            host: $('#addAddress .default').attr('sel') == 'yes' ? 1 : 0,
+        };
+        $.post('{%url m=ajax c=address a=create%}', data, function(response) {
+            if (response.code == 1) {
+                $('#addAddress').hide();
+                $('#address_box .have_address').show();
+                $('#address_box .have_address .flex_box').removeClass('active');
+                $('<div class="row flex_box active" data-id="' + response.body.id + '"><div class="edit"></div><div class="address"><div class="line1">' + response.body.name + '</div><div class="line2"><span class="red">' + (response.body.host == 1 ? '[默认]' : '') + '</span>' + response.body.province + '&nbsp;' + response.body.city + '&nbsp;' + response.body.county + '&nbsp;' + response.body.address + '</div></div></div>').insertBefore('#address_box .have_address .tianjia');
+
+                $('#addAddress input[name=name]').val('');
+                $('#addAddress input[name=telephone]').val('');
+                $('#addAddress input[name=identify]').val('');
+                $('#province').val('');
+                $('#city').val('');
+                $('#county').val('');
+                $('#addAddress input[name=address]').val('');
+            } else {
+                msg(response.result);
+            }
+        });
+        return false;
+    });
+    $('#address_box .title').on('click', function() {
+        if (!$('#addAddress').is(':hidden')) {
+            $('#addAddress').hide();
+            $('#address_box .have_address').show();
+        } else {
+            $('#address_box').slideToggle();
+        }
+        return false;
+    });
+    $('#coupon .title').on('click', function() {
+        $('#coupon').slideToggle("slow");
+    });
+    $('#address_box .tianjia').on('click', function() {
+        $('#addAddress').show();
+        $('#address_box .have_address').hide();
+        return false;
+    });
+    //点击优惠卷的操作
+    $('.coupon_page1 .use_coupon').live('click', function() {
+        $('.coupon_page1 .use_coupon').html('使用');
+        $(this).html('已选择');
+        $(this).parents('.flex_box').addClass('active');
+        $('#selectCoupon .right').html($(this).parents('.flex_box').find('.coupon_name').html());
+
+        var goods = $('.goods.active');
+        var data = [];
+        $.each(goods, function(index, value) {
+            var product = {
+                id: $(value).find('#count_down').data('id'),
+                content: $(value).find('#count_down').data('content'),
+                num: $(value).find('#goods_count').val(),
+            };
+            data.push(product);
+        });
+        $.post('{%url m=ajax c=order a=create%}', {
+            product: JSON.stringify(data),
+            prepay: 1,
+            coupon: $(this).data('id')
+        }, function(response) {
+            if (response.code == 1) {
+                $('.orderamount').html('￥' + response.body.orderamount);
+                $('#goodsamount').html('￥' + response.body.goodsamount);
+                $('#feeamount').html('￥' + response.body.feeamount);
+                $('#taxamount').html('￥' + response.body.taxamount);
+                $('#discount').html('￥' + response.body.discount);
+                $('#orderamount').html('￥' + response.body.orderamount);
+            } else {
+                msg(response.result);
+            }
+        });
+    });
+    $('#createCoupon').on('click', function() {
+        var couponno = window.prompt('请输入优惠编码');
+        if (couponno != null && couponno != '') {
+            $.post('{%url m=ajax c=coupon a=couponno%}', {
+                couponno: couponno
+            }, function(response) {
+                if (response.code == 1) {
+                    var max = response.body.max == 0 ? '无限制' : ('满' + response.body.max + '可使用');
+                    var endtime = response.body.endtime == 0 ? '无限制' : ('有效期至:' + unixtotime(response.body.endtime, false, 8));
+                    var tpl = '<div class="item flex_box"><div class="fl2 quota">￥' + response.body.value + '</div><div class="fl6"><div class="black coupon_name">' + response.body.name + '</div><div class="black">' + max + '</div><div class="gray">' + endtime + '</div></div><div class="fl2"><a class="use_btn use_coupon" data-id="' + response.body.id + '">使用</a></div></div>';
+                    $('.coupon_page1').append(tpl);
+                } else {
+                    msg(response.result);
+                }
+            });
+        }
+        return false;
+    });
+    $('#closePaymentMethod').on('click', function() {
+        $('#payment_method').slideToggle();
+    });
+    $('#payment_method .title').on('click', function() {
+        $('#payment_method').slideToggle("slow");
+    });
+    $('#payment_method .row').on('click', function() {
+        $(this).siblings().removeClass('active');
+        $(this).addClass('active');
+        $('#payment_method').slideToggle("slow");
+        $('#selectPayment .right').html($(this).find('.left').html());
+    });
+    $('#amount .title').on('click', function() {
+        $('#amount').slideToggle("slow");
+    });
+    $('#priceDetail').on('click', function() {
+        $('#amount').slideToggle();
+    });
+
+    //点击结算
+    $('.settlement').on('click', function() {
+        if ($(this).hasClass('disabled')) {
+            return false;
+        }
+        var goods = $('.goods.active');
+        var data = [];
+        $.each(goods, function(index, value) {
+            var product = {
+                id: $(value).find('#count_down').data('id'),
+                content: $(value).find('#count_down').data('content'),
+                num: $(value).find('#goods_count').val(),
+            };
+            data.push(product);
+        });
+
+        //请求可以使用的优惠卷列表
+        $.post('{%url m=ajax c=coupon a=mylistsDynamic%}', {
+            product: JSON.stringify(data)
+        }, function(response) {
+            if (response.code == 1) {
+                var valid = response.body.valid;
+                var invalid = response.body.invalid;
+                $('.coupon_page1').empty();
+                $('.coupon_page2').empty();
+                for (var i = 0; i < valid.length; i++) {
+                    coupon = valid[i];
+                    var tpl = '<div class="item flex_box"><div class="fl2 quota">￥' + coupon.value + '</div><div class="fl6"><div class="black coupon_name">' + coupon.name.substr(0, 30) + '</div><div class="black">' + (coupon.max != 0 ? '满' + coupon.max + '可使用' : '无限制') + '</div><div class="gray">' + (coupon.endtime == 0 ? '无期限' : unixtotime(coupon.endtime, false, 8)) + '</div></div><div class="fl2"><a class="use_btn use_coupon" data-id="' + coupon.id + '">使用</a></div></div>';
+                    $('.coupon_page1').append(tpl);
+                }
+                for (var i = 0; i < invalid.length; i++) {
+                    coupon = invalid[i];
+                    var timestamp = Date.parse(new Date()) / 1000;
+                    if (coupon.used == 1) {
+                        var result = '已使用';
+                    } else if (coupon.endtime != 0 && coupon.endtime <= timestamp) {
+                        var result = '已过期';
+                    } else {
+                        var result = '无法使用';
+                    }
+                    var tpl = '<div class="item flex_box"><div class="fl2 quota">￥' + coupon.value + '</div><div class="fl6"><div class="black coupon_name">' + coupon.name.substr(0, 30) + '</div><div class="black">' + (coupon.max != 0 ? '满' + coupon.max + '可使用' : '无限制') + '</div><div class="gray">' + (coupon.endtime == 0 ? '无期限' : unixtotime(coupon.endtime, false, 8)) + '</div></div><div class="fl2"><a class="use_btn">' + result + '</a></div></div>';
+                    $('.coupon_page2').append(tpl);
+                }
+            }
+        });
+        //生成预订单 计算订单价格
+        $.post('{%url m=ajax c=order a=create%}', {
+            product: JSON.stringify(data),
+            prepay: 1
+        }, function(response) {
+            if (response.code == 1) {
+                $('.orderamount').html('￥' + response.body.orderamount);
+                $('#goodsamount').html('￥' + response.body.goodsamount);
+                $('#feeamount').html('￥' + response.body.feeamount);
+                $('#taxamount').html('￥' + response.body.taxamount);
+                $('#discount').html('￥' + response.body.discount);
+                $('#orderamount').html('￥' + response.body.orderamount);
+
+                $('#black_bg').show();
+                $('#payment_box').slideToggle();
+            } else {
+                msg(response.result);
+            }
+        });
+    });
+
+    $('#submit').on('click', function() {
+        var goods = $('.goods.active');
+        var data = [];
+        $.each(goods, function(index, value) {
+            var product = {
+                id: $(value).find('#count_down').data('id'),
+                content: $(value).find('#count_down').data('content'),
+                num: $(value).find('#goods_count').val(),
+            };
+            data.push(product);
+        });
+        $.post('{%url m=ajax c=order a=create%}', {
+            product: JSON.stringify(data),
+            coupon: $('#coupon .coupon_page1 .item.active .use_coupon').data('id'),
+            address: $('.have_address .flex_box.active').data('id'),
+            clear: 1
+        }, function(response) {
+            if (response.code == 1) {
+                var paytype = $('#payment_method .row.active').data('type');
+                window.location = '{%url c=order a=payment%}&paytype=' + paytype + '&orderno=' + response.body.orderno;
+            } else if (response.code == 2) {
+                window.location = '{%url m=mobile a=login%}&href={%url urlencode=1 m=mobile a=cart%}';
+            } else {
+                msg(response.result);
+            }
+        });
+    });
+
+    $('.del_btn').click(function() {
+
+        // $("#delete_confirm").slideToggle();
+
+        var ths = $(this);
+
+        // $(".confirm").click(function() {
+            remove_product($(this).data('id'), $(this).data('content'), $(this).parents('.goods').find('#goods_count').val(), function() {
+                ths.parents('.goods').remove();
+            // });
+
+            // $("#delete_confirm").hide();
+        })
+
+        // $(".cancel").click(function() {
+        //     $("#delete_confirm").slideToggle();
+        // })
+
+         if ($(".cart_box").text().trim().length == 0)
+                $(".no_goods").show();
+            return false;
+    });
+
+
+
+
+    $('.deleteAll').on('click', function() {
+        var goods = $('.goods.active');
+        $.each(goods, function(index, value) {
+            remove_product($(value).find('#count_down').data('id'), $(value).find('#count_down').data('content'), $(value).find('#goods_count').val(), function() {
+                goods.remove();
+            });
+        });
+        if ($(".cart_box").text().trim().length == 0)
+            $(".no_goods").show();
+    });
+
+    calculation();
+
+    $("a[id^=count_down]").click(function() {
+        var count = $(this).parent().find("#goods_count").val();
+        if (count > 1) {
+            count--;
+            $(this).parent().find("#goods_count").val(count);
+            $(this).parents('.goods').find('#goods_num').html('×' + count);
+            var btn = $(this);
+
+            calculation_store();
+            calculation();
+
+            $.post('{%url m=ajax c=cart a=add%}', {
+                id: $(this).data('id'),
+                content: $(this).data('content'),
+                num: -1
+            }, function(response) {
+                if (response.code == 2) {
+                    window.location = '{%url m=mobile a=login%}';
+                } else if (response.code != 1) {
+                    count++;
+                    btn.parent().find("#goods_count").val(count);
+                    btn.parents('.goods').find('#goods_num').html('×' + count);
+                    calculation_store();
+                    calculation();
+
+                    msg(response.result);
+                }
+            });
+        }
+        return false;
+    });
+    $("a[id^=count_up]").click(function() {
+        var count = $(this).parent().find("#goods_count").val();
+        if (count > 0) {
+            count++;
+            $(this).parent().find("#goods_count").val(count);
+            $(this).parents('.goods').find('#goods_num').html('×' + count);
+            var btn = $(this);
+
+            calculation_store();
+            calculation();
+
+            $.post('{%url m=ajax c=cart a=add%}', {
+                id: $(this).data('id'),
+                content: $(this).data('content'),
+                num: 1
+            }, function(response) {
+                if (response.code == 2) {
+                    window.location = '{%url m=mobile a=login%}';
+                } else if (response.code != 1) {
+                    count--;
+                    btn.parent().find("#goods_count").val(count);
+                    btn.parents('.goods').find('#goods_num').html('×' + count);
+                    calculation_store();
+                    calculation();
+
+                    msg(response.result);
+                }
+            });
+        }
+        return false;
+    });
+    $("input[id^=goods_count]").keyup(function() {
+        var cart_id = $(this).attr("cart_id");
+        var count = $("#goods_count").val().replace(/\D/g, '');
+        if (count == "") {
+            count = 1;
+        }
+        if (count > 0) {
+            $("#goods_count").val(count);
+        }
+        $(this).parents('.goods').find('#goods_num').html('×' + count);
+    });
+})
+
+$('.goods_wrap .choose_store').on('click', function() {
+    if ($(this).attr('sele') == 'yes') {
+        $(this).attr('sele', 'no');
+        $(this).parents('.goods_wrap').removeClass('active');
+        $(this).parents('.goods_wrap').find('.goods').removeClass('active');
+        $(this).parents('.goods_wrap').find('.choose_product').attr('sele', 'no');
+    } else {
+        $(this).attr('sele', 'yes');
+        $(this).parents('.goods_wrap').addClass('active');
+        $(this).parents('.goods_wrap').find('.goods').addClass('active');
+        $(this).parents('.goods_wrap').find('.choose_product').attr('sele', 'yes');;
+    }
+    calculation_store();
+    calculation();
+    judgeAll();
+});
+
+$('.choose_product').on('click', function() {
+    if ($(this).attr('sele') == 'yes') {
+        $(this).attr('sele', 'no');
+        $(this).parents('.goods').removeClass('active');
+        //woxiede
+        // console.log($(this).parent().siblings(".goods").length);
+
+        // var ju=0;
+        // $(this).parent().siblings(".goods").each(function(){
+        //     if($(this).children('.choose_product').attr("sele")=="no"){
+        //         ju=0;
+        //     }
+        // })
+        //  if(ju==0){
+        //     console.log("no");
+        //      $(this).parent().siblings(".shop_name").children('.choose_store').attr("sele","no")
+        // }
+        // else{
+        //     console.log("yes");
+        //      $(this).parent().siblings(".shop_name").children('.choose_store').attr("sele","yes")
+        // }
+        $(this).parent().siblings(".shop_name").children('.choose_store').attr("sele", "no")
+
+    } else {
+        $(this).attr('sele', 'yes');
+        $(this).parents('.goods').addClass('active');
+        //woxiede
+        var ju = 1;
+        $(this).parent().siblings(".goods").each(function() {
+            if ($(this).children('.choose_product').attr("sele") == "no") {
+                ju = 0;
+            }
+        })
+        if (ju == 0) {
+            $(this).parent().siblings(".shop_name").children('.choose_store').attr("sele", "no")
+        } else {
+            $(this).parent().siblings(".shop_name").children('.choose_store').attr("sele", "yes")
+        }
+    }
+    calculation_store();
+    calculation();
+    judgeAll();
+});
+
+function judgeAll() {
+    var ju = 1;
+    $(".choose_product").each(function() {
+        if ($(this).attr("sele") == "no") {
+            ju = 0;
+        }
+    })
+    if (ju == 0) {
+        // $(".allSelect").attr("sele","no");
+        $(".allSelect").attr("selectall", "no");
+    } else {
+        // $(".allSelect").attr("sele","yes");
+        $(".allSelect").attr("selectall", "yes");
+    }
+
+}
+
+function selectAll(obj) {
+    toggleAttr(obj, 'selectAll', 'yes', 'no');
+    if (obj.getAttribute('selectAll') == 'yes') {
+        $('.goods_wrap .choose').attr('sele', 'yes');
+        $('.goods').addClass('active');
+        $('.goods_wrap').addClass('active');
+    } else {
+        $('.goods_wrap .choose').attr('sele', 'no');
+        $('.goods').removeClass('active');
+        $('.goods_wrap').removeClass('active');
+    }
+    calculation_store();
+    calculation();
+}
+
+function edit(obj) {
+    toggleAttr(obj, 'edit', 'yes', 'no');
+    if (obj.getAttribute('edit') == 'yes') {
+        $(obj).html('完成');
+        $('.cart_goods_infor .left .word').hide();
+        $('.row_bottom').hide();
+        $('#settlement').hide();
+        $('.cart_goods_infor .left #number').show();
+        $('.del_btn').show();
+        $('#deleteAll').show();
+    } else {
+        $(obj).html('编辑');
+        $('.cart_goods_infor .left .word').show();
+        $('.row_bottom').show();
+        $('#settlement').show();
+        $('.cart_goods_infor .left #number').hide();
+        $('.del_btn').hide();
+        $('#deleteAll').hide();
+        if ($(".cart_box").text().trim().length == 0)
+            $(".no_goods").show();
+    }
+}
+</script>
+
+</html>

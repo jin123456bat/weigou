@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>淘微购</title>
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-touch-fullscreen" content="yes" />
+    <meta name="full-screen" content="yes"/>
+    <meta name="screen-orientation" content="portrait"/>
+    <meta name="x5-fullscreen" content="true"/>
+    <!-- <link rel="stylesheet" type="text/css" href="{%$VIEW_ROOT%}/mobile/css/reset.css"> -->
+    <!-- <link rel="stylesheet" type="text/css" href="{%$VIEW_ROOT%}/mobile/css/style.css"> -->
+    <link rel="stylesheet" type="text/css" href="{%$VIEW_ROOT%}/mobile/css/sharego.css">
+    <script type="text/javascript" src="{%$VIEW_ROOT%}/mobile/js/jquery-1.8.3.min.js"></script>
+    <script type="text/javascript" src="{%$VIEW_ROOT%}/mobile/js/resolution.js"></script>
+    <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+    <script>!function(a,d){function c(){var w=d.documentElement.clientWidth;if(w>640)w=640;d.documentElement.style.fontSize=w/750*100+"px"}var b=null;a.addEventListener("onorientationchange"in a?"orientationchange":"resize",function(){clearTimeout(b);b=setTimeout(c,300)},!1);a.addEventListener("pageshow",function(a){a.persisted&&(clearTimeout(b),b=setTimeout(c,300))},!1);d.addEventListener('DOMContentLoaded',c,false);}(window,document);</script>
+</head>
+<body>
+    <section class="banner">
+        <img src="{%$VIEW_ROOT%}/mobile/image/sharetwg.jpg">
+    </section>
+
+    <div class="main">
+        <section class="invite-info-content">
+            <div class="invite-info">
+                <div class="inviter-info">
+                    <div class="avatar">
+                        <img src="{%resource file=$current_user.gravatar%}">
+                        <span><i class="flag-left"></i>邀请人<i class="flag-right"></i></span>
+                    </div>
+                    <span class="inviter-name">{%$current_user.name%}</span>
+                </div>
+                <div class="invite-desc">推荐你一款我正在使用的一个靠谱的App——淘微购！精选全球，去伪存真，高性价比，专属服务！<span class="bot"></span></div>
+            </div>
+            <div class="steps">
+                <div class="step-1">
+                    <h1>第一步：复制框内邀请码</h1>
+                    <div id="inviteCode" onclick="select();" class="invite-code">{%$current_user.invit%}</div>
+                    <p><i></i>长按虚线框即可复制</p>
+                </div>
+                <div class="step-2">
+                    <h1>第二步：下载App，接受邀请</h1>
+                    <a href="http://a.app.qq.com/o/simple.jsp?pkgname=com.lianhai.MicroBuy"><div id="dl">点击一键下载</div></a>
+                </div>
+            </div>
+        
+    </div>
+    
+    <!-- <div id="header">
+        <header>
+            <a href="{%url c=mobile a=spread%}" class="left_btn"><i class="icon back"></i></a>
+            <h1>专属邀请码</h1>
+        </header>
+    </div>
+    <div id="content" style="padding-top: 50px;">
+        <div class="code_box">
+            <div class="envelope">
+                邀请码：<span>{%$user.invit%}</span>
+            </div>
+            <div class="word"></div>
+            <a class="short_btn" id="shareBtn">点击分享给好友</a>
+            <p class="red">From 淘微购</p>
+        </div>
+    </div>
+    <div id="black_bg" style="display: none">
+        {%if isset($isWechat) && $isWechat%}
+        <div class="" style="width:50%; float:right;">
+            <img src="{%$VIEW_ROOT%}/mobile/image/share-it.png" style="width:50%; float:right;">
+            <div class="" style="color: white; font-size: x-large; float: right;">
+                <nobr>点击这里分享给其他的小伙伴</nobr>
+            </div>
+        </div>
+        {%else%}
+        <div class="spread-share" style="display: block;">
+            <div class="ss-head"><img src="{%$VIEW_ROOT%}/mobile/image/close.png"><p>分享</p></div>
+            <div class="ss-box">
+                <div class="ss-box3 sharetoqq">
+                    <img src="{%$VIEW_ROOT%}/mobile/image/btn_qq.png">
+                    <p>QQ</p>
+                </div>
+                <div class="ss-box4 sharetoweibo">
+                    <img src="{%$VIEW_ROOT%}/mobile/image/btn_weibo.png">
+                    <p>微博</p>
+                </div>
+            </div>
+        </div>
+        {%/if%}
+    </div> -->
+    <script type="text/javascript">
+    $('#shareBtn').on('click',function(){
+        $('#black_bg').show();
+    });
+    
+    $(".spread-share .ss-head").click(function(){
+        $("#black_bg").hide();
+    })
+    
+    $('.sharetoqq').on('click',function(){
+        window.location = 'http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url={%url c=mobile a=invitUrl id=$user.id|default:"" share_uid=$user.id|default:"" urlencode=1%}&title={%$share.title|default:""%}&desc={%$share.desc%}&site=淘微购{%if !empty($share.logo)%}&pics={%resource file=$share.logo full=1 urlencode=1%}{%/if%}';
+    });
+    
+    $('.sharetoweibo').on('click',function(){
+        window.location = 'http://service.weibo.com/share/share.php?appkey={%$weibo_appkey%}{%if !empty($share.logo)%}&pic={%resource file=$share.logo full=1 urlencode=1%}{%/if%}&title={%$share.desc|default:"分享标题"%}&url={%url c=mobile a=invitUrl id=$user.id|default:"" share_uid=$user.id|default:"" urlencode=1%}&source=bshare&retcode=0&ralateUid={%$user.weibo_uid|default:""%}';
+    });
+    
+    wx.config({
+        debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+        appId: '{%$jsApiTicket.appId|default:""%}', // 必填，公众号的唯一标识
+        timestamp: '{%$jsApiTicket.timestamp|default:""%}', // 必填，生成签名的时间戳
+        nonceStr: '{%$jsApiTicket.nonceStr|default:""%}', // 必填，生成签名的随机串
+        signature: '{%$jsApiTicket.signature|default:""%}',// 必填，签名，见附录1
+        jsApiList: [
+            'onMenuShareTimeline',
+            'onMenuShareAppMessage',
+            'onMenuShareQQ',
+            'onMenuShareWeibo',
+            'onMenuShareQZone',
+            'startRecord',
+            'stopRecord',
+            'onVoiceRecordEnd',
+            'playVoice',
+            'pauseVoice',
+            'stopVoice',
+            'onVoicePlayEnd',
+            'uploadVoice',
+            'downloadVoice',
+            'chooseImage',
+            'previewImage',
+            'uploadImage',
+            'downloadImage',
+            'translateVoice',
+            'getNetworkType',
+            'openLocation',
+            'getLocation',
+            'hideOptionMenu',
+            'showOptionMenu',
+            'hideMenuItems',
+            'showMenuItems',
+            'hideAllNonBaseMenuItem',
+            'showAllNonBaseMenuItem',
+            'closeWindow',
+            'scanQRCode',
+            'chooseWXPay',
+            'openProductSpecificView',
+            'addCard',
+            'chooseCard',
+            'openCard',
+        ] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+    });
+    
+    
+    wx.ready(function(){
+        //分享给朋友
+        wx.onMenuShareAppMessage({
+          title: '我的邀请码是{%$user.invit%}',
+          desc: '{%$share.desc|default:"分享的描述"%}',
+          link: '{%url c=mobile a=invitUrl id=$user.id|default:""%}',
+          imgUrl: '{%resource file=$share.logo full=1%}',
+          success: function (res) {},
+          cancel: function (res) {},
+          fail: function (res) {}
+        });
+        //分享到朋友圈
+        wx.onMenuShareTimeline({
+          title: '我的邀请码是{%$user.invit%}',
+          desc: '{%$share.desc|default:"分享的描述"%}',
+          link: '{%url c=mobile a=invitUrl id=$user.id|default:""%}',
+          imgUrl: '{%resource file=$share.logo full=1%}',
+          success: function (res) {},
+          cancel: function (res) {},
+          fail: function (res) {}
+        });
+        //分享到QQ
+        wx.onMenuShareQQ({
+          title: '我的邀请码是{%$user.invit%}',
+          desc: '{%$share.desc|default:"分享的描述"%}',
+          link: '{%url c=mobile a=invitUrl id=$user.id|default:""%}',
+          imgUrl: '{%resource file=$share.logo full=1%}',
+          success: function (res) {},
+          cancel: function (res) {},
+          fail: function (res) {}
+        });
+        //分享到微博
+        wx.onMenuShareWeibo({
+          title: '我的邀请码是{%$user.invit%}',
+          desc: '{%$share.desc|default:"分享的描述"%}',
+          link: '{%url c=mobile a=invitUrl id=$user.id|default:""%}',
+          imgUrl: '{%resource file=$share.logo full=1%}',
+          success: function (res) {},
+          cancel: function (res) {},
+          fail: function (res) {}
+        });
+    });
+
+    function select(){
+        var doc = document,   
+            text = doc.getElementById("inviteCode"),  
+            range,   
+            selection;  
+        if (doc.body.createTextRange) {  
+            range = document.body.createTextRange();  
+            range.moveToElementText(text);  
+            range.select();  
+        } else if (window.getSelection) {  
+            selection = window.getSelection();          
+            range = document.createRange();  
+            range.selectNodeContents(text);  
+            selection.removeAllRanges();  
+            selection.addRange(range);   
+        }else{  
+            alert("当前浏览器不支持点击复制功能");  
+        }
+    }
+    </script>
+</body>
+</html>

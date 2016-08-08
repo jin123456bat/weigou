@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>微购</title>
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-touch-fullscreen" content="yes" />
+    <meta name="full-screen" content="yes"/>
+    <meta name="screen-orientation" content="portrait"/>
+    <meta name="x5-fullscreen" content="true"/>
+    <link rel="stylesheet" type="text/css" href="{%$VIEW_ROOT%}/mobile/css/reset.css">
+    <link rel="stylesheet" type="text/css" href="{%$VIEW_ROOT%}/mobile/css/style.css">
+    <script type="text/javascript" src="{%$VIEW_ROOT%}/mobile/js/jquery-1.8.3.min.js"></script>
+    <script type="text/javascript" src="{%$VIEW_ROOT%}/mobile/js/resolution.js"></script>
+</head>
+<body style="background-color: #ebeded;">
+    {%if !isset($smarty.get.webview) || $smarty.get.webview!=1%}
+    <div id="header">
+        <header>
+            <a href="javascript:window.history.go(-1);" class="left_btn"><i class="icon back"></i></a>
+            <h1>物流详情</h1>
+        </header>
+    </div>
+    {%/if%}
+    <div class="wuliu-title" {%if isset($smarty.get.webview) && $smarty.get.webview==1%}style="margin-top:0px;"{%/if%}>
+        <img src="{%$VIEW_ROOT%}/mobile/image/profit.png" >
+        <div class="wul-text">
+            <div class="name">{%$wuliu.company|default:$package.ship_type%}</div>
+            <div class="tel">快递单号：{%$wuliu.no|default:$package.ship_number%}</div>
+            <div class="time"><img src="{%$VIEW_ROOT%}/mobile/image/time.png" > 发货时间：{%$package.ship_time|date_format:'Y-m-d H:i:s'%}</div>
+        </div>
+    </div>
+    <section id="wul-timeline" class="wuliu-cont">
+        <div class="wul-detail">物流详情</div>
+        {%if isset($wuliu.list)%}
+        {%section name=wuliu loop=$wuliu.list%}
+        <div class="wul-itme">
+            <div class="wul-point1"></div>
+            <div class="wul-content">
+                <div class="wul-text10">[{%$wuliu.list[wuliu].zone|default:''%}] {%$wuliu.list[wuliu].remark%}</div>
+                <div class="wul-text20">{%$wuliu.list[wuliu].datetime%}</div>
+            </div>
+        </div>
+        {%sectionelse%}
+        <div class="wul-itme">
+            <div class="wul-point1"></div>
+            <div class="wul-content" style="margin-bottom: 30px;">
+                <div class="wul-text10">尚未找到任何物流信息</div>
+            </div>
+        </div>
+        
+        {%/section%}
+        {%else%}
+        <div class="wul-itme">
+            <div class="wul-point1"></div>
+            <div class="wul-content" style="margin-bottom: 30px;">
+                <div class="wul-text10">尚未找到任何物流信息</div>
+            </div>
+        </div>
+        {%/if%}
+    </section>
+</body>
+</html>

@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8 no-js"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9 no-js"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en">
+    <!--<![endif]-->
+    <!-- BEGIN HEAD -->
+
+    <head>
+        <meta charset="utf-8" />
+        <title>添加商品</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta content="width=device-width, initial-scale=1" name="viewport" />
+        <meta content="" name="description" />
+        <meta content="" name="author" />
+        <!-- BEGIN GLOBAL MANDATORY STYLES -->
+        <link href="{%$VIEW_ROOT%}/assets/global/css/font.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/plugins/uniform/css/uniform.default.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css" rel="stylesheet" type="text/css" />
+        <!-- END GLOBAL MANDATORY STYLES -->
+        <!-- BEGIN PAGE LEVEL PLUGINS -->
+        <link href="{%$VIEW_ROOT%}/assets/global/plugins/datatables/datatables.min.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/plugins/fancybox/source/jquery.fancybox.css" rel="stylesheet" type="text/css" />
+		<link rel="stylesheet" type="text/css" href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-tagsinput/bootstrap-tagsinput.css"/>
+        <!-- END PAGE LEVEL PLUGINS -->
+        <!-- BEGIN THEME GLOBAL STYLES -->
+        <link href="{%$VIEW_ROOT%}/assets/global/css/components.min.css" rel="stylesheet" id="style_components" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/css/plugins.min.css" rel="stylesheet" type="text/css" />
+		<link href="{%$VIEW_ROOT%}/umeditor/themes/default/css/umeditor.min.css" rel="stylesheet" type="text/css"/>
+		<link href="{%$VIEW_ROOT%}/assets/global/plugins/select2/css/select2-bootstrap.min.css" rel="stylesheet" type="text/css" />
+		<link href="{%$VIEW_ROOT%}/assets/global/plugins/select2/css/select2.min.css" rel="stylesheet" type="text/css" />
+        <!-- END THEME GLOBAL STYLES -->
+        <!-- BEGIN THEME LAYOUT STYLES -->
+        <link href="{%$VIEW_ROOT%}/assets/layouts/layout/css/layout.min.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/layouts/layout/css/themes/darkblue.min.css" rel="stylesheet" type="text/css" id="style_color" />
+        <link href="{%$VIEW_ROOT%}/assets/layouts/layout/css/custom.min.css" rel="stylesheet" type="text/css" />
+        <!-- END THEME LAYOUT STYLES -->
+        <link rel="shortcut icon" href="favicon.ico" /> </head>
+    <!-- END HEAD -->
+	<style>
+	.bootstrap-tagsinput{width: 100%;height: 38px;}
+	.edui-container{
+		width:100%;
+	}
+	</style>
+    <body class="page-header-fixed page-sidebar-closed-hide-logo page-content-white">
+        <!-- BEGIN HEADER -->
+        {%include file='admin/public/header.html'%}
+        <!-- END HEADER -->
+        <!-- BEGIN HEADER & CONTENT DIVIDER -->
+        <div class="clearfix"> </div>
+        <!-- END HEADER & CONTENT DIVIDER -->
+        <!-- BEGIN CONTAINER -->
+        <div class="page-container">
+            <!-- BEGIN SIDEBAR -->
+            {%include file='admin/public/sidebar.html'%}
+            <!-- END SIDEBAR -->
+            <!-- BEGIN CONTENT -->
+            <div class="page-content-wrapper">
+                <!-- BEGIN CONTENT BODY -->
+                <div class="page-content">
+                    <!-- BEGIN PAGE HEADER-->
+                    <!-- BEGIN THEME PANEL -->
+                    {%include file='admin/public/style.html'%}
+                    <!-- END THEME PANEL -->
+                    <!-- BEGIN PAGE BAR -->
+                    <div class="page-bar">
+                        <ul class="page-breadcrumb">
+                            <li>
+                                <a href="index.php">首页</a>
+                                <i class="fa fa-circle"></i>
+                            </li>
+                            <li>
+                                <span>商品管理</span>
+								<i class="fa fa-circle"></i>
+                            </li>
+							<li>
+                                <span>添加商品</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- END PAGE BAR -->
+                    <!-- BEGIN PAGE TITLE-->
+                    <h3 class="page-title"> 商品管理
+                        <small>添加商品</small>
+                    </h3>
+                    <!-- END PAGE TITLE-->
+                    <!-- END PAGE HEADER-->
+                    <div class="row">
+                        <div class="col-md-12">
+                            <form class="form-horizontal form-row-seperated" action="#">
+							<input type="hidden" value="0" id="product_id">
+                                <div class="portlet">
+                                    <div class="portlet-title">
+                                        <div class="caption">
+                                            <i class="fa fa-shopping-cart"></i>添加商品 </div>
+                                        <div class="actions btn-set">
+											{%if isset($smarty.server.HTTP_REFERER)%}
+                                            <button type="button" name="back" class="btn btn-secondary-outline" onClick="history.go(-1);">
+                                                <i class="fa fa-angle-left"></i> 后退</button>
+											{%/if%}
+                                            <button class="btn btn-secondary-outline" type="reset">
+                                                <i class="fa fa-reply"></i> 重置</button>
+                                            <button class="btn btn-success" id="save">
+                                                <i class="fa fa-check"></i> 保存</button>
+                                            <button class="btn btn-success" id="saveedit">
+                                                <i class="fa fa-check-circle"></i> 保存 & 继续编辑</button>
+											<button class="btn btn-danger display-hide" id="remove">
+												<i class="fa fa-remove"></i> 删除</button>
+                                        </div>
+                                    </div>
+                                    <div class="portlet-body">
+                                        <div class="tabbable-bordered">
+                                            <ul class="nav nav-tabs">
+                                                <li class="active">
+                                                    <a href="#tab_general" data-toggle="tab"> 通用 </a>
+                                                </li>
+                                                <li>
+                                                    <a href="#tab_description" data-toggle="tab"> 详情 </a>
+                                                </li>
+                                                <li id="outside">
+                                                    <a href="#tab_meta" data-toggle="tab"> 海外 </a>
+                                                </li>
+												<li>
+                                                    <a href="#tab_prototype" data-toggle="tab"> 属性 </a>
+                                                </li>
+                                                <li>
+                                                    <a href="#tab_images" data-toggle="tab"> 图像 </a>
+                                                </li>
+                                                <li>
+                                                    <a href="#tab_ship" data-toggle="tab"> 配送 </a>
+                                                </li>
+                                            </ul>
+                                            <div class="tab-content">
+                                            	<div class="tab-pane" id="tab_ship">
+                                               		<div class="form-body">
+                                                    	<div class="form-group">
+                                                            <label class="col-md-2 control-label">默认运费:
+                                                            </label>
+                                                            <div class="col-md-10">
+                                                                <input type="text" class="form-control" name="fee" placeholder=""> </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-md-2 control-label">包邮地区</label>
+                                                            <div class="col-md-10">
+                                                                <div class="checkbox-list">
+                                                                	<table>
+                                                                	<tr>
+                                                                    {%section name=province loop=$province%}
+                                                                    <td>
+                                                                    <label class="checkbox-inline">
+                                                                        <input type="checkbox" name="fee_province" value="{%$province[province].id%}"> {%$province[province].name|truncate:2:''%}
+                                                                    </label>
+                                                                    </td>
+                                                                    {%if ($smarty.section.province.index+1)%10 == 0%}
+                                                                    </tr><tr>
+                                                                    {%/if%}
+                                                                    {%/section%}
+                                                                    </tr>
+                                                                    </table>
+                                                                    <div class="col-md-12">
+                                                                    	<button class="btn btn-xs yellow" id="selectAll">全选</button>
+                                                                        <button class="btn btn-xs yellow" id="selectElse">反选</button>
+                                                                        <button class="btn btn-xs yellow" id="selectZJH">江浙沪</button>
+                                                                        <button class="btn btn-xs yellow" id="selectPIAN">偏远地区</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="tab-pane active" id="tab_general">
+                                                    <div class="form-body">
+                                                    	<div class="form-group">
+                                                            <label class="col-md-2 control-label">商品类型:
+                                                                <span class="required"> * </span>
+                                                            </label>
+                                                            <div class="col-md-10">
+                                                            	<select name="outside" class="form-control">
+                                                                	<option value="0">普通商品</option>
+                                                                    <option value="1">进口商品</option>
+                                                                    <option value="2">直供商品</option>
+                                                                    <option value="3">直邮商品</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-md-2 control-label">名称:
+                                                                <span class="required"> * </span>
+                                                            </label>
+                                                            <div class="col-md-10">
+                                                                <input type="text" class="form-control" name="name" placeholder=""> </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-md-2 control-label">短描述:
+                                                                <span class="required"> * </span>
+                                                            </label>
+                                                            <div class="col-md-10">
+                                                                <textarea class="form-control" name="short_description"></textarea>
+                                                                <span class="help-block"> 商品列表中显示 </span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-md-2 control-label">分类:
+                                                                <span class="required"> * </span>
+                                                            </label>
+                                                            <div class="col-md-10">
+                                                                <div class="form-control height-auto">
+                                                                    <div class="scroller">
+                                                                        <ul class="list-unstyled">
+                                                                        	{%section name=category loop=$category%}
+                                                                            {%if empty($category[category].cid)%}
+                                                                            <li>
+                                                                                <label>
+                                                                                    <input class="category" type="checkbox" name="category[]" value="{%$category[category].id%}">{%$category[category].name%}</label>
+                                                                                <ul class="list-unstyled">
+                                                                                    {%section name=subcate loop=$category%}
+                                                                                    {%if $category[subcate].cid==$category[category].id%}
+                                                                                    <li>
+                                                                                        <label>
+                                                                                            <input class="category" type="checkbox" name="category[]" value="{%$category[subcate].id%}">{%$category[subcate].name%}</label>
+                                                                                    </li>
+                                                                                    {%/if%}
+                                                                                    {%/section%}
+                                                                                </ul>
+                                                                            </li>
+                                                                            {%/if%}
+                                                                            {%/section%}
+                                                                        </ul>
+                                                                    </div>
+                                                                </div>
+                                                                <span class="help-block"> 选择一个或多个分类 </span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-md-2 control-label">SKU:
+                                                                <span class="required"> * </span>
+                                                            </label>
+                                                            <div class="col-md-10">
+                                                                <input type="text" class="form-control" name="sku" placeholder=""> </div>
+                                                        </div>
+														<div class="form-group">
+                                                            <label class="col-md-2 control-label">条形码:
+                                                                <span class="required"> * </span>
+                                                            </label>
+                                                            <div class="col-md-10">
+                                                                <input type="text" class="form-control" maxlength="13" name="barcode" placeholder=""> </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-md-2 control-label">进价:</label>
+                                                            <div class="col-md-10">
+                                                                <input type="text" class="form-control" name="inprice" placeholder=""> </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-md-2 control-label">原价:
+                                                                <span class="required"> * </span>
+                                                            </label>
+                                                            <div class="col-md-10">
+                                                                <input type="text" class="form-control" name="oldprice" placeholder=""> </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-md-2 control-label">V0价:
+                                                                <span class="required"> * </span>
+                                                            </label>
+                                                            <div class="col-md-10">
+                                                                <input type="text" class="form-control" name="price" placeholder=""> </div>
+                                                        </div>
+														<div class="form-group">
+                                                            <label class="col-md-2 control-label">V1价:
+                                                                <span class="required"> * </span>
+                                                            </label>
+                                                            <div class="col-md-10">
+                                                                <input type="text" class="form-control" name="v1price" placeholder=""> </div>
+                                                        </div>
+														<div class="form-group">
+                                                            <label class="col-md-2 control-label">V2价:
+                                                                <span class="required"> * </span>
+                                                            </label>
+                                                            <div class="col-md-10">
+                                                                <input type="text" class="form-control" name="v2price" placeholder=""> </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-md-2 control-label">售卖数:</label>
+                                                            <div class="col-md-10">
+                                                                <input type="text" class="form-control" name="selled" placeholder=""> </div>
+                                                        </div>
+														<div class="form-group">
+															<label class="col-md-2 control-label">标签</label>
+															<div class="col-md-10">
+																<input type="text" class="form-control" data-role="tagsinput" name="tags" placeholder="说明标签">
+															</div>
+														</div>
+														<div class="form-group">
+                                                            <label class="col-md-2 control-label">发货仓库:
+																<span class="required"> * </span>
+															</label>
+                                                            <div class="col-md-10">
+                                                                <select name="store" class="form-control select2">
+																	<option>请选择...</option>
+																		{%section name=store loop=$store%}
+																		<option value="{%$store[store].id%}">{%$store[store].name%}</option>
+																		{%/section%}
+																</select>
+                                                            </div>
+                                                        </div>
+														<div class="form-group">
+                                                            <label class="col-md-2 control-label">来源国:
+															<span class="required"> * </span>
+															</label>
+                                                            <div class="col-md-10">
+                                                                <select name="origin" class="form-control select2">
+																	<option>请选择...</option>
+																		{%section name=origin loop=$origin%}
+																		<option value="{%$origin[origin].id%}">{%$origin[origin].name%}</option>
+																		{%/section%}
+																</select>
+                                                            </div>
+                                                        </div>
+														<div class="form-group">
+                                                            <label class="col-md-2 control-label">库存管理:</label>
+                                                            <div class="col-md-10">
+                                                                <input type="checkbox" name="auto_stock" id="auto_stock">
+																<span class="help-block"> 开启库存限制. </span>
+                                                            </div>
+                                                        </div>
+														<div class="form-group">
+                                                            <label class="col-md-2 control-label">初始库存:
+                                                            </label>
+                                                            <div class="col-md-10">
+                                                                <input type="text" class="form-control" disabled="disabled" name="stock" placeholder="">
+                                                            </div>
+                                                        </div>
+														<div class="form-group">
+                                                            <label class="col-md-2 control-label">供货商:
+															<span class="required"> * </span>
+                                                            </label>
+                                                            <div class="col-md-10">
+                                                                <select name="publish" class="form-control select2">
+																	<option>请选择...</option>
+																		{%section name=publish loop=$publish%}
+																		<option value="{%$publish[publish].id%}">{%$publish[publish].name%}</option>
+																		{%/section%}
+																</select>
+                                                         	</div>
+                                                        </div>
+														<div class="form-group">
+                                                            <label class="col-md-2 control-label">自动上下架:</label>
+                                                            <div class="col-md-10">
+                                                                <input type="checkbox" name="auto_status" id="auto_status">
+																<span class="help-block"> 按照销售日期自动调整上下架状态. </span>
+                                                            </div>
+                                                        </div>
+														<div class="form-group">
+                                                            <label class="col-md-2 control-label">销售日期:
+                                                            </label>
+                                                            <div class="col-md-10">
+                                                                <div class="input-group input-large date-picker input-daterange" data-date-format="yyyy-mm-dd">
+                                                                    <input type="text" id="time_from" disabled="disabled" class="form-control" name="product[available_from]">
+                                                                    <span class="input-group-addon"> 到 </span>
+                                                                    <input type="text" id="time_to" disabled="disabled" class="form-control" name="product[available_to]"> </div>
+                                                                <span class="help-block"> 销售时间区间. </span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-md-2 control-label">状态:
+                                                                <span class="required"> * </span>
+                                                            </label>
+                                                            <div class="col-md-10">
+                                                                <select class="table-group-action-input form-control input-medium" name="status">
+                                                                    <option value="">请选择...</option>
+                                                                    <option value="1">上架</option>
+                                                                    <option value="0">下架</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-md-2 control-label">下架原因:
+                                                            </label>
+                                                            <div class="col-md-10">
+                                                                <input type="text" class="form-control" name="down_reason" placeholder=""> </div>
+                                                        </div>
+														<div class="form-group">
+                                                            <label class="col-md-2 control-label">排序:</label>
+                                                            <div class="col-md-10">
+                                                                <input type="text" class="form-control" name="sort" placeholder="">
+																<span class="help-block">从小到大</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+												<div class="tab-pane" id="tab_description">
+													<div class="form-body">
+														<div class="form-group">
+                                                            <label class="col-md-2 control-label">描述:
+                                                                <span class="required"> * </span>
+                                                            </label>
+                                                            <div class="col-md-10">
+																<script id="description" name="description" type="text/plain"></script>
+                                                            </div>
+                                                        </div>
+													</div>
+												</div>
+                                                <div class="tab-pane" id="tab_meta">
+                                                    <div class="form-body">
+														<div class="form-group" id="ztax">
+                                                            <label class="col-md-2 control-label">综合税:</label>
+                                                            <div class="col-md-10">
+                                                                <select name="ztax" class="form-control select2">
+																	<option>请选择...</option>
+																		{%section name=ztax loop=$ztax%}
+																		<option value="{%$ztax[ztax].id%}">{%$ztax[ztax].name%}({%($ztax[ztax].xtax+$ztax[ztax].ztax)/(1-$ztax[ztax].xtax)*0.7%})</option>
+																		{%/section%}
+																</select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group" id="postTaxNo">
+                                                            <label class="col-md-2 control-label">行邮税号:</label>
+                                                            <div class="col-md-10">
+                                                                <select name="postTaxNo" class="form-control select2">
+																	<option>请选择...</option>
+																		{%section name=postTaxNo loop=$postTaxNo%}
+																		<option value="{%$postTaxNo[postTaxNo].id%}">{%$postTaxNo[postTaxNo].name%}({%$postTaxNo[postTaxNo].tax%})</option>
+																		{%/section%}
+																</select>
+                                                            </div>
+                                                        </div>
+														<div class="form-group">
+                                                            <label class="col-md-2 control-label">免税:</label>
+                                                            <div class="col-md-10">
+                                                                <input type="checkbox" name="freetax" class="form-control">
+																<span class="help-block">勾选此项不计算税费</span>
+                                                            </div>
+                                                        </div>
+														<div class="form-group">
+                                                            <label class="col-md-2 control-label">包装:</label>
+                                                            <div class="col-md-10">
+                                                                <select name="package" class="form-control select2">
+																	<option>请选择...</option>
+																		{%section name=package loop=$package%}
+																		<option value="{%$package[package].id%}">{%$package[package].name%}</option>
+																		{%/section%}
+																</select>
+                                                            </div>
+                                                        </div>
+														<div class="form-group">
+                                                            <label class="col-md-2 control-label">计量单位:</label>
+                                                            <div class="col-md-10">
+                                                                <select name="MeasurementUnit" class="form-control select2">
+                                                                    <option>请选择...</option>
+                                                                        {%section name=MeasurementUnit loop=$MeasurementUnit%}
+                                                                        <option value="{%$MeasurementUnit[MeasurementUnit].id%}">{%$MeasurementUnit[MeasurementUnit].name%}</option>
+                                                                        {%/section%}
+                                                                </select>
+                                                            </div>
+                                                        </div>
+														<div class="form-group">
+                                                            <label class="col-md-2 control-label">类目编码:</label>
+                                                            <div class="col-md-10">
+                                                                <input type="text" name="categoryCode" class="form-control maxlength-handler" maxlength="10">
+																<span class="help-block">10个字符</span>
+                                                            </div>
+                                                        </div>
+														<div class="form-group">
+                                                            <label class="col-md-2 control-label">毛重:</label>
+                                                            <div class="col-md-10">
+                                                                <input type="text" name="grossWeight" class="form-control" maxlength="10">
+																<span class="help-block">单位KG</span>
+                                                            </div>
+                                                        </div>
+														<div class="form-group">
+                                                            <label class="col-md-2 control-label">商品货号:</label>
+                                                            <div class="col-md-10">
+                                                                <input type="text" name="goodsItemNo" class="form-control maxlength-handler" maxlength="24">
+																<span class="help-block">24个字符</span>
+                                                            </div>
+                                                        </div>
+														<div class="form-group">
+                                                            <label class="col-md-2 control-label">规格型号:</label>
+                                                            <div class="col-md-10">
+                                                                <input type="text" name="goodsModel" class="form-control maxlength-handler" maxlength="24">
+																<span class="help-block">24个字符</span>
+                                                            </div>
+                                                        </div>
+														<div class="form-group">
+                                                            <label class="col-md-2 control-label">价格币种:</label>
+                                                            <div class="col-md-10">
+                                                                <select name="currencyType" class="form-control select2">
+																	<option>请选择...</option>
+																		{%section name=currency loop=$currency%}
+																		<option value="{%$currency[currency].id%}">{%$currency[currency].name%}</option>
+																		{%/section%}
+																</select>
+																<span class="help-block">价格的计算单位</span>
+                                                            </div>
+                                                        </div>
+														<div class="form-group">
+                                                            <label class="col-md-2 control-label">商品用途:</label>
+                                                            <div class="col-md-10">
+                                                                <input type="text" name="purpose" class="form-control maxlength-handler" maxlength="128">
+																<span class="help-block">128个字符</span>
+                                                            </div>
+                                                        </div>
+														<div class="form-group">
+                                                            <label class="col-md-2 control-label">第一单位:</label>
+                                                            <div class="col-md-10">
+                                                                <select name="firstUnit" class="form-control select2">
+																	<option>请选择...</option>
+																		{%section name=package loop=$package%}
+																		<option value="{%$package[package].id%}">{%$package[package].name%}</option>
+																		{%/section%}
+																</select>
+																<span class="help-block">第一单位</span>
+                                                            </div>
+                                                        </div>
+														<div class="form-group">
+                                                            <label class="col-md-2 control-label">产品国检备案编号:</label>
+                                                            <div class="col-md-10">
+                                                                <input type="text" name="productRecordNo" class="form-control maxlength-handler" maxlength="12">
+																<span class="help-block">12个字符</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+												<div class="tab-pane" id="tab_prototype">
+													<div class="form-body">
+														<div class="row">
+															<div class="col-md-4">
+																<input type="text" class="form-control" style="height:38px;" name="prototype_name" placeholder="属性名">
+															</div>
+															<div class="col-md-3">
+																<select class="form-control" name="prototype_type" style="height:38px;">
+																	<option value="text">固定值</option>
+																	<option value="radio">可选值</option>
+																</select>
+															</div>
+															<div class="col-md-4">
+																<div id="prototype_text" style="display: block;">
+																<input type="text" class="form-control" style="height:38px;" name="prototype_value" placeholder="属性值">
+																</div>
+																<div id="prototype_radio" style="display: none;">
+																	
+																	<input type="text" class="form-control" data-role="tagsinput" name="prototype_value" placeholder="属性值" style="display: block;">
+																</div>
+															</div>
+															<div class="col-md-1">
+																<button class="form-contorl btn btn-circle btn-danger" name="prototype_add"><i class="fa fa-plus"></i></button>
+															</div>
+														</div>
+														<hr>
+														<table class="table table-hover" id="prototype_container">
+														</table>
+														<table class="table table-hover" id="prototype_collection">
+															<thead><tr><th>属性</th><th>v0价格</th><th>v1价格</th><th>v2价格</th><th>库存</th><th>编码</th><th>图像</th><th>可用</th></tr></thead>
+															<tbody>
+															</tbody>
+														</table>
+													</div>
+												</div>
+                                                <div class="tab-pane" id="tab_images">
+                                                    <div class="alert alert-success margin-bottom-10">
+                                                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+                                                        <i class="fa fa-warning fa-lg"></i> 文件最大不得超过10MB. </div>
+                                                    <div id="tab_images_uploader_container" class="text-align-reverse margin-bottom-10">
+                                                        <a id="tab_images_uploader_pickfiles" href="javascript:;" class="btn btn-success">
+                                                            <i class="fa fa-plus"></i> 选择文件 </a>
+                                                        <a data-url="{%url m=api c=common a=upload%}" id="tab_images_uploader_uploadfiles" href="javascript:;" class="btn btn-primary">
+                                                            <i class="fa fa-share"></i> 上传文件 </a>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div id="tab_images_uploader_filelist" class="col-md-6 col-sm-12"> </div>
+                                                    </div>
+                                                    <table class="table table-bordered table-hover" id="photoList">
+                                                        <thead>
+                                                            <tr role="row" class="heading">
+                                                                <th width="8%"> 图像 </th>
+                                                                <th width="25%"> 文件名 </th>
+                                                                <th width="8%"> 排序 </th>
+                                                                <th width="10%"> 列表图 </th>
+                                                                <th width="10%"> 详情图 </th>
+                                                               
+                                                                <th width="10%"> </th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+														
+                                                            
+                                                           
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!-- END CONTENT BODY -->
+            </div>
+            <!-- END CONTENT -->
+            <!-- BEGIN QUICK SIDEBAR -->
+            {%include file='admin/public/quick_sidebar.html'%}
+			<!-- END QUICK SIDEBAR -->
+        </div>
+        <!-- END CONTAINER -->
+        <!-- BEGIN FOOTER -->
+        {%include file='admin/public/footer.html'%}
+        <!-- END FOOTER -->
+        <!--[if lt IE 9]>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/respond.min.js"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/excanvas.min.js"></script> 
+<![endif]-->
+        <!-- BEGIN CORE PLUGINS -->
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/jquery.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/js.cookie.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/jquery.blockui.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/uniform/jquery.uniform.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js" type="text/javascript"></script>
+        <!-- END CORE PLUGINS -->
+        <!-- BEGIN PAGE LEVEL PLUGINS -->
+        <script src="{%$VIEW_ROOT%}/assets/global/scripts/datatable.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/datatables/datatables.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-maxlength/bootstrap-maxlength.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/fancybox/source/jquery.fancybox.pack.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/plupload/js/plupload.full.min.js" type="text/javascript"></script>
+        <!-- END PAGE LEVEL PLUGINS -->
+        <!-- BEGIN THEME GLOBAL SCRIPTS -->
+        <script src="{%$VIEW_ROOT%}/assets/global/scripts/app.js" type="text/javascript"></script>
+        <!-- END THEME GLOBAL SCRIPTS -->
+        <!-- BEGIN PAGE LEVEL SCRIPTS -->
+        <script src="{%$VIEW_ROOT%}/assets/pages/scripts/ecommerce-products-edit.js" type="text/javascript"></script>
+		<script src="{%$VIEW_ROOT%}/umeditor/umeditor.js" type="text/javascript"></script>
+		<script src="{%$VIEW_ROOT%}/umeditor/umeditor.config.js" type="text/javascript"></script>
+		<script type="text/javascript" src="{%$VIEW_ROOT%}/umeditor/lang/zh-cn/zh-cn.js"></script>
+		<script src="{%$VIEW_ROOT%}/assets/global/plugins/select2/js/select2.full.min.js" type="text/javascript"></script>
+		<script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-tagsinput/bootstrap-tagsinput.min.js" type="text/javascript"></script>
+        <!-- END PAGE LEVEL SCRIPTS -->
+        <!-- BEGIN THEME LAYOUT SCRIPTS -->
+        <script src="{%$VIEW_ROOT%}/assets/layouts/layout/scripts/layout.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/layouts/layout/scripts/demo.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/layouts/global/scripts/quick-sidebar.min.js" type="text/javascript"></script>
+		<script src="{%$VIEW_ROOT%}/assets/pages/scripts/collection.js" type="text/javascript"></script>
+		<script type="text/javascript">
+			$.ajaxSetup({
+				headers:{
+					'X-CSRF-TOKEN':'{%$x_csrf_token%}'
+				}
+			});
+		
+		
+			$('#prototype_radio').find('input[name=prototype_value]').on('itemAdded',function(event){
+				var exp = /[^0-9A-Za-z\u4E00-\u9FA5\uF900-\uFA2D]/;
+				if(exp.test(event.item))
+				{
+					alert('只允许数字字母和汉字');
+					$(this).tagsinput('remove',event.item);
+				}
+			});
+			
+			window.um = UM.getEditor('description');
+			
+			$.fn.select2.defaults.set("theme", "bootstrap");
+			$(".select2").select2({
+				placeholder: '请选择',
+				width: '100%',
+				language: {
+				   noResults: function(){
+					   return "没有找到任何匹配项";
+				   }
+			   	},
+			});
+			
+			$('#selectAll').on('click',function(){
+				$('input[name=fee_province]').each(function(index, element) {
+                    $(element).parent().addClass('checked');
+					$(element).attr('checked','checked');
+                });
+				return false;
+			});
+			
+			var in_array = function(data,array){
+				for(var i=0;i<array.length;i++)
+				{
+					if(array[i] == data)
+					{
+						return true;
+					}
+				}
+				return false;
+			}
+			
+			$('#selectPIAN').on('click',function(){
+				var province = [
+					5,21,26,28,29,30,31,32,33,34,35,
+				];
+				$('input[name=fee_province]').each(function(index, element) {
+					if(in_array($(element).val(),province))
+					{
+						$(element).parent().addClass('checked');
+						$(element).attr('checked','checked');
+					}
+					else
+					{
+						$(element).parent().removeClass('checked');
+						$(element).removeAttr('checked');
+					}
+                });
+				return false;
+			});
+			
+			$('#selectZJH').on('click',function(){
+				var province = [9,10,11];
+				$('input[name=fee_province]').each(function(index, element) {
+					if(in_array($(element).val(),province))
+					{
+						$(element).parent().addClass('checked');
+						$(element).attr('checked','checked');
+					}
+					else
+					{
+						$(element).parent().removeClass('checked');
+						$(element).removeAttr('checked');
+					}
+                });
+				return false;
+			});
+			
+			$('#selectElse').on('click',function(){
+				$('input[name=fee_province]').each(function(index, element) {
+                    if($(element).parent().hasClass('checked'))
+					{
+						$(element).parent().removeClass('checked');
+						$(element).removeAttr('checked','checked');
+					}
+					else
+					{
+						$(element).parent().addClass('checked');
+						$(element).attr('checked','checked');
+					}
+                });
+				return false;
+			});
+			
+			$('button[name=prototype_add]').on('click',function(){
+				var name = $.trim($('input[name=prototype_name]').val());
+				if(name.length==0)
+				{
+					App.alert({
+						container: $('#alert_container').val(), // alerts parent container 
+						place: 'append', // append or prepent in container 
+						type: 'danger', // alert's type 
+						message: '属性名或属性值不得为空',
+                        close: true,
+						focus: true, // auto scroll to the alert after shown
+						closeInSeconds: 3, // auto close after defined seconds 
+						icon:'fa fa-remove' // put icon class before the message
+					});
+					return false;
+				}
+				var type = $('select[name=prototype_type]').val();
+				switch(type)
+				{
+					case 'text':
+						var value = $.trim($('#prototype_text').find('input').val());
+					break;
+					case 'radio':
+						var value = $('#prototype_radio').find('input').val();
+					break;
+					default:return false;
+				}
+				
+				collection.addPrototype(name,type,value);
+				collection.drawCollectionTables();
+				collection.drawPrototypeTables();
+				
+				return false;
+			});
+			
+			$('#prototype_container').on('click','.prototype_remove',function(e){
+				var name = $(this).parents('tr').find('td:first').html();
+				collection.removePrototype(name);
+				return false;
+			});
+			
+			$('#prototype_collection tbody').on('click','img',function(){
+				var input = $('<input type="file">');
+				var ths = $(this);
+				input.trigger('click');
+				
+				input.on('change',function(){
+					var url = '{%url m=api c=common a=upload%}';
+					var xhr = new XMLHttpRequest();
+					var formData = new FormData();
+					formData.append('file',this.files[0]);
+					xhr.open('POST',url,true);
+					xhr.onload = function(){  
+						if(xhr.status == 200 && xhr.readyState == 4)  
+						{  
+							var response = $.parseJSON(xhr.response);
+							if(response.code == 1)
+							{
+								ths.parent().find('input[name=logo]').val(response.body.id);
+								ths.attr('src',response.body.path);
+							}
+							else
+							{
+								alert('文件上传失败');
+							}
+						}
+						else
+						{
+							alert('文件上传失败');
+						}
+					};
+					xhr.send(formData);
+					return false;
+				});
+				
+			});
+			
+			$('select[name=prototype_type]').on('change',function(){
+				switch($(this).val())
+				{
+					case 'text':
+						$('#prototype_text').show();
+						$('#prototype_radio').hide();
+						break;
+					case 'radio':
+						$('#prototype_radio').show();
+						$('#prototype_text').hide();
+						break;
+				}
+			});
+			
+			$('.maxlength-handler').maxlength({
+				limitReachedClass: "label label-danger",
+				alwaysShow: true,
+				threshold: 5
+			});
+			
+			$('#auto_status').on('click',function(){
+				if($(this).is(':checked'))
+				{
+					$('#time_from').removeAttr('disabled');
+					$('#time_to').removeAttr('disabled');
+				}
+				else
+				{
+					$('#time_from').attr('disabled','disabled');
+					$('#time_to').attr('disabled','disabled');
+				}
+			});
+			
+			$('#auto_stock').on('click',function(){
+				if($(this).is(':checked'))
+				{
+					$('input[name=stock]').removeAttr('disabled');
+				}
+				else
+				{
+					$('input[name=stock]').attr('disabled','disabled');
+				}
+			});
+			
+			$('#save').on('click',function(){
+				if($('select[name=store]').val() == '')
+				{
+					alert('请选择发货仓库');
+					return false;
+				}
+				save(function(success){
+					window.location = '{%url c=admin a=product%}';
+				},function(){
+				});
+				
+				return false;
+			});
+			
+			$('#saveedit').on('click',function(){
+				if($('select[name=store]').val() == '')
+				{
+					alert('请选择发货仓库');
+					return false;
+				}
+				save();
+				return false;
+			});
+			
+			$('#remove').on('click',function(){
+				if($('#product_id').val()==0)
+				return false;
+				var product_id = $('#product_id').val();
+				try{
+				$.post('{%url m=ajax c=product a=remove%}',{id:product_id},function(response){
+					if(response.code==1)
+					{
+						window.location = '{%url c=admin a=product%}';
+					}
+					else
+					{
+						App.alert({
+							container: $('#alert_container').val(), // alerts parent container 
+							place: 'append', // append or prepent in container 
+							type: 'danger', // alert's type 
+							message: response.result,
+							close: true,
+							focus: true, // auto scroll to the alert after shown
+							closeInSeconds: 3, // auto close after defined seconds 
+							icon:'fa fa-remove' // put icon class before the message
+						});
+					}
+				});
+				}
+				catch(e)
+				{
+					console.log(e);
+				}
+				return false;
+			});
+			
+			function save(success,failed)
+			{
+				App.blockUI();
+     			
+				var category = [];
+				$('.category:checked').each(function(index, element) {
+					category.push($(element).val());
+				});
+				try{
+					
+					var fee_province = [];
+					product_province = $('input[name=fee_province]:checked');
+					$.each(product_province,function(index,value){
+						fee_province.push($(value).val());
+					});
+					
+					var obj = {
+						prototype:collection.getPrototypeTables(),
+						collection:collection.getCollectionTables(),
+						image:EcommerceProductsEdit.getPhoto(),
+						
+						name:$('input[name=name]').val(),
+						description:window.um.getContent(),
+						short_description:$('textarea[name=short_description]').val(),
+						category:category,
+						sku:$('input[name=sku]').val(),
+						oldprice:$('input[name=oldprice]').val(),
+						price:$('input[name=price]').val(),
+						v1price:$('input[name=v1price]').val(),
+						v2price:$('input[name=v2price]').val(),
+						auto_stock:$('#auto_stock:checked').length,
+						stock:$('input[name=stock]').val(),
+						auto_status:$('#auto_status:checked').length,
+						avaliabletime_from:$('#time_from').val(),
+						avaliabletime_to:$('#time_to').val(),
+						status:$('select[name=status]').val(),
+						outside:$('select[name=outside]').val(),
+						store:$('select[name=store]').val(),
+						postTaxNo:$('select[name=postTaxNo]').val(),
+						package:$('select[name=package]').val(),
+						origin:$('select[name=origin]').val(),
+						categoryCode:$('input[name=categoryCode]').val(),
+						grossWeight:$('input[name=grossWeight]').val(),
+						goodsItemNo:$('input[name=goodsItemNo]').val(),
+						goodsModel:$('input[name=goodsModel]').val(),
+						currencyType:$('select[name=currencyType]').val(),
+						purpose:$('input[name=purpose]').val(),
+						firstUnit:$('select[name=firstUnit]').val(),
+						productRecordNo:$('input[name=productRecordNo]').val(),
+						sort:$('input[name=sort]').val(),
+						tags:$('input[name=tags]').val(),
+						publish:$('select[name=publish]').val(),
+						freetax:$('input[name=freetax]:checked').length,
+						fee:$('input[name=fee]').val(),
+						fee_province:fee_province,
+						ztax:$('select[name=ztax]').val(),
+						barcode:$('input[name=barcode]').val(),
+						inprice:$('input[name=inprice]').val(),		
+						selled:$('input[name=selled]').val(),
+						down_reason:$('input[name=down_reason]').val(),
+                        MeasurementUnit:$('select[name=MeasurementUnit]').val(),
+					};
+				}
+				catch(e)
+				{
+					alert('系统异常');
+				}
+				
+				if($('#product_id').val() != 0)
+				{
+					var url = '{%url m=ajax c=product a=save%}';
+					obj['id'] = $('#product_id').val();
+				}
+				else
+				{
+					var url = '{%url m=ajax c=product a=create%}';
+				}
+				
+				$.post(url,obj,function(response){
+					if(response.code==1)
+					{
+						App.alert({
+							container: $('#alert_container').val(), // alerts parent container 
+							place: 'append', // append or prepent in container 
+							type: 'success', // alert's type 
+							message: '保存成功',
+							close: true,
+							focus: true, // auto scroll to the alert after shown
+							closeInSeconds: 3, // auto close after defined seconds 
+							icon:'fa fa-check' // put icon class before the message
+						});
+						
+						$('#product_id').val(response.body);
+						
+						$('#remove').removeClass('display-hide');
+						if(success)
+						{
+							success(response);
+						}
+						
+					}
+					else
+					{
+						App.alert({
+							container: $('#alert_container').val(), // alerts parent container 
+							place: 'append', // append or prepent in container 
+							type: 'danger', // alert's type 
+							message: response.result,
+							close: true,
+							focus: true, // auto scroll to the alert after shown
+							closeInSeconds: 3, // auto close after defined seconds 
+							icon:'fa fa-remove' // put icon class before the message
+						});
+						if(failed)
+						{
+							failed(response);
+						}
+					}
+					App.unblockUI();
+				});
+			}
+			
+			var selectMode = function(){
+				switch($('select[name=outside]').val())
+				{
+					case '0':
+						$('#outside').hide();
+					break;
+					case '1':
+						$('#outside').hide();
+					break;
+					case '2':
+						$('#outside').show();
+						$('#ztax').show();
+						$('#postTaxNo').hide();
+					break;
+					case '3':
+						$('#outside').show();
+						$('#ztax').hide();
+						$('#postTaxNo').show();
+					break;
+				}
+			}
+			selectMode();
+			$('select[name=outside]').on('change',function(){
+				selectMode();
+				return false;
+			});
+		</script>
+        <!-- END THEME LAYOUT SCRIPTS -->
+    </body>
+
+</html>

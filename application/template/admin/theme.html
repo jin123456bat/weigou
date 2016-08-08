@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8 no-js"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9 no-js"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en">
+    <!--<![endif]-->
+    <!-- BEGIN HEAD -->
+
+    <head>
+        <meta charset="utf-8" />
+        <title>主题管理</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta content="width=device-width, initial-scale=1" name="viewport" />
+        <meta content="" name="description" />
+        <meta content="" name="author" />
+        <!-- BEGIN GLOBAL MANDATORY STYLES -->
+        <link href="{%$VIEW_ROOT%}/assets/global/css/font.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/plugins/uniform/css/uniform.default.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css" rel="stylesheet" type="text/css" />
+        <!-- END GLOBAL MANDATORY STYLES -->
+        <!-- BEGIN THEME GLOBAL STYLES -->
+        <link href="{%$VIEW_ROOT%}/assets/global/css/components.min.css" rel="stylesheet" id="style_components" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/css/plugins.min.css" rel="stylesheet" type="text/css" />
+		<link href="{%$VIEW_ROOT%}/assets/global/plugins/select2/css/select2.min.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/plugins/select2/css/select2-bootstrap.min.css" rel="stylesheet" type="text/css" />
+        <!-- END THEME GLOBAL STYLES -->
+        <!-- BEGIN THEME LAYOUT STYLES -->
+        <link href="{%$VIEW_ROOT%}/assets/layouts/layout/css/layout.min.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/layouts/layout/css/themes/darkblue.min.css" rel="stylesheet" type="text/css" id="style_color" />
+        <link href="{%$VIEW_ROOT%}/assets/layouts/layout/css/custom.min.css" rel="stylesheet" type="text/css" />
+        <!-- END THEME LAYOUT STYLES -->
+        <link rel="shortcut icon" href="favicon.ico" /> </head>
+    <!-- END HEAD -->
+
+    <body class="page-header-fixed page-sidebar-closed-hide-logo page-content-white">
+        <!-- BEGIN HEADER -->
+        {%include file='admin/public/header.html'%}
+        <!-- END HEADER -->
+        <!-- BEGIN HEADER & CONTENT DIVIDER -->
+        <div class="clearfix"> </div>
+        <!-- END HEADER & CONTENT DIVIDER -->
+        <!-- BEGIN CONTAINER -->
+        <div class="page-container">
+            <!-- BEGIN SIDEBAR -->
+            {%include file='admin/public/sidebar.html'%}
+            <!-- END SIDEBAR -->
+            <!-- BEGIN CONTENT -->
+            <div class="page-content-wrapper">
+                <!-- BEGIN CONTENT BODY -->
+                <div class="page-content">
+                    <!-- BEGIN PAGE HEADER-->
+                    <!-- BEGIN THEME PANEL -->
+                    {%include file='admin/public/style.html'%}
+                    <!-- END THEME PANEL -->
+                    <!-- BEGIN PAGE BAR -->
+                    <div class="page-bar">
+                        <ul class="page-breadcrumb">
+                            <li>
+                                <a href="index.php">首页</a>
+                                <i class="fa fa-circle"></i>
+                            </li>
+                            <li>
+                                <span>主题管理</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- END PAGE BAR -->
+                    <!-- BEGIN PAGE TITLE-->
+                    <h3 class="page-title"> 主题管理
+                        <small>主题管理</small>
+                    </h3>
+                    
+					
+					<div class="tabbable tabbable-tabdrop">
+						<ul class="nav nav-tabs">
+							<li class="dropdown pull-right tabdrop">
+								<a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">更多&nbsp;<i class="fa fa-angle-down"></i> <b class="caret"></b></a>
+								<ul class="dropdown-menu">
+									<li class="">
+										<a href="#createThemeTab" data-toggle="tab">添加主题</a>
+									</li>
+								</ul>
+							</li>
+							{%section name=theme loop=$theme%}
+							<li class="{%if $smarty.section.theme.first%}active{%/if%}">
+								<a href="#theme_{%$theme[theme].id%}" data-toggle="tab" aria-expanded="false">{%$theme[theme].title%}</a>
+							</li>
+							{%/section%}
+						</ul>
+						<div class="tab-content">
+							{%section name=detail loop=$theme%}
+							<div class="tab-pane {%if $smarty.section.detail.first%}active{%/if%}" id="theme_{%$theme[detail].id%}">
+								<div class="form-body">
+									<div class="form-group">
+										<label class="col-md-2 control-label">主题名称</label>
+										<div class="col-md-10">
+											<input type="text" name="title" class="form-control" value="{%$theme[detail].title%}" placeholder="主题名称">
+											<span class="help-block"> 主题名称 </span>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-md-2 control-label">Logo</label>
+										<div class="col-md-10 uploadImg">
+											<img class="img-responsive" width="640" height="320" src="{%$theme[detail].logo|default:'http://placehold.it/640x320'%}" style="width:640px; height:320px;">
+											<input type="hidden" name="logo" value="{%$theme[detail].logo_id%}">
+											<span class="help-inline"> Logo图. </span>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-md-2 control-label">快速连接</label>
+										<div class="col-md-10">
+											<div class="input-group col-md-12 createSubThemeForm">
+												<div class="col-md-4">
+													<input class="form-control" type="text" name="title" placeholder="连接短标题">
+												</div>
+												<div class="col-md-4">
+													<input class="form-control" type="text" name="subtitle" placeholder="连接长标题">
+												</div>
+												<div class="col-md-3">
+													<input class="form-control" type="text" name="sort" placeholder="排序（从小到大）">
+												</div>
+												<span class="input-group-btn col-md-1">
+													<button class="btn btn-success createSubThemeBtn" data-id="{%$theme[detail].id%}" type="button">
+														<i class="fa fa-arrow-left fa-fw"></i> 添加</button>
+												</span>
+											</div>
+											<table class="table table-hover subthemeTable" id="subthemeTable_{%$theme[detail].id%}">
+												<thead><tr><th>短标题</th><th>长标题</th><th>排序</th><th>商品</th><th>操作</th></tr></thead>
+												<tbody>
+													{%section name=subtheme loop=$subtheme%}
+													{%if $subtheme[subtheme].theme_id==$theme[detail].id%}
+													<tr><td data-id="{%$subtheme[subtheme].id%}" data-name="title" class="editable">{%$subtheme[subtheme].title%}</td><td data-id="{%$subtheme[subtheme].id%}" data-name="subtitle" class="editable">{%$subtheme[subtheme].subtitle%}</td><td><button class="btn btn-outline btn-circle btn-xs yellow moveup" data-id="{%$subtheme[subtheme].id%}" data-theme_id="{%$theme[detail].id%}">上移</button><button class="btn btn-outline btn-circle btn-xs yellow movedown" data-id="{%$subtheme[subtheme].id%}" data-theme_id="{%$theme[detail].id%}">下移</button></td><td>
+													<select data-id="{%$subtheme[subtheme].id%}" name="pid" class="form-control select2-multiple" multiple>
+														{%section name=product loop=$product%}
+															{%if $product[product].subtheme_id == $subtheme[subtheme].id%}
+															<option value="{%$product[product].product_id%}" selected=selected>{%$product[product].name%}</option>
+															{%/if%}
+														{%/section%}
+													</select>
+													
+													</td><td><button data-id="{%$subtheme[subtheme].id%}" class="btn btn-outline red btn-xs removeSubTheme">删除连接</button></td></tr>
+													{%/if%}
+													{%/section%}
+												</tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+								<div class="form-actions">
+									<div class="row">
+										<div class="col-md-offset-2 col-md-10">
+											<button type="submit" class="btn green col-md-6 saveThemeBtn" data-id="{%$theme[detail].id%}">保存</button>
+											<button type="button" class="btn red col-md-6 removeThemeBtn" data-id="{%$theme[detail].id%}">删除</button>
+										</div>
+									</div>
+								</div>
+							</div>
+							{%/section%}
+							<div class="tab-pane" id="createThemeTab">
+								<div class="portlet light bordered">
+									<div class="portlet-title">
+										<div class="caption">
+											<i class="icon-settings font-dark"></i>
+											<span class="caption-subject font-dark sbold uppercase">创建主题</span>
+										</div>
+									</div>
+									<div class="portlet-body form">
+										<form class="form-horizontal" role="form" id="createThemeForm">
+											<div class="form-body">
+												<div class="form-group">
+													<label class="col-md-2 control-label">主题名称</label>
+													<div class="col-md-10">
+														<input type="text" name="title" class="form-control" placeholder="主题名称">
+														<span class="help-block"> 主题名称 </span>
+													</div>
+												</div>
+												<div class="form-group">
+													<label class="col-md-2 control-label">Logo</label>
+													<div class="col-md-10 uploadImg">
+														<img class="img-responsive" style="width:640px; height:320px;" width="640" height="320" src="http://placehold.it/640x320">
+														<input type="hidden" name="logo" value="">
+														<span class="help-inline"> Logo图. </span>
+													</div>
+												</div>
+											</div>
+											<div class="form-actions">
+												<div class="row">
+													<div class="col-md-offset-3 col-md-10">
+														<button type="submit" class="btn green">保存</button>
+														<button type="button" class="btn default">取消</button>
+													</div>
+												</div>
+											</div>
+										</form>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+                </div>
+                <!-- END CONTENT BODY -->
+            </div>
+            <!-- END CONTENT -->
+            <!-- BEGIN QUICK SIDEBAR -->
+            {%include file='admin/public/quick_sidebar.html'%}
+            <!-- END QUICK SIDEBAR -->
+        </div>
+        <!-- END CONTAINER -->
+        <!-- BEGIN FOOTER -->
+        {%include file='admin/public/footer.html'%}
+        <!-- END FOOTER -->
+        <!--[if lt IE 9]>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/respond.min.js"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/excanvas.min.js"></script> 
+<![endif]-->
+        <!-- BEGIN CORE PLUGINS -->
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/jquery.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/js.cookie.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/jquery.blockui.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/uniform/jquery.uniform.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js" type="text/javascript"></script>
+        <!-- END CORE PLUGINS -->
+        <!-- BEGIN THEME GLOBAL SCRIPTS -->
+        <script src="{%$VIEW_ROOT%}/assets/global/scripts/app.js" type="text/javascript"></script>
+		<script src="{%$VIEW_ROOT%}/assets/global/plugins/select2/js/select2.full.js" type="text/javascript"></script>
+        <!-- END THEME GLOBAL SCRIPTS -->
+        <!-- BEGIN THEME LAYOUT SCRIPTS -->
+        <script src="{%$VIEW_ROOT%}/assets/layouts/layout/scripts/layout.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/layouts/layout/scripts/demo.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/layouts/global/scripts/quick-sidebar.min.js" type="text/javascript"></script>
+        <!-- END THEME LAYOUT SCRIPTS -->
+		<script type="text/javascript">
+		$.ajaxSetup({
+			headers:{
+				'X-CSRF-TOKEN':'{%$x_csrf_token%}'
+			}
+		});
+		
+		$('.saveThemeBtn').on('click',function(){
+			var id = $(this).data('id');
+			var title = $.trim($(this).parents('.tab-pane').find('input[name=title]').val());
+			var logo = $(this).parents('.tab-pane').find('input[name=logo]').val();
+			
+			var data = [];
+			var pidInput = $(this).parents('.tab-pane').find('select.select2-multiple');
+			$.each(pidInput,function(index,value){
+				var temp = {
+					subtheme_id:$(value).data('id'),
+					pid:$(value).val(),
+				};
+				data.push(temp);
+			});
+			$.post('{%url m=ajax c=theme a=save%}',{id:id,title:title,logo:logo,data:data},function(response){
+				App.alert({
+					container: $('#alert_container').val(), // alerts parent container 
+					place: 'append', // append or prepent in container 
+					type: response.code==1?'success':'danger', // alert's type 
+					message: response.result,
+					close: true,
+					focus: true, // auto scroll to the alert after shown
+					closeInSeconds: 3, // auto close after defined seconds 
+					icon:'fa fa-remove' // put icon class before the message
+				});
+			});
+			return false;
+		});
+		
+		$('.subthemeTable').on('click','.removeSubTheme',function(){
+			var id = $(this).data('id');
+			var ths = $(this);
+			$.post('{%url m=ajax c=theme a=removeSubTheme%}',{id:id},function(response){
+				if(response.code==1)
+				{
+					ths.parents('tr').remove();
+				}
+				else
+				{
+					App.alert({
+						container: $('#alert_container').val(), // alerts parent container 
+						place: 'append', // append or prepent in container 
+						type: 'danger', // alert's type 
+						message: response.result,
+                        close: true,
+						focus: true, // auto scroll to the alert after shown
+						closeInSeconds: 3, // auto close after defined seconds 
+						icon:'fa fa-remove' // put icon class before the message
+					});
+				}
+			});
+			return false;
+		});
+		
+		$('.removeThemeBtn').on('click',function(){
+			var id = $(this).data('id');
+			$.post('{%url m=ajax c=theme a=remove%}',{id:id},function(response){
+				if(response.code==1)
+				{
+					$('#theme_'+id).remove();
+					$('.tab-pane').removeClass('active');
+					$('.tab-pane:first').addClass('active');
+					$('.nav').find('li.active').remove();
+					$('.nav').find('li:eq(1)').addClass('active');
+				}
+				else
+				{
+					App.alert({
+						container: $('#alert_container').val(), // alerts parent container 
+						place: 'append', // append or prepent in container 
+						type: 'danger', // alert's type 
+						message: response.result,
+                        close: true,
+						focus: true, // auto scroll to the alert after shown
+						closeInSeconds: 3, // auto close after defined seconds 
+						icon:'fa fa-remove' // put icon class before the message
+					});
+				}
+			});
+			return false;
+		});
+		
+		$('.createSubThemeBtn').on('click',function(){
+			var theme_id = $(this).data('id');
+			var title = $.trim($(this).parents('.createSubThemeForm').find('input[name=title]').val());
+			var subtitle = $.trim($(this).parents('.createSubThemeForm').find('input[name=subtitle]').val());
+			var sort = $(this).parents('.createSubThemeForm').find('input[name=sort]').val();
+			if(title.length == 0 || subtitle.length == 0)
+			{
+				alert('短标题和长标题不能为空');
+				return false;
+			}
+			$.post('{%url m=ajax c=theme a=createSubTheme%}',{theme_id:theme_id,title:title,subtitle:subtitle,sort:sort},function(response){
+				if(response.code==1)
+				{
+					var tpl = $('<tr><td>'+title+'</td><td>'+subtitle+'</td><td><button data-id="'+response.body.id+'" data-theme_id="'+theme_id+'" class="btn btn-outline btn-circle btn-xs yellow moveup">上移</button><button data-id="'+response.body.id+'" data-theme_id="'+theme_id+'" class="btn btn-outline btn-circle btn-xs yellow movedown">下移</button></td><td><select data-id="'+response.body.id+'" name="pid" class="form-control select2-multiple" multiple></td><td><button data-id="'+response.body.id+'" class="btn btn-outline red btn-xs removeSubTheme">删除连接</button></td></tr>');
+					tpl.find('.select2-multiple').select2({
+						width: "off",
+						allowClear: true,
+						language: {
+						   noResults: function(){
+							   return "没有找到任何匹配项";
+						   },
+						   inputTooShort:function(){
+							   return '请输入商品名称';
+							},
+							searching:function(){
+								return '正在努力搜索...';
+							},
+							loadingMore:function(){
+								return '载入更多...';
+							},
+							inputTooLong:function(){
+								return '输入太多了...';
+							}
+						},
+						ajax: {
+							url: "{%url m=ajax c=product a=search%}",
+							dataType: 'json',
+							delay: 250,
+							data: function(params) {
+								return {
+									keywords: params.term, // search term
+									page: params.page
+								};
+							},
+							processResults: function(data, page) {
+								return {
+									results: data.body.data
+								};
+							},
+							cache: true
+						},
+						escapeMarkup: function(markup) {
+							return markup;
+						}, // let our custom formatter work
+						minimumInputLength: 1,
+						templateResult: formatRepo,
+						templateSelection: formatRepoSelection
+					});
+					$('#subthemeTable_'+theme_id).find('tbody').append(tpl);
+				}
+				else
+				{
+					App.alert({
+						container: $('#alert_container').val(), // alerts parent container 
+						place: 'append', // append or prepent in container 
+						type: 'danger', // alert's type 
+						message: response.result,
+                        close: true,
+						focus: true, // auto scroll to the alert after shown
+						closeInSeconds: 3, // auto close after defined seconds 
+						icon:'fa fa-remove' // put icon class before the message
+					});
+				}
+			});
+			return false;
+		});
+		
+		$('.subthemeTable').on('click','.moveup',function(){
+			var theme_id = $(this).data('theme_id');
+			var id = $(this).data('id');
+			var ths = $(this);
+			$.post('{%url m=ajax c=theme a=moveUpSubTheme%}',{id:id,theme_id:theme_id},function(response){
+				if(response.code==1)
+				{
+					ths.parents('tr').insertBefore(ths.parents('tr').prev());
+				}
+				else
+				{
+					App.alert({
+						container: $('#alert_container').val(), // alerts parent container 
+						place: 'append', // append or prepent in container 
+						type: 'danger', // alert's type 
+						message: response.result,
+                        close: true,
+						focus: true, // auto scroll to the alert after shown
+						closeInSeconds: 3, // auto close after defined seconds 
+						icon:'fa fa-remove' // put icon class before the message
+					});
+				}
+			});
+			return false;
+		});
+		$('.subthemeTable').on('click','.movedown',function(){
+			var theme_id = $(this).data('theme_id');
+			var id = $(this).data('id');
+			var ths = $(this);
+			$.post('{%url m=ajax c=theme a=moveDownSubTheme%}',{id:id,theme_id:theme_id},function(response){
+				if(response.code==1)
+				{
+					ths.parents('tr').insertAfter(ths.parents('tr').next());
+				}
+				else
+				{
+					App.alert({
+						container: $('#alert_container').val(), // alerts parent container 
+						place: 'append', // append or prepent in container 
+						type: 'danger', // alert's type 
+						message: response.result,
+                        close: true,
+						focus: true, // auto scroll to the alert after shown
+						closeInSeconds: 3, // auto close after defined seconds 
+						icon:'fa fa-remove' // put icon class before the message
+					});
+				}
+			});
+			return false;
+		});
+		
+		$('.uploadImg').on('click',function(){
+			var input = $('<input type="file">');
+			var ths = $(this);
+			input.on('change',function(){
+				var file = $(this)[0].files[0];
+				var formData = new FormData();
+				formData.append('file',file);
+				var xhr = new XMLHttpRequest();
+				xhr.open('POST','{%url m=api c=common a=upload%}',true);
+				xhr.onload = function(){
+					if(xhr.status == 200 && xhr.readyState == 4)  
+					{
+						var response = xhr.response;
+						response = $.parseJSON(response);
+						ths.find('img').attr('src',response.body.path);
+						ths.find('input[name=logo]').val(response.body.id);
+					}
+				};  
+				xhr.send(formData);
+			});
+			input.trigger('click');
+		});
+		
+		$('#createThemeForm').on('submit',function(){
+			var title = $.trim($(this).find('input[name=title]').val());
+			if(title.length==0)
+			{
+				alert('请填写主题名称');
+				return false;
+			}
+			var logo= $(this).find('input[name=logo]').val();
+			$.post('{%url m=ajax c=theme a=createTheme%}',{title:title,logo:logo},function(response){
+				if(response.code==1)
+				{
+					var tpl = '<li class="active"><a href="#theme_'+response.body.id+'" data-toggle="tab" aria-expanded="false">'+response.body.title+'</a></li>';
+					$('.nav').append(tpl);
+					window.location.reload();
+				}
+				else
+				{
+					App.alert({
+						container: $('#alert_container').val(), // alerts parent container 
+						place: 'append', // append or prepent in container 
+						type: 'danger', // alert's type 
+						message: response.result,
+                        close: true,
+						focus: true, // auto scroll to the alert after shown
+						closeInSeconds: 3, // auto close after defined seconds 
+						icon:'fa fa-remove' // put icon class before the message
+					});
+				}
+			});
+			return false;
+		});
+		
+		$.fn.select2.defaults.set("theme", "bootstrap");
+		
+		 function formatRepo(repo) {
+            if (repo.loading) return repo.text;
+
+            var markup = "<div class='select2-result-repository clearfix'>" +
+                "<div class='select2-result-repository__avatar'><img src='" + repo.image + "' /></div>" +
+                "<div class='select2-result-repository__meta'>" +
+                "<div class='select2-result-repository__title'>" + repo.name + "</div>";
+
+            markup += "<div class='select2-result-repository__statistics'>" +
+                "<div class='select2-result-repository__forks'><span class='glyphicon glyphicon-flash'></span> 原价:" + repo.oldprice + " </div>" +
+                "<div class='select2-result-repository__stargazers'><span class='glyphicon glyphicon-star'></span> 价格:" + repo.price + " </div>" +
+                "<div class='select2-result-repository__watchers'><span class='glyphicon glyphicon-eye-open'></span> 库存" + repo.stock + " </div>" +
+                "</div>" +
+                "</div></div>";
+
+            return markup;
+        }
+
+        function formatRepoSelection(repo) {
+		    return repo.name;
+        }
+
+        $(".select2-multiple").select2({
+            width: "off",
+			allowClear: true,
+			/*initSelection:function (element, callback) {   // 初始化时设置默认值
+				var data = [];
+				
+				$.each($(element).find('option:selected'),function(index,value){
+					var temp = {
+						id:$(value).val(),
+						name:$(value).html(),
+					};
+					data.push(temp);
+				});
+				callback(data);
+			},*/
+			language: {
+			   noResults: function(){
+				   return "没有找到任何匹配项";
+			   },
+			   inputTooShort:function(){
+				   return '请输入商品名称';
+				},
+				searching:function(){
+					return '正在努力搜索...';
+				},
+				loadingMore:function(){
+					return '载入更多...';
+				},
+				inputTooLong:function(){
+					return '输入太多了...';
+				}
+			},
+            ajax: {
+                url: "{%url m=ajax c=product a=search%}",
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    return {
+                        keywords: params.term, // search term
+                        page: params.page
+                    };
+                },
+                processResults: function(data, page) {
+                    return {
+                        results: data.body.data
+                    };
+                },
+                cache: true
+            },
+            escapeMarkup: function(markup) {
+                return markup;
+            }, // let our custom formatter work
+            minimumInputLength: 1,
+            templateResult: formatRepo,
+            templateSelection: formatRepoSelection
+        });
+		
+		$('.subthemeTable').on('click','.editable',function(){
+			if($(this).find('input').length!=0)
+				return false;
+			var id = $(this).data('id');
+			var name = $(this).data('name');
+			var input = $('<input type="text">');
+			input.val($(this).html());
+			$(this).empty().append(input);
+			input.trigger('focus');
+			var complete = function(ths){
+				var newval = ths.val();
+				$.post('{%url m=ajax c=theme a=modifyTitleOrSubtitle%}',{id:id,name:name,value:newval},function(response){
+					if(response.code==1)
+					{
+						ths.parent().empty().html(newval);
+					}
+				});
+			}
+			input.on('blur',function(){
+				complete($(this));
+			});
+			input.on('keydown',function(event){
+				if(event.which==13)
+				{
+					complete($(this));
+				}
+			});
+			
+		});
+	
+		</script>
+    </body>
+
+</html>

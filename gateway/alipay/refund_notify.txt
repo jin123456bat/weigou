@@ -1,0 +1,1 @@
+{"sign":"98697b41ec4415083d9f5982b01284f0","result_details":"2016062321001004790278373719^88.00^SUCCESS","notify_time":"2016-06-24 14:29:09","sign_type":"MD5","notify_type":"batch_refund_notify","notify_id":"6ee310b06ba30f328e322f88e506830jh0","batch_no":"201606241606231650453169037","success_num":"1"}

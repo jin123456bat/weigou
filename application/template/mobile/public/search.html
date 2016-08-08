@@ -1,0 +1,31 @@
+<div class="search_wrap clearfix">
+	<div class="back" onClick="window.history.go(-1);"></div>
+	<div class="s_input">
+		<input type="text" name="keywords" placeholder="请输入商品名称">
+	</div>
+	<div class="s_btn">搜索</div>
+</div>
+<script type="text/javascript">
+$('.s_btn').on('click',function(){
+	var keywords = $.trim($('input[name=keywords]').val());
+	if(window.localStorage && keywords.length!=0)
+	{
+		var storageKeywords = window.localStorage.getItem('keywords');
+		if(storageKeywords != null)
+		{
+			storageKeywords = JSON.parse(storageKeywords);
+			if(storageKeywords.indexOf(keywords) == -1)
+			{
+				storageKeywords.push(keywords);
+			}
+		}
+		else
+		{
+			storageKeywords = [keywords];
+		}
+		window.localStorage.setItem('keywords',JSON.stringify(storageKeywords));
+		$('.l_keyword').prepend('<div class="keyword">'+keywords+'</div>');
+	}
+	window.location = '{%url c=mobile a=searchResult%}&keywords='+keywords;
+});
+</script>

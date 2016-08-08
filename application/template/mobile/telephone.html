@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>淘微购</title>
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-touch-fullscreen" content="yes" />
+    <meta name="full-screen" content="yes"/>
+    <meta name="screen-orientation" content="portrait"/>
+    <meta name="x5-fullscreen" content="true"/>
+    <link rel="stylesheet" type="text/css" href="{%$VIEW_ROOT%}/mobile/css/reset.css">
+    <link rel="stylesheet" type="text/css" href="{%$VIEW_ROOT%}/mobile/css/style.css">
+	<link rel="stylesheet" type="text/css" href="{%$VIEW_ROOT%}/mobile/css/other.css">
+    <script type="text/javascript" src="{%$VIEW_ROOT%}/mobile/js/jquery-1.8.3.min.js"></script>
+    <script type="text/javascript" src="{%$VIEW_ROOT%}/mobile/js/resolution.js"></script>
+	<script type="text/javascript" src="{%$VIEW_ROOT%}/mobile/js/js.js"></script>
+</head>
+<body>
+    <div id="header">
+        <header>
+            <a href="{%url c=mobile a=safe%}" class="left_btn"><i class="icon back"></i></a>
+            <h1>手机号绑定</h1>
+        </header>
+    </div>
+    <div id="content" style="padding-top: 50px;">
+        <div class="phone_box">
+            <div class="phone_number">{%if empty($user.telephone)%}未绑定{%else%}已绑定：<span>{%$user.telephone|default:''%}{%/if%}</span></div>
+            <a class="long_btn" href="{%if empty($user.telephone)%}{%url c=mobile a=set_telephone%}{%else%}{%url c=mobile a=auth_telephone%}{%/if%}">{%if empty($user.telephone)%}绑定手机号{%else%}更换手机号{%/if%}</a>
+        </div>
+    </div>
+</body>
+</html>

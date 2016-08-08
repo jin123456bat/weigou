@@ -1,0 +1,83 @@
+<div class="cbp-l-inline">
+    <div class="cbp-l-inline-left" style="width:40%;">
+        <div class="row">
+            <div class="col-sm-5 portfolio-tile">
+                <a href="{%resource file=$carousel.logo%}" class="cbp-lightbox">
+                    <img src="{%resource file=$carousel.logo%}" onerror="this.src='http://placehold.it/640x320';" alt="">
+				</a>
+            </div>
+            
+        </div>
+    </div>
+    <div class="cbp-l-inline-right" style="width:60%;">
+        <div class="cbp-l-inline-title">
+			<button class="btn btn-outline yellow" id="changeLogo" data-id="{%$carousel.id%}">更改图片</button>
+			<input type="hidden" name="logo" value="{%$carousel.logo|default:''%}" />
+		</div>
+        <div class="cbp-l-inline-subtitle">标题</div>
+        <div class="cbp-l-inline-desc">
+			<div class="form-group">
+				<label class="col-md-2 control-label">标题</label>
+				<div class="col-md-10">
+					<input type="text" class="form-control" name="title" placeholder="标题" value="{%$carousel.title%}">
+					<span class="help-block"> 输入要更改的标题. </span>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-md-2 control-label">排序</label>
+				<div class="col-md-10">
+					<input type="text" class="form-control" name="sort" placeholder="数字" value="{%$carousel.sort%}">
+					<span class="help-block"> 从小到大. </span>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-md-2 control-label">连接到</label>
+				<div class="col-md-10">
+					<select name="linktype" class="form-control">
+						<option value="product" {%if $carousel.linktype==product%}selected{%/if%}>商品</option>
+						<option value="page" {%if $carousel.linktype==page%}selected{%/if%}>页面</option>
+						<option value="category" {%if $carousel.linktype==category%}selected{%/if%}>分类</option>
+						<option value="theme" {%if $carousel.linktype==theme%}selected{%/if%}>主题</option>
+						<option value="url" {%if $carousel.linktype==url%}selected{%/if%}>URL</option>
+						<option value="none" {%if $carousel.linktype==none%}selected{%/if%}>无连接</option>
+					</select>
+					<span class="help-block"> 连接地址. </span>
+				</div>
+			</div>
+			<div class="form-group" id="linkurl">
+				<label class="col-md-2 control-label">连接地址</label>
+				<div class="col-md-10">
+					<input name="url" type="text" class="form-control hideorshow url {%if $carousel.linktype!=url%}hide{%/if%}" placeholder="网址" value="{%$carousel.url%}">
+					
+					<select name="url" class="form-control hideorshow category {%if $carousel.linktype!=category%}hide{%/if%}">
+						{%section name=category loop=$category%}
+						<option value="{%$category[category].id%}" {%if $category[category].id==$carousel.url%}selected=selected{%/if%}>{%$category[category].name%}</option>
+						{%/section%}
+					</select>
+					
+					<select name="url" class="form-control hideorshow product {%if $carousel.linktype!=product%}hide{%/if%}">
+						{%section name=product loop=$product%}
+						<option value="{%$product[product].id%}" {%if $product[product].id==$carousel.url%}selected=selected{%/if%}>{%$product[product].name%}</option>
+						{%/section%}
+					</select>
+					
+					<select name="url" class="form-control hideorshow page {%if $carousel.linktype!=page%}hide{%/if%}">
+						{%section name=page loop=$page%}
+						<option value="{%$page[page].id%}" {%if $page[page].id==$carousel.url%}selected=selected{%/if%}>{%$page[page].title%}</option>
+						{%/section%}
+					</select>
+					
+					<select name="url" class="form-control hideorshow theme {%if $carousel.linktype!=theme%}hide{%/if%}">
+						{%section name=theme loop=$theme%}
+						<option value="{%$theme[theme].id%}" {%if $theme[theme].id==$carousel.url%}selected=selected{%/if%}>{%$theme[theme].title%}</option>
+						{%/section%}
+					</select>
+					
+					<span class="help-block"> 连接地址. </span>
+				</div>
+			</div>
+		</div>
+        <a href="#" target="_blank" data-id="{%$carousel.id%}" class="cbp-l-inline-view btn blue btn-outline submit" data-action="close">保存</a>
+		<a href="#" target="_blank" data-id="{%$carousel.id%}" class="cbp-l-inline-view btn red btn-outline remove" data-action="close">删除</a>
+    </div>
+</div>

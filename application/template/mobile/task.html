@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>淘微购</title>
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-touch-fullscreen" content="yes" />
+    <meta name="full-screen" content="yes"/>
+    <meta name="screen-orientation" content="portrait"/>
+    <meta name="x5-fullscreen" content="true"/>
+    <link rel="stylesheet" type="text/css" href="{%$VIEW_ROOT%}/mobile/css/reset.css">
+    <link rel="stylesheet" type="text/css" href="{%$VIEW_ROOT%}/mobile/css/style.css">
+	<link rel="stylesheet" type="text/css" href="{%$VIEW_ROOT%}/mobile/css/other.css">
+    <script type="text/javascript" src="{%$VIEW_ROOT%}/mobile/js/jquery-1.8.3.min.js"></script>
+    <script type="text/javascript" src="{%$VIEW_ROOT%}/mobile/js/resolution.js"></script>
+	<script type="text/javascript" src="{%$VIEW_ROOT%}/mobile/js/js.js"></script>
+</head>
+<body style="background-color: #ebeded;">
+    <div id="header">
+        <header>
+            <a href="javascript:window.history.go(-1);" class="left_btn"><i class="icon back"></i></a>
+            <h1>免费VIP</h1>
+            <a href="{%url c=mobile a=taskProgress%}" class="right_btn">什么是免费VIP</a>
+        </header>
+    </div>
+    <div id="content" style="padding-top: 50px; padding-bottom:20px;">
+        <div class="free-banner">
+            <img src="{%url c=system a=task name=logo%}">
+        </div>
+        <div class="college_box" style="margin-top:10px">
+            <div class="bar flex_box">
+                <div class="item flex active" style="border-top:none">我来组团</div>
+                <div class="item flex" style="border-top:none">我的团购</div>
+            </div>
+            <div id="page1">
+				{%section name=product loop=$product%}
+                <div class="free-cont clearfix" onClick="window.location = '{%url c=mobile a=taskdetail id=$product[product].id%}';">
+                    <div class="free-cont1 clearfix">
+                        <div class="fc1-left"><img src="{%$product[product].image%}"></div>
+                        <div class="fc1-right">
+                            <div class="item1">{%if !empty($product[product].product)%}<img src="{%$product[product].origin.logo%}"> {%$product[product].origin.name%}品牌{%/if%}{%if !empty($product[product].store)%} {%$product[product].store%}发货{%/if%}</div>
+                            <div class="item2">{%$product[product].name%}</div>
+                        </div>
+                    </div>
+                    <div class="free-cont2 clearfix">
+                        <div class="fc2-left">
+                            <div class="item2">￥{%$product[product].price%} <span>￥{%$product[product].oldprice%}</span></div>
+                            <div class="item1">{%$product[product].teamnum%}</div>
+                        </div>
+                        <div class="fc2-right">
+                            <div class="item1 startTask" data-id="{%$product[product].id%}">开启任务></div>
+                            <div class="item2">奖励经验：{%$product[product].score%}</div>
+                        </div>
+                    </div>
+                </div>
+				{%/section%}
+            </div>
+            <div id="page2" style="display: none;">
+				{%section name=order loop=$order%}
+                <div class="free-cont clearfix" {%if $order[order].status!=0%}style="color:grey;"{%/if%} onClick="window.location = '{%url c=mobile a=taskorderdetail orderno=$order[order].orderno%}';">
+                    <div class="free-cont1 clearfix">
+                        <div class="fc1-left"><img src="{%$order[order].image%}"></div>
+                        <div class="fc1-right">
+                            <div class="item1">{%if !empty($order[order].origin)%}<img src="{%$order[order].origin.logo%}"> {%$order[order].origin.name%}品牌 {%/if%}{%if !empty($order[order].store)%}{%$order[order].store%}发货{%/if%}</div>
+                            <div class="item2">{%$order[order].name%}</div>
+                        </div>
+                    </div>
+                    <div class="free-cont2 clearfix">
+                    	{%if $order[order].status!=2%}
+                        <div class="right">
+                            {%if $order[order].status==1%}团购完成{%elseif $order[order].status==0%}去完成任务{%/if%}
+                        </div>
+                       {%/if%}
+                       
+                        <div class="left">
+                        	{%if $order[order].status==0%}
+                        	还差{%$order[order].teamnum - $order[order].complete_order_num%}人成功获得{%$order[order].score%}积分
+                            {%elseif $order[order].status==1%}
+                            团购完成 {%if empty($order[order].o_orderno)%}成功获得{%$order[order].score%}积分{%/if%}
+                            {%elseif $order[order].status==2%}
+                            团购失败,已付金额全部退还
+                            {%/if%}
+                        </div>
+                    </div>
+                </div>
+				{%/section%}
+            </div>
+        </div>
+    </div>
+	{%include file='mobile/public/msg.html'%}
+<div id="black_bg" style="display: none">
+    <div class="spread-share" style="display: block;">
+        <div class="ss-head"><img src="{%$VIEW_ROOT%}/mobile/image/close.png"><p>分享给更多的朋友</p></div>
+        <div class="ss-box">
+            <div class="ss-box1">
+                <img src="{%$VIEW_ROOT%}/mobile/image/btn_weixin.png">
+                <p>微信</p>
+            </div>
+            <div class="ss-box2">
+                <img src="{%$VIEW_ROOT%}/mobile/image/btn_friendCircle.png">
+                <p>朋友圈</p>
+            </div>
+            <div class="ss-box3">
+                <img src="{%$VIEW_ROOT%}/mobile/image/btn_qq.png">
+                <p>QQ</p>
+            </div>
+            <div class="ss-box4">
+                <img src="{%$VIEW_ROOT%}/mobile/image/btn_weibo.png">
+                <p>微博</p>
+            </div>
+        </div>
+    </div>
+</div>
+    
+
+</body>
+<script type="text/javascript">
+// tanchuang
+    $(".free-cont2 .right").on('click',function(){
+        $(this).parents('.free-cont').trigger('click');
+		return false;
+    })
+    $(".spread-share .ss-head img").click(function(){
+        $("#black_bg").hide();
+    })
+	
+	$.ajaxSetup({
+		headers:{
+			'X-CSRF-TOKEN':'{%$x_csrf_token%}'
+		}
+	});
+
+    $(document).ready(function(){
+        $('.bar .item').on('click',function(){
+            var index = $(this).index()+1;
+            $(this).siblings().removeClass('active');
+            $(this).addClass('active');
+            $('div[id^=page]').hide();
+            $('#page'+index).show();
+        })
+		
+		$('.startTask').on('click',function(){
+			var id = $(this).data('id');
+			$.post('{%url m=ajax c=task a=start%}',{tid:id},function(response){
+				if(response.code==1)
+				{
+					window.location.reload();
+				}
+				else
+				{
+					msg(response.result);
+				}
+			});
+		});
+    })
+</script>
+</html>
