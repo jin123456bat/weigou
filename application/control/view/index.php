@@ -47,7 +47,7 @@ class index extends view
 	{
 		$erpSender = new erpSender();
 		
-		$barcode = 'XL002238';
+		$barcode = 'XL001769';
 		
 		//var_dump($erpSender->doAction(2, 'AddOrder',[168]));
 		
@@ -55,16 +55,25 @@ class index extends view
 		//$response = $erpSender->doAction(2, 'QueryGoodsInventory',['barcode'=>$barcode,'store'=>$product['store']]);
 		//var_dump($response);
 		
-		$response = $erpSender->doAction(2, 'QueryGoods',[$barcode]);
+		//$response = $erpSender->doAction(2, 'QueryGoods',[$barcode]);
 		//var_dump($erpSender->doAction(2, 'AddGoods',[639]));
 		
 		//var_dump($erpSender->doAction(2, 'QueryPlatform',[222]));
-		var_dump($response);
+		//var_dump($response);
 		
 		
 		/* $orderno = '1607301700203608548';
 		$erpSender = new erpSender();
 		var_dump($erpSender->doSendOrder($orderno)); */
+	}
+	
+	function import()
+	{
+		$file = $this->fil->receive($_FILES['file']);
+		if (is_file($file))
+		{
+			
+		}
 	}
 	
 }

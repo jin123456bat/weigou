@@ -128,7 +128,6 @@ class erpSender extends base
 		{
 			//已经拆单成功，发送拆单后的数据
 			$suborder = $this->model('suborder_store')->where('main_orderno=?',[$orderno])->select();
-			
             foreach ($suborder as $order)
 			{
 				if ($order['erp'] == 1 && !$focus)
@@ -234,6 +233,42 @@ class erpSender extends base
 				{
 					$response = $this->doAction($store['erp'], $erp['QueryGoods'],[$product['barcode']]);
 					return $response;
+				}
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * 查询商品库存
+	 * @param $id 商品id
+	 */
+	function QueryGoodsInventory($id)
+	{
+		$product = $this->model('product')->where('id=?',[$id])->find();
+		if (!empty($product))
+		{
+			$store = $this->model('store')->where('id=?',[$product['store']])->find();
+			if (!empty($store) && !empty($store['erp']))
+			{
+				$erp = $this->model('erp')->where('id=?',[$store['erp']])->find();
+				$substore = $this->model('substore')->where('sid=?',[$product['store']])->select();
+				if (!empty($substore))
+				{
+					$stock = [];
+					foreach ($substore as $s_store)
+					{
+						if (!empty($s_store['code']))
+						{
+							$stock[$s_store['id']] = $this->doAction($store['erp'], $erp['QueryGoodsInventory'],[$product['barcode'],$s_store['code']]);
+						}
+					}
+					return $stock;
+				}
+				else
+				{
+					$HouseId = 25;
+					return $this->doAction($store['erp'], $erp['QueryGoodsInventory'],[$product['barcode'],$HouseId]);
 				}
 			}
 		}

@@ -11,10 +11,44 @@ class api extends view
 	}
 	
 	/**
+	 * 同步商品库存
+	 */
+	function asyncStock()
+	{
+		$id = $this->post('id');
+		if (is_array($id) && !empty($id))
+		{
+			$product = $id;
+		}
+		else
+		{
+			$product = $this->model('product')->where('isdelete=?',[0])->select('id');
+		}
+		$erpSender = new erpSender();
+		foreach ($product as $p)
+		{
+			$stock = $erpSender->QueryGoodsInventory($p['id']);
+			if ($stock === false)
+			{
+				//查询失败
+			}
+			else 
+			{
+				$this->model('product')->where('id=?',[$p['id']])->limit(1)->update([
+					'stock' => $stock,
+					'auto_stock'=>0,//关闭不限制库存
+					'modifytime' => $_SERVER['REQUEST_TIME']
+				]);
+			}
+		}
+	}
+	
+	/**
 	 * 维护失败调用的接口定时发送  10分钟1次
 	 */
 	function crontab()
 	{
+		//对于调用失败的接口重新发起
 		$api_log = $this->model('api_log')->where('success=? and times < ?',[0,10])->select();
 		foreach ($api_log as $api)
 		{
@@ -28,6 +62,7 @@ class api extends view
 		}
 		
 		
+		//同步订单的物流信息
 		$suborder_id_array = $this->model('order')->table('suborder_store','left join','suborder_store.main_orderno=order.orderno')
 		->where('order.way_status=?',[0])
 		->where('suborder_store.erp=?',[1])
@@ -94,8 +129,4 @@ class api extends view
 		}
 	}
 	
-	function getOrderInfo()
-	{
-	    
-	}
 }

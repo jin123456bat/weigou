@@ -166,17 +166,19 @@ class oms extends erp
 		$xml = $this->createParameter($data, __FUNCTION__, __FUNCTION__);
 		$xml = $this->sendXml($xml);
 		$response = xmlToArray($xml);
-		var_dump($response);
 		if (isset($response['Goods']['Status']) && $response['Goods']['Status'] == 1)
 		{
-			$product = $response['Goods']['Data']['Goods'];
-			$product = [
-				'name' => $product['GoodsName'],
-				'MeasurementUnit' => $this->model('dictionary')->where('type=? and code=?',['MeasurementUnit',str_pad($product['GoodsUnit'],3,'0',STR_PAD_LEFT)])->find('id')['id'],
-				'origin' => $this->model('dictionary')->where('type=? and code=?',['country',$product['ProduceCountry']])->find('id')['id'],
-				'grossWeight' => $product['GrossWeight']
-			];
-			return $product;
+			if (isset($response['Goods']['Data']['Goods']))
+			{
+				$product = $response['Goods']['Data']['Goods'];
+				$product = [
+					'name' => $product['GoodsName'],
+					'MeasurementUnit' => $this->model('dictionary')->where('type=? and code=?',['MeasurementUnit',str_pad($product['GoodsUnit'],3,'0',STR_PAD_LEFT)])->find('id')['id'],
+					'origin' => $this->model('dictionary')->where('type=? and code=?',['country',$product['ProduceCountry']])->find('id')['id'],
+					'grossWeight' => $product['GrossWeight']
+				];
+				return $product;
+			}
 		}
 		return false;
 	}
@@ -184,42 +186,32 @@ class oms extends erp
 	/**
 	 * 商品库存查询
 	 * @param 商品条形码 $barcode
-	 * @param int $store 仓库id
+	 * @param int $HouseId 仓库id
 	 * @return bool|int 成功返回数字，否则返回false
 	 */
-	function QueryGoodsInventory($barcode,$store)
+	function QueryGoodsInventory($barcode,$HouseId)
 	{
-		$store_id = 0;
-		
-		$storeParameter = $this->getParameter('store');
-		if (is_array($storeParameter) && !empty($storeParameter))
-		{
-			foreach ($storeParameter as $st)
-			{
-				if($st['store'] == $store)
-				{
-					$store_id = $st['HouseId'];
-				}
-			}
-		}
-		
 		$data = [
 			'GoodsSerial' => $barcode,
-			'HouseId' => $store_id,
+			'HouseId' => $HouseId,
 			'StockGetTogether' => 'YES',
 		];
-		var_dump($data);
 		$xml = $this->createParameter($data, __FUNCTION__, __FUNCTION__);
 		$xml = $this->sendXml($xml);
-		var_dump($xml);
 		$response = xmlToArray($xml);
-		
-		var_dump($response);
-		/* if (isset($response['Goods']['Status']) && $response['Goods']['Status'] == 1)
+		if (isset($response['Inventory']['Status']) && $response['Inventory']['Status'] == 1)
 		{
-			return $response;
+			//一定要判断是否查询数据中存在
+			if (isset($response['Inventory']['Data']['Inventory']['Available']))
+			{
+				return $response['Inventory']['Data']['Inventory']['Available'];
+			}
+			else
+			{
+				return 0;
+			}
 		}
-		return false; */
+		return false;
 	}
 	
 	function QueryPlatform($platForm = NULL)
@@ -267,8 +259,8 @@ class oms extends erp
 		}
 		
 		//仓库id替换 获得oms的仓库代码
-		$store_id = 0;
-		$way = array();//['yt'=>77]
+		$store_id = 25;
+		/* $way = array();//['yt'=>77]
 		
 		$storeParameter = $this->getParameter('store');
 		if (is_array($storeParameter) && !empty($storeParameter))
@@ -281,7 +273,7 @@ class oms extends erp
 					$way = $st['way'];
 				}
 			}
-		}
+		} */
 		
 		$data = $this->model('suborder_store')
 		->table('`order`','left join','order.orderno=suborder_store.main_orderno')
@@ -368,10 +360,17 @@ class oms extends erp
 		
 		
 		$xml = $this->createParameter($data,__FUNCTION__.$data['CustomerCode'],__FUNCTION__);
-		var_dump($xml);
 		$response = $this->sendXml($xml);
-		var_dump($response);
-		exit();
+		$this->setResponseString($response);
+		$response = xmlToArray($response);
+		if (isset($response['Order']['Status']) && $response['Order']['Status'] == 1)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 	
 	/**
