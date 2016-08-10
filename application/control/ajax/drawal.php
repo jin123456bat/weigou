@@ -104,4 +104,15 @@ class drawal extends ajax
 		}
 		return new json(json::PARAMETER_ERROR,'超过账户余额');
 	}
+	
+	function info()
+	{
+		$id = $this->post('id');
+		$drawal = $this->model('drawal')->where('id=?',[$id])->find();
+		if (isset($drawal['bankcard']) && !empty($drawal['bankcard']))
+		{
+			$bankcard = $this->model('bankcard')->where('id=?',[$drawal['bankcard']])->find();
+			return new json(json::OK,NULL,$bankcard);
+		}
+	}
 }
