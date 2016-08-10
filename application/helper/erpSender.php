@@ -252,23 +252,26 @@ class erpSender extends base
 			if (!empty($store) && !empty($store['erp']))
 			{
 				$erp = $this->model('erp')->where('id=?',[$store['erp']])->find();
-				$substore = $this->model('substore')->where('sid=?',[$product['store']])->select();
-				if (!empty($substore))
+				if (!empty($erp))
 				{
-					$stock = [];
-					foreach ($substore as $s_store)
+					$substore = $this->model('substore')->where('sid=?',[$product['store']])->select();
+					if (!empty($substore))
 					{
-						if (!empty($s_store['code']))
+						$stock = [];
+						foreach ($substore as $s_store)
 						{
-							$stock[$s_store['id']] = $this->doAction($store['erp'], $erp['QueryGoodsInventory'],[$product['barcode'],$s_store['code']]);
+							if (!empty($s_store['code']))
+							{
+								$stock[$s_store['id']] = $this->doAction($store['erp'], $erp['QueryGoodsInventory'],[$product['barcode'],$s_store['code']]);
+							}
 						}
+						return $stock;
 					}
-					return $stock;
-				}
-				else
-				{
-					$HouseId = 25;
-					return $this->doAction($store['erp'], $erp['QueryGoodsInventory'],[$product['barcode'],$HouseId]);
+					else
+					{
+						$HouseId = 25;
+						return $this->doAction($store['erp'], $erp['QueryGoodsInventory'],[$product['barcode'],$HouseId]);
+					}
 				}
 			}
 		}

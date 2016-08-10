@@ -446,7 +446,7 @@ class model
 	public function delete($table = '')
 	{
 		$sql = 'delete '.$table.(isset($this->_temp['table'])?$this->_temp['table']:'').' from ' . $this->_table . ' ' . $this->_temp['where'];
-		$result = $this->query($sql, $this->_temp['array']);
+		$result = $this->query($sql, empty($this->_temp['array'])?array():$this->_temp['array']);
 		unset($this->_temp);
 		return $result;
 	}

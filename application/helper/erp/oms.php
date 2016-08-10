@@ -41,7 +41,7 @@ class oms extends erp
 	 */
 	function isOpen()
 	{
-		return false;
+		return true;
 	}
 	
 	function getDesKey()
@@ -251,12 +251,8 @@ class oms extends erp
 			return false;
 		}
 		
-		$store = $this->model('store')->where('id=?',[$suborder['store']])->find();
+		$store = $this->model('store')->where('id=?',[$suborder['store']])->find();//找到对应的仓库
 		
-		if (empty($store['customs']))
-		{
-			return false;
-		}
 		
 		//仓库id替换 获得oms的仓库代码
 		$store_id = 25;
@@ -297,7 +293,7 @@ class oms extends erp
 			'address.identify as ReciverIdentity',
 			'concat(order.note,",",order.msg) as OrderMessage',
 			$store_id.' as HouseId',
-			current(current($way)).' as ShippingExpressId',//这个是快递代号
+			'58 as ShippingExpressId',//这个是物流方式 暂时固定58
 			'"" as SendOrderSn',//发货单号
 			'"YES" as OrderDeliver',//订单同步直接发货
 			'suborder_store.feeamount as ShippingFee',
@@ -357,7 +353,6 @@ class oms extends erp
 		unset($data['PayIdentity']);
 		unset($data['PayTime']);
 		unset($data['PayType']);
-		
 		
 		$xml = $this->createParameter($data,__FUNCTION__.$data['CustomerCode'],__FUNCTION__);
 		$response = $this->sendXml($xml);

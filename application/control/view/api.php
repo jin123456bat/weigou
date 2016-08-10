@@ -22,9 +22,15 @@ class api extends view
 		}
 		else
 		{
-			$product = $this->model('product')->where('isdelete=?',[0])->select('id');
+			$product = $this->model('product')->where('store=? and isdelete=?',[27,0])->select('id');
 		}
+		
 		$erpSender = new erpSender();
+		
+		//清空库存
+		$this->model('store_stock')->delete();
+		$this->model('product')->where('store=? and isdelete=?',[27,0])->update('stock',0);
+		
 		foreach ($product as $p)
 		{
 			$stock = $erpSender->QueryGoodsInventory($p['id']);
@@ -32,13 +38,48 @@ class api extends view
 			{
 				//查询失败
 			}
-			else 
+			else
 			{
-				$this->model('product')->where('id=?',[$p['id']])->limit(1)->update([
+				//这里是只对接一个仓库的时候
+				/* $this->model('product')->where('id=?',[$p['id']])->limit(1)->update([
 					'stock' => $stock,
 					'auto_stock'=>0,//关闭不限制库存
 					'modifytime' => $_SERVER['REQUEST_TIME']
-				]);
+				]); */
+				
+				if (is_array($stock))
+				{
+					//多个仓库按照仓库id为下标返回数组
+					$sum_stock = 0;
+					foreach ($stock as $s_store => $stock)
+					{
+						if (!empty($stock))
+						{
+							//更新子仓库库存
+							$this->model('store_stock')->insert([
+								'son_store' => $s_store,
+								'pid' => $p['id'],
+								'stock' => $stock
+							]);
+							$sum_stock+=$stock;
+						}
+					}
+					//更新商品实际库存
+					$this->model('product')->where('id=?',[$p['id']])->limit(1)->update([
+						'stock' => $sum_stock,
+						'auto_stock'=>0,//关闭不限制库存
+						'modifytime' => $_SERVER['REQUEST_TIME']
+					]);
+				}
+				else
+				{
+					//更新商品实际库存
+					$this->model('product')->where('id=?',[$p['id']])->limit(1)->update([
+						'stock' => $stock,
+						'auto_stock'=>0,//关闭不限制库存
+						'modifytime' => $_SERVER['REQUEST_TIME']
+					]);
+				}
 			}
 		}
 	}

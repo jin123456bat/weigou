@@ -45,7 +45,7 @@ class index extends view
 	
 	function test()
 	{
-		$erpSender = new erpSender();
+		/* $erpSender = new erpSender();
 		
 		$barcode = 'XL001769';
 		
@@ -62,7 +62,7 @@ class index extends view
 		//var_dump($response);
 		
 		
-		/* $orderno = '1607301700203608548';
+		$orderno = '1608102215343605826';
 		$erpSender = new erpSender();
 		var_dump($erpSender->doSendOrder($orderno)); */
 	}
