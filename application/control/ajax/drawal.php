@@ -112,7 +112,9 @@ class drawal extends ajax
 		if (isset($drawal['bankcard']) && !empty($drawal['bankcard']))
 		{
 			$bankcard = $this->model('bankcard')->where('id=?',[$drawal['bankcard']])->find();
-			return new json(json::OK,NULL,$bankcard);
+			$drawal['bankcard'] = $bankcard;
+			return new json(json::OK,NULL,$drawal);
 		}
+		return new json(json::PARAMETER_ERROR,NULL);
 	}
 }
