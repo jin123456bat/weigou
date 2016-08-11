@@ -2,12 +2,40 @@
 namespace application\control\view;
 use system\core\view;
 use application\helper\erpSender;
+use application\helper\erp\oms;
+/**
+ * @author fx
+ *
+ */
 class api extends view
 {
 	function __construct()
 	{
 		$this->_csrf_token_refresh = false;
 		parent::__construct();
+	}
+	
+	/**
+	 * oms推送订单状态到我们这边
+	 * 
+	 */
+	function pushOrderStatus()
+	{
+		$uncode = $this->post("uncode");
+		$appid = $this->post('appid');
+		$xml = $this->post('xml');
+		$md5 = $this->post('md5');
+		
+		$oms = new \application\helper\oms();
+		$xml = $oms->desrypt($uncode, $appid, $xml, $md5);
+		if ($xml===false)
+		{
+			return $oms->encrypt(false,'解密失败');
+		}
+		else
+		{
+			
+		}
 	}
 	
 	/**
