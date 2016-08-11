@@ -16,13 +16,20 @@ class oms extends erp
 	
 	private $_des_key = '4QEzW4RWiwbb150901092132';
 	
-	private $_md5_url = 'http://sandbox-oms.x-omni.com/api/encrypt';
+	private $_md5_url = 'http://oms.x-omni.com/api/encrypt';
 	
-	private $_xml_url = 'http://sandbox-oms.x-omni.com/api/';
+	private $_xml_url = 'http://oms.x-omni.com/api/';
 	
 	private $UserName = '135'; //开户名
 	
-	private $ApiSecret = '*q@eI5c*mL03bsnXa*a6#$FxEWRvqG%yLTSePd3O'; //api密钥；
+	private $ApiSecret = 'bTx3p4TTvHbzJFUER2d61BF3TEKaxs3Hy9Wx0Z*B'; //api密钥；
+	
+	/*
+	 * erp_mode代表erp对接的方式，
+	 * false代表单仓库，我们系统的一个仓库对应erp那边的一个仓库
+	 * true 代表我们一个仓库，对应erp多个仓库，这时需要配置substore表
+	 */
+	private $_erp_mode = false;
 	
 	
 	function __construct()
@@ -186,15 +193,28 @@ class oms extends erp
 	/**
 	 * 商品库存查询
 	 * @param 商品条形码 $barcode
-	 * @param int $HouseId 仓库id
+	 * @param int $store 我们系统的仓库id
 	 * @return bool|int 成功返回数字，否则返回false
 	 */
-	function QueryGoodsInventory($barcode,$HouseId)
+	function QueryGoodsInventory($barcode,$store)
 	{
+		$store_id = 0;
+		$storeParameter = $this->getParameter('store');
+		if (is_array($storeParameter) && !empty($storeParameter))
+		{
+			foreach ($storeParameter as $st)
+			{
+				if($st['store'] == $store)
+				{
+					$store_id = $st['HouseId'];
+				}
+			}
+		}
+		
 		$data = [
 			'GoodsSerial' => $barcode,
-			'HouseId' => $HouseId,
-			'StockGetTogether' => 'YES',
+			'HouseId' => $store_id,
+			//'StockGetTogether' => 'YES',
 		];
 		$xml = $this->createParameter($data, __FUNCTION__, __FUNCTION__);
 		$xml = $this->sendXml($xml);
@@ -220,9 +240,7 @@ class oms extends erp
 			'PlatformId' => $platForm,
 		];
 		$xml = $this->createParameter($data,__FUNCTION__,__FUNCTION__);
-		var_dump($xml);
 		$response = $this->sendXml($xml);
-		var_dump($response);
 	}
 	
 	/**
@@ -231,11 +249,16 @@ class oms extends erp
 	function CancelOrder($suborder_id)
 	{
 		$data = $this->model('suborder_store')->where('id=?',[$suborder_id])->find([
-			'concat(replace(suborder_store.data,"-",""),suborder_store.id) as CustomerCode',
+			'concat(replace(suborder_store.date,"-",""),suborder_store.id) as CustomerCode',
 		]);
 		$xml = $this->createParameter($data, __FUNCTION__, __FUNCTION__);
 		$response = $this->sendXml($xml);
-		return $response;
+		$response = xmlToArray($response);
+		if (isset($response['Order']['Status']) && $response['Order']['Status'] == 1)
+		{
+			return true;
+		}
+		return false;
 	}
 	
 	/**
@@ -245,31 +268,40 @@ class oms extends erp
 	 */
 	function AddOrder($suborder_id)
 	{
+		$erp_mode = $this->_erp_mode;
 		$suborder = $this->model('suborder_store')->where('id=?',[$suborder_id])->find();
 		if (empty($suborder))
 		{
 			return false;
 		}
-		
 		$store = $this->model('store')->where('id=?',[$suborder['store']])->find();//找到对应的仓库
 		
-		
 		//仓库id替换 获得oms的仓库代码
-		$store_id = 25;
-		/* $way = array();//['yt'=>77]
-		
-		$storeParameter = $this->getParameter('store');
-		if (is_array($storeParameter) && !empty($storeParameter))
+		if (!$erp_mode)
 		{
-			foreach ($storeParameter as $st)
+			$store_id = 0;
+			$way = array();//['yt'=>58]
+			
+			$storeParameter = $this->getParameter('store');
+			if (is_array($storeParameter) && !empty($storeParameter))
 			{
-				if($st['store'] == $suborder['store'])
+				foreach ($storeParameter as $st)
 				{
-					$store_id = $st['HouseId'];
-					$way = $st['way'];
+					if($st['store'] == $suborder['store'])
+					{
+						$store_id = $st['HouseId'];
+						$way = $st['way'];
+					}
 				}
 			}
-		} */
+		}
+		else
+		{
+			//假如erp_mode为true，需要重新拆单
+		}
+		
+		//获取物流方式编号
+		$way = end(end($way));
 		
 		$data = $this->model('suborder_store')
 		->table('`order`','left join','order.orderno=suborder_store.main_orderno')
@@ -293,7 +325,7 @@ class oms extends erp
 			'address.identify as ReciverIdentity',
 			'concat(order.note,",",order.msg) as OrderMessage',
 			$store_id.' as HouseId',
-			'58 as ShippingExpressId',//这个是物流方式 暂时固定58
+			!$erp_mode?($way.' as ShippingExpressId'):'58 as ShippingExpressId',//这个是物流方式
 			'"" as SendOrderSn',//发货单号
 			'"YES" as OrderDeliver',//订单同步直接发货
 			'suborder_store.feeamount as ShippingFee',
@@ -355,6 +387,7 @@ class oms extends erp
 		unset($data['PayType']);
 		
 		$xml = $this->createParameter($data,__FUNCTION__.$data['CustomerCode'],__FUNCTION__);
+		
 		$response = $this->sendXml($xml);
 		$this->setResponseString($response);
 		$response = xmlToArray($response);
@@ -441,6 +474,7 @@ class oms extends erp
 		],false,false,'MD5');
 		//组装加密xml
 		$xml_data_md5 = '<?xml version="1.0" encoding="UTF-8"?>' .$xml->__toString();
+		
 		
 		//返回加密值
 		$get_xml = $this->sendXml($xml_data_md5, $this->_md5_url);

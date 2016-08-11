@@ -260,9 +260,6 @@ class order extends view
 	{
 		if ($this->post('notify_type') === 'batch_refund_notify')
 		{
-			file_put_contents('./refund_notify.txt', json_encode($_POST));
-			
-			
 			$pay = new \application\helper\pay();
 			
 			$pay->setPayType('alipay');
@@ -329,6 +326,8 @@ class order extends view
 						}
 						else
 						{
+							//先记录一下退款失败原因
+							$this->model('refund')->where('refundno=?',[$refundno])->limit(1)->update('reason',json_encode($_POST));
 							//退款失败，回滚
 						}
 					}
@@ -383,6 +382,8 @@ class order extends view
 						}
 						else
 						{
+							//先记录一下退款失败原因
+							$this->model('refund')->where('refundno=?',[$refundno])->limit(1)->update('reason',json_encode($_POST));
 							//退款失败  回滚
 						}
 					}

@@ -18,11 +18,11 @@ class api extends view
 		$id = $this->post('id');
 		if (is_array($id) && !empty($id))
 		{
-			$product = $id;
+			$product = $this->model('product')->where('store=? and isdelete=?',[27,0])->where('id in (?)',$id)->select('id,barcode,store');
 		}
 		else
 		{
-			$product = $this->model('product')->where('store=? and isdelete=?',[27,0])->select('id');
+			$product = $this->model('product')->where('store=? and isdelete=?',[27,0])->select('id,barcode,store');
 		}
 		
 		$erpSender = new erpSender();
@@ -33,7 +33,11 @@ class api extends view
 		
 		foreach ($product as $p)
 		{
-			$stock = $erpSender->QueryGoodsInventory($p['id']);
+			//$stock = $erpSender->QueryGoodsInventory($p['id']);
+			
+			
+			$stock = $erpSender->doAction(2, 'QueryGoodsInventory',[$p['barcode'],$p['store']]);
+			
 			if ($stock === false)
 			{
 				//查询失败
@@ -104,6 +108,7 @@ class api extends view
 		
 		
 		//同步订单的物流信息
+		/*
 		$suborder_id_array = $this->model('order')->table('suborder_store','left join','suborder_store.main_orderno=order.orderno')
 		->where('order.way_status=?',[0])
 		->where('suborder_store.erp=?',[1])
@@ -168,6 +173,8 @@ class api extends view
 				}
 			}
 		}
+		*/
+		
 	}
 	
 }

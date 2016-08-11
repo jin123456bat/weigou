@@ -215,6 +215,28 @@ class erpSender extends base
 		}
 	}
 	
+	function CancelOrder($orderno)
+	{
+		$suborder = $this->model('suborder_store')->where('main_orderno=? and erp=?',[$orderno,1])->select();
+		
+		foreach ($suborder as $order)
+		{
+			$store = $this->model('store')->where('id=?',[$order['store']])->find();
+			if (!empty($store) && !empty($store['erp']))
+			{
+				$erp = $this->model('erp')->where('id=?',[$store['erp']])->find();
+				if (!empty($erp) && !empty($erp['CancelOrder']))
+				{
+					if(!$this->doAction($store['erp'], $erp['CancelOrder'],[$order['id']]))
+					{
+						return false;
+					}
+				}
+			}
+		}
+		return true;
+	}
+	
 	/**
 	 * 商品信息查询的方法，返回可以直接update进数据库的数组
 	 * @param unknown $id 商品id
@@ -246,8 +268,9 @@ class erpSender extends base
 	function QueryGoodsInventory($id)
 	{
 		$product = $this->model('product')->where('id=?',[$id])->find();
-		if (!empty($product))
+		if (empty($product))
 		{
+		
 			$store = $this->model('store')->where('id=?',[$product['store']])->find();
 			if (!empty($store) && !empty($store['erp']))
 			{
@@ -269,8 +292,8 @@ class erpSender extends base
 					}
 					else
 					{
-						$HouseId = 25;
-						return $this->doAction($store['erp'], $erp['QueryGoodsInventory'],[$product['barcode'],$HouseId]);
+						$store = $product['store'];
+						return $this->doAction($store['erp'], $erp['QueryGoodsInventory'],[$product['barcode'],$store]);
 					}
 				}
 			}

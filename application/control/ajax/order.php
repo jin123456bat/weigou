@@ -585,6 +585,7 @@ class order extends ajax
 	
 	function importWay()
 	{
+		ini_set('memory_limit', '512M');
 		$config = config('file');
 		//文件类型
 		$config->type = [
@@ -610,6 +611,10 @@ class order extends ajax
 					$sheet = $objPHPExcel->getSheet(0);
 					$rowNum = $sheet->getHighestRow();
 					//$colNum = $sheet->getHighestColumn();
+					if ($rowNum>1000)
+					{
+						$rowNum = 1000;
+					}
 				}
 				catch (\Exception $e)
 				{

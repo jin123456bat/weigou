@@ -2,6 +2,7 @@
 namespace application\helper;
 use system\core\base;
 use system\core\random;
+use application\message\json;
 class order extends base
 {
 	private $_uid;
@@ -773,13 +774,24 @@ class order extends base
 					}
 				}
 				
-				$this->model('order_log')->add($orderno,'订单取消成功');
+				
 				
 				if ($transaction)
 				{
 					$this->model('order')->commit();
 				}
-				return true;
+				
+				$erpSender = new erpSender();
+				if($erpSender->CancelOrder($orderno))
+				{
+					$this->model('order_log')->add($orderno,'订单取消成功');
+					return true;
+				}
+				else
+				{
+					$this->model('order_log')->add($orderno,'订单取消成功,ERP失败');
+					return false;
+				}
 			}
 		}
 		if ($transaction)
@@ -875,6 +887,7 @@ class order extends base
 				'createtime' => $_SERVER['REQUEST_TIME'],
 				'completetime' => 0,
 				'money' => $money,
+				'reason' => '',
 			]))
 			{
 				return false;
