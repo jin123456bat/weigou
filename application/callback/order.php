@@ -200,13 +200,14 @@ class order extends base
 			//拼团成功
 			if ($main_order['teamnum'] == $pay_success_num && $main_order['task_user_status'] == 0)
 			{
-				//更改订单状态
+				//更改主订单拼团状态
 				if(!$this->model('task_user')->where('orderno=?',[$main_order_orderno])->limit(1)->update([
 					'status'=>1
 				]))
 				{
 					return false;
 				}
+				//更改子订单拼团状态
 				if(!$this->model('task_user')->where('o_orderno=?',[$main_order_orderno])->update('status',1))
 				{
 					return false;

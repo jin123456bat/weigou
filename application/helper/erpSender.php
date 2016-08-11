@@ -205,6 +205,13 @@ class erpSender extends base
 					'erp_time' => $_SERVER['REQUEST_TIME']
 				]);
 			}
+			else
+			{
+				$this->model('order')->where('orderno=?',[$orderno])->limit(1)->update([
+					'erp'=>2,//erp状态为2的话部分商品推送成功
+					'erp_time' => $_SERVER['REQUEST_TIME']
+				]);
+			}
 			
 			return true;
 		}

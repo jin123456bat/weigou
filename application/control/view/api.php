@@ -35,6 +35,10 @@ class api extends view
 		{
 			//$stock = $erpSender->QueryGoodsInventory($p['id']);
 			
+			if (empty($p['barcode']) || empty($p['store']))
+			{
+				continue;
+			}
 			
 			$stock = $erpSender->doAction(2, 'QueryGoodsInventory',[$p['barcode'],$p['store']]);
 			
@@ -71,7 +75,7 @@ class api extends view
 					//更新商品实际库存
 					$this->model('product')->where('id=?',[$p['id']])->limit(1)->update([
 						'stock' => $sum_stock,
-						'auto_stock'=>0,//关闭不限制库存
+						'auto_stock'=>1,//关闭不限制库存
 						'modifytime' => $_SERVER['REQUEST_TIME']
 					]);
 				}
@@ -80,7 +84,7 @@ class api extends view
 					//更新商品实际库存
 					$this->model('product')->where('id=?',[$p['id']])->limit(1)->update([
 						'stock' => $stock,
-						'auto_stock'=>0,//关闭不限制库存
+						'auto_stock'=>1,//关闭不限制库存
 						'modifytime' => $_SERVER['REQUEST_TIME']
 					]);
 				}

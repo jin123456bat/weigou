@@ -676,8 +676,37 @@ class order extends base
 			{
 				$this->model('order')->commit();
 				
-				$erpSender = new erpSender();
-				$erpSender->doSendOrder($orderno);
+				//团购订单要等团购完成之后再推送
+				$task_user = $this->model('task_user')->where('orderno=?',[$orderno])->find();
+				$isTaskOrder = !empty($task_user);
+				if ($isTaskOrder)
+				{
+					//假如是团购订单 判断团购订单有没有拼团成功
+					if($task_user['status'] == 1)
+					{
+						//拼团成功
+						if (empty($task_user['o_orderno']))
+						{
+							$main_orderno = $task_user['orderno'];
+						}
+						else
+						{
+							$main_orderno = $task_user['o_orderno'];
+						}
+						$task_success_orderno = $this->model('task_user')->where('(orderno=? or o_orderno=?) and status=?',[$main_orderno,$main_orderno,1])->select('orderno');
+						$erpSender = new erpSender();
+						foreach ($task_success_orderno as $order)
+						{
+							$erpSender->doSendOrder($order['orderno']);
+						}
+					}
+				}
+				else
+				{
+					//不是拼团订单 支付成功  拆单并且发送到ERP
+					$erpSender = new erpSender();
+					$erpSender->doSendOrder($orderno);
+				}
 				
 				return true;
 			}
