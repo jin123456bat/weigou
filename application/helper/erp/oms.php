@@ -351,11 +351,9 @@ class oms extends erp
 		
 		$data['GoodsList']['Goods'] = $product;
 		
-		file_put_contents('./oms_debug.txt', json_encode($data));
-		
 		//支付信息
 		$data['PayInfo'] = array(
-			'PayCompanyCode' => $this->model('paycompany_customs')->where('city=?',[$store['customs']])->find($data['PayType'])[$data['PayType']],//支付公司编码
+			'PayCompanyCode' => $data['PayType']=='alipay'?'JHalipay':'JHwxpay',//$this->model('paycompany_customs')->where('city=?',[$store['customs']])->find($data['PayType'])[$data['PayType']],//支付公司编码
 			'PayTime' => $data['PayTime'],
 			'PayIdentity' => $data['PayIdentity'],
 			'PurchaserPhone' => $data['PurchaserPhone'],
