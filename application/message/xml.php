@@ -126,7 +126,7 @@ class xml
 		{
 			foreach($array as $key=>$value)
 			{
-				if (is_string($value) || is_int($value) || is_bool($value))
+				if (is_string($value) || is_int($value) || is_bool($value) || is_float($value))
 				{
 					$replace = $this->_cdata?('<![CDATA['.$value.']]>'):$value;
 				}
