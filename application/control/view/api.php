@@ -140,72 +140,76 @@ class api extends view
 		
 		
 		//同步订单的物流信息
-		/*
-		$suborder_id_array = $this->model('order')->table('suborder_store','left join','suborder_store.main_orderno=order.orderno')
-		->where('order.way_status=?',[0])
-		->where('suborder_store.erp=?',[1])
-		->select(['suborder_store.id']);
+		
+		$suborder_id_array = $this->model('order')
+		->table('suborder_store','left join','suborder_store.main_orderno=order.orderno')
+		->where('order.way_status in (?)',[0,2])//尚未发货 或者部分发货
+		->where('order.pay_status in (?)',[1,4])//已经支付,或部分退款
+		->where('order.status=?',[1])//订单有效
+		->where('suborder_store.erp=?',[1])//erp已经推送
+		->where('suborder_store.store=?',[27])//限制发货仓库id为27
+		->select(['suborder_store.id','suborder_store.main_orderno as orderno','suborder_store.store']);
+
+		//本次查询的订单
+		$select_orderno = [];
 		
 		$erpSender = new \application\helper\erpSender();
-		foreach ($suborder_id_array as $suborder_id)
+		foreach ($suborder_id_array as $suborder)
 		{
-			$result = $erpSender->doGetOrder($suborder_id['id']);
-			$result = json_decode($result,true);
-			if(!empty($result))
+			$orderStatus = $erpSender->doAction(2, 'QueryOrderStatus',[$suborder['id']]);//获取订单状态
+			if ($orderStatus!==false)
 			{
-				if (isset($result['Data']) && isset($result['Code']) && $result['Code']==0 && !empty($result['Data']))
+				//订单状态查询成功
+				//订单已发货
+				if ($orderStatus['OrderStatus'] == 40)
 				{
-					$data = json_decode($result['Data'],true);
-					if (!empty($data))
+					$ship_code = $orderStatus['ShippingExpressId'];//40
+					//配送方式替换
+					$ship = $this->model('ship')->where('oms=?',[$ship_code])->find();
+					if (!empty($ship))
 					{
-						$select_orderno_array = [];
-						
-						foreach ($data as $sub_order)
-						{
-							$sub_orderno = $sub_order['ExternalOrder'];
-							$sub_id = substr($sub_orderno, 8);
-							
-							if (!empty($sub_order['ShippingTrackingNumber']) && !empty($sub_order['ShippingCompany']))
-							{
-								$suborder = $this->model('suborder_store')->where('id=?',[$sub_id])->find();
-								if (!empty($suborder))
-								{
-									$ship = $this->model('ship')->where('name=?',[$sub_order['ShippingCompany']])->find();
-									$ship_type = isset($ship['code'])?$ship['code']:'';
-									if (!empty($ship_type))
-									{
-										if($this->model('order_package')->where('orderno=? and store_id=?',[$suborder['main_orderno'],$suborder['store']])->update([
-											'ship_type' => $ship_type,
-											'ship_number' => $sub_order['ShippingTrackingNumber'],
-											'ship_time' => $_SERVER['REQUEST_TIME'],
-											'ship_status' => 1,
-										]))
-										{
-											$select_orderno_array[] = $suborder['main_orderno'];
-										}
-									}
-								}
-							}
-						}
-						
-						
-						$select_orderno_array = array_unique($select_orderno_array);
-						foreach ($select_orderno_array as $orderno)
-						{
-							if(empty($this->model('order_package')->where('orderno=? and ship_status=?',[$orderno,0])->find()))
-							{
-								$this->model('order')->where('orderno=?',[$orderno])->limit(1)->update([
-									'way_status' => 1,
-									'way_type' => 3,
-									'way_time' => $_SERVER['REQUEST_TIME']
-								]);
-							}
-						}
+						$ship_code = $ship['code'];
 					}
+					
+					$ship_number = $orderStatus['ShippingCode'];//快递单号
+					$ship_time = strtotime($orderStatus['ShippingTime']);//发货时间
+					
+					$this->model('order_package')->where('orderno=? and store_id=?',[$suborder['orderno'],$suborder['store']])
+					->update([
+						'ship_status' => 1,
+						'ship_type' => $ship_code,
+						'ship_time' => $ship_time,
+						'ship_number' => $ship_number,
+					]);
+					
+					$select_orderno[] = $suborder['orderno'];
 				}
 			}
 		}
-		*/
+		
+		foreach ($select_orderno as $orderno)
+		{
+			//查找是否还有未发货的包裹
+			if(empty($this->model('order_package')->where('orderno=? and ship_status=?',[$orderno,0])->find()))
+			{
+				//标记订单为已发货
+				$this->model('order')->where('orderno=?',[$orderno])->limit(1)->update([
+					'way_status' => 1,
+					'way_type' => 3,
+					'way_time' => $_SERVER['REQUEST_TIME']
+				]);
+			}
+			else
+			{
+				//标记订单为部分发货
+				$this->model('order')->where('orderno=?',[$orderno])->limit(1)->update([
+					'way_status' => 2,
+					'way_type' => 3,
+					'way_time' => $_SERVER['REQUEST_TIME']
+				]);
+			}
+		}
+		
 		
 	}
 	

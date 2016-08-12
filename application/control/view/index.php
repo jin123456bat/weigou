@@ -61,10 +61,13 @@ class index extends view
 		//var_dump($erpSender->doAction(2, 'QueryPlatform',[222]));
 		//var_dump($response);
 		
+		/* $response = $erpSender->doAction(2, 'QueryOrderStatus',[314]);
+		var_dump($response); */
 		
-		$orderno = '1608111100463607218';
+	/* 	$orderno = '1608111100463607218';
 		$erpSender = new erpSender();
 		var_dump($erpSender->CancelOrder($orderno));
+	 */
 	}
 	
 	function import()

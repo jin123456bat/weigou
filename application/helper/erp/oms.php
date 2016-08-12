@@ -213,6 +213,33 @@ class oms extends erp
 	}
 	
 	/**
+	 * 获取订单状态
+	 * @param unknown $suborder_id
+	 * @return mixed 成功返回订单状态，失败返回false
+	 */
+	function QueryOrderStatus($suborder_id)
+	{
+		$data = $this->model('suborder_store')->where('id=?',[$suborder_id])->find([
+			'concat(replace(suborder_store.date,"-",""),suborder_store.id) as CustomerCode',
+			$this->getParameter('platform').' as OrderFrom',
+		]);
+		if (!empty($data))
+		{
+			$xml = $this->createParameter($data, __FUNCTION__, __FUNCTION__);
+			$response = $this->sendXml($xml);
+			$response = xmlToArray($response);
+			if (isset($response['Order']['Status']) && $response['Order']['Status'] == 1)
+			{
+				if (isset($response['Order']['Data']['Order']) && !empty($response['Order']['Data']['Order']))
+				{
+					return $response['Order']['Data']['Order'];
+				}
+			}
+		}
+		return false;
+	}
+	
+	/**
 	 * 添加订单
 	 * @param unknown $suborder_id
 	 * @return boolean
