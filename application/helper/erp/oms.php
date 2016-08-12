@@ -280,7 +280,7 @@ class oms extends erp
 			'"" as SendOrderSn',//发货单号
 			'"YES" as OrderDeliver',//订单同步直接发货
 			'suborder_store.feeamount as ShippingFee',
-			'suborder_store.orderamount as OrderAmount',
+			'(suborder_store.goodsamount*0.8 + suborder_store.feeamount - suborder_store.discount) as OrderAmount',  //订单金额需要重新计算
 			'suborder_store.taxamount as TaxAmount',
 			'suborder_store.discount as DiscountAmount',
 			'concat(replace(suborder_store.date,"-",""),suborder_store.id) as CustomerCode',//这边是订单号
@@ -309,11 +309,14 @@ class oms extends erp
 		->select([
 		//	'product.id as GoodsCommonid',
 			'product.barcode as GoodsSerial',
-			'order_product.price as GoodsPayPrice',
-			'order_product.num as GoodsNum',
+			//'order_product.price as GoodsPayPrice',
+			'(product.inprice * 0.8) as GoodsPayPrice',//商品单价
+			'(order_product.num * product.selled) as GoodsNum',//商品数量
 		]);
 		
 		$data['GoodsList']['Goods'] = $product;
+		
+		file_put_contents('./oms_debug.txt', json_encode($data));
 		
 		//支付信息
 		$data['PayInfo'] = array(

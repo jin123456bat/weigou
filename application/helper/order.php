@@ -783,16 +783,18 @@ class order extends base
 				$product = $this->model('order')
 				->table('order_package','left join','order_package.orderno=order.orderno')
 				->table('order_product','left join','order_package.id=order_product.package_id')
+				->table('product','left join','product.id=order_product.pid')
 				->where('order.orderno=?',[$orderno])
 				->select([
 					'order_product.pid',
 					'order_product.num',
-					'order_product.content'
+					'order_product.content',
+					'product.selled',
 				]);
 				$productHelper = new \application\helper\product();
 				foreach ($product as $p)
 				{
-					if(!$productHelper->increaseStock($p['pid'], $p['content'], $p['num']))
+					if(!$productHelper->increaseStock($p['pid'], $p['content'], $p['num'] * $p['selled']))
 					{
 						if ($transaction)
 						{

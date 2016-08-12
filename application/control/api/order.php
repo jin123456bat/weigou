@@ -130,7 +130,10 @@ class order extends common
 			//减少库存
 			foreach ($product as $p)
 			{
-				if(!$productHelper->increaseStock($p['id'], $p['content'], -$p['num']))
+				$selled = $this->model('product')->where('id=?',[$p['id']])->find('selled');
+				$selled = isset($selled['selled']) && !empty($selled['selled'])?$selled['selled']:1;
+				
+				if(!$productHelper->increaseStock($p['id'], $p['content'], -$p['num']*$selled))
 				{
 					$this->model('order')->rollback();
 					return new json(json::PARAMETER_ERROR,'库存不足');
