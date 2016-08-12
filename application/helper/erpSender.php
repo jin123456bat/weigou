@@ -174,6 +174,8 @@ class erpSender extends base
 									'erptime' => $_SERVER['REQUEST_TIME'],
 								]);
 								
+								$this->model('order_log')->add($orderno,"订单推送ERP成功");
+								
 								//成功的回调
 								$this->success($classname, json_encode([
 									'orderno'=>$orderno
@@ -186,6 +188,8 @@ class erpSender extends base
 								$this->failed($classname, json_encode([
 									'orderno'=>$orderno
 								]), __FUNCTION__, $class->getResponseString());
+								
+								$this->model('order_log')->add($orderno,$class->getResponseString());
 								
 								return false;
 							}

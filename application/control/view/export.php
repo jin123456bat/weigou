@@ -165,7 +165,7 @@ class export extends view
 				'erp'=>1,
 				'erp_time'=>$_SERVER['REQUEST_TIME']
 			]);
-			$this->model('order_log')->add($orderno,'订单已经推到供应商，准备发货');
+			$this->model('order_log')->add($orderno,'订单导出');
 		}
 		
 		$template = ROOT.'/extends/PHPExcel/order.xlsx';

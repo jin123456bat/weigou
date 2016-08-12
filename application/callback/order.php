@@ -138,8 +138,6 @@ class order extends base
 			}
 		}
 		
-		
-		
 		$this->model('order_log')->add($orderno,'订单退款成功');
 		
 		return true;

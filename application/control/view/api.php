@@ -198,6 +198,7 @@ class api extends view
 					'way_type' => 3,
 					'way_time' => $_SERVER['REQUEST_TIME']
 				]);
+				$this->model('order_log')->add($orderno,"订单通过OMS获取发货状态成功");
 			}
 			else
 			{
