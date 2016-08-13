@@ -128,6 +128,9 @@
                                                     <a href="#tab_prototype" data-toggle="tab"> 属性 </a>
                                                 </li>
                                                 <li>
+                                                    <a href="#tab_bind" data-toggle="tab"> 捆绑 </a>
+                                                </li>
+                                                <li>
                                                     <a href="#tab_images" data-toggle="tab"> 图像 </a>
                                                 </li>
                                                 <li>
@@ -135,6 +138,41 @@
                                                 </li>
                                             </ul>
                                             <div class="tab-content">
+                                                <div class="tab-pane" id="tab_bind">
+                                                    <div class="form-body">
+                                                        <div class="form-group">
+                                                            <table class="table" id="BindTable">
+                                                                <thead>
+                                                                    <th class="radioPrototypeInBind display-none">规格</th><th>数量</th><th>进价</th><th>V0价</th><th>V1价</th><th>V2价</th><th>操作</th>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <td class="radioPrototypeInBind display-none">
+                                                                        <select class="form-control input-sm" name="content">
+                                                                        </select>
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type="text" name="num" class="form-control input-sm">
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type="text" name="inprice" class="form-control input-sm">
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type="text" name="price" class="form-control input-sm">
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type="text" name="v1price" class="form-control input-sm">
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type="text" name="v2price" class="form-control input-sm">
+                                                                    </td>
+                                                                    <td>
+                                                                        <button class="btn btn-sm blue createBindBtn">添加</button>
+                                                                    </td>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             	<div class="tab-pane" id="tab_ship">
                                                		<div class="form-body">
                                                     	<div class="form-group">
@@ -251,7 +289,9 @@
                                                                 <input type="text" class="form-control" maxlength="13" name="barcode" value="{%$product.barcode%}" placeholder=""> </div>
                                                         </div>
                                                         <div class="form-group">
-                                                            <label class="col-md-2 control-label">进价:</label>
+                                                            <label class="col-md-2 control-label">进价:
+                                                                <span class="required"> * </span>
+                                                            </label>
                                                             <div class="col-md-10">
                                                                 <input type="text" class="form-control" name="inprice" value="{%$product.inprice%}" placeholder=""> </div>
                                                         </div>
@@ -284,7 +324,9 @@
                                                                 <input type="text" class="form-control" name="v2price" value="{%$product.v2price%}" placeholder=""> </div>
                                                         </div>
                                                         <div class="form-group">
-                                                            <label class="col-md-2 control-label">售卖数:</label>
+                                                            <label class="col-md-2 control-label">售卖数:
+                                                                <span class="required"> * </span>
+                                                            </label>
                                                             <div class="col-md-10">
                                                                 <input type="text" class="form-control" name="selled" value="{%$product.selled%}" placeholder=""> </div>
                                                         </div>
@@ -656,6 +698,18 @@
 					'X-CSRF-TOKEN':'{%$x_csrf_token%}'
 				}
 			});
+
+            $('.createBindBtn').on('click',function(){
+                var tr = $(this).parents('tr').clone();
+                tr.find('.createBindBtn').addClass('removeBindBtn').html('删除').addClass('red').removeClass('blue').removeClass('createBindBtn');
+                tr.insertAfter($(this).parents('tr'));
+                return false;
+            });
+
+            $('#BindTable').on('click','.removeBindBtn',function(){
+                $(this).parents('tr').remove();
+                return false;
+            });
 			
 			{%if !empty($product_prototype)%}
 			
@@ -674,6 +728,12 @@
 			{%section name=product_image loop=$product_image%}
 			EcommerceProductsEdit.drawPhoto({%$product_image[product_image].id%},'{%$product_image[product_image].path%}','{%$product_image[product_image].name%}',{%$product_image[product_image].sort%},{%$product_image[product_image].position%});
 			{%/section%}
+
+
+            {%section name=bind loop=$bind%}
+            collection.setBind('{%$bind[bind].content%}','{%$bind[bind].num%}','{%$bind[bind].inprice%}','{%$bind[bind].price%}','{%$bind[bind].v1price%}','{%$bind[bind].v2price%}');
+            {%/section%}
+
 			
 			$('#prototype_radio').find('input[name=prototype_value]').on('itemAdded',function(event){
 				var exp = /[^0-9A-Za-z\u4E00-\u9FA5\uF900-\uFA2D]/;
@@ -972,24 +1032,25 @@
 						prototype:collection.getPrototypeTables(),
 						collection:collection.getCollectionTables(),
 						image:EcommerceProductsEdit.getPhoto(),
+                        bind:collection.getBind(),
 						
-						name:$('input[name=name]').val(),
+						name:$('#tab_general input[name=name]').val(),
 						description:window.um.getContent(),
-						short_description:$('textarea[name=short_description]').val(),
+						short_description:$('#tab_general textarea[name=short_description]').val(),
 						category:category,
-						sku:$('input[name=sku]').val(),
-						oldprice:$('input[name=oldprice]').val(),
-						price:$('input[name=price]').val(),
-						v1price:$('input[name=v1price]').val(),
-						v2price:$('input[name=v2price]').val(),
-						auto_stock:$('#auto_stock:checked').length,
-						stock:$('input[name=stock]').val(),
-						auto_status:$('#auto_status:checked').length,
-						avaliabletime_from:$('#time_from').val(),
-						avaliabletime_to:$('#time_to').val(),
-						status:$('select[name=status]').val(),
-						outside:$('select[name=outside]').val(),
-						store:$('select[name=store]').val(),
+						sku:$('#tab_general input[name=sku]').val(),
+						oldprice:$('#tab_general input[name=oldprice]').val(),
+						price:$('#tab_general input[name=price]').val(),
+						v1price:$('#tab_general input[name=v1price]').val(),
+						v2price:$('#tab_general input[name=v2price]').val(),
+						auto_stock:$('#tab_general #auto_stock:checked').length,
+						stock:$('#tab_general input[name=stock]').val(),
+						auto_status:$('#tab_general #auto_status:checked').length,
+						avaliabletime_from:$('#tab_general #time_from').val(),
+						avaliabletime_to:$('#tab_general #time_to').val(),
+						status:$('#tab_general select[name=status]').val(),
+						outside:$('#tab_general select[name=outside]').val(),
+						store:$('#tab_general select[name=store]').val(),
 						postTaxNo:$('select[name=postTaxNo]').val(),
 						package:$('select[name=package]').val(),
 						origin:$('select[name=origin]').val(),
@@ -1009,9 +1070,9 @@
 						fee_province:fee_province,
 						ztax:$('select[name=ztax]').val(),
 						barcode:$('input[name=barcode]').val(),
-						inprice:$('input[name=inprice]').val(),
+						inprice:$('#tab_general input[name=inprice]').val(),
 						down_reason:$('input[name=down_reason]').val(),
-						selled:$('input[name=selled]').val(),
+						selled:$('#tab_general input[name=selled]').val(),
                         MeasurementUnit:$('select[name=MeasurementUnit]').val(),
 					};
 				}

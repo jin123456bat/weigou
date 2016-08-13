@@ -565,7 +565,9 @@ class admin extends view
             $category = $this->model('category')->fetchAll($filter);
             $this->assign('category', $category);
 
-
+            $bind = $this->model('bind')->where('pid=?',[$id])->select();
+			$this->assign('bind', $bind);
+            
             $filter = [
                 'isdelete' => 0,
                 'parameter' => 'store.id,store.name',

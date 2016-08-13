@@ -64,10 +64,11 @@ class index extends view
 		/* $response = $erpSender->doAction(2, 'QueryOrderStatus',[314]);
 		var_dump($response); */
 		
-	/* 	$orderno = '1608111100463607218';
+		
+		$orderno = '16081312242824166096';
 		$erpSender = new erpSender();
 		var_dump($erpSender->CancelOrder($orderno));
-	 */
+	 
 	}
 	
 	function import()

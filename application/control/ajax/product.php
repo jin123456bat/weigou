@@ -34,6 +34,24 @@ class product extends ajax
 			}
 		}
 		
+		if (floatval($product['inprice']) == 0)
+		{
+			return new json(json::PARAMETER_ERROR,'进价不能为0');
+		}
+		if (empty($product['barcode']))
+		{
+			return new json(json::PARAMETER_ERROR,'条形码不能为空');
+		}
+		if (intval($product['selled'])<=0)
+		{
+			return new json(json::PARAMETER_ERROR,'售卖数不能为空');
+		}
+		
+		if($this->model('product')->where('barcode=? and isdelete=?',[$product['barcode'],0])->find())
+		{
+			return new json(json::PARAMETER_ERROR,'存在相同条形码的商品');
+		}
+		
 		if($this->model('product')->insert($product))
 		{
 			$product_id = $this->model('product')->lastInsertId();
@@ -54,7 +72,6 @@ class product extends ajax
 					}
 				}
 			}
-			
 			
 			$hasListImage = false;
 			if (is_array($this->post('image')) && !empty($this->post('image')))
@@ -119,9 +136,6 @@ class product extends ajax
 						'v2price' => $collection['v2price'],
 						'stock' => $collection['stock'],
 						'sku' => $collection['sku'],
-						'barcode' => $collection['barcode'],
-						'selled' => $collection['selled'],
-						'inprice' => $collection['inprice'],
 						'logo' => empty($collection['logo'])?NULL:$collection['logo'],
 						'deletetime' => 0,
 						'createtime' => $_SERVER['REQUEST_TIME'],
@@ -146,6 +160,35 @@ class product extends ajax
 					{
 						$this->model('province')->rollback();
 						return new json(json::PARAMETER_ERROR,'添加配送城市失败');
+					}
+				}
+			}
+			
+			if (is_array($this->post('bind')) && !empty($this->post('bind')))
+			{
+				foreach ($this->post('bind') as $bind)
+				{
+					if (empty($bind['num']) || empty($bind['price']) || empty($bind['inprice']) || empty($bind['v1price']) || empty($bind['v2price']))
+					{
+						continue;
+					}
+					if(!empty($this->model('bind')->where('pid=? and content=? and num=?',[$product_id,$bind['content'],$bind['num']])->find()))
+					{
+						$this->model('product')->rollback();
+						return new json(json::PARAMETER_ERROR,'无法捆绑相同数量的商品');
+					}
+					if (!$this->model('bind')->insert([
+						'pid' => $product_id,
+						'content' => $bind['content'],
+						'num'=>$bind['num'],
+						'inprice' => $bind['inprice'],
+						'price' => $bind['price'],
+						'v1price' => $bind['v1price'],
+						'v2price' => $bind['v2price'],
+					]))
+					{
+						$this->model('product')->rollback();
+						return new json(json::PARAMETER_ERROR,'商品捆绑添加失败');
 					}
 				}
 			}
@@ -369,6 +412,24 @@ class product extends ajax
 			}
 		}
 		
+		if (floatval($product['inprice']) == 0)
+		{
+			return new json(json::PARAMETER_ERROR,'进价不能为0');
+		}
+		if (empty($product['barcode']))
+		{
+			return new json(json::PARAMETER_ERROR,'条形码不能为空');
+		}
+		if (intval($product['selled'])<=0)
+		{
+			return new json(json::PARAMETER_ERROR,'售卖数不能为空');
+		}
+		
+		if($this->model('product')->where('id!=? and barcode=? and isdelete=?',[$product_id,$product['barcode'],0])->find())
+		{
+			return new json(json::PARAMETER_ERROR,'存在相同条形码的商品');
+		}
+		
 		if($this->model('product')->where('id=?',[$product_id])->update($product,'',true))
 		{
 			$this->model('category_product')->where('pid=?',[$product_id])->delete();
@@ -464,9 +525,6 @@ class product extends ajax
 						'v2price' => $collection['v2price'],
 						'stock' => $collection['stock'],
 						'sku' => $collection['sku'],
-						'barcode' => $collection['barcode'],
-						'selled' => $collection['selled'],
-						'inprice' => $collection['inprice'],
 						'logo' => empty($collection['logo'])?NULL:$collection['logo'],
 						'deletetime' => 0,
 						'createtime' => $_SERVER['REQUEST_TIME'],
@@ -493,6 +551,38 @@ class product extends ajax
 					{
 						$this->model('province')->rollback();
 						return new json(json::PARAMETER_ERROR,'添加配送城市失败');
+					}
+				}
+			}
+			
+			$this->model('bind')->where('pid=?',[$product_id])->delete();
+			if (is_array($this->post('bind')) && !empty($this->post('bind')))
+			{
+				foreach ($this->post('bind') as $bind)
+				{
+					if (empty($bind['num']) || empty($bind['price']) || empty($bind['inprice']) || empty($bind['v1price']) || empty($bind['v2price']))
+					{
+						continue;
+					}
+					
+					if(!empty($this->model('bind')->where('pid=? and content=? and num=?',[$product_id,$bind['content'],$bind['num']])->find()))
+					{
+						$this->model('product')->rollback();
+						return new json(json::PARAMETER_ERROR,'无法捆绑相同数量的商品');
+					}
+					
+					if (!$this->model('bind')->insert([
+						'pid' => $product_id,
+						'content' => $bind['content'],
+						'num'=>$bind['num'],
+						'inprice' => $bind['inprice'],
+						'price' => $bind['price'],
+						'v1price' => $bind['v1price'],
+						'v2price' => $bind['v2price'],
+					]))
+					{
+						$this->model('product')->rollback();
+						return new json(json::PARAMETER_ERROR,'商品捆绑添加失败');
 					}
 				}
 			}

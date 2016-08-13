@@ -122,6 +122,12 @@ class order extends ajax
 			}
 		}
 		
+		
+		if (floatval($order['orderamount']) == 0)
+		{
+			return new json(json::PARAMETER_ERROR,'订单创建失败');
+		}
+		
 		$this->model('order')->transaction();
 	
 		if($this->model('order')->insert($order))

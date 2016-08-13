@@ -131,6 +131,9 @@
                                                     <a href="#tab_prototype" data-toggle="tab"> 属性 </a>
                                                 </li>
                                                 <li>
+                                                    <a href="#tab_bind" data-toggle="tab"> 捆绑 </a>
+                                                </li>
+                                                <li>
                                                     <a href="#tab_images" data-toggle="tab"> 图像 </a>
                                                 </li>
                                                 <li>
@@ -138,6 +141,41 @@
                                                 </li>
                                             </ul>
                                             <div class="tab-content">
+                                                <div class="tab-pane" id="tab_bind">
+                                                    <div class="form-body">
+                                                        <div class="form-group">
+                                                            <table class="table" id="BindTable">
+                                                                <thead>
+                                                                    <th class="radioPrototypeInBind display-none">规格</th><th>数量</th><th>进价</th><th>V0价</th><th>V1价</th><th>V2价</th><th>操作</th>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <td class="radioPrototypeInBind display-none">
+                                                                        <select class="form-control input-sm" name="content">
+                                                                        </select>
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type="text" name="num" class="form-control input-sm">
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type="text" name="inprice" class="form-control input-sm">
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type="text" name="price" class="form-control input-sm">
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type="text" name="v1price" class="form-control input-sm">
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type="text" name="v2price" class="form-control input-sm">
+                                                                    </td>
+                                                                    <td>
+                                                                        <button class="btn btn-sm blue createBindBtn">添加</button>
+                                                                    </td>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             	<div class="tab-pane" id="tab_ship">
                                                		<div class="form-body">
                                                     	<div class="form-group">
@@ -253,7 +291,9 @@
                                                                 <input type="text" class="form-control" maxlength="13" name="barcode" placeholder=""> </div>
                                                         </div>
                                                         <div class="form-group">
-                                                            <label class="col-md-2 control-label">进价:</label>
+                                                            <label class="col-md-2 control-label">进价:
+                                                                <span class="required"> * </span>
+                                                            </label>
                                                             <div class="col-md-10">
                                                                 <input type="text" class="form-control" name="inprice" placeholder=""> </div>
                                                         </div>
@@ -286,7 +326,9 @@
                                                                 <input type="text" class="form-control" name="v2price" placeholder=""> </div>
                                                         </div>
                                                         <div class="form-group">
-                                                            <label class="col-md-2 control-label">售卖数:</label>
+                                                            <label class="col-md-2 control-label">售卖数:
+                                                                <span class="required"> * </span>
+                                                            </label>
                                                             <div class="col-md-10">
                                                                 <input type="text" class="form-control" name="selled" placeholder=""> </div>
                                                         </div>
@@ -556,7 +598,7 @@
 														<table class="table table-hover" id="prototype_container">
 														</table>
 														<table class="table table-hover" id="prototype_collection">
-															<thead><tr><th>属性</th><th>v0价格</th><th>v1价格</th><th>v2价格</th><th>库存</th><th>SKU</th><th>条形码</th><th>起售数</th><th>进价</th><th>图像</th><th>可用</th></tr></thead>
+															<thead><tr><th>属性</th><th>v0价格</th><th>v1价格</th><th>v2价格</th><th>库存</th><th>编码</th><th>图像</th><th>可用</th></tr></thead>
 															<tbody>
 															</tbody>
 														</table>
@@ -659,7 +701,18 @@
 					'X-CSRF-TOKEN':'{%$x_csrf_token%}'
 				}
 			});
-		
+
+            $('.createBindBtn').on('click',function(){
+                var tr = $(this).parents('tr').clone();
+                tr.find('.createBindBtn').addClass('removeBindBtn').html('删除').addClass('red').removeClass('blue').removeClass('createBindBtn');
+                tr.insertAfter($(this).parents('tr'));
+                return false;
+            });
+
+            $('#BindTable').on('click','.removeBindBtn',function(){
+                $(this).parents('tr').remove();
+                return false;
+            });
 		
 			$('#prototype_radio').find('input[name=prototype_value]').on('itemAdded',function(event){
 				var exp = /[^0-9A-Za-z\u4E00-\u9FA5\uF900-\uFA2D]/;
@@ -951,16 +1004,17 @@
 						prototype:collection.getPrototypeTables(),
 						collection:collection.getCollectionTables(),
 						image:EcommerceProductsEdit.getPhoto(),
+                        bind:collection.getBind(),
 						
-						name:$('input[name=name]').val(),
+						name:$('#tab_general input[name=name]').val(),
 						description:window.um.getContent(),
 						short_description:$('textarea[name=short_description]').val(),
 						category:category,
-						sku:$('input[name=sku]').val(),
-						oldprice:$('input[name=oldprice]').val(),
-						price:$('input[name=price]').val(),
-						v1price:$('input[name=v1price]').val(),
-						v2price:$('input[name=v2price]').val(),
+						sku:$('#tab_general input[name=sku]').val(),
+						oldprice:$('#tab_general input[name=oldprice]').val(),
+						price:$('#tab_general input[name=price]').val(),
+						v1price:$('#tab_general input[name=v1price]').val(),
+						v2price:$('#tab_general input[name=v2price]').val(),
 						auto_stock:$('#auto_stock:checked').length,
 						stock:$('input[name=stock]').val(),
 						auto_status:$('#auto_status:checked').length,
@@ -980,22 +1034,23 @@
 						purpose:$('input[name=purpose]').val(),
 						firstUnit:$('select[name=firstUnit]').val(),
 						productRecordNo:$('input[name=productRecordNo]').val(),
-						sort:$('input[name=sort]').val(),
-						tags:$('input[name=tags]').val(),
+						sort:$('#tab_general input[name=sort]').val(),
+						tags:$('#tab_general input[name=tags]').val(),
 						publish:$('select[name=publish]').val(),
 						freetax:$('input[name=freetax]:checked').length,
 						fee:$('input[name=fee]').val(),
 						fee_province:fee_province,
 						ztax:$('select[name=ztax]').val(),
 						barcode:$('input[name=barcode]').val(),
-						inprice:$('input[name=inprice]').val(),		
-						selled:$('input[name=selled]').val(),
+						inprice:$('#tab_general input[name=inprice]').val(),		
+						selled:$('#tab_general input[name=selled]').val(),
 						down_reason:$('input[name=down_reason]').val(),
                         MeasurementUnit:$('select[name=MeasurementUnit]').val(),
 					};
 				}
 				catch(e)
 				{
+                    console.log(e);
 					alert('系统异常');
 				}
 				
