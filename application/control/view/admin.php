@@ -742,8 +742,8 @@ class admin extends view
                 //echo "test2\t\n";
                 //循环向数据库插入 生成表格日志
 
-                header("Content-type:application/vnd.ms-excel");
-                header("Content-Disposition:filename=test.xls");
+                header("Content-type:application/vnd.ms-excel;charset=gb2312");
+                header("Content-Disposition:filename=价格导入反馈" . date("Y-m-d H:i:s", time()) . ".xls");
                 foreach ($data as $d) {
                     //向数据去获取当前数据 进价 v0 v1 v2 原价 商品id sku 起售数量
                     $product = $this->model("product")->where("barcode=?", [$d[0]])->find();
@@ -756,7 +756,7 @@ class admin extends view
                         //存在
                         //修改价格 数量
                         if ($d[2] == 0 || empty($d[2]) || $d[3] == 0 || empty($d[3]) || $d[4] == 0 || empty($d[4])) {
-                            $content = "修改失败\t条形码:" . $d[0] . "\t价格不能为0或‘’\n";
+                            $content = "修改失败\t条形码:" . $d[0] . "\t sku:" . $product['sku'] . "价格不能为0或‘’\n";
                             echo $content;
 
                         } else {
@@ -791,7 +791,7 @@ class admin extends view
                                     "created" => date("Y-m-d H:i:s", time())
                                 ]);
                             } else {
-                                $content = "修改失败\t条形码:" . $d[0] . "\n";
+                                $content = "修改失败\t条形码:" . $d[0] . " \t sku:" . $product['sku'] . "\n";
                                 echo $content;
                             }
 
@@ -835,8 +835,8 @@ class admin extends view
 //循环向数据库插入 生成表格日志
 
 
-                header("Content-type:application/vnd.ms-excel");
-                header("Content-Disposition:filename=test.xls");
+                header("Content-type:application/vnd.ms-excel;charset=gb2312");
+                header("Content-Disposition:filename=数量导入反馈" . date("Y-m-d H:i:s", time()) . ".xls");
                 foreach ($data as $d) {
                     //向数据去获取当前数据 进价 v0 v1 v2 原价 商品id sku 起售数量
                     $product = $this->model("product")->where("barcode=?", [$d[0]])->find();
@@ -869,7 +869,7 @@ class admin extends view
                                 "created" => date("Y-m-d H:i:s", time())
                             ]);
                         } else {
-                            $content = "修改失败\t条形码:" . $d[0] . "\n";
+                            $content = "修改失败\t条形码:" . $d[0] . "\tsku :" . $product['sku'] . "\n";
                             echo $content;
                         }
                     }

@@ -81,8 +81,10 @@
                 </div>
                 <div class="g_flag clearfix">
                     <div class="flag" {%if isset($product.origin.logo) && !empty($product.origin.logo)%}style="background-image:url({%$product.origin.logo%});float: left;" {%/if%}>{%$product.origin.name%}进口</div>
+                {%if $product.outside==2 || $product.outside==3%}
                     <div class="flag" style="margin-left: 10px; float: left;">跨境商品</div>
                     <a class="g_tips">跨境小提示</a>
+                {%/if%}
                 </div>
             </div>
             <div class="goods_info">商品说明:<span class="pink">·</span><span>保税区发货</span><span class="pink">·</span><span>配送地区</span><span class="pink">·</span><span>温馨提示</span><span>></span></div>
@@ -111,22 +113,26 @@
         </div>
         <div class="tishi_hasdown">别拉了，到底了~</div>
     </div>
+
+    {%if ($product.outside==2 || $product.outside==3) && $product.freetax==0%}
     //提示情况一
     <div class="g_tips_mask" id="g_tips_mask1" style="display:none;">
         <ul class="gtm_details ths  ">
-            <li>· 杭州保税区发货</li>
-            <li>· 适用税率：跨境电商税9.1%</li>
-            <li>· 此售价包含跨境电商税</li>
+            <li>· {%$product.store%}</li>
+            <li>· 适用税率：跨境电商税{%$ztax%}%</li>
+
         </ul>
     </div>
+    {%else%}
     //提示情况二
     <div class="g_tips_mask" id="g_tips_mask2" style="display:none;">
         <ul class="gtm_details ths  ">
-            <li>· 杭州保税区发货</li>
-            <li>· 适用税率：跨境电商税9.1%</li>
+            <li>· {%$product.store%}</li>
+            <li>· 适用税率：跨境电商税{%$ztax%}%</li>
             <li>· 此商品包税</li>
         </ul>
     </div>
+    {%/if%}
     <div class="buy_box flex_box">
         <div class="flex">
             <a class="half" href="http://kefu.easemob.com/webim/im.html?tenantId=16641&hide=false&sat=false&user=&referrer={%url c=mobile a=product id=$product.id urlencode=1%}&show=true">
@@ -134,18 +140,24 @@
                 <div class="ww">客服</div>
             </a>
             <a class="half" href="{%url c=mobile a=cart%}">
-                <div class="car"><span class="car_num">1</span></div>
+
+                <div class="car">{%if $num>0%}<span class="car_num">{%$num%}</span>{%/if%}</div>
                 <div class="ww">购物车</div>
             </a>
         </div>
+        {%if $product_status==1 && $product.stock>10%}
         <div class="flex {%if $product.outside==2 || $product.outside==3%}disabled{%/if%}">
             <a class="add_to_cart" {%if $product.outside==2 || $product.outside==3%}style="color: #F0F0F0; background-color: grey;" {%/if%}>加入购物车</a>
         </div>
         <div class="flex">
             <a class="buy_now">立即购买</a>
         </div>
-        <div class="g_hasdown" style="display:none;">产品已下架</div>
-        <div class="g_notenough" style="display:none;">库存不足</div>
+        {%/if%}
+        {%if $product_status==0%}
+        <div class="g_hasdown" >产品已下架</div>
+        {%else if $product.stock<=10%}
+        <div class="g_notenough" >库存不足</div>
+        {%/if%}
     </div>
     <div class="message" style="width: 100%; height: 100%; position: fixed; left: 0; top: 0; background-color: rgba(0,0,0,0.5); z-index: 1000; display:none;">
         <div class="message_dialog" style="background-color: #fff; position: absolute; bottom: 0; left: 0; width: 100%;">
@@ -460,11 +472,12 @@
 <script type="text/javascript">
 //跨境提示
 $('.g_tips').click(function() {
-    $('#g_tips_mask2').show();
+    $('.g_tips_mask').show();
 })
 $('.g_tips_mask').click(function(e) {
     $('.g_tips_mask').hide();
 })
+/*
 $('.goods_info').click(function() {
     $('#g_tips_mask2').show();
 })
@@ -472,7 +485,7 @@ $('.g_tips_mask').click(function(e) {
     $('.g_tips_mask').hide();
 })
 
-
+*/
 
 $('#registerBtn').on('click', function() {
     if (window.localStorage) {
