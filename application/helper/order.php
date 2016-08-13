@@ -33,8 +33,8 @@ class order extends base
 	}
 	
 	/**
-	 * 按照仓库拆分订单
-	 * @return 0订单不存在  1拆单成功 2已经拆单过了 3无需拆单 4系统繁忙
+	 * 按照仓库拆分订单  增加了退款和订单状态判断，增加了订单中商品退款的判断
+	 * @return 0订单不存在  1拆单成功 2已经拆单过了 3无需拆单 4系统繁忙 5由于订单状态原因拆单失败
 	 */
 	public function departByStore($orderno)
 	{
@@ -43,6 +43,11 @@ class order extends base
 		if(empty($order))
 		{
 			return 0;
+		}
+		
+		if ($order['pay_status'] == 2 || $order['pay_status'] == 3 || $order['status']==0)
+		{
+			return 5;
 		}
 		
 		//判断是否已经拆分过了
@@ -69,6 +74,7 @@ class order extends base
 				$product = $this->model('order_package')
 				->table('order_product','left join','order_product.package_id=order_package.id')
 				->where('order_package.orderno=?',[$orderno])
+				->where('order_product.refund=?',[0])//商品必须没有退款
 				->where('order_package.store_id=?',[$st])
 				->select(['order_product.*']);
 				
