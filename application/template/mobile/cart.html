@@ -33,7 +33,7 @@
 </div>
 <div id="content">
     <!--无商品-->
-    {%if !$store%}
+    {%if !isset($store)%}
     <div class="no_goods" style="display: none;">
         <div class="pic" style="padding-top:120px;">
             <img src="{%$VIEW_ROOT%}/mobile/image/no_goods.png">
