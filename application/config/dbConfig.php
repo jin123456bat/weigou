@@ -45,7 +45,7 @@ class dbConfig extends config
 	 *
 	 * @var unknown
 	 */
-	public $db_password = 'ZJyxlv365';
+	public $db_password = '';
 
 	/**
 	 * 持久化连接
