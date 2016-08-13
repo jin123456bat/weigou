@@ -56,7 +56,7 @@
                 <h3 class="uppercase">基础</h3>
             </li>
 			
-			<li class="nav-item {%if $smarty.get.a==recycle || $smarty.get.a==product || $smarty.get.a==create_product || $smarty.get.a==category || $smarty.get.a==store || $smarty.get.a==edit_product || $smarty.get.a==product_top%}active open{%/if%}">
+			<li class="nav-item {%if $smarty.get.a==recycle || $smarty.get.a==product || $smarty.get.a==product_up || $smarty.get.a==create_product || $smarty.get.a==category || $smarty.get.a==store || $smarty.get.a==edit_product || $smarty.get.a==product_top%}active open{%/if%}">
 				<a href="javascript:;" class="nav-link nav-toggle">
                     <i class="icon-graph"></i>
                     <span class="title">商品管理</span>
@@ -91,6 +91,12 @@
                         <a href="{%url c=admin a=product_top%}" class="nav-link ">
                             <i class="icon-pin"></i>
                             <span class="title">首页商品</span>
+                        </a>
+                    </li>
+                    <li class="nav-item  {%if $smarty.get.a==product_up%}active{%/if%}">
+                        <a href="{%url c=admin a=product_up%}" class="nav-link ">
+                            <i class="icon-pin"></i>
+                            <span class="title">商品价格/库存同步</span>
                         </a>
                     </li>
                     <li class="nav-item  {%if $smarty.get.a==recycle%}active{%/if%}">
@@ -233,11 +239,11 @@
                     </li>
                 </ul>
             </li>
-            <li class="nav-item {%if $smarty.get.a==create_question ||$smarty.get.a==edit_question ||$smarty.get.a==question || $smarty.get.a==carousel || $smarty.get.a==page || $smarty.get.a==createPage || $smarty.get.a==editPage%}active open{%/if%} ">
+            <li class="nav-item {%if $smarty.get.a==create_question ||$smarty.get.a==editnotice ||$smarty.get.a==notice ||$smarty.get.a==edit_question ||$smarty.get.a==question || $smarty.get.a==carousel || $smarty.get.a==page || $smarty.get.a==createPage || $smarty.get.a==editPage%}active open{%/if%} ">
                 <a href="javascript:;" class="nav-link nav-toggle">
                     <i class="icon-paper-plane"></i>
                     <span class="title">页面</span>
-                    <span class="arrow {%if $smarty.get.a==create_question ||$smarty.get.a==edit_question ||$smarty.get.a==question || $smarty.get.a==carousel || $smarty.get.a==page || $smarty.get.a==createPage || $smarty.get.a==editPage%}open{%/if%}"></span>
+                    <span class="arrow {%if $smarty.get.a==create_question ||$smarty.get.a==editnotice ||$smarty.get.a==notice ||$smarty.get.a==edit_question ||$smarty.get.a==question || $smarty.get.a==carousel || $smarty.get.a==page || $smarty.get.a==createPage || $smarty.get.a==editPage%}open{%/if%}"></span>
                 </a>
                 <ul class="sub-menu">
                     <li class="nav-item  {%if $smarty.get.a==carousel%}open{%/if%}">
@@ -245,9 +251,15 @@
                             <span class="title">滚动图</span>
                         </a>
                     </li>
+
                     <li class="nav-item  {%if $smarty.get.a==page || $smarty.get.a==createPage || $smarty.get.a==editPage%}open{%/if%}">
                         <a href="{%url c=admin a=page%}" class="nav-link ">
                             <span class="title">静态页</span>
+                        </a>
+                    </li>
+                    <li class="nav-item  {%if $smarty.get.a==notice  || $smarty.get.a==editnotice%}open{%/if%}">
+                        <a href="{%url c=admin a=notice%}" class="nav-link ">
+                            <span class="title">公告</span>
                         </a>
                     </li>
                     <li class="nav-item  {%if $smarty.get.a==create_question ||$smarty.get.a==edit_question ||$smarty.get.a==question%}open{%/if%}">

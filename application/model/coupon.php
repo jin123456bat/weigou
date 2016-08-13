@@ -7,7 +7,7 @@ class couponModel extends model
 	{
 		parent::__construct($table);
 	}
-	
+
 	function fetch(array $filter = [])
 	{
 		if (isset($filter['isdelete']))
@@ -24,7 +24,7 @@ class couponModel extends model
 		}
 		return parent::fetch($filter);
 	}
-	
+
 	function datatables($post)
 	{
 		$this->table('user','left join','user.id=coupon.uid');
@@ -104,7 +104,7 @@ class couponModel extends model
 		}
 		return $this->select($parameter);
 	}
-	
+
 	function count()
 	{
 		$result = $this->select('count(*)');

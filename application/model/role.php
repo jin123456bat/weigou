@@ -86,6 +86,7 @@ class roleModel extends model
 	 */
 	function checkPower($groupId,$model,$power)
 	{
+
 		$result = $this->where('id=?',array($groupId))->limit(1)->find();
 		if(isset($result[$model]))
 		{

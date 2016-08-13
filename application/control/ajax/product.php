@@ -498,7 +498,7 @@ class product extends ajax
 			}
 			
 			//顺便清空购物车中的相关商品
-			$this->model('cart')->where('pid=?',[$product_id])->delete();
+			//$this->model('cart')->where('pid=?',[$product_id])->delete();
 				
 			$this->model('product')->commit();
 			return new json(json::OK,NULL,$product_id);
