@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>淘微购</title>
+    <meta name="viewport"
+          content="width=device-width, height=device-height, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=0"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-touch-fullscreen" content="yes"/>
+    <meta name="full-screen" content="yes"/>
+    <meta name="screen-orientation" content="portrait"/>
+    <meta name="x5-fullscreen" content="true"/>
+    <link rel="stylesheet" type="text/css" href="{%$VIEW_ROOT%}/mobile/css/reset.css">
+    <link rel="stylesheet" type="text/css" href="{%$VIEW_ROOT%}/mobile/css/style.css">
+    <link rel="stylesheet" type="text/css" href="{%$VIEW_ROOT%}/mobile/css/other.css">
+    <script type="text/javascript" src="{%$VIEW_ROOT%}/mobile/js/jquery-1.8.3.min.js"></script>
+    <script type="text/javascript" src="{%$VIEW_ROOT%}/mobile/js/resolution.js"></script>
+    <script type="text/javascript" src="{%$VIEW_ROOT%}/mobile/js/js.js"></script>
+</head>
+<body style="background-color: #e7e7e7;">
+<div id="header">
+    <header>
+        <a href="{%url c=mobile a=coupon%}" class="left_btn"><i class="icon back"></i></a>
+
+        <h1>失效优惠券</h1>
+    </header>
+</div>
+<div id="content" style="padding-top: 50px;">
+    <div class="coupon_box">
+        <div class="coupon">
+            {%section name=coupon loop=$coupon%}
+            <div class="item lightgray_bg">
+                <div class="tt">{%$coupon[coupon].name|truncate:30%}</div>
+
+                {%if $coupon[coupon].used==1%}
+                <div class="use"><img src="{%$VIEW_ROOT%}/mobile/image/hasgone.png" alt=""></div>
+                {%else%}
+                <div class="use"><img src="{%$VIEW_ROOT%}/mobile/image/hasgone.png" alt=""></div>
+                {%/if%}
+                <div style="cursor:pointer;" data-product-id="{%$coupon[coupon].product_id%}" class="right useCopupon ">
+                    <div class="quota">￥<span>{%$coupon[coupon].value|intval%}</span></div>
+                </div>
+                <div class="left">
+                    <div class="wd">{%if
+                        $coupon[coupon].max==0%}无使用限制{%else%}满{%$coupon[coupon].max|intval%}可使用{%/if%}
+                    </div>
+                    <div class="wd">有效期至：{%if
+                        $coupon[coupon].endtime==0%}无期限{%else%}{%$coupon[coupon].endtime|date_format:'Y-m-d'%}{%/if%}
+                    </div>
+                </div>
+            </div>
+            {%/section%}
+        </div>
+    </div>
+</div>
+{%include file='mobile/public/msg.html'%}
+<script type="text/javascript">
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': '{%$x_csrf_token%}'
+        }
+    });
+
+    $('.useCopupon').live('click', function () {
+        var product_id = $(this).data('product-id');
+        if (product_id != '' && product_id != null) {
+            window.open('{%url c=mobile a=product%}&id=' + product_id);
+        }
+        else {
+            window.open('{%url c=mobile a=index%}');
+        }
+        return false;
+    });
+
+    var unixtotime = function (unixTime, isFull, timeZone) {
+        if (typeof (timeZone) == 'number') {
+            unixTime = parseInt(unixTime) + parseInt(timeZone) * 60 * 60;
+        }
+        var time = new Date(unixTime * 1000);
+        var ymdhis = "";
+        ymdhis += time.getUTCFullYear() + ".";
+        ymdhis += (time.getUTCMonth() + 1) + ".";
+        ymdhis += time.getUTCDate();
+        if (isFull === true) {
+            ymdhis += " " + time.getUTCHours() + ":";
+            ymdhis += time.getUTCMinutes() + ":";
+            ymdhis += time.getUTCSeconds();
+        }
+        return ymdhis;
+    }
+
+    $('#submit').on('click', function () {
+        var couponno = $.trim($('#couponno').val());
+        $.post('{%url m=ajax c=coupon a=couponno%}', {couponno: couponno}, function (response) {
+            if (response.code == 1) {
+                var endtime = response.body.endtime;
+                if (endtime == 0) {
+                    endtime = '无期限';
+                }
+                else {
+                    endtime = unixtotime(endtime, false, 8);
+                }
+                var tpl = '<div class="item flex_box"><div class="left"><div class="tt">' + response.body.name.substr(0, 30) + '</div><div class="wd">满' + parseInt(response.body.max) + '可使用</div><div class="wd">有效期至：' + endtime + '</div></div><div class="right useCopupon red_bg" data-product-id="' + response.body.product_id + '"><div class="quota">￥<span>' + parseInt(response.body.value) + '</span></div><div class="use">立即使用</div></div></div>';
+                $('.coupon').append(tpl);
+            }
+            else {
+                msg(response.result);
+            }
+        });
+
+    });
+</script>
+</body>
+</html>
