@@ -1079,112 +1079,115 @@ class mobile extends view
         $uid = $userHelper->isLogin();
 
         if (!empty($uid)) {
+
             //筛选所有仓库
             $store = $this->model('cart')->table('product', 'left join', 'product.id=cart.pid')->table('store', 'left join', 'product.store=store.id')->where('cart.uid=?', [$uid])->groupby('store.id')->select('store.id,store.name');
             $storel = $store;
+
             $productHelper = new product();
+            if ($store) {
+                //用户信息
+                $user = $this->model('user')->where('id=?', [$uid])->find();
+                //在售商品
+                foreach ($store as &$st) {
+                    $product_filter = [
+                        'isdelete' => 0,
+                        'status' => 1,
+                        'uid' => $uid,
+                        'sort' => ['cart.time', 'asc'],
+                        'store' => $st['id'],
+                        'parameter' => [
+                            'product.id',
+                            'product.name',
+                            'cart.num',
+                            'product.price',
+                            'product.v1price',
+                            'product.v2price',
+                            'product.outside',//是否是海外商品  是海外商品的话显示税率
+                            'product.origin',
+                            'cart.content', //选择的属性
+                            'product.stock',
+                            'product.auto_stock',
+                            'product.freetax',
+                        ],
+                    ];
 
-            //用户信息
-            $user = $this->model('user')->where('id=?', [$uid])->find();
-            //在售商品
-            foreach ($store as &$st) {
-                $product_filter = [
-                    'isdelete' => 0,
-                    'status' => 1,
-                    'uid' => $uid,
-                    'sort' => ['cart.time', 'asc'],
-                    'store' => $st['id'],
-                    'parameter' => [
-                        'product.id',
-                        'product.name',
-                        'cart.num',
-                        'product.price',
-                        'product.v1price',
-                        'product.v2price',
-                        'product.outside',//是否是海外商品  是海外商品的话显示税率
-                        'product.origin',
-                        'cart.content', //选择的属性
-                        'product.stock',
-                        'product.auto_stock',
-                        'product.freetax',
-                    ],
-                ];
+                    $amount = 0;
+                    $tax = 0;
+                    //筛选出仓库下的商品
+                    $product = $this->model('cart')->fetchAll($product_filter);
+                    foreach ($product as &$p) {
+                        $p['origin'] = $this->model('country')->get($p['origin']);
+                        $p['image'] = $productHelper->getListImage($p['id']);
+                        $p['tax'] = $productHelper->getTaxFields($p['id']);
 
-                $amount = 0;
-                $tax = 0;
-                //筛选出仓库下的商品
-                $product = $this->model('cart')->fetchAll($product_filter);
-                foreach ($product as &$p) {
-                    $p['origin'] = $this->model('country')->get($p['origin']);
-                    $p['image'] = $productHelper->getListImage($p['id']);
-                    $p['tax'] = $productHelper->getTaxFields($p['id']);
-
-                    //规格价格替换
-                    if (!empty($p['content'])) {
-                        $collection_price = $this->model('collection')->get($p['id'], $p['content']);
-                        if (!empty($collection_price)) {
-                            if ($collection_price['available'] == 1) {
-                                $p['price'] = $collection_price['price'];
-                                $p['v1price'] = $collection_price['v1price'];
-                                $p['v2price'] = $collection_price['v2price'];
-                                $p['image'] = $this->model('upload')->get($collection_price['logo'], 'path');
-                                $p['stock'] = $collection_price['stock'];
+                        //规格价格替换
+                        if (!empty($p['content'])) {
+                            $collection_price = $this->model('collection')->get($p['id'], $p['content']);
+                            if (!empty($collection_price)) {
+                                if ($collection_price['available'] == 1) {
+                                    $p['price'] = $collection_price['price'];
+                                    $p['v1price'] = $collection_price['v1price'];
+                                    $p['v2price'] = $collection_price['v2price'];
+                                    $p['image'] = $this->model('upload')->get($collection_price['logo'], 'path');
+                                    $p['stock'] = $collection_price['stock'];
+                                }
                             }
                         }
-                    }
 
-                    //计算总价
-                    switch ($user['vip']) {
-                        case 0:
-                            $amount += $p['price'] * $p['num'];
-                            $tax += $productHelper->calculationTax($p['id'], $amount);
-                            break;
-                        case 1:
-                            $amount += $p['v1price'] * $p['num'];
-                            $tax += $productHelper->calculationTax($p['id'], $amount);
-                            break;
-                        case 2:
-                            $amount += $p['v2price'] * $p['num'];
-                            $tax += $productHelper->calculationTax($p['id'], $amount);
-                            break;
-                        default:
-                            $amount += $p['price'] * $p['num'];
-                            $tax += $productHelper->calculationTax($p['id'], $amount);
+                        //计算总价
+                        switch ($user['vip']) {
+                            case 0:
+                                $amount += $p['price'] * $p['num'];
+                                $tax += $productHelper->calculationTax($p['id'], $amount);
+                                break;
+                            case 1:
+                                $amount += $p['v1price'] * $p['num'];
+                                $tax += $productHelper->calculationTax($p['id'], $amount);
+                                break;
+                            case 2:
+                                $amount += $p['v2price'] * $p['num'];
+                                $tax += $productHelper->calculationTax($p['id'], $amount);
+                                break;
+                            default:
+                                $amount += $p['price'] * $p['num'];
+                                $tax += $productHelper->calculationTax($p['id'], $amount);
+                        }
                     }
+                    $st['product'] = $product;//商品内容
+                    $st['amount'] = $amount;//商品总价
+                    $st['tax'] = $tax;//实收税款
+                    $st['discount'] = 0;//活动优惠? 这个价格怎么出来的?
                 }
-                $st['product'] = $product;//商品内容
-                $st['amount'] = $amount;//商品总价
-                $st['tax'] = $tax;//实收税款
-                $st['discount'] = 0;//活动优惠? 这个价格怎么出来的?
-            }
-            $this->assign('store', $store);
-            //下架商品
 
-            $cartl = $this->model("cart")
-                ->table('product', 'left join', 'product.id=cart.pid')
-                ->where('cart.uid=? and product.status=0', [$uid])->select([
-                    "cart.num",
-                    "product.name",
-                    "product.id",
-                    "product.id",
-                    "product.price",
-                    "product.v1price",
-                    "product.v2price",
-                ]);
-            foreach ($cartl as &$p) {
-                $p['image'] = $productHelper->getListImage($p['id']);
-            }
+                $this->assign('store', $store);
+                //下架商品
+
+                $cartl = $this->model("cart")
+                    ->table('product', 'left join', 'product.id=cart.pid')
+                    ->where('cart.uid=? and product.status=0', [$uid])->select([
+                        "cart.num",
+                        "product.name",
+                        "product.id",
+                        "product.id",
+                        "product.price",
+                        "product.v1price",
+                        "product.v2price",
+                    ]);
+                foreach ($cartl as &$p) {
+                    $p['image'] = $productHelper->getListImage($p['id']);
+                }
 
 
-            $this->assign('cartl', $cartl);
+                $this->assign('cartl', $cartl);
 
-            $this->assign('province', $this->model('province')->select());
+                $this->assign('province', $this->model('province')->select());
 
-            $filter = [
-                'uid' => $uid,
-                'sort' => [['host', 'desc'], ['id', 'desc']],
-                'isdelete' => 0,
-                'parameter' => 'address.id,
+                $filter = [
+                    'uid' => $uid,
+                    'sort' => [['host', 'desc'], ['id', 'desc']],
+                    'isdelete' => 0,
+                    'parameter' => 'address.id,
 								address.name,
 								address.telephone,
 								address.zcode,
@@ -1197,9 +1200,12 @@ class mobile extends view
 								province.name as province,
 								city.name as city,
 								county.name as county'
-            ];
-            $address = $this->model('address')->fetchAll($filter);
-            $this->assign('address', $address);
+                ];
+                $address = $this->model('address')->fetchAll($filter);
+                $this->assign('address', $address);
+            }
+        } else {
+            $this->response->addHeader('Location', $this->http->url('view', 'mobile', 'login'));
         }
         return $this;
     }
@@ -1437,6 +1443,7 @@ class mobile extends view
             $filter = [
                 'uid' => $userHelper->isLogin(),
                 'sort' => ['createtime', 'desc'],
+                'isdelete'=>0,
                 'parameter' => [
                     '`order`.*',
                 ],

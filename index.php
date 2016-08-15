@@ -1,12 +1,12 @@
 <?php
 use system\core\webApplication;
 
-set_error_handler(function($errno, $errstr, $errfile, $errline){
-	$data = '';
-	$data .= '['.date('Y-m-d H:i:s').']';
-	$data .= '('.$errno.')errstr:'.$errstr."\n";
-	$data .= 'errfile:'.$errfile." on line (".$errline.")\n";
-	file_put_contents('./error.log', $data,FILE_APPEND);
+set_error_handler(function ($errno, $errstr, $errfile, $errline) {
+    $data = '';
+    $data .= '[' . date('Y-m-d H:i:s') . ']';
+    $data .= '(' . $errno . ')errstr:' . $errstr . "\n";
+    $data .= 'errfile:' . $errfile . " on line (" . $errline . ")\n";
+    file_put_contents('./error.log', $data, FILE_APPEND);
 });
 
 /* 定义根目录 */

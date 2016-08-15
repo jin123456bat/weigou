@@ -116,7 +116,7 @@
             <div class="flex_box deleteAll2" style="display: none;">
                 <!-- <div class="allSelect flex" onClick="selectAll(this);" selectall="no">全选</div> -->
                 <div class="total_wrap" style="width: 100%;"></div>
-                <div class="deleteAll" style="width: 100px;">删除商品</div>
+                <div class="deleteAll" data-id="{%$store[store].id%}" style="width: 100px;">删除商品</div>
             </div>
 
             <div class="clearfix note2000" style="display:none;">
@@ -608,6 +608,56 @@
         return true;
     }
 
+    var remove_product1 = function (id, content, num, callback) {
+        var data = {
+            id: id,
+            content: content,
+            num: -num,
+        }
+        $.post('{%url m=ajax c=cart a=del%}', data, function (response) {
+            if (response.code != 1) {
+                msg(response.result);
+            }
+        });
+        if (typeof callback == 'function') {
+            callback();
+        }
+        var store = $('.goods_wrap');
+        $.each(store, function (index, value) {
+            if ($(value).find('.goods').length == 0) {
+                $(value).remove();
+            }
+        });
+        calculation_store();
+        calculation();
+        return true;
+    }
+
+    var remove_product2 = function (id, content, num, callback) {
+        var data = {
+            id: id,
+            content: content,
+            num: -num,
+        }
+        $.post('{%url m=ajax c=cart a=delall%}', data, function (response) {
+            if (response.code != 1) {
+                msg(response.result);
+            }
+        });
+        if (typeof callback == 'function') {
+            callback();
+        }
+        var store = $('.goods_wrap');
+        $.each(store, function (index, value) {
+            if ($(value).find('.goods').length == 0) {
+                $(value).remove();
+            }
+        });
+        calculation_store();
+        calculation();
+        return true;
+    }
+
     function tabb(obj, n) {
         $(obj).siblings().removeClass('active');
         $(obj).addClass('active');
@@ -892,7 +942,7 @@
             var ths = $(this);
 
             $(".confirm").click(function () {
-                remove_product($(this).data('id'), $(this).data('content'), $(this).parents('.goods').find('#goods_count').val(), function () {
+                remove_product1($(".del_btn").data('id'), $(this).data('content'), $(this).parents('.goods').find('#goods_count').val(), function () {
                     ths.parents('.goods').remove();
                 });
 
@@ -915,14 +965,22 @@
             var store = $('.goods_wrap');
 
             $(".confirm").click(function () {
-                $.each(store, function (index, value) {
-                    var goods = $(value).find('.goods.active');
-                    $.each(goods, function (index, value) {
-                        remove_product($(value).find('#count_down').data('id'), $(value).find('#count_down').data('content'), $(value).find('#goods_count').val(), function () {
-                            goods.remove();
-                        });
-                    });
-                })
+                /*
+                 $.each(store, function (index, value) {
+                 var goods = $(value).find('.goods.active');
+                 $.each(goods, function (index, value) {
+                 remove_product1($(value).find('#count_down').data('id'), $(value).find('#count_down').data('content'), $(value).find('#goods_count').val(), function () {
+                 goods.remove();
+                 });
+                 });
+                 })
+                 */
+
+                remove_product2($(".deleteAll").data('id'), $(this).data('content'), $(this).parents('.goods').find('#goods_count').val(), function () {
+                    // goods.remove();
+                    //删除对应商品
+
+                });
                 $("#delete_confirm").hide();
 
 

@@ -56,7 +56,7 @@
             <a href="#" class="right_btn" id="share_btn"><i class="icon share"></i></a>
         </header>
     </div>
-    <div id="content" style="padding-top: 106px;padding-bottom: 60px;">
+    <div id="content clearfix" style="padding-top: 106px;padding-bottom: 60px;">
         <div class="goods_box">
             <div class="goods_pic booth">
                 <div class="swiper-container">
@@ -82,17 +82,17 @@
                 <div class="g_flag clearfix">
                     <div class="flag" {%if isset($product.origin.logo) && !empty($product.origin.logo)%}style="background-image:url({%$product.origin.logo%});float: left;" {%/if%}>{%$product.origin.name%}进口</div>
                 {%if $product.outside==2 || $product.outside==3%}
-                    <div class="flag" style="margin-left: 10px; float: left;">跨境商品</div>
+                    <div class="flag" style="margin-left: 20px; float: left;">跨境商品</div>
                     <a class="g_tips">跨境小提示</a>
                 {%/if%}
                 </div>
             </div>
             <div class="goods_info">商品说明:<span class="pink">·</span><span>保税区发货</span><span class="pink">·</span><span>配送地区</span><span class="pink">·</span><span>温馨提示</span><span>></span></div>
-            {%if !empty($product.tags)%}
+            <!-- {%if !empty($product.tags)%}
             <div class="shuo_ming">
                 说&nbsp;&nbsp;明：<span class="red_circle"></span>{%'<span class="red_circle"></span>'|implode:(','|explode:$product.tags)%}
             </div>
-            {%/if%}
+            {%/if%} -->
             <div class="graphic_details">
                 {%if !empty($product.textPrototype)%}
                 <div class="writing">
@@ -115,7 +115,7 @@
     </div>
 
     {%if ($product.outside==2 || $product.outside==3) && $product.freetax==0%}
-    //提示情况一
+    
     <div class="g_tips_mask" id="g_tips_mask1" style="display:none;">
         <ul class="gtm_details ths  ">
             <li>· {%$product.store%}</li>
@@ -124,7 +124,8 @@
         </ul>
     </div>
     {%else%}
-    //提示情况二
+
+    
     <div class="g_tips_mask" id="g_tips_mask2" style="display:none;">
         <ul class="gtm_details ths  ">
             <li>· {%$product.store%}</li>

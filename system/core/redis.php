@@ -4,4 +4,5 @@ namespace system\core;
 class redis
 {
 }
+
 ?>
