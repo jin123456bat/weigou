@@ -442,7 +442,7 @@ class datatables extends view
         $resultObj->data = $this->model('vip_order')->datatables($this->post());
 
         $resultObj->recordsFiltered = count($resultObj->data);
-        if ($this->post('length') != -1) {
+
             //获取用户对应id username
             $users = $this->model('user')->select(['id', 'name']);
             $user = array();
@@ -456,7 +456,7 @@ class datatables extends view
             foreach ($resultObj->data as &$ds) {
                 $ds['oid'] = empty($ds['oid']) ? '无' : $user[$ds['oid']];
             }
-        }
+
         $resultObj->recordsTotal = $this->model('vip_order')->count();
         return new json($resultObj);
     }
