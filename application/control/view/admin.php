@@ -565,9 +565,9 @@ class admin extends view
             $category = $this->model('category')->fetchAll($filter);
             $this->assign('category', $category);
 
-            $bind = $this->model('bind')->where('pid=?',[$id])->select();
-			$this->assign('bind', $bind);
-            
+            $bind = $this->model('bind')->where('pid=?', [$id])->select();
+            $this->assign('bind', $bind);
+
             $filter = [
                 'isdelete' => 0,
                 'parameter' => 'store.id,store.name',
@@ -677,7 +677,7 @@ class admin extends view
 
 
             $filename = $_SERVER['REQUEST_TIME'];
-
+            $name = $filename . $hz;
             if (!move_uploaded_file($_FILES['file']['tmp_name'], $filename . $hz)) {
                 $this->assign('error', '文件保存失败');
                 return $this;
@@ -735,6 +735,7 @@ class admin extends view
 
                 if (empty($data)) {
                     $this->assign('error', '无法做为一个excel文件解析');
+                    unlink($name);
                     return $this;
                 }
 
@@ -802,7 +803,7 @@ class admin extends view
 
 
                 }
-
+                unlink($name);
 
             } else {
                 //num
@@ -827,6 +828,7 @@ class admin extends view
 
                 if (empty($data)) {
                     $this->assign('error', '无法做为一个excel文件解析');
+                    unlink($name);
                     return $this;
                 }
 
@@ -881,6 +883,7 @@ class admin extends view
 
 
             }
+            unlink($name);
 
         } else {
             return $this;
