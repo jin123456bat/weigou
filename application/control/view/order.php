@@ -180,7 +180,8 @@ class order extends view
 		{
 			case 'alipay':
 				$log = json_encode($_POST);
-				file_put_contents('./alipay_notify.txt', $log);
+ 				file_put_contents('./alipay_notify.txt', $log);
+ 				
 				if($this->post->notify_type == 'trade_status_sync')
 				{
 					$notify_id = $this->post->notify_id;//通知id
