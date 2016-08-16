@@ -32,7 +32,7 @@ class vip extends view
 				$pay->setKey($key);
 				$pay->setClient('web');
 				$pay->setCharset('utf-8');
-				$pay->setSigntype('md5');
+				$pay->setSigntype('MD5');
 				$pay->setPayType($paytype);
 				$pay->setId($order['orderno']);
 				$pay->setTimeout(3600);

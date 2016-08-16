@@ -654,6 +654,11 @@ class user extends ajax
 		$userHelper = new \application\helper\user();
 		if($userHelper->auth($password, $userData['password'], $userData['salt']))
 		{
+			if ($userData['close']==1)
+			{
+				return new json(json::PARAMETER_ERROR,'账号已封，请联系管理员');
+			}
+			
 			$userHelper->saveUserSession($userData);
 			$userHelper->protectedUser($userData);
 			

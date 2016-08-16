@@ -427,7 +427,7 @@ class order extends view
 					$pay->setKey($key);
 					$pay->setClient('web');
 					$pay->setCharset('utf-8');
-					$pay->setSigntype('md5');
+					$pay->setSigntype('MD5');//使用rsa加密验证
 					$pay->setPayType($paytype);
 					$pay->setId($orderno);
 					$pay->setMoney($order['orderamount']);

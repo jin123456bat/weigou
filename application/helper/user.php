@@ -179,6 +179,7 @@ class user extends base
 			'invittime' => $invittime,
 			'source' => $source,
 			'wechat_no' => '',
+			'close' => 0,
 		];
 		return $data;
 	}

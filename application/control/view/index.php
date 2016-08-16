@@ -64,11 +64,12 @@ class index extends view
 		/* $response = $erpSender->doAction(2, 'QueryOrderStatus',[314]);
 		var_dump($response); */
 		
-		
-		$orderno = '16081312242824166096';
-		$erpSender = new erpSender();
-		var_dump($erpSender->CancelOrder($orderno));
-	 
+		$order = $this->model('order')->where('pay_money=?',[0.01])->select();
+		foreach ($order as $o)
+		{
+			$erpSender = new erpSender();
+			var_dump($erpSender->CancelOrder($o['orderno']));
+		}
 	}
 	
 	function import()

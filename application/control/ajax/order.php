@@ -198,10 +198,42 @@ class order extends ajax
      */
     function quit()
     {
-        $orderno = $this->post('orderno');
-        if (!empty($orderno)) {
-            $orderHelper = new \application\helper\order();
-
+    	$orderno = $this->post('orderno');
+    	if (!empty($orderno))
+    	{
+    		
+    		$orderHelper = new \application\helper\order();
+    	
+	    	$userHelper = new \application\helper\user();
+	    	$uid = $userHelper->isLogin();
+	    	if (empty($uid))
+	    	{
+	    		$adminHelper = new \application\helper\admin();
+	    		$aid = $adminHelper->getAdminId();
+	  			if (empty($aid))
+	  			{
+	  				return new json(json::NOT_LOGIN);
+	  			}
+	  			else
+	  			{
+	  				$order = $this->model('order')->where('orderno=?',[$orderno])->find();
+	  				if ($order['pay_status'] == 1 || $order['pay_status']==4)
+	  				{
+	  					$roleModel = $this->model('role');
+	  					$role = $adminHelper->getGroupId();
+	  					if (!$roleModel->checkPower($role, 'refund', roleModel::POWER_ALL)) {
+	  						return new json(json::PARAMETER_ERROR, '权限不足');
+	  					}
+	  					
+	  					if(!$orderHelper->refund($orderno))
+	  					{
+	  						return new json(json::PARAMETER_ERROR,'订单退款失败');
+	  					}
+	  				}
+	  			}
+	    	}
+ 
+           
             if (!empty($this->model('task_user')->where('orderno=?', [$orderno])->find())) {
                 return new json(json::PARAMETER_ERROR, '团购订单无法手动取消');
             }
@@ -216,7 +248,7 @@ class order extends ajax
                 return new json(json::PARAMETER_ERROR, '取消失败');
             }
         }
-        return new json(json::PARAMETER_ERROR);
+	    return new json(json::PARAMETER_ERROR);
     }
 
     function del()
