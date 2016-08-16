@@ -121,7 +121,6 @@ class alipay
 		{
 			return false;
 		}
-		
 		$parameter = $this->_pay->getParameter('postParameter');
 		$sign = $parameter['sign'];
 		$parameter = $this->filterParameter($parameter);
