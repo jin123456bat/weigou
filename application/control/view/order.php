@@ -424,10 +424,17 @@ class order extends view
 					
 					$pay = new pay();
 					$pay->setPartner($partner);
-					$pay->setKey($key);
 					$pay->setClient('web');
 					$pay->setCharset('utf-8');
-					$pay->setSigntype('MD5');//使用rsa加密验证
+					$pay->setSigntype('md5');//使用rsa加密验证
+					if ($pay->getSigntype()=='rsa')
+					{
+						$pay->setKey($this->model('system')->get('rsa_private_key','alipay'));
+					}
+					else if ($pay->getSigntype()=='md5')
+					{
+						$pay->setKey($key);
+					}
 					$pay->setPayType($paytype);
 					$pay->setId($orderno);
 					$pay->setMoney($order['orderamount']);

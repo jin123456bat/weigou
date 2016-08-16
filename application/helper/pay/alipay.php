@@ -153,14 +153,17 @@ class alipay
 	 */
 	private function sign($parameter,$sign_type = '')
 	{
-		$parameter = $this->toString($parameter).$this->_pay->getKey();
+		$parameter = $this->toString($parameter);
 		switch (strtoupper($sign_type))
 		{
-			case 'MD5':$parameter = md5($parameter);
+			case 'MD5':
+				$parameter .= $this->_pay->getKey();
+				$parameter = md5($parameter);
 				break;
 			case 'RSA':
-				$private_key = $this->_pay->getParameter('private_key');
-				return $this->encryptRSA($parameter, $private_key);
+				
+				$private_key = $this->_pay->getKey();
+				$parameter = $this->encryptRSA($parameter, $private_key);
 				break;
 			case 'DSA':break;
 			default:break;
@@ -193,7 +196,10 @@ class alipay
 	{
 		$priKey = file_get_contents($private_key);
 		$res = openssl_get_privatekey($priKey);
-		openssl_sign($string, $sign, $res);
+		if ($res)
+		{
+			openssl_sign($string, $sign, $res);
+		}
 		openssl_free_key($res);
 		//base64编码
 		return base64_encode($sign);
