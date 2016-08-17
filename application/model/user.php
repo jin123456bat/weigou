@@ -119,10 +119,7 @@ class userModel extends model
 				}
 			}
 		}
-		//$result = $this->select($parameter,true);
-		
-		var_dump($this->query('select * from user'));
-		exit();
+		$result = $this->select($parameter);
 		return $result;
 	}
 	

@@ -1087,4 +1087,39 @@ class user extends ajax
 		}
 		return new json(json::OK);
 	}
+	
+	function close()
+	{
+		$adminHelper = new \application\helper\admin();
+		$aid = $adminHelper->getAdminId();
+		if (empty($aid))
+		{
+			return new json(json::NOT_LOGIN);
+		}
+		$id = $this->post('id');
+		
+		$user = $this->model('user')->where('id=?',[$id])->find();
+		if (!empty($user))
+		{
+			if ($user['close'] == 0)
+			{
+				if($this->model('user')->where('id=?',[$id])->update([
+					'close'=>1,
+				]))
+				{
+					return new json(json::OK);
+				}
+			}
+			else
+			{
+				if($this->model('user')->where('id=?',[$id])->update([
+					'close'=>0,
+				]))
+				{
+					return new json(json::OK);
+				}
+			}
+		}
+		return new json(json::PARAMETER_ERROR);
+	}
 }

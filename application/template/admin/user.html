@@ -463,6 +463,38 @@
 				'X-CSRF-TOKEN':'{%$x_csrf_token%}'
 			}
 		});
+
+		$('#datatable_orders').on('click','.closeUser',function(){
+			var id = $(this).data('id');
+			var ths = $(this);
+			$.post('{%url m=ajax c=user a=close%}',{id:id},function(response){
+				if(response.code==1)
+				{
+					if (ths.html()=='封停')
+					{
+						ths.html('解封');
+						ths.parents('tr').addClass('danger');
+					}
+					else
+					{
+						ths.html('封停').parents('tr').removeClass('danger');
+					}
+				}
+				else
+				{
+					App.alert({
+						container: $('#alert_container').val(), // alerts parent container 
+						place: 'append', // append or prepent in container 
+						type: 'danger', // alert's type 
+						message: response.result,
+                        close: true,
+						focus: true, // auto scroll to the alert after shown
+						closeInSeconds: 3, // auto close after defined seconds 
+						icon:'fa fa-remove' // put icon class before the message
+					});
+				}
+			});
+		});
 		
 		$('#datatable_orders').on('click','.vip',function(){
 			var id = $(this).data('id');
@@ -537,7 +569,16 @@
 				}
 				else
 				{
-					alert(response.result);
+					App.alert({
+						container: $('#alert_container').val(), // alerts parent container 
+						place: 'append', // append or prepent in container 
+						type: 'danger', // alert's type 
+						message: response.result,
+                        close: true,
+						focus: true, // auto scroll to the alert after shown
+						closeInSeconds: 3, // auto close after defined seconds 
+						icon:'fa fa-remove' // put icon class before the message
+					});
 				}
 			});
 			return false;
