@@ -24,7 +24,7 @@ class dbConfig extends config
      *
      * @var unknown
      */
-    public $db_server = '121.41.30.95';
+    public $db_server = 'localhost';
 
     /**
      * 数据库名
@@ -45,7 +45,7 @@ class dbConfig extends config
      *
      * @var unknown
      */
-    public $db_password = 'ZJyxlv365';
+    public $db_password = '';
 
     /**
      * 持久化连接

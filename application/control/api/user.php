@@ -289,6 +289,10 @@ class user extends common
                     'salt' => $salt,
                 ])
                 ) {
+                	if ($user['close']==1)
+                	{
+                		return new json(json::PARAMETER_ERROR,'账号已封');
+                	}
                     $userHelper->saveUserSession($user);
                     $userHelper->protectedUser($user);
                     return new json(json::OK, NULL, $user);
@@ -360,6 +364,10 @@ class user extends common
                             'user.*',
                             'upload.path as gravatar',
                         ]);
+                        if ($user['close']==1)
+                        {
+                        	return new json(json::PARAMETER_ERROR,'账号已封');
+                        }
                         $userHelper->saveUserSession($user);
                         $userHelper->protectedUser($user);
                         return new json(json::OK, NULL, $user);
@@ -391,6 +399,10 @@ class user extends common
             if (empty($user['telephone'])) {
                 return new json(json::OK, NULL, 2);
             } else {
+            	if ($user['close']==1)
+            	{
+            		return new json(json::PARAMETER_ERROR,'账号已封');
+            	}
                 $userHelper = new \application\helper\user();
                 $userHelper->saveUserSession($user);
                 $userHelper->protectedUser($user);
@@ -476,6 +488,10 @@ class user extends common
                     'salt' => $salt,
                 ])
                 ) {
+                	if ($user['close']==1)
+                	{
+                		return new json(json::PARAMETER_ERROR,'账号已封');
+                	}
                     $userHelper->saveUserSession($user);
                     $userHelper->protectedUser($user);
                     return new json(json::OK, NULL, $user);
@@ -550,6 +566,10 @@ class user extends common
                             'user.*',
                             'upload.path as gravatar',
                         ]);
+                        if ($user['close']==1)
+                        {
+                        	return new json(json::PARAMETER_ERROR,'账号已封');
+                        }
                         $userHelper->saveUserSession($user);
                         $userHelper->protectedUser($user);
                         return new json(json::OK, NULL, $user);
@@ -584,6 +604,10 @@ class user extends common
             if (empty($user['telephone'])) {
                 return new json(json::OK, NULL, 2);
             } else {
+            	if ($user['close']==1)
+            	{
+            		return new json(json::PARAMETER_ERROR,'账号已封');
+            	}
                 $userHelper = new \application\helper\user();
                 $userHelper->saveUserSession($user);
                 $userHelper->protectedUser($user);
@@ -667,6 +691,10 @@ class user extends common
                     'salt' => $salt,
                 ])
                 ) {
+                	if ($user['close']==1)
+                	{
+                		return new json(json::PARAMETER_ERROR,'账号已封');
+                	}
                     $userHelper->saveUserSession($user);
                     $userHelper->protectedUser($user);
                     return new json(json::OK, NULL, $user);
@@ -740,6 +768,10 @@ class user extends common
                             'user.*',
                             'upload.path as gravatar',
                         ]);
+                        if ($user['close']==1)
+                        {
+                        	return new json(json::PARAMETER_ERROR,'账号已封');
+                        }
                         $userHelper->saveUserSession($user);
                         $userHelper->protectedUser($user);
                         return new json(json::OK, NULL, $user);
@@ -782,6 +814,10 @@ class user extends common
             if (empty($user['telephone'])) {
                 return new json(json::OK, NULL, 2);
             } else {
+            	if ($user['close']==1)
+            	{
+            		return new json(json::PARAMETER_ERROR,'账号已封');
+            	}
                 $userHelper->saveUserSession($user);
                 $userHelper->protectedUser($user);
                 return new json(json::OK, NULL, $user);

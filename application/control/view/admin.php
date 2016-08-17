@@ -447,7 +447,7 @@ class admin extends view
      */
     function user()
     {
-        $this->assign('source', $this->model('source')->select());
+        $this->assign('source', $this->model('source')->where('isdelete=?',[0])->select());
         return $this;
     }
 

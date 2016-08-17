@@ -119,12 +119,11 @@ class userModel extends model
 				}
 			}
 		}
+		//$result = $this->select($parameter,true);
 		
-		
-		
-		
-		//$this->where('user.source = ?',[$this->session->id]);
-		return $this->select($parameter);
+		var_dump($this->query('select * from user'));
+		exit();
+		return $result;
 	}
 	
 	/*

@@ -54,6 +54,10 @@ class user extends ajax
 						];
 						if($this->model('user')->where('wx_openid_web=?',[$login_info['wx_openid']])->update($data))
 						{
+							if ($user['close']==1)
+							{
+								return new json(json::PARAMETER_ERROR,'账号已封');
+							}
 							$userHelper->saveUserSession($user);
 							return new json(json::OK);
 						}
@@ -91,6 +95,10 @@ class user extends ajax
 					if (!empty($data) && is_array($data))
 					{
 						$this->model('user')->where('telephone=?',[$telephone])->limit(1)->update($data);
+					}
+					if ($user['close']==1)
+					{
+						return new json(json::PARAMETER_ERROR,'账号已封');
 					}
 					$userHelper->saveUserSession($user);
 					return new json(json::OK);
@@ -151,6 +159,10 @@ class user extends ajax
 						];
 						if($this->model('user')->where('weibo_uid=?',[$login_info['weibo_uid']])->update($data))
 						{
+							if ($user['close']==1)
+							{
+								return new json(json::PARAMETER_ERROR,'账号已封');
+							}
 							$userHelper->saveUserSession($user);
 							return new json(json::OK);
 						}
@@ -188,6 +200,10 @@ class user extends ajax
 					if (!empty($data) && is_array($data))
 					{
 						$this->model('user')->where('telephone=?',[$telephone])->limit(1)->update($data);
+					}
+					if ($user['close']==1)
+					{
+						return new json(json::PARAMETER_ERROR,'账号已封');
 					}
 					$userHelper->saveUserSession($user);
 					return new json(json::OK);
@@ -238,6 +254,7 @@ class user extends ajax
 						if($this->model('user')->insert($user))
 						{
 							$user['id'] = $this->model('user')->lastInsertId();
+							
 							$userHelper->saveUserSession($user);
 							return new json(json::OK);
 						}
@@ -252,6 +269,10 @@ class user extends ajax
 						];
 						if($this->model('user')->where('qq_openid_web=?',[$login_info['openid']])->update($data))
 						{
+							if ($user['close']==1)
+							{
+								return new json(json::PARAMETER_ERROR,'账号已封');
+							}
 							$userHelper->saveUserSession($user);
 							return new json(json::OK);
 						}
@@ -296,6 +317,10 @@ class user extends ajax
 						$data = array_merge($data,$user_info);
 					}
 					$this->model('user')->where('telephone=?',[$telephone])->limit(1)->update($data);
+					if ($user['close']==1)
+					{
+						return new json(json::PARAMETER_ERROR,'账号已封');
+					}
 					$userHelper->saveUserSession($user);
 					return new json(json::OK);
 				}
