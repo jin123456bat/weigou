@@ -52,31 +52,8 @@ class index extends view
 	
 	function test()
 	{
-		$erpSender = new erpSender();
-		
-		$barcode = 'XL001769';
-		
-		//var_dump($erpSender->doAction(2, 'AddOrder',[168]));
-		
-		//$product = $this->model('product')->where('barcode=?',[$barcode])->find();
-		//$response = $erpSender->doAction(2, 'QueryGoodsInventory',['barcode'=>$barcode,'store'=>$product['store']]);
-		//var_dump($response);
-		
-		//$response = $erpSender->doAction(2, 'QueryGoods',[$barcode]);
-		//var_dump($erpSender->doAction(2, 'AddGoods',[639]));
-		
-		//var_dump($erpSender->doAction(2, 'QueryPlatform',[222]));
-		//var_dump($response);
-		
-		/* $response = $erpSender->doAction(2, 'QueryOrderStatus',[314]);
-		var_dump($response); */
-		/* 
-		$order = $this->model('order')->where('pay_money=?',[0.01])->select();
-		foreach ($order as $o)
-		{
-			$erpSender = new erpSender();
-			var_dump($erpSender->CancelOrder($o['orderno']));
-		} */
+		/* $erpSender = new erpSender();
+		var_dump($erpSender->doSendOrder('1608150035033588512')); */
 	}
 	
 	function import()
