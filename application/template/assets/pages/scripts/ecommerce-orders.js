@@ -272,11 +272,11 @@ var EcommerceOrders = function () {
 							case '1':
 							if(full.pay_type=='money')
 							{
-								return '<font style="cursor:pointer;" class="popovers" data-container="body" data-html="true" data-trigger="click hover" data-placement="right" data-original-title="余额支付" data-content="扣除余额:'+full.money+'">已支付</font>';
+								return '<font style="cursor:pointer;" class="popovers" data-container="body" data-html="true" data-trigger="click hover" data-placement="right" data-original-title="余额支付" data-content="扣除余额:'+full.money+'">已支付('+full.pay_money+')</font>';
 							}
 							else
 							{
-								return '<font style="cursor:pointer;" class="popovers" data-container="body" data-html="true" data-trigger="click hover" data-placement="right" data-content="'+('金额:'+full.pay_money+'<br>时间:'+unixtotime(full.pay_time,true,8))+'<br>单号:'+full.pay_number+'<br>余额:'+full.money+'" data-original-title="'+(full.pay_type=='alipay'?'支付宝':(full.pay_type=='wechat'?'微信':'余额'))+'">已支付</font>';
+								return '<font style="cursor:pointer;" class="popovers" data-container="body" data-html="true" data-trigger="click hover" data-placement="right" data-content="'+('金额:'+full.pay_money+'<br>时间:'+unixtotime(full.pay_time,true,8))+'<br>单号:'+full.pay_number+'<br>余额:'+full.money+'" data-original-title="'+(full.pay_type=='alipay'?'支付宝':(full.pay_type=='wechat'?'微信':'余额'))+'">已支付('+full.pay_money+')</font>';
 							}
 						}
 						return '';
