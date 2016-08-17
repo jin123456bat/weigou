@@ -201,6 +201,9 @@ class order extends ajax
     	$orderno = $this->post('orderno');
     	if (!empty($orderno))
     	{
+    		if (!empty($this->model('task_user')->where('orderno=?', [$orderno])->find())) {
+    			return new json(json::PARAMETER_ERROR, '团购订单无法手动取消');
+    		}
     		
     		$orderHelper = new \application\helper\order();
     	
@@ -232,12 +235,7 @@ class order extends ajax
 	  				}
 	  			}
 	    	}
- 
-           
-            if (!empty($this->model('task_user')->where('orderno=?', [$orderno])->find())) {
-                return new json(json::PARAMETER_ERROR, '团购订单无法手动取消');
-            }
-
+	    	
             $this->model('order')->transaction();
 
             if ($orderHelper->quitOrder($orderno, false)) {

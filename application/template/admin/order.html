@@ -23,6 +23,7 @@
         <!-- END GLOBAL MANDATORY STYLES -->
         <!-- BEGIN PAGE LEVEL PLUGINS -->
         <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css" rel="stylesheet" type="text/css" />
+        
         <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css" rel="stylesheet" type="text/css" />
         
         <link href="{%$VIEW_ROOT%}/assets/global/plugins/datatables/datatables.min.css" rel="stylesheet" type="text/css" />
@@ -376,7 +377,6 @@
         <script src="{%$VIEW_ROOT%}/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js" type="text/javascript"></script>
         <script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js" type="text/javascript"></script>
         <script src="{%$VIEW_ROOT%}/assets/global/plugins/select2/js/select2.full.min.js" type="text/javascript"></script>
-		
 		<script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-modal/js/bootstrap-modal.js" type="text/javascript"></script>
 		<script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-modal/js/bootstrap-modalmanager.js" type="text/javascript"></script>
         <!-- END PAGE LEVEL PLUGINS -->
@@ -560,28 +560,33 @@
 		
 		//取消订单按钮
 		$('#datatable_orders').on('click','.quit',function(){
-			var orderno = $(this).data('orderno');
-			var ths = $(this);
-			$.post('{%url m=ajax c=order a=quit%}',{orderno:orderno},function(response){
-				if(response.code==1)
-				{
-					ths.parents('tr').find('.order-status').html('无效<br>'+getNowFormatDate());
-					ths.remove();
-				}
-				else
-				{
-					App.alert({
-						container: $('#alert_container').val(), // alerts parent container 
-						place: 'append', // append or prepent in container 
-						type: 'danger', // alert's type 
-						message: response.result,
-						close: true,
-						focus: false, // auto scroll to the alert after shown
-						closeInSeconds: 3, // auto close after defined seconds 
-						icon:'fa fa-remove' // put icon class before the message
-					});
-				}
-			});
+            if (window.confirm("您确定退款并且取消订单?"))
+            {
+                var orderno = $(this).data('orderno');
+                var ths = $(this);
+
+                $.post('{%url m=ajax c=order a=quit%}',{orderno:orderno},function(response){
+                    if(response.code==1)
+                    {
+                        ths.parents('tr').find('.order-status').html('无效<br>'+getNowFormatDate());
+                        ths.parents('tr').find('.send').remove();//删除发货按钮
+                        ths.remove();//删除取消订单按钮
+                    }
+                    else
+                    {
+                        App.alert({
+                            container: $('#alert_container').val(), // alerts parent container 
+                            place: 'append', // append or prepent in container 
+                            type: 'danger', // alert's type 
+                            message: response.result,
+                            close: true,
+                            focus: false, // auto scroll to the alert after shown
+                            closeInSeconds: 5, // auto close after defined seconds 
+                            icon:'fa fa-remove' // put icon class before the message
+                        });
+                    }
+                });
+            }
 			return false;
 		});
 		
