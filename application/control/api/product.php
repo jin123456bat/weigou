@@ -127,6 +127,9 @@ class product extends common
 		];
 		$product['collection'] = $this->model('collection')->fetchAll($filter);
 		
+		$bind = $this->model('bind')->where('pid=?',[$id])->select();
+		$product['bind'] = $bind;
+		
 		return new json(json::OK,NULL,$product);
 	}
 	
