@@ -158,7 +158,6 @@ class order extends base
 			//支付成功后增加商品的销售数量
 			$this->model('product')->where('id=?',[$p['pid']])->increase('selled',$p['num']);
 		} */
-		
 		$task_user = $this->model('task_user')->where('orderno=?',[$orderno])->find();
 		if (!empty($task_user))
 		{
@@ -205,10 +204,13 @@ class order extends base
 				{
 					return false;
 				}
-				//更改子订单拼团状态
-				if(!$this->model('task_user')->where('o_orderno=?',[$main_order_orderno])->update('status',1))
+				//更改子订单拼团状态  假如跟团订单没有的话  也是团购数量为1的话 就没有跟团订单 这边会返回false
+				if (!empty($this->model('task_user')->where('o_orderno=? and status=?',[$main_order_orderno,0])->find()))
 				{
-					return false;
+					if(!$this->model('task_user')->where('o_orderno=?',[$main_order_orderno])->update('status',1))
+					{
+						return false;
+					}
 				}
 				
 				//增加用户积分

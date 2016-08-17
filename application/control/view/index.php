@@ -3,6 +3,7 @@ namespace application\control\view;
 use system\core\view;
 use application\helper\erpSender;
 use application\helper\erp\oms;
+use system\core\image;
 class index extends view
 {
 	function __construct()
@@ -21,6 +22,12 @@ class index extends view
 		{
 			$this->response->addHeader('Location','http://willg.cn');
 		}
+	}
+	
+	function code()
+	{
+		$image = new image();
+		$image->code();
 	}
 	
 	function clearCookieAndSession()
@@ -63,13 +70,13 @@ class index extends view
 		
 		/* $response = $erpSender->doAction(2, 'QueryOrderStatus',[314]);
 		var_dump($response); */
-		
+		/* 
 		$order = $this->model('order')->where('pay_money=?',[0.01])->select();
 		foreach ($order as $o)
 		{
 			$erpSender = new erpSender();
 			var_dump($erpSender->CancelOrder($o['orderno']));
-		}
+		} */
 	}
 	
 	function import()
