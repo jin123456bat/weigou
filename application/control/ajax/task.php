@@ -133,13 +133,15 @@ class task extends ajax
 	{
 		$id = $this->post('id');
 		$price = $this->post('price');
-		$teamnum = $this->post('teamnum');
+        $teamnum = $this->post('teamnum');
 		$score = $this->post('score');
 		$day = $this->post('day');
 		
 		if(empty($id) || empty($price) || empty($teamnum) || empty($score))
 			return new json(json::PARAMETER_ERROR,'参数不能为0');
-		
+		if($teamnum <2){
+            return new json(json::PARAMETER_ERROR, '人数不能小于2');
+        }
 		$this->model('task')->where('id=?',[$id])->limit(1)->update([
 			'price' => $price,
 			'teamnum' => $teamnum,

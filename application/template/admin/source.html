@@ -1,356 +1,417 @@
 <!DOCTYPE html>
-<!--[if IE 8]> <html lang="en" class="ie8 no-js"> <![endif]-->
-<!--[if IE 9]> <html lang="en" class="ie9 no-js"> <![endif]-->
+<!--[if IE 8]>
+<html lang="en" class="ie8 no-js"> <![endif]-->
+<!--[if IE 9]>
+<html lang="en" class="ie9 no-js"> <![endif]-->
 <!--[if !IE]><!-->
 <html lang="en">
-    <!--<![endif]-->
-    <!-- BEGIN HEAD -->
+<!--<![endif]-->
+<!-- BEGIN HEAD -->
 
-    <head>
-        <meta charset="utf-8" />
-        <title>渠道管理</title>
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta content="width=device-width, initial-scale=1" name="viewport" />
-        <meta content="" name="description" />
-        <meta content="" name="author" />
-        <!-- BEGIN GLOBAL MANDATORY STYLES -->
-        <link href="{%$VIEW_ROOT%}/assets/global/css/font.css" rel="stylesheet" type="text/css" />
-        <link href="{%$VIEW_ROOT%}/assets/global/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
-        <link href="{%$VIEW_ROOT%}/assets/global/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css" />
-        <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
-        <link href="{%$VIEW_ROOT%}/assets/global/plugins/uniform/css/uniform.default.css" rel="stylesheet" type="text/css" />
-        <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css" rel="stylesheet" type="text/css" />
-        <!-- END GLOBAL MANDATORY STYLES -->
-        <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css" rel="stylesheet" type="text/css" />
-        <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css" rel="stylesheet" type="text/css" />
-        <!-- BEGIN THEME GLOBAL STYLES -->
-        <link href="{%$VIEW_ROOT%}/assets/global/css/components.min.css" rel="stylesheet" id="style_components" type="text/css" />
-        <link href="{%$VIEW_ROOT%}/assets/global/css/plugins.min.css" rel="stylesheet" type="text/css" />
-        <!-- END THEME GLOBAL STYLES -->
-        <!-- BEGIN THEME LAYOUT STYLES -->
-        <link href="{%$VIEW_ROOT%}/assets/layouts/layout/css/layout.min.css" rel="stylesheet" type="text/css" />
-        <link href="{%$VIEW_ROOT%}/assets/layouts/layout/css/themes/darkblue.min.css" rel="stylesheet" type="text/css" id="style_color" />
-        <link href="{%$VIEW_ROOT%}/assets/layouts/layout/css/custom.min.css" rel="stylesheet" type="text/css" />
-        <!-- END THEME LAYOUT STYLES -->
-        <link rel="shortcut icon" href="favicon.ico" /> </head>
-    <!-- END HEAD -->
+<head>
+    <meta charset="utf-8"/>
+    <title>渠道管理</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1" name="viewport"/>
+    <meta content="" name="description"/>
+    <meta content="" name="author"/>
+    <!-- BEGIN GLOBAL MANDATORY STYLES -->
+    <link href="{%$VIEW_ROOT%}/assets/global/css/font.css" rel="stylesheet" type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/global/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet"
+          type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/global/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet"
+          type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/global/plugins/uniform/css/uniform.default.css" rel="stylesheet" type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css" rel="stylesheet"
+          type="text/css"/>
+    <!-- END GLOBAL MANDATORY STYLES -->
+    <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css" rel="stylesheet"
+          type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css" rel="stylesheet"
+          type="text/css"/>
+    <!-- BEGIN THEME GLOBAL STYLES -->
+    <link href="{%$VIEW_ROOT%}/assets/global/css/components.min.css" rel="stylesheet" id="style_components"
+          type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/global/css/plugins.min.css" rel="stylesheet" type="text/css"/>
+    <!-- END THEME GLOBAL STYLES -->
+    <!-- BEGIN THEME LAYOUT STYLES -->
+    <link href="{%$VIEW_ROOT%}/assets/layouts/layout/css/layout.min.css" rel="stylesheet" type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/layouts/layout/css/themes/darkblue.min.css" rel="stylesheet" type="text/css"
+          id="style_color"/>
+    <link href="{%$VIEW_ROOT%}/assets/layouts/layout/css/custom.min.css" rel="stylesheet" type="text/css"/>
+    <!-- END THEME LAYOUT STYLES -->
+    <link rel="shortcut icon" href="favicon.ico"/>
+</head>
+<!-- END HEAD -->
 
-    <body class="page-header-fixed page-sidebar-closed-hide-logo page-content-white">
-        <!-- BEGIN HEADER -->
-        {%include file='admin/public/header.html'%}
-        <!-- END HEADER -->
-        <!-- BEGIN HEADER & CONTENT DIVIDER -->
-        <div class="clearfix"> </div>
-        <!-- END HEADER & CONTENT DIVIDER -->
-        <!-- BEGIN CONTAINER -->
-        <div class="page-container">
-            <!-- BEGIN SIDEBAR -->
-            {%include file='admin/public/sidebar.html'%}
-            <!-- END SIDEBAR -->
-            <!-- BEGIN CONTENT -->
-            <div class="page-content-wrapper">
-                <!-- BEGIN CONTENT BODY -->
-                <div class="page-content">
-                    <!-- BEGIN PAGE HEADER-->
-                    <!-- BEGIN THEME PANEL -->
-                    {%include file='admin/public/style.html'%}
-                    <!-- END THEME PANEL -->
-                    <!-- BEGIN PAGE BAR -->
-                    <div class="page-bar">
-                        <ul class="page-breadcrumb">
-                            <li>
-                                <a href="index.php">首页</a>
-                                <i class="fa fa-circle"></i>
-                            </li>
-                            <li>
-                                <span>渠道管理</span>
-                            </li>
-                        </ul>
-                    </div>
-                    <!-- END PAGE BAR -->
-                    <!-- BEGIN PAGE TITLE-->
-                    <h3 class="page-title"> 渠道管理
-                        <small>渠道管理</small>
-                    </h3>
-                    <!-- END PAGE TITLE-->
-                    <!-- END PAGE HEADER-->
-                    <div id="sourceModal" class="modal fade" tabindex="-1" data-width="760">
-						<form class="form-horizontal" role="form" id="sourceForm">
-							<div class="modal-header">
-								<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-								<h4 class="modal-title">创建渠道</h4>
-							</div>
-							<div class="modal-body">
-								<div class="form-group">
-									<label class="col-md-2 control-label">用户名</label>
-									<div class="col-md-10">
-										<input type="text" name="name" class="form-control">
-									</div>
-								</div>
-							</div>
-							<div class="modal-body">
-								<div class="form-group">
-									<label class="col-md-2 control-label">手机号</label>
-									<div class="col-md-10">
-										<input type="text" name="phone" class="form-control">
-									</div>
-								</div>
-							</div>
-							<div class="modal-body">
-								<div class="form-group">
-									<label class="col-md-2 control-label">微信号</label>
-									<div class="col-md-10">
-										<input type="text" name="wechat" class="form-control">
-									</div>
-								</div>
-							</div>
-							<div class="modal-body">
-								<div class="form-group">
-									<label class="col-md-2 control-label">登陆密码</label>
-									<div class="col-md-10">
-										<input type="text" name="password" class="form-control">
-									</div>
-								</div>
-							</div>
-                            <div class="modal-body">
-								<div class="form-group">
-									<label class="col-md-2 control-label">注册流量权限</label>
-									<div class="col-md-10">
-										<input type="checkbox" name="user" class="form-control">
-									</div>
-								</div>
-							</div>
-                            <div class="modal-body">
-								<div class="form-group">
-									<label class="col-md-2 control-label">销售流量权限</label>
-									<div class="col-md-10">
-										<input type="checkbox" name="product" class="form-control">
-									</div>
-								</div>
-							</div>
-							<div class="modal-footer">
-								<button type="button" data-dismiss="modal" class="btn btn-outline dark">关闭</button>
-								<button type="submit" class="btn green">添加</button>
-							</div>
-						</form>
-					</div>
-                    
-                    <div id="passwordModal" class="modal fade" tabindex="-1" data-width="760">
-						<form class="form-horizontal" role="form" id="passwordForm">
-                        	<input type="hidden" name="id" value="">
-							<div class="modal-header">
-								<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-								<h4 class="modal-title">修改密码</h4>
-							</div>
-							<div class="modal-body">
-								<div class="form-group">
-									<label class="col-md-2 control-label">新登陆密码</label>
-									<div class="col-md-10">
-										<input type="text" name="password" class="form-control">
-									</div>
-								</div>
-							</div>
-							<div class="modal-footer">
-								<button type="button" data-dismiss="modal" class="btn btn-outline dark">关闭</button>
-								<button type="submit" class="btn green">保存</button>
-							</div>
-						</form>
-					</div>
-
-                    <button class="btn blue createSourceBtn" data-toggle="modal" data-target="#sourceModal">添加渠道</button>
-                    <table class="table table-hover">
-                    	<tr><th>用户名</th><th>注册流量权限</th><th>销售流量权限</th><th>链接地址</th><th>二维码</th><th>操作</th></tr>
-                        {%section name=source loop=$source%}
-                        <tr><td>{%$source[source].name%}</td><td><input class="editable" data-id="{%$source[source].id%}" data-name="user" type="checkbox" name="user" {%if $source[source].user==1%}checked="checked"{%/if%}></td><td><input class="editable" data-id="{%$source[source].id%}" data-name="product" type="checkbox" {%if $source[source].product==1%}checked="checked"{%/if%}></td><td>
-                        http://{%$smarty.server.HTTP_HOST%}/index.php?c=source&a=enter&id={%$source[source].id%}
-                        </td><td>
-                        <img src="{%url c=source a=eqcode size=2 id=$source[source].id%}" class="img-responsive" style="width:50px; height:50px;">
-                        </td><td>
-                        	<button class="btn yellow btn-xs chagepwd" data-id="{%$source[source].id%}">改密</button>
-                            <button class="btn red btn-xs remove" data-id="{%$source[source].id%}">删除</button>
-                        </td></tr>
-                        
-                        
-                        {%section name=source2 loop=$source2%}
-                        {%if $source2[source2].u_source== $source[source].id%} 
-                         <tr><td>　|---{%$source2[source2].name%}</td><td><input class="editable" data-id="{%$source2[source2].id%}" data-name="user" type="checkbox" name="user" {%if $source2[source2].user==1%}checked="checked"{%/if%}></td><td><input class="editable" data-id="{%$source2[source2].id%}" data-name="product" type="checkbox" {%if $source2[source2].product==1%}checked="checked"{%/if%}></td><td>
-                        http://{%$smarty.server.HTTP_HOST%}/index.php?c=source&a=enter&id={%$source2[source2].id%}
-                        </td><td>
-                        <img src="{%url c=source a=eqcode size=2 id=$source2[source2].id%}" class="img-responsive" style="width:50px; height:50px;">
-                        </td><td>
-                        	<button class="btn yellow btn-xs chagepwd" data-id="{%$source2[source2].id%}">改密</button>
-                            <button class="btn red btn-xs remove" data-id="{%$source2[source2].id%}">删除</button>
-                        </td></tr>
-                        {%/if%}
-                        {%/section%}
-                        
-                        {%/section%}
-                    </table>
-                </div>
-                <!-- END CONTENT BODY -->
+<body class="page-header-fixed page-sidebar-closed-hide-logo page-content-white">
+<!-- BEGIN HEADER -->
+{%include file='admin/public/header.html'%}
+<!-- END HEADER -->
+<!-- BEGIN HEADER & CONTENT DIVIDER -->
+<div class="clearfix"></div>
+<!-- END HEADER & CONTENT DIVIDER -->
+<!-- BEGIN CONTAINER -->
+<div class="page-container">
+    <!-- BEGIN SIDEBAR -->
+    {%include file='admin/public/sidebar.html'%}
+    <!-- END SIDEBAR -->
+    <!-- BEGIN CONTENT -->
+    <div class="page-content-wrapper">
+        <!-- BEGIN CONTENT BODY -->
+        <div class="page-content">
+            <!-- BEGIN PAGE HEADER-->
+            <!-- BEGIN THEME PANEL -->
+            {%include file='admin/public/style.html'%}
+            <!-- END THEME PANEL -->
+            <!-- BEGIN PAGE BAR -->
+            <div class="page-bar">
+                <ul class="page-breadcrumb">
+                    <li>
+                        <a href="index.php">首页</a>
+                        <i class="fa fa-circle"></i>
+                    </li>
+                    <li>
+                        <span>渠道管理</span>
+                    </li>
+                </ul>
             </div>
-            <!-- END CONTENT -->
-            <!-- BEGIN QUICK SIDEBAR -->
-            {%include file='admin/public/quick_sidebar.html'%}
-            <!-- END QUICK SIDEBAR -->
-        </div>
-        <!-- END CONTAINER -->
-        <!-- BEGIN FOOTER -->
-        {%include file='admin/public/footer.html'%}
-        <!-- END FOOTER -->
-        <!--[if lt IE 9]>
-<script src="{%$VIEW_ROOT%}/assets/global/plugins/respond.min.js"></script>
-<script src="{%$VIEW_ROOT%}/assets/global/plugins/excanvas.min.js"></script> 
-<![endif]-->
-        <!-- BEGIN CORE PLUGINS -->
-        <script src="{%$VIEW_ROOT%}/assets/global/plugins/jquery.min.js" type="text/javascript"></script>
-        <script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
-        <script src="{%$VIEW_ROOT%}/assets/global/plugins/js.cookie.min.js" type="text/javascript"></script>
-        <script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js" type="text/javascript"></script>
-        <script src="{%$VIEW_ROOT%}/assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
-        <script src="{%$VIEW_ROOT%}/assets/global/plugins/jquery.blockui.min.js" type="text/javascript"></script>
-        <script src="{%$VIEW_ROOT%}/assets/global/plugins/uniform/jquery.uniform.min.js" type="text/javascript"></script>
-        <script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js" type="text/javascript"></script>
-        <!-- END CORE PLUGINS -->
-        <!-- BEGIN THEME GLOBAL SCRIPTS -->
-        <script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-modal/js/bootstrap-modalmanager.js" type="text/javascript"></script>
-        <script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-modal/js/bootstrap-modal.js" type="text/javascript"></script>
+            <!-- END PAGE BAR -->
+            <!-- BEGIN PAGE TITLE-->
+            <h3 class="page-title"> 渠道管理
+                <small>渠道管理</small>
+            </h3>
+            <!-- END PAGE TITLE-->
+            <!-- END PAGE HEADER-->
+            <div id="sourceModal" class="modal fade" tabindex="-1" data-width="760">
+                <form class="form-horizontal" role="form" id="sourceForm">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                        <h4 class="modal-title">创建渠道</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">用户名</label>
 
-        <script src="{%$VIEW_ROOT%}/assets/global/scripts/app.min.js" type="text/javascript"></script>
-        <!-- END THEME GLOBAL SCRIPTS -->
-        <!-- BEGIN THEME LAYOUT SCRIPTS -->
-        <script src="{%$VIEW_ROOT%}/assets/layouts/layout/scripts/layout.min.js" type="text/javascript"></script>
-        <script src="{%$VIEW_ROOT%}/assets/layouts/layout/scripts/demo.min.js" type="text/javascript"></script>
-        <script src="{%$VIEW_ROOT%}/assets/layouts/global/scripts/quick-sidebar.min.js" type="text/javascript"></script>
-        <!-- END THEME LAYOUT SCRIPTS -->
-        <script type="text/javascript">
-		$.ajaxSetup({
-			headers:{
-				'X-CSRF-TOKEN':'{%$x_csrf_token%}'
-			}
-		});
-		
-		$('table').on('click','.editable',function(){
-			var id = $(this).data('id');
-			var name = $(this).data('name');
-			$.post('{%url m=ajax c=source a=power%}',{id:id,name:name},function(){});
-		});
-		
-		$('#sourceForm').on('submit',function(){
-			var name = $(this).find('input[name=name]').val();
-			var phone = $(this).find('input[name=phone]').val();
-			var wechat = $(this).find('input[name=wechat]').val();
-		    var password = $(this).find('input[name=password]').val();
-			var user = $(this).find('input[name=user]:checked').length;
-			var product = $(this).find('input[name=product]:checked').length;
-			var ctype = '0';
-			
-			$.post('{%url m=ajax c=source a=create%}',{name:name,phone:phone,wechat:wechat,password:password,user:user,product:product,ctype:ctype},function(response){
-				if(response.code==1)
-				{
-					var tr = $('tbody tr:last').clone();
-					tr.find('td:first').html(name);
-					if(user==1)
-					{
-						tr.find('input[name=user]').attr('checked','checked');
-						tr.find('input[name=user]').parent().addClass('checked');
-					}
-					else
-					{
-						tr.find('input[name=user]').removeAttr('checked');
-						tr.find('input[name=user]').parent().removeClass('checked');
-					}
-					if(product==1)
-					{
-						tr.find('input[name=product]').attr('checked','checked');
-						tr.find('input[name=product]').parent().addClass('checked');
-					}
-					else
-					{
-						tr.find('input[name=product]').removeAttr('checked');
-						tr.find('input[name=product]').parent().removeClass('checked');
-					}
-					
-					//url
-					var url = tr.find('td:eq(3)').html();
-					url = url.split('=');
-					url[url.length-1] = response.body.id;
-					tr.find('td:eq(3)').html(url.join('='));
-					//二维码
-					var src = tr.find('td:eq(4)').find('img').attr('src');
-					src = src.split('=');
-					src[src.length-1] = response.body.id;
-					tr.find('td:eq(4)').find('img').attr('src',src.join('='));
-					
-					//input
-					tr.find('.editable').attr('data-id',response.body.id);
-					
-					//button
-					tr.find('button').attr('data-id',response.body.id);
-					
-					$('tbody').append(tr);
-					$('#sourceModal').modal('hide');
-				}
-				else
-				{
-					alert(response.result);
-				}
-			});
-			return false;
-		});
-		
-		$('table').on('click','img',function(){
-			window.open($(this).attr('src')+'&download=true');
-			return false;
-		});
-		
-		$('table').on('click','.chagepwd',function(){
-			var id = $(this).data('id');
-			$('#passwordModal').find('input[name=id]').val(id);
-			$('#passwordModal').modal('show');
-		});
-		
-		$('#passwordForm').on('submit',function(){
-			var id = $(this).find('input[name=id]').val();
-			var password = $(this).find('input[name=password]').val();
-			$.post('{%url m=ajax c=source a=changepwd%}',{id:id,password:password},function(response){
-				if(response.code==1)
-				{
-					$('#passwordModal').modal('hide');
-				}
-				else
-				{
-					alert(response.result);
-				}
-			});
-			return false;
-		});
-		
-		$('table').on('click','.remove',function(){
-			var id = $(this).data('id');
-			var ths = $(this);
-			$.post('{%url m=ajax c=source a=remove%}',{id:id},function(response){
-				if(response.code==1)
-				{
-					ths.parents('tr').remove();
-				}
-				else
-				{
-					App.alert({
-						container: $('#alert_container').val(), // alerts parent container 
-						place: 'append', // append or prepent in container 
-						type: 'success', // alert's type 
-						message: response.result,
-						close: true,
-						focus: true, // auto scroll to the alert after shown
-						closeInSeconds: 3, // auto close after defined seconds 
-						icon:'fa fa-check' // put icon class before the message
-					});
-				}
-			});
-			return false;
-		});
-        </script>
-    </body>
+                            <div class="col-md-10">
+                                <input type="text" name="name" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">手机号</label>
+
+                            <div class="col-md-10">
+                                <input type="text" name="phone" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">微信号</label>
+
+                            <div class="col-md-10">
+                                <input type="text" name="wechat" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">登陆密码</label>
+
+                            <div class="col-md-10">
+                                <input type="text" name="password" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">是否是导师</label>
+
+                            <div class="col-md-10">
+                                <input type="radio" name="master" class="form-control" value="1">是
+                                <input type="radio" name="master" class="form-control" value="0" checked>不是
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">注册流量权限</label>
+
+                            <div class="col-md-10">
+                                <input type="checkbox" name="user" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">销售流量权限</label>
+
+                            <div class="col-md-10">
+                                <input type="checkbox" name="product" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" data-dismiss="modal" class="btn btn-outline dark">关闭</button>
+                        <button type="submit" class="btn green">添加</button>
+                    </div>
+                </form>
+            </div>
+
+            <div id="passwordModal" class="modal fade" tabindex="-1" data-width="760">
+                <form class="form-horizontal" role="form" id="passwordForm">
+                    <input type="hidden" name="id" value="">
+
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                        <h4 class="modal-title">修改密码</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">新登陆密码</label>
+
+                            <div class="col-md-10">
+                                <input type="text" name="password" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" data-dismiss="modal" class="btn btn-outline dark">关闭</button>
+                        <button type="submit" class="btn green">保存</button>
+                    </div>
+                </form>
+            </div>
+
+            <button class="btn blue createSourceBtn" data-toggle="modal" data-target="#sourceModal">添加渠道</button>
+            <table class="table table-hover">
+                <tr>
+                    <th>用户名</th>
+                    <th>注册流量权限</th>
+                    <th>销售流量权限</th>
+                    <th>链接地址</th>
+                    <th>二维码</th>
+                    <th>操作</th>
+                </tr>
+                {%section name=source loop=$source%}
+                <tr>
+                    <td>{%$source[source].name%}</td>
+                    <td><input class="editable" data-id="{%$source[source].id%}" data-name="user" type="checkbox"
+                               name="user" {%if $source[source].user==1%}checked="checked"{%/if%}></td>
+                    <td><input class="editable" data-id="{%$source[source].id%}" data-name="product" type="checkbox"
+                               {%if $source[source].product==1%}checked="checked"{%/if%}></td>
+                    <td>
+                        http://{%$smarty.server.HTTP_HOST%}/index.php?c=source&a=enter&id={%$source[source].id%}
+                    </td>
+                    <td>
+                        <img src="{%url c=source a=eqcode size=2 id=$source[source].id%}" class="img-responsive"
+                             style="width:50px; height:50px;">
+                    </td>
+                    <td>
+                        <button class="btn yellow btn-xs chagepwd" data-id="{%$source[source].id%}">改密</button>
+                        <button class="btn red btn-xs remove" data-id="{%$source[source].id%}">删除</button>
+                    </td>
+                </tr>
+
+
+                {%section name=source2 loop=$source2%}
+                {%if $source2[source2].u_source== $source[source].id%}
+                <tr>
+                    <td>　|---{%$source2[source2].name%}</td>
+                    <td><input class="editable" data-id="{%$source2[source2].id%}" data-name="user" type="checkbox"
+                               name="user" {%if $source2[source2].user==1%}checked="checked"{%/if%}></td>
+                    <td><input class="editable" data-id="{%$source2[source2].id%}" data-name="product" type="checkbox"
+                               {%if $source2[source2].product==1%}checked="checked"{%/if%}></td>
+                    <td>
+                        http://{%$smarty.server.HTTP_HOST%}/index.php?c=source&a=enter&id={%$source2[source2].id%}
+                    </td>
+                    <td>
+                        <img src="{%url c=source a=eqcode size=2 id=$source2[source2].id%}" class="img-responsive"
+                             style="width:50px; height:50px;">
+                    </td>
+                    <td>
+                        <button class="btn yellow btn-xs chagepwd" data-id="{%$source2[source2].id%}">改密</button>
+                        <button class="btn red btn-xs remove" data-id="{%$source2[source2].id%}">删除</button>
+                    </td>
+                </tr>
+                {%/if%}
+                {%/section%}
+
+                {%/section%}
+            </table>
+        </div>
+        <!-- END CONTENT BODY -->
+    </div>
+    <!-- END CONTENT -->
+    <!-- BEGIN QUICK SIDEBAR -->
+    {%include file='admin/public/quick_sidebar.html'%}
+    <!-- END QUICK SIDEBAR -->
+</div>
+<!-- END CONTAINER -->
+<!-- BEGIN FOOTER -->
+{%include file='admin/public/footer.html'%}
+<!-- END FOOTER -->
+<!--[if lt IE 9]>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/respond.min.js"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/excanvas.min.js"></script>
+<![endif]-->
+<!-- BEGIN CORE PLUGINS -->
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/jquery.min.js" type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/js.cookie.min.js" type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js"
+        type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js"
+        type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/jquery.blockui.min.js" type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/uniform/jquery.uniform.min.js" type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js"
+        type="text/javascript"></script>
+<!-- END CORE PLUGINS -->
+<!-- BEGIN THEME GLOBAL SCRIPTS -->
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-modal/js/bootstrap-modalmanager.js"
+        type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-modal/js/bootstrap-modal.js"
+        type="text/javascript"></script>
+
+<script src="{%$VIEW_ROOT%}/assets/global/scripts/app.min.js" type="text/javascript"></script>
+<!-- END THEME GLOBAL SCRIPTS -->
+<!-- BEGIN THEME LAYOUT SCRIPTS -->
+<script src="{%$VIEW_ROOT%}/assets/layouts/layout/scripts/layout.min.js" type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/layouts/layout/scripts/demo.min.js" type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/layouts/global/scripts/quick-sidebar.min.js" type="text/javascript"></script>
+<!-- END THEME LAYOUT SCRIPTS -->
+<script type="text/javascript">
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': '{%$x_csrf_token%}'
+        }
+    });
+
+    $('table').on('click', '.editable', function () {
+        var id = $(this).data('id');
+        var name = $(this).data('name');
+        $.post('{%url m=ajax c=source a=power%}', {id: id, name: name}, function () {
+        });
+    });
+
+    $('#sourceForm').on('submit', function () {
+        var name = $(this).find('input[name=name]').val();
+        var phone = $(this).find('input[name=phone]').val();
+        var wechat = $(this).find('input[name=wechat]').val();
+        var password = $(this).find('input[name=password]').val();
+        var user = $(this).find('input[name=user]:checked').length;
+        var product = $(this).find('input[name=product]:checked').length;
+        var master = $(this).find('input[name=master]:checked').val();
+        var ctype = '0';
+
+        $.post('{%url m=ajax c=source a=create%}', {
+            name: name,
+            phone: phone,
+            wechat: wechat,
+            password: password,
+            user: user,
+            product: product,
+            ctype: ctype,
+            'master': master
+        }, function (response) {
+            if (response.code == 1) {
+                var tr = $('tbody tr:last').clone();
+                tr.find('td:first').html(name);
+                if (user == 1) {
+                    tr.find('input[name=user]').attr('checked', 'checked');
+                    tr.find('input[name=user]').parent().addClass('checked');
+                }
+                else {
+                    tr.find('input[name=user]').removeAttr('checked');
+                    tr.find('input[name=user]').parent().removeClass('checked');
+                }
+                if (product == 1) {
+                    tr.find('input[name=product]').attr('checked', 'checked');
+                    tr.find('input[name=product]').parent().addClass('checked');
+                }
+                else {
+                    tr.find('input[name=product]').removeAttr('checked');
+                    tr.find('input[name=product]').parent().removeClass('checked');
+                }
+
+                //url
+                var url = tr.find('td:eq(3)').html();
+                url = url.split('=');
+                url[url.length - 1] = response.body.id;
+                tr.find('td:eq(3)').html(url.join('='));
+                //二维码
+                var src = tr.find('td:eq(4)').find('img').attr('src');
+                src = src.split('=');
+                src[src.length - 1] = response.body.id;
+                tr.find('td:eq(4)').find('img').attr('src', src.join('='));
+
+                //input
+                tr.find('.editable').attr('data-id', response.body.id);
+
+                //button
+                tr.find('button').attr('data-id', response.body.id);
+
+                $('tbody').append(tr);
+                $('#sourceModal').modal('hide');
+            }
+            else {
+                alert(response.result);
+            }
+        });
+        return false;
+    });
+
+    $('table').on('click', 'img', function () {
+        window.open($(this).attr('src') + '&download=true');
+        return false;
+    });
+
+    $('table').on('click', '.chagepwd', function () {
+        var id = $(this).data('id');
+        $('#passwordModal').find('input[name=id]').val(id);
+        $('#passwordModal').modal('show');
+    });
+
+    $('#passwordForm').on('submit', function () {
+        var id = $(this).find('input[name=id]').val();
+        var password = $(this).find('input[name=password]').val();
+        $.post('{%url m=ajax c=source a=changepwd%}', {id: id, password: password}, function (response) {
+            if (response.code == 1) {
+                $('#passwordModal').modal('hide');
+            }
+            else {
+                alert(response.result);
+            }
+        });
+        return false;
+    });
+
+    $('table').on('click', '.remove', function () {
+        var id = $(this).data('id');
+        var ths = $(this);
+        $.post('{%url m=ajax c=source a=remove%}', {id: id}, function (response) {
+            if (response.code == 1) {
+                ths.parents('tr').remove();
+            }
+            else {
+                App.alert({
+                    container: $('#alert_container').val(), // alerts parent container
+                    place: 'append', // append or prepent in container
+                    type: 'success', // alert's type
+                    message: response.result,
+                    close: true,
+                    focus: true, // auto scroll to the alert after shown
+                    closeInSeconds: 3, // auto close after defined seconds
+                    icon: 'fa fa-check' // put icon class before the message
+                });
+            }
+        });
+        return false;
+    });
+</script>
+</body>
 
 </html>

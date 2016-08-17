@@ -25,7 +25,7 @@ class cart extends common
      */
     function lists()
     {
-        $this->_uid = 770;
+        $this->_uid = 1946;
         if (empty($this->_uid))
             return new json(json::NOT_LOGIN);
 
@@ -34,7 +34,6 @@ class cart extends common
             ->table('product', 'left join', 'product.id=cart.pid')
             ->table('store', 'left join', 'product.store=store.id')
             ->where('cart.uid=?', [$this->_uid])
-            ->where('(product.auto_status = 0 and product.status=1) or (product.auto_status=1 and product.avaliabletime_from < ? and product.avaliabletime_to > ?)', [$_SERVER['REQUEST_TIME'], $_SERVER['REQUEST_TIME']])
             ->where('product.isdelete=?', [0])
             ->groupby('store.id')
             ->select('store.id,store.name');

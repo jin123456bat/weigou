@@ -48,11 +48,14 @@ class api extends base
      */
     function auth()
     {
+
         if (empty($this->post('data')))
             return 1;
         $partner = $this->post('partner', NULL);
+
         if (empty($partner))
             return 2;
+
         $key = $this->_config->_user[$partner];
         if (empty($key))
             return 2;

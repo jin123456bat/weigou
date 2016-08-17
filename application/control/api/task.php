@@ -170,6 +170,7 @@ class task extends common
 		
 		$tid = $this->data('tid');
 		$address = $this->data('address','','intval');
+        $uid=323;
 		if (empty($tid))
 		{
 			return new json(json::PARAMETER_ERROR);
@@ -188,6 +189,7 @@ class task extends common
 		}
 		
 		$o_orderno = $this->post('o_orderno');
+
 		if (empty($o_orderno))
 		{
 			$o_orderno = NULL;

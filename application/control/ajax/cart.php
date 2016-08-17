@@ -29,7 +29,14 @@ class cart extends ajax
                 $cartHelper = new helper\cart();
                 if ($cartHelper->add($uid, $id, $content, $num)) {
                     $this->model('product')->commit();
-                    return new json(json::OK, '添加到购车成功');
+                    //获取购物车数量
+                    $num = $this->model("cart")->where("uid=?", [$uid])->find('sum(num) as cou');
+                    $num = $num['cou'] > 0 ? $num['cou'] : 0;
+                    die(json_encode(array(
+                        'code' => 1,
+                        'result' => "添加到购车成功",
+                        'num' => $num
+                    )));
                 } else {
                     $this->model('product')->rollback();
                     return new json(json::PARAMETER_ERROR, '添加到购物车失败');
@@ -67,7 +74,25 @@ class cart extends ajax
             ->table('product', 'left join', 'product.id=cart.pid')
             ->where("product.store=? and cart.uid=?", [$id, $uid])->select('cart.pid');
         foreach ($cart as $c) {
-            
+
+            $this->model("cart")->where("pid=? and uid=?", [$c['pid'], $uid])->delete();
+        }
+        return new json(json::OK, '删除商品成功');
+    }
+
+    function deldown()
+    {
+        $userHelper = new helper\user();
+        $uid = $userHelper->isLogin();
+        if (empty($uid))
+            return new json(json::NOT_LOGIN);
+
+        $cart = $this->model("cart")
+            ->table('product', 'left join', 'product.id=cart.pid')
+            ->where("product.status=0 and cart.uid=?", [$uid])->select('cart.pid');
+
+        foreach ($cart as $c) {
+
             $this->model("cart")->where("pid=? and uid=?", [$c['pid'], $uid])->delete();
         }
         return new json(json::OK, '删除商品成功');

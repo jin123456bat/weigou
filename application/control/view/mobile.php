@@ -553,6 +553,7 @@ class mobile extends view
         $id = $this->get('id');
         if (!empty($id)) {
             $theme = $this->model('theme')->table('upload', 'left join', 'theme.logo=upload.id')->where('theme.id=?', [$id])->find('theme.id,upload.path as logo,theme.title');
+
             if (!empty($theme)) {
                 $subtheme = $this->model('subtheme')->where('theme_id=?', [$id])->orderby('subtheme.sort', 'asc')->select();
 
@@ -1081,7 +1082,12 @@ class mobile extends view
         if (!empty($uid)) {
 
             //筛选所有仓库
-            $store = $this->model('cart')->table('product', 'left join', 'product.id=cart.pid')->table('store', 'left join', 'product.store=store.id')->where('cart.uid=?', [$uid])->groupby('store.id')->select('store.id,store.name');
+            $store = $this->model('cart')
+                ->table('product', 'left join', 'product.id=cart.pid')
+                ->table('store', 'left join', 'product.store=store.id')
+                ->where('product.status=1 and cart.uid=?', [$uid])
+                ->groupby('store.id')
+                ->select('store.id,store.name');
             $storel = $store;
 
             $productHelper = new product();
@@ -1443,7 +1449,7 @@ class mobile extends view
             $filter = [
                 'uid' => $userHelper->isLogin(),
                 'sort' => ['createtime', 'desc'],
-                'isdelete'=>0,
+                'isdelete' => 0,
                 'parameter' => [
                     '`order`.*',
                 ],
@@ -1886,9 +1892,24 @@ class mobile extends view
                 'product.stock',
             ],
         ];
-        $product = $this->model('product_top')->fetchAll($product_filter);
+        $product = $this->model('product_top')
+            ->fetchAll($product_filter);
         $productHelper = new \application\helper\product();
+
+        $theme = $this->model('subtheme_product')
+            ->where("subtheme_product.subtheme_id=27")->select(['product_id']);
+
+        foreach ($theme as &$t) {
+            $t = $t['product_id'];
+        }
+
+
         foreach ($product as &$p) {
+            if (in_array($p['id'], $theme)) {
+                $p['is_theme'] = 1;
+            } else {
+                $p['is_theme'] = 0;
+            }
             $p['origin'] = $this->model('country')->get($p['origin']);
             $p['image'] = $productHelper->getListImage($p['id']);
 
@@ -1915,6 +1936,7 @@ class mobile extends view
                 }
             }
         }
+
         $this->assign('product', $product);
 
         return $this;

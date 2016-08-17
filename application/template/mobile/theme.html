@@ -3,9 +3,10 @@
 <head lang="en">
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
     <title>淘微购</title>
-    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=0" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-touch-fullscreen" content="yes" />
+    <meta name="viewport"
+          content="width=device-width, height=device-height, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=0"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-touch-fullscreen" content="yes"/>
     <meta name="full-screen" content="yes"/>
     <meta name="screen-orientation" content="portrait"/>
     <meta name="x5-fullscreen" content="true"/>
@@ -17,82 +18,92 @@
     <script type="text/javascript" src="{%$VIEW_ROOT%}/mobile/js/idangerous.swiper.js"></script>
 </head>
 <body>
-    <div id="header">
-        <header>
-            <h1>{%$theme.title%}</h1>
-            <a href="{%url c=mobile a=search%}" class="right_btn"><i class="icon search"></i></a>
-        </header>
+<div id="header">
+    <header>
+        <h1>{%$theme.title%}</h1>
+        <a href="{%url c=mobile a=search%}" class="right_btn"><i class="icon search"></i></a>
+    </header>
+</div>
+<div class="weigou-wrap">
+    <div class="ww-banner">
+        <div style="width:100%;height:100%;background-image:url({%$theme.logo%});background-size:cover;background-position:center;"></div>
+        <!-- <img src="{%$theme.logo%}"> -->
+
     </div>
-    <div class="weigou-wrap">
-        <div class="ww-banner">
-            <div style="width:100%;height:100%;background-image:url({%$theme.logo%});background-size:cover;background-position:center;"></div>
-            <!-- <img src="{%$theme.logo%}"> -->
-           
+
+    <div class="ww-tap">
+        {%section name=subtheme loop=$theme.subtheme%}
+        <div class="ww-tap1"><a href="#subtheme_{%$theme.subtheme[subtheme].id%}" {%if
+                                $smarty.section.subtheme.first%}class="current" {%/if%}>{%$theme.subtheme[subtheme].title%}</a>
         </div>
-        
-        <div class="ww-tap">
-            {%section name=subtheme loop=$theme.subtheme%}
-            <div class="ww-tap1"><a href="#subtheme_{%$theme.subtheme[subtheme].id%}" {%if $smarty.section.subtheme.first%}class="current"{%/if%}>{%$theme.subtheme[subtheme].title%}</a></div>
-            {%/section%}
-        </div>
-        <div class="ww-include">
+        {%/section%}
+    </div>
+    <div class="ww-include">
         {%section name=subtheme_detail loop=$theme.subtheme%}
         <a id="subtheme_{%$theme.subtheme[subtheme_detail].id%}" class="point">
-        <div class="ww-tap1-con">
-            <div class="ww-tap1-head">
-            ——  {%$theme.subtheme[subtheme_detail].subtitle%}  ——</div>
-            <div class="ww-tap1-item1 clearfix">
-            	{%section name=product loop=$theme.subtheme[subtheme_detail].product%}
-                <div class="product">
-                    <div class="item clearfix" onClick="window.location = '{%url c=mobile a=product id=$theme.subtheme[subtheme_detail].product[product].id%}';">
-                        <div class="item-img">
-                             <div style="width:100%;height:135px;background-image:url({%$theme.subtheme[subtheme_detail].product[product].image%});background-size:cover;background-position:center;margin:0 auto;"></div>
-                           <!--  <img onerror="this.src='http://placehold.it/300x300?text=暂无商品图';" src="{%$theme.subtheme[subtheme_detail].product[product].image%}" > -->
-                        </div>
-                        <div class="item-title">{%$theme.subtheme[subtheme_detail].product[product].name|truncate:30:'...'%}</div>
-                        <div class="item-price">￥{%if isset($user) && $user.vip==1%}{%$theme.subtheme[subtheme_detail].product[product].v1price%}{%elseif isset($user) &&  $user.vip==2%}{%$theme.subtheme[subtheme_detail].product[product].v2price%}{%else%}{%$theme.subtheme[subtheme_detail].product[product].price%}{%/if%} <span> ￥{%$theme.subtheme[subtheme_detail].product[product].oldprice%}</span></div>
-                        <div class="item-btn">立即购买></div>
-                    </div>
+            <div class="ww-tap1-con">
+                <div class="ww-tap1-head">
+                    —— {%$theme.subtheme[subtheme_detail].subtitle%} ——
                 </div>
-                {%/section%}
+                <div class="ww-tap1-item1 clearfix">
+                    {%section name=product loop=$theme.subtheme[subtheme_detail].product%}
+                    <div class="product">
+                        <div class="item clearfix"
+                             onClick="window.location = '{%url c=mobile a=product id=$theme.subtheme[subtheme_detail].product[product].id%}';">
+                            <div class="item-img">
+                                <div style="width:100%;height:135px;background-image:url({%$theme.subtheme[subtheme_detail].product[product].image%});background-size:cover;background-position:center;margin:0 auto;"></div>
+                                <!--  <img onerror="this.src='http://placehold.it/300x300?text=暂无商品图';" src="{%$theme.subtheme[subtheme_detail].product[product].image%}" > -->
+                            </div>
+                            <div class="item-title">
+                                {%$theme.subtheme[subtheme_detail].product[product].name|truncate:30:'...'%}
+                            </div>
+                            <div class="item-price">￥{%if isset($user) &&
+                                $user.vip==1%}{%$theme.subtheme[subtheme_detail].product[product].v1price%}{%elseif
+                                isset($user) &&
+                                $user.vip==2%}{%$theme.subtheme[subtheme_detail].product[product].v2price%}{%else%}{%$theme.subtheme[subtheme_detail].product[product].price%}{%/if%}
+                                <span> ￥{%$theme.subtheme[subtheme_detail].product[product].oldprice%}</span></div>
+                            <div class="item-btn">立即购买></div>
+                        </div>
+                    </div>
+                    {%/section%}
+                </div>
             </div>
-        </div>
         </a>
         {%/section%}
-        </div>
-        
     </div>
-   <script type="text/javascript"> 
-        var bHeight=$(".ww-banner").width()*0.7;
-        $(".ww-banner").css("height",bHeight+"px");
-        $(".ww-tap").css("top",bHeight+50+"px");
-        $(".ww-include").css("margin-top",bHeight+93+"px");
 
-        $(document).ready(function () {
-            $(".ww-include").css("height",$(window).height()-bHeight-93+"px");
-            $(".ww-include").scroll(function () {
-                var items = $(".point");
-                var menu = $(".ww-tap");
-                var top = $(window).scrollTop();
-                var currentId = ""; //滚动条现在所在位置的item id
-                items.each(function () {
-                    var m = $(this);
-                    //注意：m.offset().top代表每一个item的顶部位置
-                    if (top > m.offset().top-133-bHeight) {
-                        currentId = "#" + m.attr("id");
-                    } else {
-                        return false;
-                    }
-                });
+</div>
+<script type="text/javascript">
+    var bHeight = $(".ww-banner").width() * 0.7;
+    $(".ww-banner").css("height", bHeight + "px");
+    $(".ww-tap").css("top", bHeight + 50 + "px");
+    $(".ww-include").css("margin-top", bHeight + 93 + "px");
 
-                var currentLink = menu.find(".current");
-                if (currentId && currentLink.attr("href") != currentId) {
-                    $(".ww-tap a").removeClass();
-                    // currentLink.removeClass("current");
-                    menu.find("[href=" + currentId + "]").addClass("current");
+    $(document).ready(function () {
+        $(".ww-include").css("height", $(window).height() - bHeight - 93 + "px");
+        $(".ww-include").scroll(function () {
+            var items = $(".point");
+            var menu = $(".ww-tap");
+            var top = $(window).scrollTop();
+            var currentId = ""; //滚动条现在所在位置的item id
+            items.each(function () {
+                var m = $(this);
+                //注意：m.offset().top代表每一个item的顶部位置
+                if (top > m.offset().top - 133 - bHeight) {
+                    currentId = "#" + m.attr("id");
+                } else {
+                    return false;
                 }
             });
+
+            var currentLink = menu.find(".current");
+            if (currentId && currentLink.attr("href") != currentId) {
+                $(".ww-tap a").removeClass();
+                // currentLink.removeClass("current");
+                menu.find("[href=" + currentId + "]").addClass("current");
+            }
         });
-    </script>
+    });
+</script>
 </body>
 </html>

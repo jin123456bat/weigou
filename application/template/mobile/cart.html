@@ -450,6 +450,16 @@
         $("#delete_confirm").show();
 
         $(".confirm").click(function () {
+
+            //ajax  请求
+            var data = {
+                id: 0
+            }
+            $.post('{%url m=ajax c=cart a=deldown%}', data, function (response) {
+                if (response.code != 1) {
+                    msg(response.result);
+                }
+            });
             $("#cart_downwrap").hide();
             $("#delete_confirm").hide();
         })
@@ -639,6 +649,7 @@
             content: content,
             num: -num,
         }
+
         $.post('{%url m=ajax c=cart a=delall%}', data, function (response) {
             if (response.code != 1) {
                 msg(response.result);
@@ -961,26 +972,43 @@
 
         $('.deleteAll').on('click', function () {
             $("#delete_confirm").show();
+            var idx = $(".deleteAll").index($(this));
+
+            var shopidx = $().index($);
 
             var store = $('.goods_wrap');
-
+            var deleteall = this;
             $(".confirm").click(function () {
+
+                $.each(store, function (index, value) {
+                    var goods = $(value).find('.goods.active');
+                    $.each(goods, function (index, value) {
+                        remove_product1($(value).find('#count_down').data('id'), $(value).find('#count_down').data('content'), $(value).find('#goods_count').val(), function () {
+                            goods.remove();
+                        });
+                    });
+                })
+
                 /*
-                 $.each(store, function (index, value) {
-                 var goods = $(value).find('.goods.active');
-                 $.each(goods, function (index, value) {
-                 remove_product1($(value).find('#count_down').data('id'), $(value).find('#count_down').data('content'), $(value).find('#goods_count').val(), function () {
-                 goods.remove();
+                 remove_product2($(deleteall).data('id'), $(this).data('content'), $(this).parents('.goods').find('#goods_count').val(), function () {
+                 // goods.remove();
+                 //删除对应商品
+                 var nowstore = $(".goods_wrap ").eq(idx);
+                 if (nowstore.find(".choose_store").attr("sele") == "yes")
+                 nowstore.remove();
+                 else {
+                 nowstore.find(".choose_product").each(function () {
+                 if ($(this).attr("sele") == "yes") {
+                 var product_idx = $(".choose_product").index($(this));
+                 console.log(product_idx);
+                 $(".goods").eq(product_idx).remove();
+                 }
+
                  });
+                 }
+
                  });
-                 })
                  */
-
-                remove_product2($(".deleteAll").data('id'), $(this).data('content'), $(this).parents('.goods').find('#goods_count').val(), function () {
-                    // goods.remove();
-                    //删除对应商品
-
-                });
                 $("#delete_confirm").hide();
 
 

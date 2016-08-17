@@ -32,6 +32,7 @@ class datatables extends view
 
     function product()
     {
+
         if ($this->post('customActionType') == 'group_action') {
             $post_id = $this->post('id');
             if (is_array($post_id) && !empty($post_id)) {
@@ -92,6 +93,7 @@ class datatables extends view
             }
         }
         $resultObj->recordsTotal = $this->model('product')->where('product.isdelete=?', [0])->count();
+        die(json_encode($resultObj));
         return new json($resultObj);
     }
 
@@ -443,19 +445,19 @@ class datatables extends view
 
         $resultObj->recordsFiltered = count($resultObj->data);
 
-            //获取用户对应id username
-            $users = $this->model('user')->select(['id', 'name']);
-            $user = array();
-            foreach ($users as $u) {
-                $user[$u['id']] = $u['name'];
-            }
+        //获取用户对应id username
+        $users = $this->model('user')->select(['id', 'name']);
+        $user = array();
+        foreach ($users as $u) {
+            $user[$u['id']] = $u['name'];
+        }
 
-            $resultObj->data = array_slice($resultObj->data, $this->post('start'), $this->post('length'));
+        $resultObj->data = array_slice($resultObj->data, $this->post('start'), $this->post('length'));
 
-            //循环更改oid
-            foreach ($resultObj->data as &$ds) {
-                $ds['oid'] = empty($ds['oid']) ? '无' : $user[$ds['oid']];
-            }
+        //循环更改oid
+        foreach ($resultObj->data as &$ds) {
+            $ds['oid'] = empty($ds['oid']) ? '无' : $user[$ds['oid']];
+        }
 
         $resultObj->recordsTotal = $this->model('vip_order')->count();
         return new json($resultObj);
