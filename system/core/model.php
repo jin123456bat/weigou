@@ -168,7 +168,9 @@ class model
             $field = implode(',', $field);
         $sql = 'select ' . $field . ' from ' . $this->getTable() . ' ' . $this->getWhere() . $this->getGroupby() . ' ' . $this->getOrderby() . ' ' . $this->getLimit();
         if ($returnSql)
+
             return $sql;
+
         $result = $this->query($sql, empty($this->_temp['where']) ? array() : $this->_temp['array']);
         unset($this->_temp);
         return $result;

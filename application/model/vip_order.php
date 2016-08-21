@@ -66,12 +66,13 @@ class vip_orderModel extends model
     {
         $uid = $this->model("source")->where("id=?", [$session_id])->find(['uid']);
         $uid = $uid['uid'];
-
-
         $this->table('user', 'left join', 'user.id=vip_order.uid');
-        $this->where('user.oid in (select id from user where oid=?)', [$uid]);
-        $this->where('user.oid =?', [$uid], 'or');
-        $this->where('user.id =?', [$uid], 'or');
+        
+        $this->where('user.oid in (select id from user where oid=?) or user.oid=? or user.id=?', [$uid,$uid,$uid]);
+        /* 
+         * $this->where('user.oid =?', [$uid], 'or');
+        	$this->where('user.id =?', [$uid], 'or');
+         */
         $parameter = [];
         foreach ($post['columns'] as $index => $columns) {
             if (!empty($columns['name'])) {

@@ -136,10 +136,9 @@ class source extends view
         $this->assign('data', $data);
         $power = $this->model('source')->where('id=?', [$this->session->id])->find();
 
-        /* if (!empty($power['u_source']) || $power['type'] == 1) {
+         if (!empty($power['u_source']) || $power['type'] == 1) {
              $this->setViewname('nopower');
-         }*/
-
+         }
 
         $source = $this->model('source')->where('isdelete=? and u_source=?', [0, $this->session->id])->select();
         $this->assign('power', $power);

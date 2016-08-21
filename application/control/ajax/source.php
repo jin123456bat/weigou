@@ -82,8 +82,14 @@ class source extends ajax
                 $userdata['vip'] = 0;
                 $userdata['master'] = 0;
             } else {
-                $userdata['vip'] = 2;
-                $userdata['master'] = 1;
+                if ($u_source == null) {
+                    $userdata['vip'] = 2;
+                    $userdata['master'] = 1;
+                } else {
+                    $userdata['vip'] = 0;
+                    $userdata['master'] = 0;
+                }
+
             }
             if ($this->model('user')->insert($userdata)) {
                 $uid = $this->model('user')->lastInsertId();
