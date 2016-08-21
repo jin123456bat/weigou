@@ -282,7 +282,7 @@
         var ids = $('#datatable_shipment_wrapper').find('tbody input.checkboxes:checked');
         var ths = $(this);
         var form = document.createElement("form");
-        form.action = '{%url c=export a=vip_order%}';
+        form.action = '{%url c=export a=vip%}';
         form.target = '_blank';
         form.method = 'post';
         var input_all = document.createElement('input');

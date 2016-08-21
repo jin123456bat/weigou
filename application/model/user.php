@@ -199,8 +199,29 @@ class userModel extends model
 		->find([
 				'uid'
 		]);
-		
-		$this->where('user.source = ? or user.oid = ?',[$session_id,$source_uid['uid']]);
+
+        //获取下一级
+
+        $oiduser = $this->model("user")->where("oid=?", [$source_uid['uid']])->select(['id']);
+        $ouser = array();
+        if ($oiduser) {
+            foreach ($oiduser as &$o) {
+                $ouser[] = $o['id'];
+
+            }
+            //$oiduser = implode(",", $oiduser);
+            ///echo $oiduser;exit;
+
+
+            $this->where('(user.oid in (select user.id from user where user.oid=?) or user.source = ? or user.oid = ? or user.id=? )', [$source_uid['uid'],$session_id, $source_uid['uid'], $source_uid['uid']]);
+            //$this->where("user.oid in (?) ", $ouser, 'or');
+
+        } else {
+
+
+            $this->where('user.source = ? or user.oid = ? or user.id=?', [$session_id, $source_uid['uid'], $source_uid['uid']]);
+        }
+		//$this->where('user.source = ? or user.oid = ?',[$session_id,$source_uid['uid']]);
 		return $this->select($parameter);
 	}
 	

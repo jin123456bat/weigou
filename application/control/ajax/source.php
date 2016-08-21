@@ -10,9 +10,10 @@ class source extends ajax
     function create()
     {
         $name = $this->post('name');
+        $name1 = $name;
         $phone = $this->post('phone');
         $wechat = $this->post('wechat');
-        $password = $this->post('password', '', 'md5');
+        $password = $this->post('password');
         $user = $this->post('user');
         $product = $this->post('product');
         $ctype = $this->post('ctype');
@@ -26,31 +27,29 @@ class source extends ajax
         if (empty($name) || empty($phone) || empty($wechat)) {
             return new json(json::PARAMETER_ERROR, '请填写完完整');
         }
-
         if (!empty($this->model('source')->where('name=? and isdelete=?', [$name, 0])->find())) {
             return new json(json::PARAMETER_ERROR, '该渠道商已经存在');
         }
+        if (!empty($userp = $this->model('user')->where('telephone=?', [$phone])->find())) {
+            $uid = $userp['id'];
+        } else {
 
-        if (!empty($this->model('user')->where('telephone=?', [$phone])->find())) {
-            return new json(json::PARAMETER_ERROR, '该该号码已经存在');
-        }
+            $uid = NULL;
 
-        $uid = NULL;
-
-        if ($ctype == 0) {
 
             $invit = random::word(6);//邀请码
             $userdata = [
                 'id' => NULL,
                 'name' => $name,
                 'telephone' => $phone,
-                'password' => '1',
-                'salt' => '',
+                'password' => md5($password . $invit),
+                'salt' => $invit,
                 'invit' => $invit,
                 'regtime' => $_SERVER['REQUEST_TIME'],
                 'money' => '',
                 'gravatar' => NULL,
-
+                'vip' => 2,
+                'master' => 1,
                 'o_master' => NULL,
                 'wx_name' => '',
                 'wx_openid_web' => NULL,
@@ -76,17 +75,21 @@ class source extends ajax
                 'invittime' => $_SERVER['REQUEST_TIME'],
                 'source' => NULL,
                 'wechat_no' => $wechat,
+                'close' => 0
             ];
-            //判断是否为导师
-            //'vip' => 2,
-            //  'master' => 1,
-            $master = $name = $this->post('master');
-            if ($master == 0) {
+            // $master = $name = $this->post('master');
+            if ($ctype == 1) {
                 $userdata['vip'] = 0;
                 $userdata['master'] = 0;
             } else {
-                $userdata['vip'] = 2;
-                $userdata['master'] = 1;
+                if ($u_source == null) {
+                    $userdata['vip'] = 2;
+                    $userdata['master'] = 1;
+                } else {
+                    $userdata['vip'] = 0;
+                    $userdata['master'] = 0;
+                }
+
             }
             if ($this->model('user')->insert($userdata)) {
                 $uid = $this->model('user')->lastInsertId();
@@ -94,12 +97,11 @@ class source extends ajax
                 return new json(json::PARAMETER_ERROR, '创建不成功');
             }
 
+
         }
-
-
         $array = [
-            'name' => $name,
-            'password' => $password,
+            'name' => $name1,
+            'password' => md5($password),
             'user' => $user,
             'product' => $product,
             'isdelete' => 0,

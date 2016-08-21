@@ -399,8 +399,28 @@ class orderModel extends model
 		{
 			$this->where('order.pay_status != 0');//默认不显示未支付的订单
 		}
-	
-		$this->where('user.source=? or user.oid=?',[$session_id,$session_uid]);
+        /*
+        $oiduser = $this->model("user")->where("oid=?", [$session_uid])->select(['id']);
+        $ouser = array();
+        if ($oiduser) {
+            foreach ($oiduser as &$o) {
+                $ouser[] = $o['id'];
+
+            }
+            //$oiduser = implode(",", $oiduser);
+            ///echo $oiduser;exit;
+
+
+            $this->where('user.source=? or user.oid=? or user.id=?', [$session_id, $session_uid, $session_uid]);
+            $this->where("user.oid in (?) ", $ouser, 'or');
+
+        } else {
+*/
+
+            $this->where('user.source=? or user.oid=? or user.id=?', [$session_id, $session_uid, $session_uid]);
+  //      }
+
+        $this->where('user.source=? or user.oid=?',[$session_id,$session_uid]);
 		return $this->select($parameter);
 	}
 	
