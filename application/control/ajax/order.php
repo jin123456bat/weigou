@@ -46,7 +46,7 @@ class order extends ajax
             return new json(json::PARAMETER_ERROR, 'product参数错误');
         }
 
-
+		//是否是模拟订单
         $prepay = $this->post('prepay', 0, 'intval');
 
         //优惠券
@@ -87,7 +87,8 @@ class order extends ajax
             //预订单到这里结束了
             return new json(json::OK, NULL, $order);
         }
-
+	
+        //检查订单中的收货地址是否需要填写身份证号码
         if ($order['need_kouan'] == 1) {
             $address = $this->model('address')->where('id=?', [$address])->find();
             if (empty($address['identify'])) {
@@ -95,6 +96,7 @@ class order extends ajax
             }
         }
 
+        //一个订单中不允许多个类型的商品存在
         if ($orderHelper->hasProductOutside(0) || $orderHelper->hasProductOutside(1)) {
             if ($orderHelper->hasProductOutside(2)) {
                 return new json(json::PARAMETER_ERROR, '普通商品和进口商品不能和直供商品同时支付，请选择部分商品支付');
@@ -103,13 +105,14 @@ class order extends ajax
                 return new json(json::PARAMETER_ERROR, '普通商品和进口商品不能和直邮商品同时支付，请选择部分商品支付');
             }
         }
+        
         if ($orderHelper->hasProductOutside(2)) {
             if ($orderHelper->hasProductOutside(3)) {
                 return new json(json::PARAMETER_ERROR, '直供商品不能和直邮商品同时支付，请选择部分商品支付');
             }
         }
 
-
+        //订单价格不允许为0
         if (floatval($order['orderamount']) == 0) {
             return new json(json::PARAMETER_ERROR, '订单创建失败');
         }
@@ -119,8 +122,8 @@ class order extends ajax
         if ($this->model('order')->insert($order)) {
             //减少库存
             foreach ($product as $p) {
-                $selled = $this->model('product')->where('id=?', [$p['id']])->find('selled');
-                $selled = isset($selled['selled']) && !empty($selled['selled']) ? $selled['selled'] : 1;
+            	
+            	$selled = $productHelper->getSelled($p);
 
                 if (!$productHelper->increaseStock($p['id'], $p['content'], -$p['num'] * $selled)) {
                     $this->model('order')->rollback();
@@ -167,15 +170,17 @@ class order extends ajax
             $clear = $this->post('clear', 0, 'intval');
             if ($clear) {
                 foreach ($product as $p) {
-                    if (!$this->model('cart')->where('uid=? and pid=? and content=?', [$uid, $p['id'], $p['content']])->increase('num', -$p['num'])) {
+                	$selled = $productHelper->getSelled($p);
+                	
+                    if (!$this->model('cart')->where('uid=? and pid=? and content=? and bind=?', [$uid, $p['id'], $p['content'],$selled])->increase('num', -$p['num'])) {
 
                         $this->model('order')->rollback();
                         return new json(json::PARAMETER_ERROR, '清空购物车失败');
                     }
 
-                    $num = $this->model('cart')->where('uid=? and pid=? and content=?', [$uid, $p['id'], $p['content']])->find();
+                    $num = $this->model('cart')->where('uid=? and pid=? and content=? and bind=?', [$uid, $p['id'], $p['content'],$selled])->find();
                     if ($num['num'] <= 0) {
-                        if (!$this->model('cart')->where('uid=? and pid=? and content=?', [$uid, $p['id'], $p['content']])->delete()) {
+                        if (!$this->model('cart')->where('uid=? and pid=? and content=? and bind=?', [$uid, $p['id'], $p['content'],$selled])->delete()) {
                             $this->model('order')->rollback();
                             return new json(json::PARAMETER_ERROR, '清空购物车失败');
                         }

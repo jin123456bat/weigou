@@ -151,12 +151,15 @@ class cart extends common
 
         $productHelper = new helper\product();
 
+        $bind = $this->data('bind',$productHelper->getSelled(['id'=>$id,'content'=>$content,'num'=>$num]),'intval');
+
         if ($productHelper->canBuy($id, $content)) {
             $this->model('product')->transaction();
             $cartHelper = new helper\cart();
-            if ($cartHelper->add($this->_uid, $id, $content, $num)) {
+            if ($cartHelper->add($this->_uid, $id, $content, $num, $bind)) {
                 $this->model('product')->commit();
-                return new json(json::OK);
+                $num = $this->model('cart')->where('uid=?',[$this->_uid])->find('sum(num) as num');
+                return new json(json::OK,NULL,$num['num']);
             } else {
                 $this->model('product')->rollback();
                 return new json(json::PARAMETER_ERROR, '添加到购物车失败');

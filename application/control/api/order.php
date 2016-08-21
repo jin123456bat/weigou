@@ -124,9 +124,7 @@ class order extends common
 
             //减少库存
             foreach ($product as $p) {
-                $selled = $this->model('product')->where('id=?', [$p['id']])->find('selled');
-                $selled = isset($selled['selled']) && !empty($selled['selled']) ? $selled['selled'] : 1;
-
+            	$selled = $productHelper->getSelled($p);
                 if (!$productHelper->increaseStock($p['id'], $p['content'], -$p['num'] * $selled)) {
                     $this->model('order')->rollback();
                     return new json(json::PARAMETER_ERROR, '库存不足');
@@ -157,14 +155,17 @@ class order extends common
             $clear = $this->data('clear', 0, 'intval');
             if ($clear) {
                 foreach ($product as $p) {
-                    if (!$this->model('cart')->where('uid=? and pid=? and content=?', [$uid, $p['id'], $p['content']])->increase('num', -$p['num'])) {
+                	
+                	$selled = $productHelper->getSelled($p);
+                	
+                    if (!$this->model('cart')->where('uid=? and pid=? and content=? and bind=?', [$uid, $p['id'], $p['content'],$selled])->increase('num', -$p['num'])) {
                         $this->model('order')->rollback();
                         return new json(json::PARAMETER_ERROR, '清空购物车失败1');
                     }
 
-                    $num = $this->model('cart')->where('uid=? and pid=? and content=?', [$uid, $p['id'], $p['content']])->find();
+                    $num = $this->model('cart')->where('uid=? and pid=? and content=? and bind=?', [$uid, $p['id'], $p['content'],$selled])->find();
                     if ($num['num'] <= 0) {
-                        if (!$this->model('cart')->where('uid=? and pid=? and content=?', [$uid, $p['id'], $p['content']])->delete()) {
+                        if (!$this->model('cart')->where('uid=? and pid=? and content=? and bind=?', [$uid, $p['id'], $p['content'],$selled])->delete()) {
                             $this->model('order')->rollback();
                             return new json(json::PARAMETER_ERROR, '清空购物车失败2');
                         }

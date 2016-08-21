@@ -22,28 +22,20 @@ class cart extends ajax
             return new json(json::NOT_LOGIN);
 
         $productHelper = new helper\product();
+        
+        $bind = $this->data('bind',$productHelper->getSelled(['id'=>$id,'content'=>$content,'num'=>$num]),'intval');
 
         if ($productHelper->canBuy($id, $content)) {
-            $this->model('product')->transaction();
-            if ($productHelper->increaseStock($id, $content, -$num)) {
-                $cartHelper = new helper\cart();
-                if ($cartHelper->add($uid, $id, $content, $num)) {
-                    $this->model('product')->commit();
-                    //获取购物车数量
-                    $num = $this->model("cart")->where("uid=?", [$uid])->find('sum(num) as cou');
-                    $num = $num['cou'] > 0 ? $num['cou'] : 0;
-                    die(json_encode(array(
-                        'code' => 1,
-                        'result' => "添加到购车成功",
-                        'num' => $num
-                    )));
-                } else {
-                    $this->model('product')->rollback();
-                    return new json(json::PARAMETER_ERROR, '添加到购物车失败');
-                }
+        	$this->model('product')->transaction();
+            $cartHelper = new helper\cart();
+            if ($cartHelper->add($this->_uid, $id, $content, $num, $bind)) {
+                $this->model('product')->commit();
+                $num = $this->model('cart')->where('uid=?',[$uid])->find('ifnull(sum(num),0) as num');
+                return new json(json::OK,NULL,$num['num']);
+            } else {
+                $this->model('product')->rollback();
+                return new json(json::PARAMETER_ERROR, '添加到购物车失败');
             }
-            $this->model('product')->rollback();
-            return new json(json::PARAMETER_ERROR, '库存不足');
         }
         return new json(json::PARAMETER_ERROR, '该商品无法购买');
     }

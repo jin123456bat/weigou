@@ -201,7 +201,7 @@ class order extends base
                 }
             }
 
-            //计算商品价格
+            //根据规格 计算商品价格
             if (!empty($p['content'])) {
                 $collection_price = $this->model('collection')->get($p['id'], $p['content']);
                 if (!empty($collection_price)) {
@@ -212,12 +212,22 @@ class order extends base
                     $product['sku'] = $collection_price['sku'];
                 }
             }
+            
+            //计算捆绑价格
+            $productHelper = new \application\helper\product();
+            $priceInBind = $productHelper->getPriceByBind($p);
+            if ($priceInBind)
+            {
+            	$product['price'] = $priceInBind['price'];
+            	$product['v1price'] = $priceInBind['v1price'];
+            	$product['v2price'] = $priceInBind['v2price'];
+            }
 
+            //对于团购商品可能需要强制性的价格
             if (isset($p['price'])) {
                 $product['v2price'] = $product['v1price'] = $product['price'] = $p['price'];
             }
-
-            $productHelper = new \application\helper\product();
+            
             switch (intval($user['vip'])) {
                 case 0:
                     $totalamount += $product['price'] * $p['num'];
@@ -489,6 +499,7 @@ class order extends base
                     'pid' => $p['id'],
                     'content' => $p['content'],
                     'num' => $p['num'],
+                	'bind' => $productHelper->getSelled($p),
                     'price' => $price,
                     'refund' => 0,
                     'refundmoney' => 0,
@@ -509,6 +520,7 @@ class order extends base
                     'product' => [[
                         'pid' => $p['id'],
                         'num' => $p['num'],
+                    	'bind' => $productHelper->getSelled($p),
                         'price' => $price,
                         'content' => $p['content'],
                         'refund' => 0,

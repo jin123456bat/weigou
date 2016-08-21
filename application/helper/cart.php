@@ -10,11 +10,11 @@ class cart extends base
 	 * @param unknown $content
 	 * @param unknown $num 添加的数量
 	 */
-	function add($uid,$id,$content,$num)
+	function add($uid,$id,$content,$num,$bind = 0)
 	{
 		if (empty($num))
 			return false;
-		$result = $this->model('cart')->where('uid=? and pid=? and content=?',[$uid,$id,$content])->find();
+		$result = $this->model('cart')->where('uid=? and pid=? and content=? and bind=?',[$uid,$id,$content,$bind])->find();
 		if(empty($result))
 		{
 			if ($num<=0)
@@ -25,17 +25,18 @@ class cart extends base
 				'content' => $content,
 				'num' => $num,
 				'time' => $_SERVER['REQUEST_TIME'],
+				'bind' => $bind
 			]);
 		}
 		else
 		{
 			if ($result['num'] + $num <= 0)
 			{
-				return $this->model('cart')->where('uid=? and pid=? and content=?',[$uid,$id,$content])->delete();
+				return $this->model('cart')->where('uid=? and pid=? and content=? and bind=?',[$uid,$id,$content,$bind])->delete();
 			}
 			else
 			{
-				return $this->model('cart')->where('uid=? and pid=? and content=?',[$uid,$id,$content])->update([
+				return $this->model('cart')->where('uid=? and pid=? and content=? and bind=?',[$uid,$id,$content,$bind])->update([
 					'num' => ($result['num'] + $num),
 					'time' => $_SERVER['REQUEST_TIME'],
 				]);

@@ -225,11 +225,16 @@ class model
     {
         //where语句中的in操作符单独使用
         if (substr_count($sql, ' in ') == 1) {
-            if (empty($array)) {
+        	if (empty($array)) {
                 return $this;
             }
-            $replace = implode(',', array_fill(0, count($array), '?'));
-            $sql = str_replace('?', $replace, $sql);
+            $pattern = '$in\s*\(\s*\?\s*\)$';
+            if (preg_match($pattern, $sql,$inSql))
+            {
+	            $inSql = $inSql[0];
+	            $replace = ' in ('.implode(',', array_fill(0, count($array), '?')).')';
+	            $sql = str_replace($inSql, $replace, $sql);
+            }
         }
         if (isset($this->_temp['where'])) {
             $this->_temp['where'] = $this->_temp['where'] . ' ' . $combine . ' ' . '(' . $sql . ')';

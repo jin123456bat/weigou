@@ -227,6 +227,51 @@ class product extends base
 	}
 	
 	/**
+	 * 通过捆绑参数获取商品的单价信息
+	 * @param array('id','content','num','bind') $p
+	 */
+	function getPriceByBind($p)
+	{
+		if (isset($p['bind']) && !empty($p['bind']))
+		{
+			$bind = $this->model('bind')->where('id=? and content=? and num=?',[$p['id'],$p['content'],$p['bind']])->select();
+			if (!empty($bind))
+			{
+				return $bind;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * 创建订单的时候，获取并计算product参数中的销售数量，假如不符合规则则使用默认的销售规则
+	 * @param array('id','content','num','bind') $p
+	 */
+	function getSelled($p)
+	{
+		if ($this->hasBind($p['id']) && isset($p['bind']) && !empty($p['bind']))
+		{
+			//设定了捆绑参数，也传递过来了，说明是新版本的接口，  这里使用接口传递过来的数量
+			$selled = $p['bind'];
+		}
+		else
+		{
+			//没有设定捆绑参数,使用默认的捆绑数量
+			$selled = $this->model('product')->where('id=?', [$p['id']])->find('selled');
+			$selled = isset($selled['selled']) && !empty($selled['selled']) ? $selled['selled'] : 1;
+		}
+		return $selled;
+	}
+	
+	/**
+	 * 检查商品是否设定了捆绑
+	 */
+	function hasBind($id)
+	{
+		return !empty($this->model('bind')->where('pid=?',[$id])->find());
+	}
+	
+	/**
 	 * 判断商品是否可以被购买
 	 */
 	function canBuy($id,$content)
