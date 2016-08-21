@@ -82,7 +82,94 @@ var collection = function(){
 				RadioPrototypeNum++;
 			}
 			prototype.push(temp);
+			this.showBindTable();
 			this.clearInput();
+		},
+
+		getBind:function()
+		{
+			var bind = [];
+			var tr = $('#BindTable tbody tr').each(function(index,value){
+				var data = {
+					content:$(value).find('select[name=content]').val(),
+					num:$(value).find('input[name=num]').val(),
+					inprice:$(value).find('input[name=inprice]').val(),
+					price:$(value).find('input[name=price]').val(),
+					v1price:$(value).find('input[name=v1price]').val(),
+					v2price:$(value).find('input[name=v2price]').val(),
+				}
+				bind.push(data);
+			});
+			return bind;
+		},
+
+		setBind:function(content,num,inprice,price,v1price,v2price){
+			$('#BindTable .createBindBtn').trigger('click');
+
+			$('#BindTable tbody tr').each(function(index,value){
+				
+				if ($(value).find('input[name=num]').val() == '' && index != 0)
+				{
+					$(value).find('select[name=content]').val(content);
+					$(value).find('input[name=num]').val(num);
+					$(value).find('input[name=inprice]').val(inprice);
+					$(value).find('input[name=price]').val(price);
+					$(value).find('input[name=v1price]').val(v1price);
+					$(value).find('input[name=v2price]').val(v2price);
+					return false;
+				}
+			});
+		},
+
+		showBindTable:function()
+		{
+			if (hasRadioPrototype)
+			{
+				$('.radioPrototypeInBind').removeClass('display-none');
+				$('.radioPrototypeInBind select').empty();
+			}
+			else
+			{
+				$('.radioPrototypeInBind').addClass('display-none');
+			}
+
+			for(var i=0;i<prototype.length;i++)
+			{
+				if (prototype[i].type=='radio')
+				{
+					var option = $('.radioPrototypeInBind select option');
+					var radioPrototypeValue = prototype[i].value.split(',');
+					if (option.length==0)
+					{
+						for(var j=0;j<radioPrototypeValue.length;j++)
+						{
+							var str = radioPrototypeValue[j];
+							$('.radioPrototypeInBind select').append('<option value="'+str+'">'+str+'</option>');
+						}
+					}
+					else
+					{
+						for(var m=0;m<radioPrototypeValue.length;m++)
+						{
+							$('.radioPrototypeInBind select').empty();
+							for(var z=0;z<radioPrototypeValue.length;z++)
+							{
+								var option_t = option.clone();
+								for(var t = 0;t<option_t.length;t++)
+								{
+									$(option_t[t]).html($(option_t[t]).html()+','+radioPrototypeValue[z]);
+									$(option_t[t]).val($(option_t[t]).val()+','+radioPrototypeValue[z]);
+								}
+								$('.radioPrototypeInBind select').append(option_t);
+							}
+							
+						}
+						
+					}
+				}
+			}
+			//$('.radioPrototypeInBind select').append('<option value="'+str+'">'+str+'</option>');
+
 		},
 		
 		removePrototype:function(name)
@@ -90,13 +177,18 @@ var collection = function(){
 			hasRadioPrototype = false;
 			for(var i=0;i<prototype.length;i++)
 			{
-				if(prototype[i].type=='radio')
-					hasRadioPrototype = true;
 				if(prototype[i].name == name)
 				{
 					prototype.splice(i,1);
+					continue;
 				}
+				if (prototype[i].type=='radio')
+				{
+					hasRadioPrototype = true;
+				};
 			}
+
+			this.showBindTable();
 			this.drawPrototypeTables();
 			this.drawCollectionTables();
 		},
@@ -138,9 +230,6 @@ var collection = function(){
 		
 		drawCollectionTables:function()
 		{
-			if(!hasRadioPrototype)
-			return false;
-			
 			drawTimes++;
 			
 			container.empty();
