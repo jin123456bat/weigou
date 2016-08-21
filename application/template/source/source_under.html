@@ -128,7 +128,7 @@
                                 <span class="selected"></span>
                             </a>
                         </li>
-{%if $data['type']==0%}
+
  			<li class="">
                             <a href="{%url c=source a=source_viporder%}" class="nav-link nav-toggle">
                                 <i class="icon-basket"></i>
@@ -136,6 +136,7 @@
                                 <span class="selected"></span>
                             </a>
                         </li>
+                        {%if $data['type']==0%}
                         <li class="nav-item start active open">
                             <a href="{%url c=source a=source_under%}" class="nav-link nav-toggle">
                                 <i class="icon-social-dribbble"></i>

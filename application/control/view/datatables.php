@@ -472,6 +472,12 @@ class datatables extends view
         //生成json
 
         //筛选
+
+        //获取当前渠道的用户id
+
+        //生成json
+
+        //筛选
         $resultObj = new \stdClass();
         $resultObj->draw = $this->post('draw');
         $resultObj->data = $this->model('vip_order')->vipdatatables($this->post(), $this->session->id);
@@ -480,6 +486,14 @@ class datatables extends view
             $resultObj->data = array_slice($resultObj->data, $this->post('start'), $this->post('length'));
         }
         $resultObj->recordsTotal = $this->model('vip_order')->vipcount($this->session->id);
+        foreach ($resultObj->data as &$data) {
+
+            $data['oidname'] = $this->model("user")
+                ->where("id=(select oid from user where id=?)",[$data['uid']])
+                ->find(['user.name']);
+
+            $data['oidname'] = $data['oidname']['name'];
+        }
         return new json($resultObj);
     }
 }
