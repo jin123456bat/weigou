@@ -63,6 +63,7 @@ class cart extends common
                     'product.stock',
                     'product.auto_stock',
                     'product.freetax',
+                	'cart.bind',
                 ],
             ];
 
@@ -77,52 +78,64 @@ class cart extends common
                     $p['tax'] = $productHelper->getTaxFields($p['id']);
 
                     //规格价格替换
-                    if (!empty($p['content'])) {
+                    if (!empty($p['content']))
+                    {
                         $collection_price = $this->model('collection')->get($p['id'], $p['content']);
-                        if (!empty($collection_price)) {
-                            if ($collection_price['available'] == 1) {
+                        if (!empty($collection_price))
+                        {
+                            if ($collection_price['available'] == 1)
+                            {
                                 $p['price'] = $collection_price['price'];
                                 $p['v1price'] = $collection_price['v1price'];
                                 $p['v2price'] = $collection_price['v2price'];
                                 $p['image'] = $this->model('upload')->get($collection_price['logo'], 'path');
                                 $p['stock'] = $collection_price['stock'];
-                            } else {
+                            }
+                            else
+                            {
                                 return new json(json::PARAMETER_ERROR, '系统错误，请清空购物车后重新下单');
                             }
-                        } else {
+                        }
+                        else
+                        {
                             return new json(json::PARAMETER_ERROR, '系统错误，请清空购物车后重新下单');
                         }
                     }
-
-                    if ($p['status']) {
-                        //计算总价
-                        switch ($user['vip']) {
-                            case 0:
-                                $amount += $p['price'] * $p['num'];
-                                $temp_tax = $p['tax'] * $p['price'] * $p['num'];
-                                if (in_array($p['outside'], [2, 3]) && $p['freetax'] == 0) {
-                                    $tax += $temp_tax;
-                                }
-                                break;
-                            case 1:
-                                $amount += $p['v1price'];
-                                $temp_tax = $p['tax'] * $p['v1price'] * $p['num'];
-                                if (in_array($p['outside'], [2, 3]) && $p['freetax'] == 0) {
-                                    $tax += $temp_tax;
-                                }
-                                break;
-                            case 2:
-                                $amount += $p['v2price'];
-                                $temp_tax = $p['tax'] * $p['v2price'] * $p['num'];
-                                if (in_array($p['outside'], [2, 3]) && $p['freetax'] == 0) {
-                                    $tax += $temp_tax;
-                                }
-                                break;
-                            default:
-                                return new json(json::PARAMETER_ERROR, '系统错误，请重新登陆');
-                        }
-
+                    
+                    //捆绑销售的单价
+                    $priceInBind = $productHelper->getPriceByBind($p);
+                    if ($priceInBind)
+                    {
+                    	$p['price'] = $priceInBind['price'];
+                    	$p['v1price'] = $priceInBind['v1price'];
+                    	$p['v2price'] = $priceInBind['v2price'];
                     }
+
+					//计算总价
+					switch ($user['vip']) {
+						case 0:
+                        	$amount += $p['price'] * $p['num'];
+                            $temp_tax = $p['tax'] * $p['price'] * $p['num'];
+                            if (in_array($p['outside'], [2, 3]) && $p['freetax'] == 0) {
+                                $tax += $temp_tax;
+                            }
+                            break;
+                        case 1:
+                            $amount += $p['v1price'];
+                            $temp_tax = $p['tax'] * $p['v1price'] * $p['num'];
+                            if (in_array($p['outside'], [2, 3]) && $p['freetax'] == 0) {
+                                $tax += $temp_tax;
+                            }
+                            break;
+                        case 2:
+                            $amount += $p['v2price'];
+                            $temp_tax = $p['tax'] * $p['v2price'] * $p['num'];
+                            if (in_array($p['outside'], [2, 3]) && $p['freetax'] == 0) {
+                                $tax += $temp_tax;
+                            }
+                            break;
+                        default:return new json(json::PARAMETER_ERROR, '系统错误，请重新登陆');
+					}
                 }
                 $st['product'] = $product;//商品内容
                 $st['amount'] = $amount;//商品总价

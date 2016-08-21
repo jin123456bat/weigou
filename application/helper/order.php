@@ -35,14 +35,22 @@ class order extends base
 
     /**
      * 按照仓库拆分订单
-     * @return 0订单不存在  1拆单成功 2已经拆单过了 3无需拆单 4系统繁忙
+     * @return 0订单不存在  1拆单成功 2已经拆单过了 3无需拆单 4系统繁忙 5订单状态不符合
      */
     public function departByStore($orderno)
     {
         //判断订单是否存在
         $order = $this->model('order')->where('orderno=?', [$orderno])->find();
-        if (empty($order)) {
+        if (empty($order))
+        {
             return 0;
+        }
+        
+        
+        //订单状态不符合 无需推单
+        if ($order['pay_status']==0 || $order['pay_status']==2 || $order['pay_status']==3 || $order['status']==0)
+        {
+        	return 5;
         }
 
         //判断是否已经拆分过了
@@ -468,6 +476,26 @@ class order extends base
                             $price = $price_collection['price'];
                     }
                 }
+            }
+            
+            //计算捆绑价格
+            $priceInBind = $productHelper->getPriceByBind($p);
+            if ($priceInBind)
+            {
+            	switch ($user['vip'])
+            	{
+            		case '0':
+            			$price = $priceInBind['price'];
+            			break;
+            		case '1':
+            			$price = $priceInBind['v1price'];
+            			break;
+            		case '2':
+            			$price = $priceInBind['v2price'];
+            			break;
+            		default:
+            			$price = $priceInBind['price'];
+            	}
             }
 
             //假如存在指定价格，按照指定价格计算
