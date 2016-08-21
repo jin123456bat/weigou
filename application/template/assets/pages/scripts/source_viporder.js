@@ -72,24 +72,17 @@ var EcommerceOrdersView = function () {
                 }, {
                     data: 'id',
                     name: 'vip_order.id',
-<<<<<<< HEAD
-=======
                 }, {
                     data: 'uid',
                     name: 'vip_order.uid',
                     orderable: true,
->>>>>>> d254762cfb08bc4773ca4f64fdd1578328ed185d
                 },
 
                     //以下是隐藏字段
                     {
                         data: 'vip_to',
                         name: 'vip_order.vip_to',
-<<<<<<< HEAD
-                        
-=======
                         visible: false,
->>>>>>> d254762cfb08bc4773ca4f64fdd1578328ed185d
                     }, {
                         data: 'payprice',
                         name: 'vip_order.payprice',
