@@ -22,17 +22,17 @@ class cart extends ajax
             return new json(json::NOT_LOGIN);
 
         $productHelper = new helper\product();
-        
-        $bind = $this->data('bind',$productHelper->getSelled(['id'=>$id,'content'=>$content,'num'=>$num]),'intval');
+
+        $bind = $this->data('bind', $productHelper->getSelled(['id' => $id, 'content' => $content, 'num' => $num]), 'intval');
 
         if ($productHelper->canBuy($id, $content)) {
-        	$this->model('product')->transaction();
+            $this->model('product')->transaction();
             $cartHelper = new helper\cart();
-            if ($cartHelper->add($this->_uid, $id, $content, $num, $bind)) {
+            if ($cartHelper->add($uid, $id, $content, $num, $bind)) {
 
                 $this->model('product')->commit();
-                $num = $this->model('cart')->where('uid=?',[$uid])->find('ifnull(sum(num),0) as num');
-                return new json(json::OK,NULL,$num['num']);
+                $num = $this->model('cart')->where('uid=?', [$uid])->find('ifnull(sum(num),0) as num');
+                return new json(json::OK, NULL, $num['num']);
             } else {
                 $this->model('product')->rollback();
                 return new json(json::PARAMETER_ERROR, '添加到购物车失败');
