@@ -677,7 +677,7 @@ class product extends ajax
 				$data = [];
 				for ($row = 2; $row <= $rowNum; $row++){//行数是以第2行开始
 					$dataset = [];
-					for ($column = 'A'; $column <= 'Q'; $column++) {//列数是以A列开始
+					for ($column = 'A'; $column <= 'R'; $column++) {//列数是以A列开始
 						//$dataset[] = $sheet->getCell($column.$row)->getValue();
 						$dataset[] = $sheet->getCell($column.$row)->getCalculatedValue();
 					}
