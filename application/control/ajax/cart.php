@@ -29,6 +29,7 @@ class cart extends ajax
         	$this->model('product')->transaction();
             $cartHelper = new helper\cart();
             if ($cartHelper->add($this->_uid, $id, $content, $num, $bind)) {
+
                 $this->model('product')->commit();
                 $num = $this->model('cart')->where('uid=?',[$uid])->find('ifnull(sum(num),0) as num');
                 return new json(json::OK,NULL,$num['num']);

@@ -56,7 +56,7 @@
             <a href="#" class="right_btn" id="share_btn"><i class="icon share"></i></a>
         </header>
     </div>
-    <div id="content clearfix" style="padding-top: 106px;padding-bottom: 60px;">
+    <div id="content clearfix" style="padding-top: 106px;padding-bottom: 42px;">
         <div class="goods_box">
             <div class="goods_pic booth">
                 <div class="swiper-container">
@@ -87,7 +87,7 @@
                 {%/if%}
                 </div>
             </div>
-            <div class="goods_info">商品说明:<span class="pink">·</span><span>保税区发货</span><span class="pink">·</span><span>配送地区</span><span class="pink">·</span><span>温馨提示</span><span>></span></div>
+            <div class="goods_info">商品说明:<span class="pink">·</span><span>保税区发货</span><span class="pink">·</span><span>配送地区</span><span class="pink">·</span><span>温馨提示</span><img src="{%$VIEW_ROOT%}/mobile/image/jiantou@3x.png"></div>
             <!-- {%if !empty($product.tags)%}
             <div class="shuo_ming">
                 说&nbsp;&nbsp;明：<span class="red_circle"></span>{%'<span class="red_circle"></span>'|implode:(','|explode:$product.tags)%}
@@ -135,22 +135,22 @@
     </div>
     {%/if%}
     <div class="buy_box flex_box">
-        <div class="flex">
+        <div class="flex" style="flex:1;border-right: 1px solid #ccc;">
             <a class="half" href="http://kefu.easemob.com/webim/im.html?tenantId=16641&hide=false&sat=false&user=&referrer={%url c=mobile a=product id=$product.id urlencode=1%}&show=true">
                 <div class="custom"></div>
-                <div class="ww">客服</div>
             </a>
+            </div>
+            <div class="flex" style="flex:1;border-right: 1px solid #ccc;">
             <a class="half" href="{%url c=mobile a=cart%}">
 
                 <div class="car">{%if $num>0%}<span class="car_num">{%$num%}</span>{%/if%}</div>
-                <div class="ww">购物车</div>
             </a>
         </div>
         {%if $product_status==1 && $product.stock>10%}
-        <div class="flex {%if $product.outside==2 || $product.outside==3%}disabled{%/if%}">
-            <a class="add_to_cart" {%if $product.outside==2 || $product.outside==3%}style="color: #F0F0F0; background-color: grey;" {%/if%}>加入购物车</a>
+        <div class="flex " style="flex:2;">
+            <a class="add_to_cart" >加入购物车</a>
         </div>
-        <div class="flex">
+        <div class="flex" style="flex:2;">
             <a class="buy_now">立即购买</a>
         </div>
         {%/if%}
@@ -471,6 +471,11 @@
     {%include file='mobile/public/msg.html'%}
 </body>
 <script type="text/javascript">
+//轮播图固定高度
+    var w = $(".goods_box .goods_pic img").width();
+    $(".goods_box .goods_pic").css('height',w*1+'px');
+
+
 //跨境提示
 $('.g_tips').click(function() {
     $('.g_tips_mask').show();
@@ -587,6 +592,7 @@ var mySwiper = new Swiper('.swiper-container', {
     paginationClickable: true,
     autoplay: 3000,
     speed: 1500,
+    loop:true,
     calculateHeight: true,
     onSwiperCreated: function(swiper) {
         $(".swiper-pagination-switch:eq(0)").addClass('swiper-visible-switch').addClass('swiper-active-switch');
@@ -939,8 +945,8 @@ $(document).ready(function() {
     });
 
     $('.add_to_cart').on('click', function() {
-        if ($(this).parent().hasClass('disabled'))
-            return false;
+        // if ($(this).parent().hasClass('disabled'))
+        //     return false;
         $('#black_bg').show();
         $('input[name=add_to_cart]').val(1);
         $('.confirm_btn').html('添加到购物车');
@@ -1072,12 +1078,15 @@ $(document).ready(function() {
                 content: $.trim($('#size .right').html()).replace('、', ','),
                 num: $('#goods_count').val(),
             }, function(response) {
-                if (response.code == 1) {
+                var returndata = JSON.parse(response);
+                
+                if (returndata.code == 1) {
+			$(".car_num").html(returndata.num);
                     msg('添加到购物车成功');
-                } else if (response.code == 2) {
+                } else if (returndata.code == 2) {
                     show_login();
                 } else {
-                    msg(response.result);
+                    msg(returndata.result);
                 }
             });
             $('#black_bg').hide();

@@ -450,10 +450,44 @@ class order extends common
         unset($filter['length']);
         $filter['parameter'] = 'count(*)';
 
-        $total = $this->model('order')->fetch($filter);
+        //获取待付款  代发货  代收获订单数量
+        $pay_status = $this->model('order')
+            ->where("uid=? and pay_status=0 and status=1", [$uid])
+            ->count();
+
+        //代发货
+        $way_status = $this->model('order')
+            ->where("uid=? and pay_status=1 and way_status=0 and status=1", [$uid])
+            ->count();
+
+        //待收获
+        $receive = $this->model('order')
+            ->where("uid=? and  pay_status=1 and way_status=1 and  receive=0 and status=1", [$uid])
+            ->count();
+        //获取公告
+        $note = $this->model("notice")->where("status=true")->find();
+        $is_note = false;
+        $note_title = "";
+        $note_url = '';
+
+        if ($note) {
+            $is_note = true;
+            $note_url = "http://" . $_SERVER['SERVER_NAME'] . '/index.php?c=mobile&a=notice';
+
+            $note_title = $note['title'];
+        }
+        //公告地址
+
+
         $orderReturnModel = [
             'current' => count($order),
             'total' => isset($total[0]['count(*)']) ? $total[0]['count(*)'] : 0,
+            'pay_num' => $pay_status,
+            'way_num' => $way_status,
+            'receive_num' => $receive,
+            'is_note' => $is_note,
+            'note_title' => $note_title,
+            'note_url' => $note_url,
             'start' => $this->data('start', 0),
             'length' => $this->data('length', 10),
             'data' => $order,
