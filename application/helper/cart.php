@@ -40,7 +40,6 @@ class cart extends base
 					'num' => ($result['num'] + $num),
 					'time' => $_SERVER['REQUEST_TIME'],
 				]);
-				
 			}
 		}
 	}
