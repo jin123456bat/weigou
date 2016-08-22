@@ -115,7 +115,7 @@
     </div>
 
     {%if ($product.outside==2 || $product.outside==3) && $product.freetax==0%}
-    
+
     <div class="g_tips_mask" id="g_tips_mask1" style="display:none;">
         <ul class="gtm_details ths  ">
             <li>· {%$product.store%}</li>
@@ -125,7 +125,7 @@
     </div>
     {%else%}
 
-    
+
     <div class="g_tips_mask" id="g_tips_mask2" style="display:none;">
         <ul class="gtm_details ths  ">
             <li>· {%$product.store%}</li>
@@ -1078,15 +1078,16 @@ $(document).ready(function() {
                 content: $.trim($('#size .right').html()).replace('、', ','),
                 num: $('#goods_count').val(),
             }, function(response) {
-                var returndata = JSON.parse(response);
-                
-                if (returndata.code == 1) {
-			$(".car_num").html(returndata.num);
+
+               // var returndata = JSON.parse(response);
+
+                if (response.code == 1) {
+			    $(".car_num").html(response.body);
                     msg('添加到购物车成功');
-                } else if (returndata.code == 2) {
+                } else if (response.code == 2) {
                     show_login();
                 } else {
-                    msg(returndata.result);
+                    msg(response.result);
                 }
             });
             $('#black_bg').hide();

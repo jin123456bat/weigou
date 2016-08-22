@@ -12,6 +12,7 @@ class cart extends ajax
      */
     function add()
     {
+
         $id = $this->post('id');
         $content = $this->post('content', '');
         $num = $this->post('num', 1, 'intval');
@@ -23,15 +24,18 @@ class cart extends ajax
 
         $productHelper = new helper\product();
 
-        $bind = $this->data('bind', $productHelper->getSelled(['id' => $id, 'content' => $content, 'num' => $num]), 'intval');
+        $bind = $productHelper->getSelled(['id' => $id, 'content' => $content, 'num' => $num]);
+
 
         if ($productHelper->canBuy($id, $content)) {
+
             $this->model('product')->transaction();
             $cartHelper = new helper\cart();
             if ($cartHelper->add($uid, $id, $content, $num, $bind)) {
 
                 $this->model('product')->commit();
                 $num = $this->model('cart')->where('uid=?', [$uid])->find('ifnull(sum(num),0) as num');
+
                 return new json(json::OK, NULL, $num['num']);
             } else {
                 $this->model('product')->rollback();
