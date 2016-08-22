@@ -7,7 +7,7 @@
  */
 
 
-$url = 'http://127.0.0.1/index.php?m=api&c=order&a=mylists';
+$url = 'http://127.0.0.1/index.php?m=api&c=product&a=detail';
 $partner = 'ios';
 $key = "ios";
 $posts = array(
@@ -21,7 +21,7 @@ $fields = array(
     //'address' => 579,
     //'prepay' => 0,
     //'tid' => 37
-    'orderno' => '16081618034019465478'
+    'id' => '65'
 
 );
 //排序

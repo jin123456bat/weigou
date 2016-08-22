@@ -315,11 +315,12 @@ section {
     height: .9rem;
     margin: .2rem auto;
     border: .02rem dashed #ff4b00;
-    font-size: .4rem;
+    font-size: .2rem;
     font-weight: 700;
     text-align: center;
     line-height: .9rem;
-    color: #ff4b00
+    color: #ff4b00;
+    letter-spacing: 1px;
 }
 
 .step-1 p {

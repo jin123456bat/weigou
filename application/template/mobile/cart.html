@@ -45,17 +45,17 @@
     {%else%}
     <div class="cart_box" style="padding-bottom:40px;margin-top: 50px;">
         {%if isset($store) && !empty($store)%} {%section name=store loop=$store%}
-        <div class="goods_wrap active">
+        <div class="goods_wrap">
             <div class="shop_name clearfix">
-                <div class="choose choose_store" sele="yes"></div>
+                <div class="choose choose_store" sele="no"></div>
                 <div class="name">{%$store[store].name%}发货</div>
             </div>
             {%section name=product loop=$store[store].product%}
-            <div class="goods flex_box active" style="border-bottom:1px solid #ccc;">
+            <div class="goods flex_box" >
                 <input type="hidden" name="outside" value="{%$store[store].product[product].outside|default:0%}">
                 <input type="hidden" name="freetax" value="{%$store[store].product[product].freetax|default:0%}">
 
-                <div class="choose choose_product" sele="yes"></div>
+                <div class="choose choose_product" sele="no"></div>
                 <div class="row_up"
                      onClick="javascript:window.location = '{%url c=mobile a=product id=$store[store].product[product].id%}';">
                     <div class="row_up_right flex_box">
@@ -103,7 +103,7 @@
             {%/section%}
 
             <!-- 结算 -->
-            <div class="flex_box settlement2">
+            <div class="flex_box settlement2" style="border-top:1px solid #eee;">
                 <!-- <div class="allSelect flex" onClick="selectAll(this);" selectall="yes">全选</div> -->
                 <div class="total_wrap">
                     <div class="total">合计：<span class="red">￥<font class="amount_num">0</font></span></div>
@@ -113,7 +113,7 @@
                 </div>
                 <div class="settlement ">结算</div>
             </div>
-            <div class="flex_box deleteAll2" style="display: none;">
+            <div class="flex_box deleteAll2" style="display: none;border-top:1px solid #ccc;">
                 <!-- <div class="allSelect flex" onClick="selectAll(this);" selectall="no">全选</div> -->
                 <div class="total_wrap" style="width: 100%;"></div>
                 <div class="deleteAll" data-id="{%$store[store].id%}" style="width: 100px;">删除商品</div>
@@ -444,14 +444,20 @@
     </div>
 </body>
 <script type="text/javascript">
+//cart-style
+// $(".goods_wrap").each(function(){
+//    $(".goods:last").children().css('border','none');
+// })
+
+$(".goods_wrap").find(".goods:last").children().css('border','none');
+
     //清空失效产品
     $(".cart_downbottom_btn").click(function () {
         // $("#cart_downwrap").hide();
         $("#delete_confirm").show();
 
         $(".confirm").click(function () {
-
-            //ajax  请求
+//ajax  请求
             var data = {
                 id: 0
             }
@@ -979,7 +985,7 @@
             var store = $('.goods_wrap');
             var deleteall = this;
             $(".confirm").click(function () {
-
+                
                 $.each(store, function (index, value) {
                     var goods = $(value).find('.goods.active');
                     $.each(goods, function (index, value) {
@@ -1099,16 +1105,22 @@
 
     $('.goods_wrap .choose_store').on('click', function () {
         if ($(this).attr('sele') == 'yes') {
+
             $(this).attr('sele', 'no');
             $(this).parents('.goods_wrap').removeClass('active');
             $(this).parents('.goods_wrap').find('.goods').removeClass('active');
             $(this).parents('.goods_wrap').find('.choose_product').attr('sele', 'no');
         } else {
+            $(".choose_store").attr('sele', 'no');
+            $(".choose_store").parents('.goods_wrap').removeClass('active');
+            $(".choose_store").parents('.goods_wrap').find('.goods').removeClass('active');
+            $(".choose_store").parents('.goods_wrap').find('.choose_product').attr('sele', 'no');
+
             $(this).attr('sele', 'yes');
             $(this).parents('.goods_wrap').addClass('active');
             $(this).parents('.goods_wrap').find('.goods').addClass('active');
             $(this).parents('.goods_wrap').find('.choose_product').attr('sele', 'yes');
-            ;
+            
         }
         calculation_store();
         calculation();
@@ -1119,28 +1131,26 @@
         if ($(this).attr('sele') == 'yes') {
             $(this).attr('sele', 'no');
             $(this).parents('.goods').removeClass('active');
-            //woxiede
-            // console.log($(this).parent().siblings(".goods").length);
-
-            // var ju=0;
-            // $(this).parent().siblings(".goods").each(function(){
-            //     if($(this).children('.choose_product').attr("sele")=="no"){
-            //         ju=0;
-            //     }
-            // })
-            //  if(ju==0){
-            //     console.log("no");
-            //      $(this).parent().siblings(".shop_name").children('.choose_store').attr("sele","no")
-            // }
-            // else{
-            //     console.log("yes");
-            //      $(this).parent().siblings(".shop_name").children('.choose_store').attr("sele","yes")
-            // }
+           
             $(this).parent().siblings(".shop_name").children('.choose_store').attr("sele", "no")
 
         } else {
             $(this).attr('sele', 'yes');
             $(this).parents('.goods').addClass('active');
+            //判断是那个仓库的
+            var idx2=$(".goods_wrap").index($(this).parents(".goods_wrap"));
+            console.log(idx2);
+
+            $(".goods_wrap").each(function(index){
+                if(index==idx2)
+                    return;
+                $(".choose_store").attr('sele', 'no');
+                $(this).removeClass('active');
+                $(this).find('.goods').removeClass('active');
+                $(this).find('.choose_product').attr('sele', 'no');
+
+            })
+
             //woxiede
             var ju = 1;
             $(this).parent().siblings(".goods").each(function () {

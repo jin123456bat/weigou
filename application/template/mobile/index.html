@@ -32,7 +32,7 @@
         <img src="{%$VIEW_ROOT%}/mobile/image/close233.png" alt="" class="godownload-close">
     </div>
     <script type="text/javascript">
-
+ 
         $(".godownload-close").click(function(){
             $(".godownload").hide();
             $("#header").css("margin-top","0");
@@ -40,10 +40,10 @@
 
         })
 
-
+       
     </script>
     {%/if%}
-
+    
     <div id="header" {%if isset($user)%}style="margin-top: 56px;"{%/if%}>
         <header>
             <h1>淘微购</h1>
@@ -106,7 +106,7 @@
                     </div>
                     <div class="des">
                         <div class="flag" style="background:url({%$product[product].origin.logo%}) no-repeat scroll left center/1.5rem 1.5rem;">{%$product[product].origin.name%}进口&nbsp;{%$product[product].store%}发货</div>
-                        <div class="name">{%if $product[product].is_theme==1%}<span style="color: red">特价</span>{%/if%}{%$product[product].name%}</div>
+                        <div class="name">{%$product[product].name%}</div>
                         <div class="price">
 							{%if isset($user) && $user.vip==1%}
                             <span class="new">￥{%$product[product].v1price%}</span>
@@ -135,12 +135,18 @@
     </div>
 </body>
 <script>
+//轮播图固定高度
+    var w = $(".booth .swiper-wrapper img").width();
+    $(".booth").css('height',w*0.7+'px');
+
+
     var mySwiper = new Swiper('.swiper-container',{
         pagination: '.pagination',
         grabCursor: true,
         paginationClickable: true,
         autoplay: 3000,
         speed: 1500,
+        loop:true,
         calculateHeight: true,
         onSwiperCreated: function(swiper){
 			$('.swiper-slide').css('height',null);
@@ -148,7 +154,7 @@
             swiper.reInit();
         }
     });
-
+	
 	$('.swiper-slide').on('click',function(){
 		var linktype = $(this).data('linktype');
 		var url = $(this).data('url');

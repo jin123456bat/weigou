@@ -807,6 +807,7 @@ class order extends base
                 'createtime' => $_SERVER['REQUEST_TIME'],
                 'completetime' => 0,
                 'money' => $money,
+                'reason'=>'管理员退款'
             ])
             ) {
                 return false;
