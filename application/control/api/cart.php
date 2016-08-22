@@ -59,6 +59,7 @@ class cart extends common
                     'product.outside',
                     'product.origin',
                     'cart.content',
+                    'cart.bind',
                     'product.stock',
                     'product.auto_stock',
                     'product.freetax',
@@ -157,7 +158,6 @@ class cart extends common
         $id = $this->data('id');
         $content = $this->data('content', '');
         $num = $this->data('num', 1, 'intval');
-
         if (empty($this->_uid))
             return new json(json::NOT_LOGIN);
 

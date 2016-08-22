@@ -100,7 +100,7 @@ var EcommerceOrders = function () {
 					orderable:true
 				},{
 					data:'pay_money',
-					name:'(select if(((sum(orderb.pay_money)-(select if(sum(oproa.price*oproa.num) is null,0,sum(oproa.price*oproa.num)) from order_product as oproa left join order_package as opaca on opaca.id=oproa.package_id left join `order` as ordera on ordera.orderno=opaca.orderno left join user as usera on ordera.uid=usera.id where oproa.refund!=0 and usera.id=user.id))) is null,0,((sum(orderb.pay_money)-(select if(sum(oproa.price*oproa.num) is null,0,sum(oproa.price*oproa.num)) from order_product as oproa left join order_package as opaca on opaca.id=oproa.package_id left join `order` as ordera on ordera.orderno=opaca.orderno left join user as usera on ordera.uid=usera.id where oproa.refund!=0 and usera.id=user.id)))) as money from `order` as orderb where orderb.uid=user.id and orderb.pay_status=1)',
+                    name: '(select ifnull(sum(orderb.pay_money),0) as money from `order` as orderb where orderb.uid=user.id and orderb.pay_status=1 and orderb.status=1 )',
 					orderable:true
 				},{
 					data:'swift_money',
