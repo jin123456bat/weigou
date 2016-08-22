@@ -25,7 +25,6 @@ class cart extends common
      */
     function lists()
     {
-        $this->_uid = 1946;
         if (empty($this->_uid))
             return new json(json::NOT_LOGIN);
 
@@ -63,7 +62,7 @@ class cart extends common
                     'product.stock',
                     'product.auto_stock',
                     'product.freetax',
-                	'cart.bind',
+                //	'cart.bind',
                 ],
             ];
 
@@ -103,13 +102,13 @@ class cart extends common
                     }
                     
                     //捆绑销售的单价
-                    $priceInBind = $productHelper->getPriceByBind($p);
+                    /* $priceInBind = $productHelper->getPriceByBind($p);
                     if ($priceInBind)
                     {
                     	$p['price'] = $priceInBind['price'];
                     	$p['v1price'] = $priceInBind['v1price'];
                     	$p['v2price'] = $priceInBind['v2price'];
-                    }
+                    } */
 
 					//计算总价
 					switch ($user['vip']) {
