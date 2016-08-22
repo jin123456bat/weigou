@@ -7,7 +7,7 @@
  */
 
 
-$url = 'http://127.0.0.1/index.php?m=api&c=cart&a=lists';
+$url = 'http://127.0.0.1/index.php?m=api&c=user&a=getoid';
 $partner = 'ios';
 $key = "ios";
 $posts = array(
@@ -22,8 +22,8 @@ $fields = array(
     //'prepay' => 0,
     //'tid' => 37
     'id' => '65',
-    'content'=>'',
-    'num'=>1
+    'invit' => 'Hqhpln',
+    'num' => 1
 
 );
 //排序

@@ -289,10 +289,9 @@ class user extends common
                     'salt' => $salt,
                 ])
                 ) {
-                	if ($user['close']==1)
-                	{
-                		return new json(json::PARAMETER_ERROR,'账号已封');
-                	}
+                    if ($user['close'] == 1) {
+                        return new json(json::PARAMETER_ERROR, '账号已封');
+                    }
                     $userHelper->saveUserSession($user);
                     $userHelper->protectedUser($user);
                     return new json(json::OK, NULL, $user);
@@ -364,9 +363,8 @@ class user extends common
                             'user.*',
                             'upload.path as gravatar',
                         ]);
-                        if ($user['close']==1)
-                        {
-                        	return new json(json::PARAMETER_ERROR,'账号已封');
+                        if ($user['close'] == 1) {
+                            return new json(json::PARAMETER_ERROR, '账号已封');
                         }
                         $userHelper->saveUserSession($user);
                         $userHelper->protectedUser($user);
@@ -399,10 +397,9 @@ class user extends common
             if (empty($user['telephone'])) {
                 return new json(json::OK, NULL, 2);
             } else {
-            	if ($user['close']==1)
-            	{
-            		return new json(json::PARAMETER_ERROR,'账号已封');
-            	}
+                if ($user['close'] == 1) {
+                    return new json(json::PARAMETER_ERROR, '账号已封');
+                }
                 $userHelper = new \application\helper\user();
                 $userHelper->saveUserSession($user);
                 $userHelper->protectedUser($user);
@@ -488,10 +485,9 @@ class user extends common
                     'salt' => $salt,
                 ])
                 ) {
-                	if ($user['close']==1)
-                	{
-                		return new json(json::PARAMETER_ERROR,'账号已封');
-                	}
+                    if ($user['close'] == 1) {
+                        return new json(json::PARAMETER_ERROR, '账号已封');
+                    }
                     $userHelper->saveUserSession($user);
                     $userHelper->protectedUser($user);
                     return new json(json::OK, NULL, $user);
@@ -566,9 +562,8 @@ class user extends common
                             'user.*',
                             'upload.path as gravatar',
                         ]);
-                        if ($user['close']==1)
-                        {
-                        	return new json(json::PARAMETER_ERROR,'账号已封');
+                        if ($user['close'] == 1) {
+                            return new json(json::PARAMETER_ERROR, '账号已封');
                         }
                         $userHelper->saveUserSession($user);
                         $userHelper->protectedUser($user);
@@ -604,10 +599,9 @@ class user extends common
             if (empty($user['telephone'])) {
                 return new json(json::OK, NULL, 2);
             } else {
-            	if ($user['close']==1)
-            	{
-            		return new json(json::PARAMETER_ERROR,'账号已封');
-            	}
+                if ($user['close'] == 1) {
+                    return new json(json::PARAMETER_ERROR, '账号已封');
+                }
                 $userHelper = new \application\helper\user();
                 $userHelper->saveUserSession($user);
                 $userHelper->protectedUser($user);
@@ -691,10 +685,9 @@ class user extends common
                     'salt' => $salt,
                 ])
                 ) {
-                	if ($user['close']==1)
-                	{
-                		return new json(json::PARAMETER_ERROR,'账号已封');
-                	}
+                    if ($user['close'] == 1) {
+                        return new json(json::PARAMETER_ERROR, '账号已封');
+                    }
                     $userHelper->saveUserSession($user);
                     $userHelper->protectedUser($user);
                     return new json(json::OK, NULL, $user);
@@ -768,9 +761,8 @@ class user extends common
                             'user.*',
                             'upload.path as gravatar',
                         ]);
-                        if ($user['close']==1)
-                        {
-                        	return new json(json::PARAMETER_ERROR,'账号已封');
+                        if ($user['close'] == 1) {
+                            return new json(json::PARAMETER_ERROR, '账号已封');
                         }
                         $userHelper->saveUserSession($user);
                         $userHelper->protectedUser($user);
@@ -814,10 +806,9 @@ class user extends common
             if (empty($user['telephone'])) {
                 return new json(json::OK, NULL, 2);
             } else {
-            	if ($user['close']==1)
-            	{
-            		return new json(json::PARAMETER_ERROR,'账号已封');
-            	}
+                if ($user['close'] == 1) {
+                    return new json(json::PARAMETER_ERROR, '账号已封');
+                }
                 $userHelper->saveUserSession($user);
                 $userHelper->protectedUser($user);
                 return new json(json::OK, NULL, $user);
@@ -1549,4 +1540,32 @@ class user extends common
         ];
         return new json($response);
     }
+
+    function getoid()
+    {
+        if (!empty($this->_response))
+             return $this->_response;
+
+            $invit = $this->data('invit');
+
+        if ($invit) {
+
+            $user = $this->model("user")
+                ->table('upload', 'left join', 'user.gravatar=upload.id')
+                ->where("invit=?", [$invit])
+                ->find([
+                    'user.name',
+                    'user.invit',
+                    'user.id',
+                    'upload.path'
+                ]);
+
+            if ($user) {
+                return new json(json::OK, NULL, $user);
+            }
+        }
+        return new json(json::PARAMETER_ERROR, '没有找到对应导师');
+    }
+
+
 }
