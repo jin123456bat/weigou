@@ -457,12 +457,12 @@ class order extends common
 
         //代发货
         $way_status = $this->model('order')
-            ->where("uid=? and pay_status=1 and way_status=0 and status=1", [$uid])
+            ->where("uid=? and (pay_status=1 or pay_status=4) and way_status=0 and status=1", [$uid])
             ->count();
 
         //待收获
         $receive = $this->model('order')
-            ->where("uid=? and  pay_status=1 and way_status=1 and  receive=0 and status=1", [$uid])
+            ->where("uid=? and  (pay_status=1 or pay_status=4) and way_status=1 and  receive=0 and status=1", [$uid])
             ->count();
         //获取公告
         $note = $this->model("notice")->where("status=true")->find();
