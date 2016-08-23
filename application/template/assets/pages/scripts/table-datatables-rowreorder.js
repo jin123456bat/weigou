@@ -14,7 +14,7 @@ var TableDatatablesRowreorder = function () {
                 "emptyTable": "No data available in table",
                 "info": "Showing _START_ to _END_ of _TOTAL_ entries",
                 "infoEmpty": "No entries found",
-                "infoFiltered": "(filtered1 from _MAX_ total entries)",
+                //"infoFiltered": "(filtered1 from _MAX_ total entries)",
                 "lengthMenu": "_MENU_ entries",
                 "search": "Search:",
                 "zeroRecords": "No matching records found"
@@ -71,7 +71,7 @@ var TableDatatablesRowreorder = function () {
                 "emptyTable": "No data available in table",
                 "info": "Showing _START_ to _END_ of _TOTAL_ entries",
                 "infoEmpty": "No entries found",
-                "infoFiltered": "(filtered1 from _MAX_ total entries)",
+                //"infoFiltered": "(filtered1 from _MAX_ total entries)",
                 "lengthMenu": "_MENU_ entries",
                 "search": "Search:",
                 "zeroRecords": "No matching records found"

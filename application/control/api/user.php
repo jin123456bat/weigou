@@ -1215,8 +1215,8 @@ class user extends common
     function login()
     {
         if (!empty($this->_response))
-            return $this->_response;
-        $telephone = $this->data('telephone', NULL, 'telephone');
+            //return $this->_response;
+            $telephone = $this->data('telephone', NULL, 'telephone');
 
         $password = $this->data('password');
 
@@ -1232,6 +1232,14 @@ class user extends common
             }
             $userHelper->saveUserSession($userData);
             $userHelper->protectedUser($userData);
+
+
+            $userData['is_master'] = 1;
+            if (empty($userData['oid'])) {
+
+                $userData['is_master'] = 0;
+            }
+
             return new json(json::OK, NULL, $userData);
         }
         return new json(json::PARAMETER_ERROR, '密码错误');
@@ -1544,9 +1552,9 @@ class user extends common
     function getoid()
     {
         if (!empty($this->_response))
-             return $this->_response;
+            return $this->_response;
 
-            $invit = $this->data('invit');
+        $invit = $this->data('invit');
 
         if ($invit) {
 
