@@ -332,7 +332,7 @@ class oms extends erp
 		$product = $this->model('suborder_store_product')
 		->table('order_product','left join','order_product.id=suborder_store_product.order_product_id')
 		->table('product','left join','product.id=order_product.pid')
-		->where('suborder_store_product.suborder_id=?',[$suborder_id])
+		->where('suborder_store_product.suborder_id=? and order_product.refund=?',[$suborder_id,0])
 		->select([
 		//	'product.id as GoodsCommonid',
 			'product.barcode as GoodsSerial',
