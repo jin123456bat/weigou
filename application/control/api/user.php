@@ -1215,7 +1215,7 @@ class user extends common
     function login()
     {
         if (!empty($this->_response))
-            //return $this->_response;
+            return $this->_response;
             $telephone = $this->data('telephone', NULL, 'telephone');
 
         $password = $this->data('password');
