@@ -1,397 +1,348 @@
 <!DOCTYPE html>
-<!--[if IE 8]> <html lang="en" class="ie8 no-js"> <![endif]-->
-<!--[if IE 9]> <html lang="en" class="ie9 no-js"> <![endif]-->
+<!--[if IE 8]>
+<html lang="en" class="ie8 no-js"> <![endif]-->
+<!--[if IE 9]>
+<html lang="en" class="ie9 no-js"> <![endif]-->
 <!--[if !IE]><!-->
 <html lang="en">
-    <!--<![endif]-->
-    <!-- BEGIN HEAD -->
+<!--<![endif]-->
+<!-- BEGIN HEAD -->
 
-    <head>
-        <meta charset="utf-8" />
-        <title>权限不足</title>
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta content="width=device-width, initial-scale=1" name="viewport" />
-        <meta content="" name="description" />
-        <meta content="" name="author" />
-        <!-- BEGIN GLOBAL MANDATORY STYLES -->
-        <link href="{%$VIEW_ROOT%}/assets/global/css/font.css" rel="stylesheet" type="text/css" />
-        <link href="{%$VIEW_ROOT%}/assets/global/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
-        <link href="{%$VIEW_ROOT%}/assets/global/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css" />
-        <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
-        <link href="{%$VIEW_ROOT%}/assets/global/plugins/uniform/css/uniform.default.css" rel="stylesheet" type="text/css" />
-        <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css" rel="stylesheet" type="text/css" />
-        <!-- END GLOBAL MANDATORY STYLES -->
-        <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css" rel="stylesheet" type="text/css" />
-        <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css" rel="stylesheet" type="text/css" />
-        <!-- BEGIN THEME GLOBAL STYLES -->
-        <link href="{%$VIEW_ROOT%}/assets/global/css/components.min.css" rel="stylesheet" id="style_components" type="text/css" />
-        <link href="{%$VIEW_ROOT%}/assets/global/css/plugins.min.css" rel="stylesheet" type="text/css" />
-        <!-- END THEME GLOBAL STYLES -->
-        <!-- BEGIN THEME LAYOUT STYLES -->
-        <link href="{%$VIEW_ROOT%}/assets/layouts/layout/css/layout.min.css" rel="stylesheet" type="text/css" />
-        <link href="{%$VIEW_ROOT%}/assets/layouts/layout/css/themes/darkblue.min.css" rel="stylesheet" type="text/css" id="style_color" />
-        <link href="{%$VIEW_ROOT%}/assets/layouts/layout/css/custom.min.css" rel="stylesheet" type="text/css" />
-        <!-- END THEME LAYOUT STYLES -->
-        <link rel="shortcut icon" href="favicon.ico" /> </head>
-    <!-- END HEAD -->
+<head>
+    <meta charset="utf-8"/>
+    <title>权限不足</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1" name="viewport"/>
+    <meta content="" name="description"/>
+    <meta content="" name="author"/>
+    <!-- BEGIN GLOBAL MANDATORY STYLES -->
+    <link href="{%$VIEW_ROOT%}/assets/global/css/font.css" rel="stylesheet" type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/global/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet"
+          type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/global/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet"
+          type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/global/plugins/uniform/css/uniform.default.css" rel="stylesheet" type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css" rel="stylesheet"
+          type="text/css"/>
+    <!-- END GLOBAL MANDATORY STYLES -->
+    <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css" rel="stylesheet"
+          type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css" rel="stylesheet"
+          type="text/css"/>
+    <!-- BEGIN THEME GLOBAL STYLES -->
+    <link href="{%$VIEW_ROOT%}/assets/global/css/components.min.css" rel="stylesheet" id="style_components"
+          type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/global/css/plugins.min.css" rel="stylesheet" type="text/css"/>
+    <!-- END THEME GLOBAL STYLES -->
+    <!-- BEGIN THEME LAYOUT STYLES -->
+    <link href="{%$VIEW_ROOT%}/assets/layouts/layout/css/layout.min.css" rel="stylesheet" type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/layouts/layout/css/themes/darkblue.min.css" rel="stylesheet" type="text/css"
+          id="style_color"/>
+    <link href="{%$VIEW_ROOT%}/assets/layouts/layout/css/custom.min.css" rel="stylesheet" type="text/css"/>
+    <!-- END THEME LAYOUT STYLES -->
+    <link rel="shortcut icon" href="favicon.ico"/>
+</head>
+<!-- END HEAD -->
 
-    <body class="page-header-fixed page-sidebar-closed-hide-logo page-container-bg-solid page-content-white">
-        <!-- BEGIN HEADER -->
-        <div class="page-header navbar navbar-fixed-top">
-            <!-- BEGIN HEADER INNER -->
-            <div class="page-header-inner ">
-                <!-- BEGIN LOGO -->
-                <div class="page-logo">
-                    <a href="index.html">
-                        <img src="{%$VIEW_ROOT%}/assets/layouts/layout/img/logo.png" alt="logo" class="logo-default" /> </a>
-                    <div class="menu-toggler sidebar-toggler"> </div>
-                </div>
-                <!-- END LOGO -->
-                <!-- BEGIN RESPONSIVE MENU TOGGLER -->
-                <a href="javascript:;" class="menu-toggler responsive-toggler" data-toggle="collapse" data-target=".navbar-collapse"> </a>
-                <!-- END RESPONSIVE MENU TOGGLER -->
-                <!-- BEGIN TOP NAVIGATION MENU -->
-                
-            </div>
-            <!-- END HEADER INNER -->
+<body class="page-header-fixed page-sidebar-closed-hide-logo page-container-bg-solid page-content-white">
+<!-- BEGIN HEADER -->
+<div class="page-header navbar navbar-fixed-top">
+    <!-- BEGIN HEADER INNER -->
+    <div class="page-header-inner ">
+        <!-- BEGIN LOGO -->
+        <div class="page-logo">
+            <a href="index.html">
+                <img src="{%$VIEW_ROOT%}/assets/layouts/layout/img/logo.png" alt="logo" class="logo-default"/> </a>
+
+            <div class="menu-toggler sidebar-toggler"></div>
         </div>
-        <!-- END HEADER -->
-        <!-- BEGIN HEADER & CONTENT DIVIDER -->
-        <div class="clearfix"> </div>
-        <!-- END HEADER & CONTENT DIVIDER -->
-        <!-- BEGIN CONTAINER -->
-        <div class="page-container">
-            <!-- BEGIN SIDEBAR -->
-            <div class="page-sidebar-wrapper">
-                <!-- BEGIN SIDEBAR -->
-                <!-- DOC: Set data-auto-scroll="false" to disable the sidebar from auto scrolling/focusing -->
-                <!-- DOC: Change data-auto-speed="200" to adjust the sub menu slide up/down speed -->
-                <div class="page-sidebar navbar-collapse collapse">
-                    <!-- BEGIN SIDEBAR MENU -->
-                    <!-- DOC: Apply "page-sidebar-menu-light" class right after "page-sidebar-menu" to enable light sidebar menu style(without borders) -->
-                    <!-- DOC: Apply "page-sidebar-menu-hover-submenu" class right after "page-sidebar-menu" to enable hoverable(hover vs accordion) sub menu mode -->
-                    <!-- DOC: Apply "page-sidebar-menu-closed" class right after "page-sidebar-menu" to collapse("page-sidebar-closed" class must be applied to the body element) the sidebar sub menu mode -->
-                    <!-- DOC: Set data-auto-scroll="false" to disable the sidebar from auto scrolling/focusing -->
-                    <!-- DOC: Set data-keep-expand="true" to keep the submenues expanded -->
-                    <!-- DOC: Set data-auto-speed="200" to adjust the sub menu slide up/down speed -->
-                    <ul class="page-sidebar-menu  page-header-fixed page-sidebar-menu-light " data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200" style="padding-top: 20px">
-                        <!-- DOC: To remove the sidebar toggler from the sidebar you just need to completely remove the below "sidebar-toggler-wrapper" LI element -->
-                        <li class="sidebar-toggler-wrapper hide">
-                            <!-- BEGIN SIDEBAR TOGGLER BUTTON -->
-                            <div class="sidebar-toggler"> </div>
-                            <!-- END SIDEBAR TOGGLER BUTTON -->
-                        </li>
-                        <!-- DOC: To remove the search box from the sidebar you just need to completely remove the below "sidebar-search-wrapper" LI element -->
-                        <li class="sidebar-search-wrapper">
-                            <!-- BEGIN RESPONSIVE QUICK SEARCH FORM -->
-                            <!-- DOC: Apply "sidebar-search-bordered" class the below search form to have bordered search box -->
-                            <!-- DOC: Apply "sidebar-search-bordered sidebar-search-solid" class the below search form to have bordered & solid search box -->
-                            <form class="sidebar-search  " action="index.php?c=source&a=index" method="POST">
-                                <a href="javascript:;" class="remove">
-                                    <i class="icon-close"></i>
-                                </a>
-                                <div class="input-group">
-                                    <input type="text" class="form-control" placeholder="搜索...">
-                                    <span class="input-group-btn">
-                                        <a href="javascript:;" class="btn submit">
-                                            <i class="icon-magnifier"></i>
-                                        </a>
-                                    </span>
-                                </div>
-                            </form>
-                            <!-- END RESPONSIVE QUICK SEARCH FORM -->
-                        </li>
-                        <li class="">
-                            <a href="{%url c=source a=index%}" class="nav-link nav-toggle">
-                                <i class="icon-home"></i>
-                                <span class="title">仪表板</span>
-                                <span class="selected"></span>
-                            </a>
-                        </li>
-                        <li class="">
-                            <a href="{%url c=source a=source_user%}" class="nav-link nav-toggle">
-                                <i class="glyphicon glyphicon-user"></i>
-                                <span class="title">用户查看</span>
-                                <span class="selected"></span>
-                            </a>
-                        </li>
-                        <li class="">
-                            <a href="{%url c=source a=source_order%}" class="nav-link nav-toggle">
-                                <i class="icon-basket"></i>
-                                <span class="title">订单详情</span>
-                                <span class="selected"></span>
-                            </a>
-                        </li>
+        <!-- END LOGO -->
+        <!-- BEGIN RESPONSIVE MENU TOGGLER -->
+        <a href="javascript:;" class="menu-toggler responsive-toggler" data-toggle="collapse"
+           data-target=".navbar-collapse"> </a>
+        <!-- END RESPONSIVE MENU TOGGLER -->
+        <!-- BEGIN TOP NAVIGATION MENU -->
 
- 			<li class="">
-                            <a href="{%url c=source a=source_viporder%}" class="nav-link nav-toggle">
-                                <i class="icon-basket"></i>
-                                <span class="title">VIP订单</span>
-                                <span class="selected"></span>
-                            </a>
-                        </li>
-                        {%if $power['type']==0%}
-                        <li class="">
-                            <a href="{%url c=source a=source_under%}" class="nav-link nav-toggle">
-                                <i class="icon-social-dribbble"></i>
-                                <span class="title">渠道统计</span>
-                                <span class="selected"></span>
-                            </a>
-                        </li>
-                        {%/if%}
-                        <li class="nav-item start active open">
-                            <a href="{%url c=source a=source_source%}" class="nav-link nav-toggle">
-                                <i class="icon-social-dribbble"></i>
-                                <span class="title">渠道管理</span>
-                                <span class="selected"></span>
-                            </a>
-                        </li>
-                    </ul>
-                    <!-- END SIDEBAR MENU -->
-                    <!-- END SIDEBAR MENU -->
-                </div>
-                <!-- END SIDEBAR -->
+    </div>
+    <!-- END HEADER INNER -->
+</div>
+<!-- END HEADER -->
+<!-- BEGIN HEADER & CONTENT DIVIDER -->
+<div class="clearfix"></div>
+<!-- END HEADER & CONTENT DIVIDER -->
+<!-- BEGIN CONTAINER -->
+<div class="page-container">
+    <!-- BEGIN SIDEBAR -->
+    <div class="page-sidebar-wrapper">
+        <!-- BEGIN SIDEBAR -->
+        <!-- DOC: Set data-auto-scroll="false" to disable the sidebar from auto scrolling/focusing -->
+        <!-- DOC: Change data-auto-speed="200" to adjust the sub menu slide up/down speed -->
+        <div class="page-sidebar navbar-collapse collapse">
+            <!-- BEGIN SIDEBAR MENU -->
+            <!-- DOC: Apply "page-sidebar-menu-light" class right after "page-sidebar-menu" to enable light sidebar menu style(without borders) -->
+            <!-- DOC: Apply "page-sidebar-menu-hover-submenu" class right after "page-sidebar-menu" to enable hoverable(hover vs accordion) sub menu mode -->
+            <!-- DOC: Apply "page-sidebar-menu-closed" class right after "page-sidebar-menu" to collapse("page-sidebar-closed" class must be applied to the body element) the sidebar sub menu mode -->
+            <!-- DOC: Set data-auto-scroll="false" to disable the sidebar from auto scrolling/focusing -->
+            <!-- DOC: Set data-keep-expand="true" to keep the submenues expanded -->
+            <!-- DOC: Set data-auto-speed="200" to adjust the sub menu slide up/down speed -->
+            {%include file='source/public/side.html'%}
+            <!-- END SIDEBAR MENU -->
+            <!-- END SIDEBAR MENU -->
+        </div>
+        <!-- END SIDEBAR -->
+    </div>
+    <!-- END SIDEBAR -->
+    <!-- BEGIN CONTENT -->
+    <div class="page-content-wrapper">
+        <!-- BEGIN CONTENT BODY -->
+        <div class="page-content">
+            <!-- BEGIN PAGE HEADER-->
+            <!-- BEGIN THEME PANEL -->
+            <!-- END THEME PANEL -->
+            <!-- BEGIN PAGE BAR -->
+            <div class="page-bar">
+                <ul class="page-breadcrumb">
+                    <li>
+                        <a href="{%url c=source a=index%}">首页</a>
+                        <i class="fa fa-circle"></i>
+                    </li>
+                    <li>
+                        <span>权限不足</span>
+                    </li>
+                </ul>
+
             </div>
-            <!-- END SIDEBAR -->
-            <!-- BEGIN CONTENT -->
-            <div class="page-content-wrapper">
-                <!-- BEGIN CONTENT BODY -->
-                <div class="page-content">
-                    <!-- BEGIN PAGE HEADER-->
-                    <!-- BEGIN THEME PANEL -->
-                    <!-- END THEME PANEL -->
-                    <!-- BEGIN PAGE BAR -->
-                    <div class="page-bar">
-                        <ul class="page-breadcrumb">
-                            <li>
-                                <a href="{%url c=source a=index%}">首页</a>
-                                <i class="fa fa-circle"></i>
-                            </li>
-                            <li>
-                                <span>权限不足</span>
-                            </li>
-                        </ul>
-                      
+            <!-- END PAGE BAR -->
+            <!-- BEGIN PAGE TITLE-->
+            <h3 class="page-title"> 权限不足
+                <small>权限不足</small>
+            </h3>
+            <!-- END PAGE TITLE-->
+            <!-- END PAGE HEADER-->
+
+
+            <div class="note note-success">
+                <table class="table">
+                    <tr>
+                        <th>用户名</th>
+                        <th>链接地址</th>
+                        <th>二维码</th>
+                    </tr>
+                    <tr>
+                        <td>{%$power['name']%}</td>
+                        <td>http://{%$smarty.server.HTTP_HOST%}/index.php?c=source&a=enter&id={%$power.id%}</td>
+                        <td><img src="{%url c=source a=eqcode size=2 id=$power.id%}" class="img-responsive"
+                                 style="width:50px; height:50px;"></td>
+                    </tr>
+                </table>
+            </div>
+
+
+            <div class="row">
+                <div class="col-md-12 page-500">
+                    <div class=" number font-red"> 403</div>
+                    <div class=" details">
+                        <h3>噢! 您的权限不足.</h3>
+
+                        <p> 您的权限不足，请联系管理员.
+                            <br></p>
+
+                        <p>
+                            <a href="{%$smarty.server.HTTP_REFERER%}" class="btn red btn-outline"> 返回上一页 </a>
+                            <br></p>
                     </div>
-                    <!-- END PAGE BAR -->
-                    <!-- BEGIN PAGE TITLE-->
-                    <h3 class="page-title"> 权限不足
-                        <small>权限不足</small>
-                    </h3>
-                    <!-- END PAGE TITLE-->
-                    <!-- END PAGE HEADER-->
-                    
-                    
-                    <div class="note note-success">
-					<table class="table">
-					<tr><th>用户名</th><th>链接地址</th><th>二维码</th></tr>
-					<tr><td>{%$power['name']%}</td><td>http://{%$smarty.server.HTTP_HOST%}/index.php?c=source&a=enter&id={%$power.id%}</td><td><img src="{%url c=source a=eqcode size=2 id=$power.id%}" class="img-responsive" style="width:50px; height:50px;"></td></tr>
-					</table>
-					</div>
-                    
-                    
-                             <div class="row">
-                        <div class="col-md-12 page-500">
-                            <div class=" number font-red"> 403 </div>
-                            <div class=" details">
-                                <h3>噢! 您的权限不足.</h3>
-                                <p> 您的权限不足，请联系管理员.
-                                    <br> </p>
-                                <p>
-                                    <a href="{%$smarty.server.HTTP_REFERER%}" class="btn red btn-outline"> 返回上一页 </a>
-                                    <br> </p>
-                            </div>
-                        </div>
-                    </div>
-        
-	
-
-                   
-                    
                 </div>
-                <!-- END CONTENT BODY -->
             </div>
-            <!-- END CONTENT -->
+
+
         </div>
-        <!-- END CONTAINER -->
-        <!-- BEGIN FOOTER -->
-        <div class="page-footer">
-            <div class="page-footer-inner"> 
-            	2014 &copy; 淘微购.
-            </div>
-            <div class="scroll-to-top">
-                <i class="icon-arrow-up"></i>
-            </div>
-        </div>
-        
-      <!--    <div id="session_id" style="display:none">{%$session_id%}</div> -->
-        
-        
-        <!-- END FOOTER -->
-                <!--[if lt IE 9]>
+        <!-- END CONTENT BODY -->
+    </div>
+    <!-- END CONTENT -->
+</div>
+<!-- END CONTAINER -->
+<!-- BEGIN FOOTER -->
+<div class="page-footer">
+    <div class="page-footer-inner">
+        2014 &copy; 淘微购.
+    </div>
+    <div class="scroll-to-top">
+        <i class="icon-arrow-up"></i>
+    </div>
+</div>
+
+<!--    <div id="session_id" style="display:none">{%$session_id%}</div> -->
+
+
+<!-- END FOOTER -->
+<!--[if lt IE 9]>
 <script src="{%$VIEW_ROOT%}/assets/global/plugins/respond.min.js"></script>
-<script src="{%$VIEW_ROOT%}/assets/global/plugins/excanvas.min.js"></script> 
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/excanvas.min.js"></script>
 <![endif]-->
-        <!-- BEGIN CORE PLUGINS -->
-        <script src="{%$VIEW_ROOT%}/assets/global/plugins/jquery.min.js" type="text/javascript"></script>
-        <script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
-        <script src="{%$VIEW_ROOT%}/assets/global/plugins/js.cookie.min.js" type="text/javascript"></script>
-        <script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js" type="text/javascript"></script>
-        <script src="{%$VIEW_ROOT%}/assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
-        <script src="{%$VIEW_ROOT%}/assets/global/plugins/jquery.blockui.min.js" type="text/javascript"></script>
-        <script src="{%$VIEW_ROOT%}/assets/global/plugins/uniform/jquery.uniform.min.js" type="text/javascript"></script>
-        <script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js" type="text/javascript"></script>
-        <!-- END CORE PLUGINS -->
-        <!-- BEGIN THEME GLOBAL SCRIPTS -->
-        <script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-modal/js/bootstrap-modalmanager.js" type="text/javascript"></script>
-        <script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-modal/js/bootstrap-modal.js" type="text/javascript"></script>
+<!-- BEGIN CORE PLUGINS -->
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/jquery.min.js" type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/js.cookie.min.js" type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js"
+        type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js"
+        type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/jquery.blockui.min.js" type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/uniform/jquery.uniform.min.js" type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js"
+        type="text/javascript"></script>
+<!-- END CORE PLUGINS -->
+<!-- BEGIN THEME GLOBAL SCRIPTS -->
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-modal/js/bootstrap-modalmanager.js"
+        type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-modal/js/bootstrap-modal.js"
+        type="text/javascript"></script>
 
-        <script src="{%$VIEW_ROOT%}/assets/global/scripts/app.min.js" type="text/javascript"></script>
-        <!-- END THEME GLOBAL SCRIPTS -->
-        <!-- BEGIN THEME LAYOUT SCRIPTS -->
-        <script src="{%$VIEW_ROOT%}/assets/layouts/layout/scripts/layout.min.js" type="text/javascript"></script>
-        <script src="{%$VIEW_ROOT%}/assets/layouts/layout/scripts/demo.min.js" type="text/javascript"></script>
-        <script src="{%$VIEW_ROOT%}/assets/layouts/global/scripts/quick-sidebar.min.js" type="text/javascript"></script>
-        <!-- END THEME LAYOUT SCRIPTS -->
-        <!-- BEGIN PAGE LEVEL SCRIPTS -->
-        <script type="text/javascript">
-		$.ajaxSetup({
-			headers:{
-				'X-CSRF-TOKEN':'{%$x_csrf_token%}'
-			}
-		});
+<script src="{%$VIEW_ROOT%}/assets/global/scripts/app.min.js" type="text/javascript"></script>
+<!-- END THEME GLOBAL SCRIPTS -->
+<!-- BEGIN THEME LAYOUT SCRIPTS -->
+<script src="{%$VIEW_ROOT%}/assets/layouts/layout/scripts/layout.min.js" type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/layouts/layout/scripts/demo.min.js" type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/layouts/global/scripts/quick-sidebar.min.js" type="text/javascript"></script>
+<!-- END THEME LAYOUT SCRIPTS -->
+<!-- BEGIN PAGE LEVEL SCRIPTS -->
+<script type="text/javascript">
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': '{%$x_csrf_token%}'
+        }
+    });
 
-		$('table').on('click','.editable',function(){
-			var id = $(this).data('id');
-			var name = $(this).data('name');
-			$.post('{%url m=ajax c=source a=power%}',{id:id,name:name},function(){});
-		});
-		
-		$('#sourceForm').on('submit',function(){
-			var name = $(this).find('input[name=name]').val();
-			var phone = $(this).find('input[name=phone]').val();
-			var wechat = $(this).find('input[name=wechat]').val();
-		    var password = $(this).find('input[name=password]').val();
-			var user = $(this).find('input[name=user]:checked').length;
-			var product = $(this).find('input[name=product]:checked').length;
-			
-			$.post('{%url m=ajax c=source a=create%}',{name:name,phone:phone,wechat:wechat,password:password,user:user,product:product,type:'undersource'},function(response){
-				if(response.code==1)
-				{
-					var tr = $('tbody tr:last').clone();
-					tr.find('td:first').html(name);
-					if(user==1)
-					{
-						tr.find('input[name=user]').attr('checked','checked');
-						tr.find('input[name=user]').parent().addClass('checked');
-					}
-					else
-					{
-						tr.find('input[name=user]').removeAttr('checked');
-						tr.find('input[name=user]').parent().removeClass('checked');
-					}
-					if(product==1)
-					{
-						tr.find('input[name=product]').attr('checked','checked');
-						tr.find('input[name=product]').parent().addClass('checked');
-					}
-					else
-					{
-						tr.find('input[name=product]').removeAttr('checked');
-						tr.find('input[name=product]').parent().removeClass('checked');
-					}
-					
-					//url
-					var url = tr.find('td:eq(3)').html();
-					url = url.split('=');
-					url[url.length-1] = response.body.id;
-					tr.find('td:eq(3)').html(url.join('='));
-					//二维码
-					var src = tr.find('td:eq(4)').find('img').attr('src');
-					src = src.split('=');
-					src[src.length-1] = response.body.id;
-					tr.find('td:eq(4)').find('img').attr('src',src.join('='));
-					
-					//input
-					tr.find('.editable').attr('data-id',response.body.id);
-					
-					//button
-					tr.find('button').attr('data-id',response.body.id);
-					
-					$('tbody').append(tr);
-					$('#sourceModal').modal('hide');
-				}
-				else
-				{
-					alert(response.result);
-				}
-			});
-			return false;
-		});
-		
-		$('table').on('click','img',function(){
-			window.open($(this).attr('src')+'&download=true');
-			return false;
-		});
-		
-		$('table').on('click','.chagepwd',function(){
-			var id = $(this).data('id');
-			$('#passwordModal').find('input[name=id]').val(id);
-			$('#passwordModal').modal('show');
-		});
-		
-		$('#passwordForm').on('submit',function(){
-			var id = $(this).find('input[name=id]').val();
-			var password = $(this).find('input[name=password]').val();
-			$.post('{%url m=ajax c=source a=changepwd%}',{id:id,password:password},function(response){
-				if(response.code==1)
-				{
-					$('#passwordModal').modal('hide');
-				}
-				else
-				{
-					alert(response.result);
-				}
-			});
-			return false;
-		});
-		
-		$('table').on('click','.remove',function(){
-			var id = $(this).data('id');
-			var ths = $(this);
-			$.post('{%url m=ajax c=source a=remove%}',{id:id},function(response){
-				if(response.code==1)
-				{
-					ths.parents('tr').remove();
-				}
-				else
-				{
-					App.alert({
-						container: $('#alert_container').val(), // alerts parent container 
-						place: 'append', // append or prepent in container 
-						type: 'success', // alert's type 
-						message: response.result,
-						close: true,
-						focus: true, // auto scroll to the alert after shown
-						closeInSeconds: 3, // auto close after defined seconds 
-						icon:'fa fa-check' // put icon class before the message
-					});
-				}
-			});
-			return false;
-		});
-		
-		
-		
-		</script>
-		
-        <script src="{%$VIEW_ROOT%}/assets/pages/scripts/dashboard.js" type="text/javascript"></script>
-        <!-- END PAGE LEVEL SCRIPTS -->
-        <!-- BEGIN THEME LAYOUT SCRIPTS -->
-        <script src="{%$VIEW_ROOT%}/assets/layouts/layout/scripts/layout.min.js" type="text/javascript"></script>
-        <script src="{%$VIEW_ROOT%}/assets/layouts/layout/scripts/demo.min.js" type="text/javascript"></script>
-        <script src="{%$VIEW_ROOT%}/assets/layouts/global/scripts/quick-sidebar.min.js" type="text/javascript"></script>
-        <!-- END THEME LAYOUT SCRIPTS -->
-    </body>
+    $('table').on('click', '.editable', function () {
+        var id = $(this).data('id');
+        var name = $(this).data('name');
+        $.post('{%url m=ajax c=source a=power%}', {id: id, name: name}, function () {
+        });
+    });
+
+    $('#sourceForm').on('submit', function () {
+        var name = $(this).find('input[name=name]').val();
+        var phone = $(this).find('input[name=phone]').val();
+        var wechat = $(this).find('input[name=wechat]').val();
+        var password = $(this).find('input[name=password]').val();
+        var user = $(this).find('input[name=user]:checked').length;
+        var product = $(this).find('input[name=product]:checked').length;
+
+        $.post('{%url m=ajax c=source a=create%}', {
+            name: name,
+            phone: phone,
+            wechat: wechat,
+            password: password,
+            user: user,
+            product: product,
+            type: 'undersource'
+        }, function (response) {
+            if (response.code == 1) {
+                var tr = $('tbody tr:last').clone();
+                tr.find('td:first').html(name);
+                if (user == 1) {
+                    tr.find('input[name=user]').attr('checked', 'checked');
+                    tr.find('input[name=user]').parent().addClass('checked');
+                }
+                else {
+                    tr.find('input[name=user]').removeAttr('checked');
+                    tr.find('input[name=user]').parent().removeClass('checked');
+                }
+                if (product == 1) {
+                    tr.find('input[name=product]').attr('checked', 'checked');
+                    tr.find('input[name=product]').parent().addClass('checked');
+                }
+                else {
+                    tr.find('input[name=product]').removeAttr('checked');
+                    tr.find('input[name=product]').parent().removeClass('checked');
+                }
+
+                //url
+                var url = tr.find('td:eq(3)').html();
+                url = url.split('=');
+                url[url.length - 1] = response.body.id;
+                tr.find('td:eq(3)').html(url.join('='));
+                //二维码
+                var src = tr.find('td:eq(4)').find('img').attr('src');
+                src = src.split('=');
+                src[src.length - 1] = response.body.id;
+                tr.find('td:eq(4)').find('img').attr('src', src.join('='));
+
+                //input
+                tr.find('.editable').attr('data-id', response.body.id);
+
+                //button
+                tr.find('button').attr('data-id', response.body.id);
+
+                $('tbody').append(tr);
+                $('#sourceModal').modal('hide');
+            }
+            else {
+                alert(response.result);
+            }
+        });
+        return false;
+    });
+
+    $('table').on('click', 'img', function () {
+        window.open($(this).attr('src') + '&download=true');
+        return false;
+    });
+
+    $('table').on('click', '.chagepwd', function () {
+        var id = $(this).data('id');
+        $('#passwordModal').find('input[name=id]').val(id);
+        $('#passwordModal').modal('show');
+    });
+
+    $('#passwordForm').on('submit', function () {
+        var id = $(this).find('input[name=id]').val();
+        var password = $(this).find('input[name=password]').val();
+        $.post('{%url m=ajax c=source a=changepwd%}', {id: id, password: password}, function (response) {
+            if (response.code == 1) {
+                $('#passwordModal').modal('hide');
+            }
+            else {
+                alert(response.result);
+            }
+        });
+        return false;
+    });
+
+    $('table').on('click', '.remove', function () {
+        var id = $(this).data('id');
+        var ths = $(this);
+        $.post('{%url m=ajax c=source a=remove%}', {id: id}, function (response) {
+            if (response.code == 1) {
+                ths.parents('tr').remove();
+            }
+            else {
+                App.alert({
+                    container: $('#alert_container').val(), // alerts parent container
+                    place: 'append', // append or prepent in container
+                    type: 'success', // alert's type
+                    message: response.result,
+                    close: true,
+                    focus: true, // auto scroll to the alert after shown
+                    closeInSeconds: 3, // auto close after defined seconds
+                    icon: 'fa fa-check' // put icon class before the message
+                });
+            }
+        });
+        return false;
+    });
+
+
+</script>
+
+<script src="{%$VIEW_ROOT%}/assets/pages/scripts/dashboard.js" type="text/javascript"></script>
+<!-- END PAGE LEVEL SCRIPTS -->
+<!-- BEGIN THEME LAYOUT SCRIPTS -->
+<script src="{%$VIEW_ROOT%}/assets/layouts/layout/scripts/layout.min.js" type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/layouts/layout/scripts/demo.min.js" type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/layouts/global/scripts/quick-sidebar.min.js" type="text/javascript"></script>
+<!-- END THEME LAYOUT SCRIPTS -->
+</body>
 
 </html>

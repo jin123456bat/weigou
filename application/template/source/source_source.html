@@ -86,81 +86,7 @@
             <!-- DOC: Set data-auto-scroll="false" to disable the sidebar from auto scrolling/focusing -->
             <!-- DOC: Set data-keep-expand="true" to keep the submenues expanded -->
             <!-- DOC: Set data-auto-speed="200" to adjust the sub menu slide up/down speed -->
-            <ul class="page-sidebar-menu  page-header-fixed page-sidebar-menu-light " data-keep-expanded="false"
-                data-auto-scroll="true" data-slide-speed="200" style="padding-top: 20px">
-                <!-- DOC: To remove the sidebar toggler from the sidebar you just need to completely remove the below "sidebar-toggler-wrapper" LI element -->
-                <li class="sidebar-toggler-wrapper hide">
-                    <!-- BEGIN SIDEBAR TOGGLER BUTTON -->
-                    <div class="sidebar-toggler"></div>
-                    <!-- END SIDEBAR TOGGLER BUTTON -->
-                </li>
-                <!-- DOC: To remove the search box from the sidebar you just need to completely remove the below "sidebar-search-wrapper" LI element -->
-                <li class="sidebar-search-wrapper">
-                    <!-- BEGIN RESPONSIVE QUICK SEARCH FORM -->
-                    <!-- DOC: Apply "sidebar-search-bordered" class the below search form to have bordered search box -->
-                    <!-- DOC: Apply "sidebar-search-bordered sidebar-search-solid" class the below search form to have bordered & solid search box -->
-                    <form class="sidebar-search  " action="index.php?c=source&a=index" method="POST">
-                        <a href="javascript:;" class="remove">
-                            <i class="icon-close"></i>
-                        </a>
-
-                        <div class="input-group">
-                            <input type="text" class="form-control" placeholder="搜索...">
-                                    <span class="input-group-btn">
-                                        <a href="javascript:;" class="btn submit">
-                                            <i class="icon-magnifier"></i>
-                                        </a>
-                                    </span>
-                        </div>
-                    </form>
-                    <!-- END RESPONSIVE QUICK SEARCH FORM -->
-                </li>
-                <li class="">
-                    <a href="{%url c=source a=index%}" class="nav-link nav-toggle">
-                        <i class="icon-home"></i>
-                        <span class="title">仪表板</span>
-                        <span class="selected"></span>
-                    </a>
-                </li>
-                <li class="">
-                    <a href="{%url c=source a=source_user%}" class="nav-link nav-toggle">
-                        <i class="glyphicon glyphicon-user"></i>
-                        <span class="title">用户查看</span>
-                        <span class="selected"></span>
-                    </a>
-                </li>
-                <li class="">
-                    <a href="{%url c=source a=source_order%}" class="nav-link nav-toggle">
-                        <i class="icon-basket"></i>
-                        <span class="title">订单详情</span>
-                        <span class="selected"></span>
-                    </a>
-                </li>
-
-                <li class="">
-                    <a href="{%url c=source a=source_viporder%}" class="nav-link nav-toggle">
-                        <i class="icon-basket"></i>
-                        <span class="title">VIP订单</span>
-                        <span class="selected"></span>
-                    </a>
-                </li>
-                {%if $data['type']==0%}
-                <li class="">
-                    <a href="{%url c=source a=source_under%}" class="nav-link nav-toggle">
-                        <i class="icon-social-dribbble"></i>
-                        <span class="title">渠道统计</span>
-                        <span class="selected"></span>
-                    </a>
-                </li>
-                {%/if%}
-                <li class="nav-item start active open">
-                    <a href="{%url c=source a=source_source%}" class="nav-link nav-toggle">
-                        <i class="icon-social-dribbble"></i>
-                        <span class="title">渠道管理</span>
-                        <span class="selected"></span>
-                    </a>
-                </li>
-            </ul>
+            {%include file='source/public/side.html'%}
             <!-- END SIDEBAR MENU -->
             <!-- END SIDEBAR MENU -->
         </div>
@@ -407,7 +333,8 @@
         var password = $(this).find('input[name=password]').val();
         var user = $(this).find('input[name=user]:checked').length;
         var product = $(this).find('input[name=product]:checked').length;
-        var ctype={%$ctype%};
+        var ctype = { % $ctype %
+    };
     $.post('{%url m=ajax c=source a=create%}', {
         name: name,
         phone: phone,

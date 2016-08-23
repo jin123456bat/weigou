@@ -92,7 +92,8 @@ class source extends view
                 'IFNULL((select sum(a.money)-(select IFNULL(sum(b.money),"0.00") from swift as b where b.uid=user.id and b.type=1 and b.source = 8) from swift as a where a.uid=user.id and a.type=0 and a.source in (2,3,4,5,6,7)),"0.00") as get_money', //收益
                 '(select count(*) from source as bsource where bsource.u_source=source.id and bsource.isdelete=0) as u_source',        //子渠道数
                 '(select count(*) from user as buser where buser.source=source.id or buser.o_master=source.uid) as user_count',  //用户数量
-                'source.type'
+                'source.type',
+                'source.u_source'
             ]);
         $data['get_money'] = sprintf("%.2f", $data['get_money']);
         $this->assign('data', $data);
@@ -103,28 +104,28 @@ class source extends view
 
     function source_user()
     {
-        $data = $this->model('source')->where('source.id=?', [$this->session->id])->find(['type']);
+        $data = $this->model('source')->where('source.id=?', [$this->session->id])->find(['type', 'u_source']);
         $this->assign('data', $data);
         return $this;
     }
 
     function source_order()
     {
-        $data = $this->model('source')->where('source.id=?', [$this->session->id])->find(['type']);
+        $data = $this->model('source')->where('source.id=?', [$this->session->id])->find(['type', 'u_source']);
         $this->assign('data', $data);
         return $this;
     }
 
     function source_viporder()
     {
-        $data = $this->model('source')->where('source.id=?', [$this->session->id])->find(['type']);
+        $data = $this->model('source')->where('source.id=?', [$this->session->id])->find(['type', 'u_source']);
         $this->assign('data', $data);
         return $this;
     }
 
     function source_under()
     {
-        $data = $this->model('source')->where('source.id=?', [$this->session->id])->find(['type']);
+        $data = $this->model('source')->where('source.id=?', [$this->session->id])->find(['type', 'u_source']);
         $this->assign('data', $data);
         return $this;
     }
@@ -132,18 +133,25 @@ class source extends view
     function source_source()
     {
 
-        $data = $this->model('source')->where('source.id=?', [$this->session->id])->find(['type']);
+        $data = $this->model('source')->where('source.id=?', [$this->session->id])->find(['type', 'u_source']);
+
+
         $this->assign('data', $data);
         $power = $this->model('source')->where('id=?', [$this->session->id])->find();
 
-         if (!empty($power['u_source']) || $power['type'] == 1) {
-             $this->setViewname('nopower');
-         }
+        if (!empty($power['u_source']) || $power['type'] == 1) {
+            $this->setViewname('nopower');
+        }
 
         $source = $this->model('source')->where('isdelete=? and u_source=?', [0, $this->session->id])->select();
         $this->assign('power', $power);
         $this->assign('source', $source);
         $this->assign('ctype', $power['type']);
+        return $this;
+    }
+
+    function source_guide()
+    {
         return $this;
     }
 
