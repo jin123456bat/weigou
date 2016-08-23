@@ -57,9 +57,9 @@
             </div>
             <ul class="menu_wrap">
                 <li>
-                    <a class="menu_item" href="{%if $user.vip==0%}{%url c=mobile a=applyvip%}{%else%}{%url c=mobile a=vip%}{%/if%}">
+                    <a class="menu_item" href="{%if $user.vip==0 && $school==0 %}{%url c=mobile a=applyvip%}{%else%}{%url c=mobile a=vip%}{%/if%}">
                         <div class="menu_icon huiyuan"></div>
-                        <div class="menu_name">{%if $user.vip==0%}申请会员{%else%}会员中心{%/if%}</div>
+                        <div class="menu_name">{%if $user.vip==0 && $school==0%}申请会员{%else%}会员中心{%/if%}</div>
                         <div class="rightward"></div>
                     </a>
                 </li>

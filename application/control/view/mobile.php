@@ -83,7 +83,21 @@ class mobile extends view
             $jsApiTicket = $this->_wechat->getSignPackage($jsApiTicket);
             $this->assign('jsApiTicket', $jsApiTicket);
         }
+        //判断是否有渠道
 
+        if (!empty($user['source'])) {
+            //判断是否是学校的
+            $school = $this->model("source")->where("id=?", [$user['source']])->find(['school']);
+
+            if ($school['school'] == 1) {
+                $this->assign('school', 1);
+            } else {
+                $this->assign('school', 0);
+            }
+
+        } else {
+            $this->assign('school', 0);
+        }
         $this->assign('isWechat', isWechat());
     }
 
@@ -1282,12 +1296,19 @@ class mobile extends view
     {
         $userHelper = new \application\helper\user();
         $uid = $userHelper->isLogin();
+
         if (empty($uid)) {
             $this->response->setCode(302);
             $this->response->addHeader('Location', $this->http->url('view', 'mobile', 'login'));
         } else {
             $user = $this->model('user')->where('id=?', [$uid])->find();
-            if ($user['vip'] == 0) {
+            //获取是否是校园的
+            $school = 0;
+            if (!empty($user['source'])) {
+                $sc = $this->model("source")->where("id=?", [$user['source']])->find();
+                $school = $sc['school'];
+            }
+            if ($user['vip'] == 0 && $school == 0) {
                 $this->response->setCode(302);
                 $this->response->addHeader('Location', $this->http->url('view', 'mobile', 'login'));
             } else {
@@ -1552,6 +1573,7 @@ class mobile extends view
             $this->response->setCode(302);
             $this->response->addHeader('Location', $this->http->url('view', 'mobile', 'login'));
         } else {
+
             return $this;
         }
 

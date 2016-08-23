@@ -64,7 +64,7 @@
             </div>
             <div class="banner">
 				{%if isset($user)%}
-                {%if $user.vip==0%}
+                {%if $user.vip==0 && $school==0%}
                 <div class="banner_item" onClick="window.location='{%url c=mobile a=applyvip%}';">
                     <div class="banner_icon one"></div>
                     <div class="banner_word">申请VIP</div>

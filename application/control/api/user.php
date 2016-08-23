@@ -1216,7 +1216,7 @@ class user extends common
     {
         if (!empty($this->_response))
             return $this->_response;
-            $telephone = $this->data('telephone', NULL, 'telephone');
+        $telephone = $this->data('telephone', NULL, 'telephone');
 
         $password = $this->data('password');
 
@@ -1238,6 +1238,16 @@ class user extends common
             if (empty($userData['oid'])) {
 
                 $userData['is_master'] = 0;
+            }
+            $userData['school'] = 0;
+            //判断是否有渠道
+            if (!empty($userData['source'])) {
+                //判断是否是学校的
+                $school = $this->model("source")->where("id=?", [$userData])->find(['school']);
+                if ($school['school'] == 1) {
+                    $userData['school'] = 1;
+                }
+
             }
 
             return new json(json::OK, NULL, $userData);
