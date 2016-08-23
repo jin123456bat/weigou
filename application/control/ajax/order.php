@@ -816,11 +816,24 @@ class order extends ajax
                             'way_status' => 1,
                             'way_type' => 2,
                             'way_time' => $_SERVER['REQUEST_TIME']
-                        ])
-                        ) {
+                        ]))
+                        {
                             $this->model('order')->rollback();
                             return new json(json::PARAMETER_ERROR, '订单发货失败，请重试');
                         }
+                    }
+                    else
+                    {
+                    	//订单还有部分包裹没有发货，物流状态更改为 部分发货
+                    	if (!$this->model('order')->where('orderno=?', [$orderno])->update([
+                    		'way_status' => 2,
+                    		'way_type' => 2,
+                    		'way_time' => $_SERVER['REQUEST_TIME']
+                    	]))
+                    	{
+                    		$this->model('order')->rollback();
+                    		return new json(json::PARAMETER_ERROR, '订单发货失败，请重试');
+                    	}
                     }
                 }
                 $this->model('order')->commit();
