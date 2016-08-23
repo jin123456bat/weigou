@@ -29,7 +29,9 @@
                     </div>
                     <div class="wrap" >
                         <div class="word white">{%$user.name%}</div>
-                        <div class="word white">{%if $user.master==1%}导师{%else%}{%if $user.vip==0%}普通会员{%elseif $user.vip==1%}白金会员{%elseif $user.vip==2%}钻石会员{%/if%}{%/if%}</div>
+                        <div class="word white">{%if $school==0%}{%if $user.master==1%}导师{%else%}{%if $user.vip==0%}普通会员{%elseif $user.vip==1%}白金会员{%elseif $user.vip==2%}钻石会员{%/if%}{%/if%}{%else%}{%if
+                            $user.master==1%}BOSS{%else%}{%if $user.vip==0%}普通会员{%elseif $user.vip==1%}合伙人{%elseif
+                            $user.vip==2%}CEO{%/if%}{%/if%}{%/if%}</div>
                     </div>
                 </div>
                 <a class="account_admini" href="{%url c=mobile a=account_manage%}">账号管理&nbsp;></a>
