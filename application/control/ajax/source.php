@@ -18,6 +18,7 @@ class source extends ajax
         $product = $this->post('product');
         $ctype = $this->post('ctype');
 
+
         if (!empty($this->post('type'))) {   //子渠道添加
             $u_source = $this->session->id;
         } else {
@@ -123,6 +124,7 @@ class source extends ajax
         $name = $this->post('name');
         $password = $this->post('password', '', 'md5');
         $user = $this->post('user');
+        $school = $this->post('school');
         $product = $this->post('product');
         $usertelephone = $this->post('usertelephone');
 
@@ -135,6 +137,9 @@ class source extends ajax
             $uid = $this->model('user')->where('telephone=?', [$usertelephone])->find([
                 'id'
             ]);
+            if(empty($uid)){
+                return new json(json::PARAMETER_ERROR, '手机号码还没注册');
+            }
         } else {
             return new json(json::PARAMETER_ERROR, '手机号码还没注册');
         }
@@ -150,7 +155,8 @@ class source extends ajax
             'createtime' => $_SERVER['REQUEST_TIME'],
             'uid' => $uid['id'],
             'u_source' => NULL,
-            'type' => 1
+            'type' => 1,
+            'school' => $school,
         ];
         if ($this->model('source')->insert($array)) {
             $array['id'] = $this->model('source')->lastInsertId();
