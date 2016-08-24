@@ -154,6 +154,7 @@ class admin extends view
             $product = $this->model('order_package')
                 ->table('order_product', 'left join', 'order_product.package_id=order_package.id')
                 ->table('product', 'left join', 'product.id=order_product.pid')
+                ->table('store', 'left join', 'store.id=order_package.store_id')
                 ->table('suborder_store', 'left join', 'suborder_store.main_orderno=order_package.orderno')
                 ->where('order_package.orderno=?', [$orderno])
                 ->select([
@@ -165,6 +166,7 @@ class admin extends view
                     'order_product.id as order_product_id',
                     'order_product.refund',
                     'order_product.refundmoney',
+                    'store.name as storename',
                     'if(suborder_store.erp=1,"已推送","未推送") as erp'
                 ]);
 
@@ -447,7 +449,7 @@ class admin extends view
      */
     function user()
     {
-        $this->assign('source', $this->model('source')->where('isdelete=?',[0])->select());
+        $this->assign('source', $this->model('source')->where('isdelete=?', [0])->select());
         return $this;
     }
 

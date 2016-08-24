@@ -7,7 +7,7 @@
  */
 
 
-$url = 'http://127.0.0.1/index.php?m=api&c=source&a=guide';
+$url = 'http://www.twillg.com/index.php?m=api&c=carousel&a=lists';
 $partner = 'ios';
 $key = "ios";
 $posts = array(
@@ -16,14 +16,14 @@ $posts = array(
 
 );
 $fields = array(
-   // "telephone" => '13373902670',
+    // "telephone" => '13373902670',
     //'password' => '123456',
     //'address' => 579,
     //'prepay' => 0,
     //'tid' => 37
     //'id' => '65',
     //'invit' => 'Hqhpln',
-    'num' => 1
+    'position' => 'index'
 
 );
 //排序

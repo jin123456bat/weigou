@@ -82,6 +82,7 @@ class source extends view
     function index()
     {
 
+
         $data = $this->model('source')
             ->table('user', 'left join', 'source.uid=user.id')
             ->where('source.id=?', [$this->session->id])
@@ -96,6 +97,7 @@ class source extends view
                 'source.u_source'
             ]);
         $data['get_money'] = sprintf("%.2f", $data['get_money']);
+
         $this->assign('data', $data);
         $this->assign('_id', $this->session->id);
 
@@ -152,6 +154,10 @@ class source extends view
 
     function source_guide()
     {
+        $data = $this->model('source')->where('source.id=?', [$this->session->id])->find(['type', 'u_source']);
+
+
+        $this->assign('data', $data);
         return $this;
     }
 

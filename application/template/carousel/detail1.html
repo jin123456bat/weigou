@@ -1,0 +1,25 @@
+<div class="cbp-l-inline">
+    <div class="cbp-l-inline-left" style="width:40%;">
+        <div class="row">
+            <div class="col-sm-5 portfolio-tile">
+                <a href="{%resource file=$carousel.logo%}" class="cbp-lightbox">
+                    <img src="{%resource file=$carousel.logo%}" onerror="this.src='http://placehold.it/640x320';"
+                         alt="">
+                </a>
+            </div>
+
+        </div>
+    </div>
+    <div class="cbp-l-inline-right" style="width:60%;">
+        <div class="cbp-l-inline-title">
+            <button class="btn btn-outline yellow" id="changeLogo" data-id="{%$carousel.id%}">更改图片</button>
+            <input type="hidden" name="logo" value="{%$carousel.logo|default:''%}"/>
+        </div>
+
+
+        <a href="#" target="_blank" data-id="{%$carousel.id%}" class="cbp-l-inline-view btn blue btn-outline submit"
+           data-action="close">保存</a>
+        <a href="#" target="_blank" data-id="{%$carousel.id%}" class="cbp-l-inline-view btn red btn-outline remove"
+           data-action="close">删除</a>
+    </div>
+</div>

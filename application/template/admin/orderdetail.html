@@ -87,7 +87,7 @@
 
                     <div id="changeShipModal" class="modal fade" tabindex="-1" data-width="760">
 						<form class="form-horizontal" role="form" id="changeShipForm">
-							<input type="hidden" name="id" value="">	
+							<input type="hidden" name="id" value="">
 							<div class="modal-header">
 								<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
 								<h4 class="modal-title">更改配送信息</h4>
@@ -152,7 +152,7 @@
                                                             <div class="portlet-title">
                                                                 <div class="caption">
                                                                     <i class="fa fa-cogs"></i>订单详情 </div>
-                                                                
+
                                                             </div>
                                                             <div class="portlet-body">
                                                                 <div class="row static-info">
@@ -173,7 +173,7 @@
                                                                     <div class="col-md-5 name"> 总计: </div>
                                                                     <div class="col-md-7 value"> {%$order.orderamount%} </div>
                                                                 </div>
-                                                                
+
                                                             </div>
                                                         </div>
                                                     </div>
@@ -182,7 +182,7 @@
                                                             <div class="portlet-title">
                                                                 <div class="caption">
                                                                     <i class="fa fa-cogs"></i>用户信息 </div>
-                                                                
+
                                                             </div>
                                                             <div class="portlet-body">
                                                                 <div class="row static-info">
@@ -219,7 +219,7 @@
                                                             <div class="portlet-title">
                                                                 <div class="caption">
                                                                     <i class="fa fa-cogs"></i>报关信息 </div>
-                                                                
+
                                                             </div>
                                                             <div class="portlet-body">
                                                                 <div class="row static-info">
@@ -290,7 +290,7 @@
                                                             <div class="portlet-title">
                                                                 <div class="caption">
                                                                     <i class="fa fa-cogs"></i>购物袋 </div>
-                                                               
+
                                                             </div>
                                                             <div class="portlet-body">
                                                                 <div class="table-responsive">
@@ -298,6 +298,7 @@
                                                                         <thead>
                                                                             <tr>
                                                                                 <th> 商品名 </th>
+                                                                                <th> 仓库</th>
                                                                                 <th> 规格 </th>
                                                                                 <th> 状态 </th>
                                                                                 <th> erp状态</th>
@@ -314,6 +315,9 @@
                                                                             <tr>
                                                                            		<td>
                                                                                     {%$product[product].name%}
+                                                                                </td>
+                                                                                <td>
+                                                                                    {%$product[product].storename%}
                                                                                 </td>
                                                                                 <td>
                                                                                     {%$product[product].content%}
@@ -398,7 +402,7 @@
                                                                 <div class="col-md-8 name"> 已支付: </div>
                                                                 <div class="col-md-3 value"> {%$order.pay_money%} </div>
                                                             </div>
-                                                            
+
                                                         </div>
                                                     </div>
                                                 </div>
@@ -475,7 +479,7 @@
         <!-- END FOOTER -->
         <!--[if lt IE 9]>
 <script src="{%$VIEW_ROOT%}/assets/global/plugins/respond.min.js"></script>
-<script src="{%$VIEW_ROOT%}/assets/global/plugins/excanvas.min.js"></script> 
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/excanvas.min.js"></script>
 <![endif]-->
         <!-- BEGIN CORE PLUGINS -->
         <script src="{%$VIEW_ROOT%}/assets/global/plugins/jquery.min.js" type="text/javascript"></script>
@@ -514,7 +518,7 @@
 				'X-CSRF-TOKEN':'{%$x_csrf_token%}'
 			}
 		});
-		
+
 		$('.refund').on('click',function(){
 			if($(this).hasClass('disabled'))
 			{
@@ -530,21 +534,21 @@
 				else
 				{
 					App.alert({
-						container: $('#alert_container').val(), // alerts parent container 
-						place: 'append', // append or prepent in container 
-						type: 'danger', // alert's type 
+						container: $('#alert_container').val(), // alerts parent container
+						place: 'append', // append or prepent in container
+						type: 'danger', // alert's type
 						message: response.result,
 						close: true,
 						focus: true, // auto scroll to the alert after shown
-						closeInSeconds: 3, // auto close after defined seconds 
+						closeInSeconds: 3, // auto close after defined seconds
 						icon:'fa fa-remove' // put icon class before the message
 					});
 				}
 			});
 			return false;
 		});
-		
-		$.fn.modal.defaults.spinner = $.fn.modalmanager.defaults.spinner = 
+
+		$.fn.modal.defaults.spinner = $.fn.modalmanager.defaults.spinner =
               '<div class="loading-spinner" style="width: 200px; margin-left: -100px;">' +
                 '<div class="progress progress-striped active">' +
                   '<div class="progress-bar progress-bar-success" role="progressbar" style="width: 100%;"></div>' +
@@ -552,7 +556,7 @@
               '</div>';
 
         $.fn.modalmanager.defaults.resize = true;
-		
+
 		$('#datatable_shipment').on('click','.lookShip',function(){
 			$('body').modalmanager('loading');
 			$('#lookShipModal').load('{%url c=order a=way%}',{id:$(this).data('id')}, function(){
@@ -560,7 +564,7 @@
 			  	$('#lookShipModal').modal();
 			});
 		});
-		
+
 		$('#datatable_shipment').on('click','.changeShip',function(){
 			$('#changeShipModal').modal('show');
 			$('#changeShipModal').find('input[name=id]').val($(this).data('id'));
@@ -573,10 +577,10 @@
             });
 			$('#changeShipModal').find('input[name=ship_number]').val($(this).parents('tr').find('td:eq(1)').html());
 		});
-		
+
 		$('#changeShipForm').on('submit',function(){
 			$('#changeShipModal').modalmanager('loading');
-			
+
 			var id = $(this).find('input[name=id]').val();
 			var ship_type_name = $(this).find('select[name=ship_type] option:selected').text();
 			var ship_type = $(this).find('select[name=ship_type]').val();
@@ -592,13 +596,13 @@
 				else
 				{
 					App.alert({
-						container: $('#alert_container').val(), // alerts parent container 
-						place: 'append', // append or prepent in container 
-						type: 'danger', // alert's type 
+						container: $('#alert_container').val(), // alerts parent container
+						place: 'append', // append or prepent in container
+						type: 'danger', // alert's type
 						message: response.result,
 						close: true,
 						focus: true, // auto scroll to the alert after shown
-						closeInSeconds: 3, // auto close after defined seconds 
+						closeInSeconds: 3, // auto close after defined seconds
 						icon:'fa fa-remove' // put icon class before the message
 					});
 				}
