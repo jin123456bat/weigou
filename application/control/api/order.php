@@ -124,7 +124,7 @@ class order extends common
 
             //减少库存
             foreach ($product as $p) {
-            	$selled = $productHelper->getSelled($p);
+                $selled = $productHelper->getSelled($p);
                 if (!$productHelper->increaseStock($p['id'], $p['content'], -$p['num'] * $selled)) {
                     $this->model('order')->rollback();
                     return new json(json::PARAMETER_ERROR, '库存不足');
@@ -155,17 +155,17 @@ class order extends common
             $clear = $this->data('clear', 0, 'intval');
             if ($clear) {
                 foreach ($product as $p) {
-                	
-                	$selled = $productHelper->getSelled($p);
-                	
-                    if (!$this->model('cart')->where('uid=? and pid=? and content=? and bind=?', [$uid, $p['id'], $p['content'],$selled])->increase('num', -$p['num'])) {
+
+                    $selled = $productHelper->getSelled($p);
+
+                    if (!$this->model('cart')->where('uid=? and pid=? and content=? and bind=?', [$uid, $p['id'], $p['content'], $selled])->increase('num', -$p['num'])) {
                         $this->model('order')->rollback();
                         return new json(json::PARAMETER_ERROR, '清空购物车失败1');
                     }
 
-                    $num = $this->model('cart')->where('uid=? and pid=? and content=? and bind=?', [$uid, $p['id'], $p['content'],$selled])->find();
+                    $num = $this->model('cart')->where('uid=? and pid=? and content=? and bind=?', [$uid, $p['id'], $p['content'], $selled])->find();
                     if ($num['num'] <= 0) {
-                        if (!$this->model('cart')->where('uid=? and pid=? and content=? and bind=?', [$uid, $p['id'], $p['content'],$selled])->delete()) {
+                        if (!$this->model('cart')->where('uid=? and pid=? and content=? and bind=?', [$uid, $p['id'], $p['content'], $selled])->delete()) {
                             $this->model('order')->rollback();
                             return new json(json::PARAMETER_ERROR, '清空购物车失败2');
                         }
@@ -250,8 +250,10 @@ class order extends common
 
     function detail()
     {
-        if (!empty($this->_response))
+        if (!empty($this->_response)) {
             return $this->_response;
+        }
+
 
         $orderno = $this->data('orderno');
         if (empty($orderno))
@@ -327,16 +329,43 @@ class order extends common
                 //判断是否发货
                 if ($order['way_status'] == 1) {
                     //是否确认收获
+                    //获取当前订单是否已经发货
+                    if ($order['receive'] == 1) {
+                        $wuliu['wuliu_notice'] = '订单已完成';
+                        $wuliu['wuliu_time'] = date("Y-m-d H:i:s", $order['receive_time']);
+                    } else {
+                        $iorder = $this->model("order_package")->where("orderno=?", [$orderno])->find();
+                        if ($iorder['ship_status'] == 1) {
 
-                    if ($order['receive']==1) {
-                        $wuliu['wuliu_notice'] = '订单提交成功';
-                        $wuliu['wuliu_time'] = $order['pay_time'];
+                            $response = \application\helper\express::queryJuhe($iorder['ship_type'], $iorder['ship_number']);
+                            $response = json_decode($response, true);
+                            /*
+
+                            */
+                            //$package['ship_type'] = $this->model('ship')->get($iorder['ship_type']);
+
+
+                            if ($response['resultcode'] == 200) {
+
+                                // die(json_encode($response['result']));
+                                $wuliu['wuliu_notice'] = $response['result']['list'][0]['remark'];
+                                $wuliu['wuliu_time'] = $response['result']['list'][0]['datetime'];
+                            } else {
+                                $wuliu['wuliu_notice'] = '等待物流最新信息';
+                                $wuliu['wuliu_time'] = date("Y-m-d H:i:s", $order['way_time']);
+                            }
+                        } else {
+                            $wuliu['wuliu_notice'] = '等待物流取货';
+                            $wuliu['wuliu_time'] = date("Y-m-d H:i:s", $order['way_time']);
+                        }
                     }
+
+
                     //判断是否是否有ship_number
 
                 } else {
                     $wuliu['wuliu_notice'] = '订单提交成功';
-                    $wuliu['wuliu_time'] = $order['pay_time'];
+                    $wuliu['wuliu_time'] = date("Y-m-d H:i:s", $order['pay_time']);
                 }
             } else {
                 $wuliu['wuliu_notice'] = '';
@@ -347,7 +376,7 @@ class order extends common
             $order['store'] = $store;
 
             $order['is_task'] = !empty($this->model('task_user')->where('orderno=?', [$orderno])->find());
-
+            $order['wuliu'] = $wuliu;
             return new json(json::OK, NULL, $order);
         }
         return new json(json::PARAMETER_ERROR);

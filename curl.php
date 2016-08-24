@@ -7,7 +7,7 @@
  */
 
 
-$url = 'http://www.twillg.com/index.php?m=api&c=carousel&a=lists';
+$url = 'http://127.0.0.1/index.php?m=api&c=order&a=detail';
 $partner = 'ios';
 $key = "ios";
 $posts = array(
@@ -23,7 +23,8 @@ $fields = array(
     //'tid' => 37
     //'id' => '65',
     //'invit' => 'Hqhpln',
-    'position' => 'index'
+    //'position' => 'index'
+    'orderno' => '16081715511619461182'
 
 );
 //排序
