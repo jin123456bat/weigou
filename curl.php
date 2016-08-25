@@ -7,7 +7,7 @@
  */
 
 
-$url = 'http://127.0.0.1/index.php?m=api&c=order&a=detail';
+$url = 'http://test.twillg.com/index.php?m=api&c=user&a=userclass';
 $partner = 'ios';
 $key = "ios";
 $posts = array(

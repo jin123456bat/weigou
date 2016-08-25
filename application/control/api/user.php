@@ -1274,7 +1274,7 @@ class user extends common
         $invit_user = $this->model('user')->where('invit=?', [$invit])->find();
         if (!empty($invit_user)) {
             //if ($invit_user['vip'] == 0)
-                return new json(json::PARAMETER_ERROR, '邀请码错误');
+            return new json(json::PARAMETER_ERROR, '邀请码错误');
             if ($invit_user['master'] == 1) {
                 $o_master = $invit_user['id'];
             } else {
@@ -1583,6 +1583,21 @@ class user extends common
             }
         }
         return new json(json::PARAMETER_ERROR, '没有找到对应导师');
+    }
+
+    /*
+     *
+     * 获取动态的个人中心分类
+     *
+     */
+
+    function  userclass()
+    {
+        if (!empty($this->_response))
+            return $this->_response;
+
+        $arr[] = array("name" => "我是大学生", "info" => "立即验证", "path" => "http://test.twillg.com/index.php?c=mobile");
+        return new json(json::OK, NULL, $arr);
     }
 
 
