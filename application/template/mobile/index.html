@@ -3,9 +3,10 @@
 <head lang="en">
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
     <title>淘微购</title>
-    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=0" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-touch-fullscreen" content="yes" />
+    <meta name="viewport"
+          content="width=device-width, height=device-height, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=0"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-touch-fullscreen" content="yes"/>
     <meta name="full-screen" content="yes"/>
     <meta name="screen-orientation" content="portrait"/>
     <meta name="x5-fullscreen" content="true"/>
@@ -17,166 +18,189 @@
     <script type="text/javascript" src="{%$VIEW_ROOT%}/mobile/js/idangerous.swiper.js"></script>
 </head>
 <body>
-    {%if isset($user)%}
-    <div class="godownload clearfix">
-        <div class="godownload-pic"><img src="{%$VIEW_ROOT%}/mobile/image/logo233.png" alt=""></div>
-        <div class="godownload-text">
-            <h3>淘微购-精选全球</h3>
-            <p><img src="{%$VIEW_ROOT%}/mobile/image/yes233.png" alt="" style="width:12px;margin-bottom: -3px;margin-right: 3px;">去伪存真，专属服务，不一样的购物体验</p>
+{%if isset($user)%}
+<div class="godownload clearfix">
+    <div class="godownload-pic"><img src="{%$VIEW_ROOT%}/mobile/image/logo233.png" alt=""></div>
+    <div class="godownload-text">
+        <h3>淘微购-精选全球</h3>
+
+        <p><img src="{%$VIEW_ROOT%}/mobile/image/yes233.png" alt=""
+                style="width:12px;margin-bottom: -3px;margin-right: 3px;">去伪存真，专属服务，不一样的购物体验</p>
+    </div>
+    <a href="http://a.app.qq.com/o/simple.jsp?pkgname=com.lianhai.MicroBuy">
+        <div class="godownload-btn">
+            立即下载
         </div>
-        <a href="http://a.app.qq.com/o/simple.jsp?pkgname=com.lianhai.MicroBuy">
-            <div class="godownload-btn">
-                立即下载
+    </a>
+    <img src="{%$VIEW_ROOT%}/mobile/image/close233.png" alt="" class="godownload-close">
+</div>
+<script type="text/javascript">
+
+    $(".godownload-close").click(function () {
+        $(".godownload").hide();
+        $("#header").css("margin-top", "0");
+        $("#content").css("padding-top", "50px");
+
+    })
+
+
+</script>
+{%/if%}
+
+<div id="header" {%if isset($user)%}style="margin-top: 56px;" {%/if%}>
+<header>
+    <h1>淘微购</h1>
+    <a href="{%url c=mobile a=search%}" class="right_btn"><i class="icon search"></i></a>
+</header>
+</div>
+<div id="content" style="padding-top: {%if isset($user)%}106{%else%}50{%/if%}px;padding-bottom: 60px;">
+    <div class="home">
+        <div class="booth">
+            <div class="swiper-container">
+                <div class="swiper-wrapper">
+                    {%section name=carousel loop=$carousel%}
+                    <div class="swiper-slide" data-linktype="{%$carousel[carousel].linktype%}"
+                         data-url="{%$carousel[carousel].url%}"><img src="{%$carousel[carousel].logo%}"
+                                                                     style="width:100%;"></div>
+                    {%/section%}
+                </div>
             </div>
-        </a>
-        <img src="{%$VIEW_ROOT%}/mobile/image/close233.png" alt="" class="godownload-close">
-    </div>
-    <script type="text/javascript">
- 
-        $(".godownload-close").click(function(){
-            $(".godownload").hide();
-            $("#header").css("margin-top","0");
-            $("#content").css("padding-top","50px");
-
-        })
-
-       
-    </script>
-    {%/if%}
-    
-    <div id="header" {%if isset($user)%}style="margin-top: 56px;"{%/if%}>
-        <header>
-            <h1>淘微购</h1>
-            <a href="{%url c=mobile a=search%}" class="right_btn"><i class="icon search"></i></a>
-        </header>
-    </div>
-    <div id="content" style="padding-top: {%if isset($user)%}106{%else%}50{%/if%}px;padding-bottom: 60px;">
-        <div class="home">
-            <div class="booth">
-                <div class="swiper-container">
-                    <div class="swiper-wrapper">
-						{%section name=carousel loop=$carousel%}
-                        <div class="swiper-slide" data-linktype="{%$carousel[carousel].linktype%}" data-url="{%$carousel[carousel].url%}"><img src="{%$carousel[carousel].logo%}" style="width:100%;"></div>
-						{%/section%}
+            <div class="pagination"></div>
+        </div>
+        <div class="banner">
+            {%if isset($user)%}
+                {%if $user.vip==0%}
+                    {%if $user.school==1%}
+                    <div class="banner_item" onClick="window.location='{%url c=mobile a=vip%}';">
+                        <div class="banner_icon one"></div>
+                        <div class="banner_word">会员中心</div>
                     </div>
-                </div>
-                <div class="pagination"></div>
-            </div>
-            <div class="banner">
-				{%if isset($user)%}
-                {%if $user.vip==0 && $school==0%}
-                <div class="banner_item" onClick="window.location='{%url c=mobile a=applyvip%}';">
-                    <div class="banner_icon one"></div>
-                    <div class="banner_word">申请VIP</div>
-                </div>
+                    {%else%}
+                    <div class="banner_item" onClick="window.location='{%url c=mobile a=applyvip%}';">
+                        <div class="banner_icon one"></div>
+                        <div class="banner_word">申请VIP</div>
+                    </div>
+                    {%/if%}
+
                 {%else%}
-				<div class="banner_item" onClick="window.location='{%url c=mobile a=vip%}';">
+                <div class="banner_item" onClick="window.location='{%url c=mobile a=vip%}';">
                     <div class="banner_icon one"></div>
                     <div class="banner_word">会员中心</div>
                 </div>
                 {%/if%}
-                <div class="banner_item" onClick="window.location = '{%url c=mobile a=task%}'">
-                    <div class="banner_icon four"></div>
-                    <div class="banner_word">免费VIP</div>
-                </div>
-				{%else%}
-                <div class="banner_item" onClick="window.location='{%url c=mobile a=applyvip%}';">
-                    <div class="banner_icon one"></div>
-                    <div class="banner_word">申请VIP</div>
-                </div>
-                <div class="banner_item" onClick="window.location='{%url c=mobile a=login%}';">
-                    <div class="banner_icon four"></div>
-                    <div class="banner_word">免费VIP</div>
-                </div>
-				{%/if%}
-                <div class="banner_item" onClick="window.location='{%url c=mobile a=college%}';">
-                    <div class="banner_icon three"></div>
-                    <div class="banner_word">创业学院</div>
-                </div>
-                <div class="banner_item" onClick="window.location = '{%url c=mobile a=zheng%}'">
-                    <div class="banner_icon two"></div>
-                    <div class="banner_word">正品溯源</div>
-                </div>
+            <div class="banner_item" onClick="window.location = '{%url c=mobile a=task%}'">
+                <div class="banner_icon four"></div>
+                <div class="banner_word">免费VIP</div>
             </div>
-            <div class="goods">
-				{%section name=product loop=$product%}
-                <div class="g_item clearfix" onClick="window.location='{%url c=mobile a=product id=$product[product].id%}';">
-                    <div class="pic">
-                        <img src="{%$product[product].image%}">
-                    </div>
-                    <div class="des">
-                        <div class="flag" style="background:url({%$product[product].origin.logo%}) no-repeat scroll left center/1.5rem 1.5rem;">{%$product[product].origin.name%}进口&nbsp;{%$product[product].store%}发货</div>
-                        <div class="name">{%$product[product].name%}</div>
-                        <div class="price">
-							{%if isset($user) && $user.vip==1%}
-                            <span class="new">￥{%$product[product].v1price%}</span>
-							{%elseif isset($user) && $user.vip==2%}
-							<span class="new">￥{%$product[product].v2price%}</span>
-							{%else%}
-							<span class="new">￥{%$product[product].price%}</span>
-                            {%/if%}
-							<span class="old">{%$product[product].oldprice%}</span>
-                        </div>
-                    </div>
-                </div>
-				{%/section%}
+            {%else%}
+            <div class="banner_item" onClick="window.location='{%url c=mobile a=applyvip%}';">
+                <div class="banner_icon one"></div>
+                <div class="banner_word">申请VIP</div>
+            </div>
+            <div class="banner_item" onClick="window.location='{%url c=mobile a=login%}';">
+                <div class="banner_icon four"></div>
+                <div class="banner_word">免费VIP</div>
+            </div>
+            {%/if%}
+            <div class="banner_item" onClick="window.location='{%url c=mobile a=college%}';">
+                <div class="banner_icon three"></div>
+                <div class="banner_word">创业学院</div>
+            </div>
+            <div class="banner_item" onClick="window.location = '{%url c=mobile a=zheng%}'">
+                <div class="banner_icon two"></div>
+                <div class="banner_word">正品溯源</div>
             </div>
         </div>
+        <div class="goods">
+            {%section name=product loop=$product%}
+            <div class="g_item clearfix"
+                 onClick="window.location='{%url c=mobile a=product id=$product[product].id%}';">
+                <div class="pic">
+                    <img src="{%$product[product].image%}">
+                </div>
+                <div class="des">
+                    <div class="flag"
+                         style="background:url({%$product[product].origin.logo%}) no-repeat scroll left center/1.5rem 1.5rem;">
+                        {%$product[product].origin.name%}进口&nbsp;{%$product[product].store%}发货
+                    </div>
+                    <div class="name">{%$product[product].name%}</div>
+                    <div class="price">
+                        {%if isset($user) && $user.vip==1%}
+                        <span class="new">￥{%$product[product].v1price%}</span>
+                        {%elseif isset($user) && $user.vip==2%}
+                        <span class="new">￥{%$product[product].v2price%}</span>
+                        {%else%}
+                        <span class="new">￥{%$product[product].price%}</span>
+                        {%/if%}
+                        <span class="old">{%$product[product].oldprice%}</span>
+                    </div>
+                </div>
+            </div>
+            {%/section%}
+        </div>
     </div>
-    <div id="footer">
-        <footer>
-            <ul class="nav_inner">
-                <li><a href="{%url c=mobile a=index%}" class="a_item cur"><div class="home"></div><p>首页</p></a></li>
-                <li><a href="{%url c=mobile a=category%}" class="a_item "><div class="classify"></div><p>分类</p></a></li>
-                <li><a href="{%url c=mobile a=cart%}" class="a_item "><div class="car"></div><p>购物车</p></a></li>
-                <li><a href="{%url c=mobile a=account%}" class="a_item "><div class="mine"></div><p>我的</p></a></li>
-            </ul>
-        </footer>
-    </div>
+</div>
+<div id="footer">
+    <footer>
+        <ul class="nav_inner">
+            <li><a href="{%url c=mobile a=index%}" class="a_item cur">
+                <div class="home"></div>
+                <p>首页</p></a></li>
+            <li><a href="{%url c=mobile a=category%}" class="a_item ">
+                <div class="classify"></div>
+                <p>分类</p></a></li>
+            <li><a href="{%url c=mobile a=cart%}" class="a_item ">
+                <div class="car"></div>
+                <p>购物车</p></a></li>
+            <li><a href="{%url c=mobile a=account%}" class="a_item ">
+                <div class="mine"></div>
+                <p>我的</p></a></li>
+        </ul>
+    </footer>
+</div>
 </body>
 <script>
-//轮播图固定高度
+    //轮播图固定高度
     var w = $(".booth .swiper-wrapper img").width();
-    $(".booth").css('height',w*0.7+'px');
+    $(".booth").css('height', w * 0.7 + 'px');
 
 
-    var mySwiper = new Swiper('.swiper-container',{
+    var mySwiper = new Swiper('.swiper-container', {
         pagination: '.pagination',
         grabCursor: true,
         paginationClickable: true,
         autoplay: 3000,
         speed: 1500,
-        loop:true,
+        loop: true,
         calculateHeight: true,
-        onSwiperCreated: function(swiper){
-			$('.swiper-slide').css('height',null);
+        onSwiperCreated: function (swiper) {
+            $('.swiper-slide').css('height', null);
             $(".swiper-pagination-switch:eq(0)").addClass('swiper-visible-switch').addClass('swiper-active-switch');
             swiper.reInit();
         }
     });
-	
-	$('.swiper-slide').on('click',function(){
-		var linktype = $(this).data('linktype');
-		var url = $(this).data('url');
-		switch(linktype)
-		{
-			case 'url':
-				window.location = url;
-			break;
-			case 'product':
-				window.location = '{%url c=mobile a=product%}&id='+url;
-			break;
-			case 'category':
-				window.location = '{%url c=mobile a=category_product%}&id='+url;
-			break;
-			case 'theme':
-				window.location = '{%url c=mobile a=theme%}&id='+url;
-			break;
-			case 'page':
-				window.location = '{%url c=page a=detail%}&id='+url;
-			break;
-			default:
-		}
-	});
+
+    $('.swiper-slide').on('click', function () {
+        var linktype = $(this).data('linktype');
+        var url = $(this).data('url');
+        switch (linktype) {
+            case 'url':
+                window.location = url;
+                break;
+            case 'product':
+                window.location = '{%url c=mobile a=product%}&id=' + url;
+                break;
+            case 'category':
+                window.location = '{%url c=mobile a=category_product%}&id=' + url;
+                break;
+            case 'theme':
+                window.location = '{%url c=mobile a=theme%}&id=' + url;
+                break;
+            case 'page':
+                window.location = '{%url c=page a=detail%}&id=' + url;
+                break;
+            default:
+        }
+    });
 </script>
 </html>

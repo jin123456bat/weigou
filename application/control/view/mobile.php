@@ -1573,7 +1573,9 @@ class mobile extends view
             $this->response->setCode(302);
             $this->response->addHeader('Location', $this->http->url('view', 'mobile', 'login'));
         } else {
-
+            //获取内容
+            $list = $this->model("center_list")->where("is_del=0")->select();
+            $this->assign('list', $list);
             return $this;
         }
 

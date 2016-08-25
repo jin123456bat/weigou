@@ -3,9 +3,10 @@
 <head lang="en">
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
     <title>淘微购</title>
-    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=0" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-touch-fullscreen" content="yes" />
+    <meta name="viewport"
+          content="width=device-width, height=device-height, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=0"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-touch-fullscreen" content="yes"/>
     <meta name="full-screen" content="yes"/>
     <meta name="screen-orientation" content="portrait"/>
     <meta name="x5-fullscreen" content="true"/>
@@ -15,118 +16,134 @@
     <script type="text/javascript" src="{%$VIEW_ROOT%}/mobile/js/resolution.js"></script>
 </head>
 <body>
-    <div id="header">
-        <header>
-            <h1>我的</h1>
-        </header>
-    </div>
-    <div id="content" style="padding-top: 50px;padding-bottom: 60px;background-color: #f0f0f0;">
-        <div class="mine_box">
-            <div class="mine_box_head">
-                <div class="upper flex_box" style="background-color:rgba(243, 37, 41, 0.23);">
-                    <div class="pic">
-                        <img src="{%resource file=$user.gravatar%}" onerror="this.src='http://placehold.it/80x80?text=头像';">
-                    </div>
-                    <div class="wrap" >
-                        <div class="word white">{%$user.name%}</div>
-                        <div class="word white">{%if $school==0%}{%if $user.master==1%}导师{%else%}{%if $user.vip==0%}普通会员{%elseif $user.vip==1%}白金会员{%elseif $user.vip==2%}钻石会员{%/if%}{%/if%}{%else%}{%if
-                            $user.master==1%}BOSS{%else%}{%if $user.vip==0%}普通会员{%elseif $user.vip==1%}合伙人{%elseif
-                            $user.vip==2%}CEO{%/if%}{%/if%}{%/if%}</div>
+<div id="header">
+    <header>
+        <h1>我的</h1>
+    </header>
+</div>
+<div id="content" style="padding-top: 50px;padding-bottom: 60px;background-color: #f0f0f0;">
+    <div class="mine_box">
+        <div class="mine_box_head">
+            <div class="upper flex_box" style="background-color:rgba(243, 37, 41, 0.23);">
+                <div class="pic">
+                    <img src="{%resource file=$user.gravatar%}" onerror="this.src='http://placehold.it/80x80?text=头像';">
+                </div>
+                <div class="wrap">
+                    <div class="word white">{%$user.name%}</div>
+                    <div class="word white">{%if $user.school==0%}{%if $user.master==1%}导师{%else%}{%if
+                        $user.vip==0%}普通会员{%elseif
+                        $user.vip==1%}白金会员{%elseif $user.vip==2%}钻石会员{%/if%}{%/if%}{%else%}{%if
+                        $user.master==1%}BOSS{%else%}{%if $user.vip==0%}普通会员{%elseif
+                        $user.vip==1%}合伙人{%elseif $user.vip==2%}CEO{%/if%}{%/if%}{%/if%}
                     </div>
                 </div>
-                <a class="account_admini" href="{%url c=mobile a=account_manage%}">账号管理&nbsp;></a>
             </div>
-            <div class="order_banner">
-                <h3>我的订单</h3>
-                <div class="order_wrap flex_box">
-                    <a class="order_item flex" href="{%url c=mobile a=order%}">
-                        <div class="order_icon one"></div>
-                        <div class="order_ww">全部</div>
-                    </a>
-                    <a class="order_item flex" href="{%url c=mobile a=order pay_status=0%}">
-                        <div class="order_icon two"></div>
-                        <div class="order_ww">待付款</div>
-                    </a>
-                    <a class="order_item flex" href="{%url c=mobile a=order way_status=0%}">
-                        <div class="order_icon three"></div>
-                        <div class="order_ww">待发货</div>
-                    </a>
-                    <a class="order_item flex" href="{%url c=mobile a=order complete=0%}">
-                        <div class="order_icon four"></div>
-                        <div class="order_ww">待收货</div>
-                    </a>
-                </div>
-            </div>
-            <ul class="menu_wrap">
-                <li>
-                    <a class="menu_item" href="{%if $user.vip==0 && $school==0 %}{%url c=mobile a=applyvip%}{%else%}{%url c=mobile a=vip%}{%/if%}">
-                        <div class="menu_icon huiyuan"></div>
-                        <div class="menu_name">{%if $user.vip==0 && $school==0%}申请会员{%else%}会员中心{%/if%}</div>
-                        <div class="rightward"></div>
-                    </a>
-                </li>
-                <li>
-                    <a class="menu_item" href="{%url c=mobile a=coupon%}">
-                        <div class="menu_icon youhuiquan"></div>
-                        <div class="menu_name">我的优惠券</div>
-                        <div class="rightward"></div>
-                    </a>
-                </li>
-                <!--<li>
-                    <a class="menu_item">
-                        <div class="menu_icon fuwu"></div>
-                        <div class="menu_name">服务中心</div>
-                        <div class="rightward"></div>
-                    </a>
-                </li>-->
-                <li>
-                    <a class="menu_item" href="{%url c=mobile a=favourite%}">
-                        <div class="menu_icon shoucang"></div>
-                        <div class="menu_name">我的收藏</div>
-                        <div class="rightward"></div>
-                    </a>
-                </li>
-                <li>
-                    <a class="menu_item" href="{%url c=mobile a=address%}">
-                        <div class="menu_icon dizhi"></div>
-                        <div class="menu_name">我的地址</div>
-                        <div class="rightward"></div>
-                    </a>
-                </li>
-                <li>
-                    <a class="menu_item" href="{%url c=mobile a=invit%}">
-                        <div class="menu_icon yaoqingma"></div>
-                        <div class="menu_name">输入邀请码</div>
-                        <div class="rightward"></div>
-                    </a>
-                </li>
-                {%if !empty($user.o_master)%}
-                <li>
-                    <a class="menu_item" onClick="alert('导师微信号：{%$user.o_master_wechat_no%}');">
-                        <div class="menu_icon huodong"></div>
-                        <div class="menu_name">我的专属导师</div>
-                        <div class="rightward"></div>
-                    </a>
-                </li>
-                {%/if%}
-                 <li>
-                    <a class="menu_item" href="{%url c=mobile a=question%}">
-                        <div class="menu_icon qqstion"></div>
-                        <div class="menu_name">常见问题</div>
-                        <div class="rightward"></div>
-                    </a>
-                </li>
-                <!--<li>
-                    <a class="menu_item" href="{%url c=mobile a=activity%}">
-                        <div class="menu_icon huodong"></div>
-                        <div class="menu_name">精彩活动</div>
-                        <div class="rightward"></div>
-                    </a>
-                </li>-->
-            </ul>
-           <!--  <div class="tuichu">退出账号</div> -->
+            <a class="account_admini" href="{%url c=mobile a=account_manage%}">账号管理&nbsp;></a>
         </div>
+        <div class="order_banner">
+            <h3>我的订单</h3>
+
+            <div class="order_wrap flex_box">
+                <a class="order_item flex" href="{%url c=mobile a=order%}">
+                    <div class="order_icon one"></div>
+                    <div class="order_ww">全部</div>
+                </a>
+                <a class="order_item flex" href="{%url c=mobile a=order pay_status=0%}">
+                    <div class="order_icon two"></div>
+                    <div class="order_ww">待付款</div>
+                </a>
+                <a class="order_item flex" href="{%url c=mobile a=order way_status=0%}">
+                    <div class="order_icon three"></div>
+                    <div class="order_ww">待发货</div>
+                </a>
+                <a class="order_item flex" href="{%url c=mobile a=order complete=0%}">
+                    <div class="order_icon four"></div>
+                    <div class="order_ww">待收货</div>
+                </a>
+            </div>
+        </div>
+        <ul class="menu_wrap">
+            <li>
+                <a class="menu_item"
+                   href="{%if $user.vip==0%}{%if $user.school==0%}{%url c=mobile a=applyvip%}{%else%}{%url c=mobile a=vip%}{%/if%}{%else%}{%url c=mobile a=vip%}{%/if%}">
+                    <div class="menu_icon huiyuan"></div>
+                    <div class="menu_name">{%if $user.vip==0%}{%if
+                        $user.school==0%}申请会员{%else%}会员中心{%/if%}{%else%}会员中心{%/if%}
+                    </div>
+                    <div class="rightward"></div>
+                </a>
+            </li>
+            <li>
+                <a class="menu_item" href="{%url c=mobile a=coupon%}">
+                    <div class="menu_icon youhuiquan"></div>
+                    <div class="menu_name">我的优惠券</div>
+                    <div class="rightward"></div>
+                </a>
+            </li>
+            <!--<li>
+                <a class="menu_item">
+                    <div class="menu_icon fuwu"></div>
+                    <div class="menu_name">服务中心</div>
+                    <div class="rightward"></div>
+                </a>
+            </li>-->
+            <li>
+                <a class="menu_item" href="{%url c=mobile a=favourite%}">
+                    <div class="menu_icon shoucang"></div>
+                    <div class="menu_name">我的收藏</div>
+                    <div class="rightward"></div>
+                </a>
+            </li>
+            <li>
+                <a class="menu_item" href="{%url c=mobile a=address%}">
+                    <div class="menu_icon dizhi"></div>
+                    <div class="menu_name">我的地址</div>
+                    <div class="rightward"></div>
+                </a>
+            </li>
+            <li>
+                <a class="menu_item" href="{%url c=mobile a=invit%}">
+                    <div class="menu_icon yaoqingma"></div>
+                    <div class="menu_name">输入邀请码</div>
+                    <div class="rightward"></div>
+                </a>
+            </li>
+            {%if !empty($user.o_master)%}
+            <li>
+                <a class="menu_item" onClick="alert('导师微信号：{%$user.o_master_wechat_no%}');">
+                    <div class="menu_icon huodong"></div>
+                    <div class="menu_name">我的专属导师</div>
+                    <div class="rightward"></div>
+                </a>
+            </li>
+            {%/if%}
+            <li>
+                <a class="menu_item" href="{%url c=mobile a=question%}">
+                    <div class="menu_icon qqstion"></div>
+                    <div class="menu_name">常见问题</div>
+                    <div class="rightward"></div>
+                </a>
+            </li>
+            {%foreach from=$list item=l%}
+            <li>
+                <a class="menu_item" href="{%$l.url%}">
+                    <div class="menu_icon yaoqingma"></div>
+                    <div class="menu_name">{%$l.name%}</div>
+                    <div class="rightward"></div>
+                </a>
+            </li>
+            {%/foreach%}
+            <!--<li>
+                <a class="menu_item" href="{%url c=mobile a=activity%}">
+                    <div class="menu_icon huodong"></div>
+                    <div class="menu_name">精彩活动</div>
+                    <div class="rightward"></div>
+                </a>
+            </li>-->
+        </ul>
+        <!--  <div class="tuichu">退出账号</div> -->
     </div>
-    {%include file='mobile/public/footer.html'%}
+</div>
+{%include file='mobile/public/footer.html'%}
 </body>
 </html>
