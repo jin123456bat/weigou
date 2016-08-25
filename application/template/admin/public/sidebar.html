@@ -10,11 +10,12 @@
         <!-- DOC: Set data-auto-scroll="false" to disable the sidebar from auto scrolling/focusing -->
         <!-- DOC: Set data-keep-expand="true" to keep the submenues expanded -->
         <!-- DOC: Set data-auto-speed="200" to adjust the sub menu slide up/down speed -->
-        <ul class="page-sidebar-menu  page-header-fixed " data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200" style="padding-top: 20px">
+        <ul class="page-sidebar-menu  page-header-fixed " data-keep-expanded="false" data-auto-scroll="true"
+            data-slide-speed="200" style="padding-top: 20px">
             <!-- DOC: To remove the sidebar toggler from the sidebar you just need to completely remove the below "sidebar-toggler-wrapper" LI element -->
             <li class="sidebar-toggler-wrapper hide">
                 <!-- BEGIN SIDEBAR TOGGLER BUTTON -->
-                <div class="sidebar-toggler"> </div>
+                <div class="sidebar-toggler"></div>
                 <!-- END SIDEBAR TOGGLER BUTTON -->
             </li>
             <!-- DOC: To remove the search box from the sidebar you just need to completely remove the below "sidebar-search-wrapper" LI element -->
@@ -26,6 +27,7 @@
                     <a href="javascript:;" class="remove">
                         <i class="icon-close"></i>
                     </a>
+
                     <div class="input-group">
                         <input type="text" class="form-control" placeholder="Search...">
                         <span class="input-group-btn">
@@ -42,52 +44,52 @@
                     <i class="icon-home"></i>
                     <span class="title">仪表板</span>
                     {%if $smarty.get.a==dashboard%}
-						<span class="selected"></span>
-					{%/if%}
+                    <span class="selected"></span>
+                    {%/if%}
                 </a>
             </li>
             <li class="nav-item {%if $smarty.get.a==publish%}active{%/if%}">
-				<a href="{%url c=admin a=publish%}" class="nav-link">
-					<i class="icon-social-dribbble"></i>
+                <a href="{%url c=admin a=publish%}" class="nav-link">
+                    <i class="icon-social-dribbble"></i>
                     <span class="title">商户管理</span>
-				</a>
-			</li>
+                </a>
+            </li>
             <li class="heading">
                 <h3 class="uppercase">基础</h3>
             </li>
-			
-			<li class="nav-item {%if $smarty.get.a==recycle || $smarty.get.a==product || $smarty.get.a==product_up || $smarty.get.a==create_product || $smarty.get.a==category || $smarty.get.a==store || $smarty.get.a==edit_product || $smarty.get.a==product_top%}active open{%/if%}">
-				<a href="javascript:;" class="nav-link nav-toggle">
+
+            <li class="nav-item {%if $smarty.get.a==recycle || $smarty.get.a==product || $smarty.get.a==product_up || $smarty.get.a==create_product || $smarty.get.a==category || $smarty.get.a==store || $smarty.get.a==edit_product || $smarty.get.a==product_top%}active open{%/if%}">
+                <a href="javascript:;" class="nav-link nav-toggle">
                     <i class="icon-graph"></i>
                     <span class="title">商品管理</span>
                     <span class="arrow {%if $smarty.get.a==recycle || $smarty.get.a==product || $smarty.get.a==create_product || $smarty.get.a==category || $smarty.get.a==store || $smarty.get.a==edit_product || $smarty.get.a==product_top%}open{%/if%}"></span>
                 </a>
-				<ul class="sub-menu">
-					<li class="nav-item {%if $smarty.get.a==create_product%}active{%/if%}">
+                <ul class="sub-menu">
+                    <li class="nav-item {%if $smarty.get.a==create_product%}active{%/if%}">
                         <a href="{%url c=admin a=create_product%}" class="nav-link ">
                             <i class="icon-plus"></i>
                             <span class="title">添加商品</span>
                         </a>
                     </li>
-					<li class="nav-item  {%if $smarty.get.a==product%}active{%/if%}">
+                    <li class="nav-item  {%if $smarty.get.a==product%}active{%/if%}">
                         <a href="{%url c=admin a=product%}" class="nav-link ">
                             <i class="icon-graph"></i>
                             <span class="title">商品管理</span>
                         </a>
                     </li>
-					<li class="nav-item  {%if $smarty.get.a==category%}active{%/if%}">
+                    <li class="nav-item  {%if $smarty.get.a==category%}active{%/if%}">
                         <a href="{%url c=admin a=category%}" class="nav-link ">
                             <i class="icon-list"></i>
                             <span class="title">分类管理</span>
                         </a>
                     </li>
-					<li class="nav-item  {%if $smarty.get.a==store%}active{%/if%}">
+                    <li class="nav-item  {%if $smarty.get.a==store%}active{%/if%}">
                         <a href="{%url c=admin a=store%}" class="nav-link ">
                             <i class="icon-grid"></i>
                             <span class="title">仓库管理</span>
                         </a>
                     </li>
-					<li class="nav-item  {%if $smarty.get.a==product_top%}active{%/if%}">
+                    <li class="nav-item  {%if $smarty.get.a==product_top%}active{%/if%}">
                         <a href="{%url c=admin a=product_top%}" class="nav-link ">
                             <i class="icon-pin"></i>
                             <span class="title">首页商品</span>
@@ -105,8 +107,8 @@
                             <span class="title">回收站</span>
                         </a>
                     </li>
-				</ul>
-			</li>
+                </ul>
+            </li>
             <li class="nav-item {%if $smarty.get.a==task%}active open{%/if%}">
                 <a href="javascript:;" class="nav-link nav-toggle">
                     <i class="icon-puzzle"></i>
@@ -149,7 +151,7 @@
                     <span class="arrow {%if $smarty.get.a==viporder || $smarty.get.a==teacher || $smarty.get.a==drawal || $smarty.get.a==user || $smarty.get.a==coupon || $smarty.get.a==couponno%}open{%/if%}"></span>
                 </a>
                 <ul class="sub-menu">
-					<li class="nav-item  {%if $smarty.get.a==user%}open{%/if%}">
+                    <li class="nav-item  {%if $smarty.get.a==user%}open{%/if%}">
                         <a href="{%url c=admin a=user%}" class="nav-link ">
                             <i class="icon-users"></i>
                             <span class="title">用户管理</span>
@@ -169,7 +171,7 @@
                     </li>
                     <li class="nav-item  {%if $smarty.get.a==teacher%}open{%/if%}">
                         <a href="{%url c=admin a=teacher%}" class="nav-link">
-                        	<i class="icon-user-following"></i>
+                            <i class="icon-user-following"></i>
                             <span class="title">导师管理</span>
                         </a>
                     </li>
@@ -218,7 +220,7 @@
             <li class="heading">
                 <h3 class="uppercase">其他</h3>
             </li>
-            
+
             <li class="nav-item {%if $smarty.get.a==advise || $smarty.get.a==college || $smarty.get.a==create_college || $smarty.get.a==edit_college%}active open{%/if%}">
                 <a href="javascript:;" class="nav-link nav-toggle">
                     <i class="icon-feed"></i>
@@ -231,7 +233,7 @@
                             <span class="title">课程管理</span>
                         </a>
                     </li>
-                    
+
                     <li class="nav-item  {%if $smarty.get.a==advise%}open{%/if%}">
                         <a href="{%url c=admin a=advise%}" class="nav-link ">
                             <span class="title">投诉与建议</span>
@@ -239,7 +241,7 @@
                     </li>
                 </ul>
             </li>
-            <li class="nav-item {%if $smarty.get.a==create_question ||$smarty.get.a==editnotice ||$smarty.get.a==notice ||$smarty.get.a==edit_question ||$smarty.get.a==question || $smarty.get.a==carousel || $smarty.get.a==page || $smarty.get.a==createPage || $smarty.get.a==editPage%}active open{%/if%} ">
+            <li class="nav-item {%if $smarty.get.a==create_question ||$smarty.get.a==center ||$smarty.get.a==editcenter ||$smarty.get.a==editnotice ||$smarty.get.a==notice ||$smarty.get.a==edit_question ||$smarty.get.a==question || $smarty.get.a==carousel || $smarty.get.a==page || $smarty.get.a==createPage || $smarty.get.a==editPage%}active open{%/if%} ">
                 <a href="javascript:;" class="nav-link nav-toggle">
                     <i class="icon-paper-plane"></i>
                     <span class="title">页面</span>
@@ -262,6 +264,11 @@
                             <span class="title">公告</span>
                         </a>
                     </li>
+                    <li class="nav-item  {%if $smarty.get.a==center || $smarty.get.a==editcenter%}open{%/if%}">
+                        <a href="{%url c=admin a=center%}" class="nav-link ">
+                            <span class="title">个人中心</span>
+                        </a>
+                    </li>
                     <li class="nav-item  {%if $smarty.get.a==create_question ||$smarty.get.a==edit_question ||$smarty.get.a==question%}open{%/if%}">
                         <a href="{%url c=admin a=question%}" class="nav-link ">
                             <span class="title">常见问题</span>
@@ -270,17 +277,17 @@
                 </ul>
             </li>
             <li class="nav-item {%if $smarty.get.a==theme%}active{%/if%}">
-				<a href="{%url c=admin a=theme%}" class="nav-link">
-					<i class="icon-social-dribbble"></i>
+                <a href="{%url c=admin a=theme%}" class="nav-link">
+                    <i class="icon-social-dribbble"></i>
                     <span class="title">主题管理</span>
-				</a>
-			</li>
+                </a>
+            </li>
             <li class="nav-item {%if $smarty.get.a==feedback%}active{%/if%}">
-				<a href="{%url c=admin a=feedback%}" class="nav-link">
-					<i class="icon-social-dribbble"></i>
+                <a href="{%url c=admin a=feedback%}" class="nav-link">
+                    <i class="icon-social-dribbble"></i>
                     <span class="title">建议与反馈</span>
-				</a>
-			</li>
+                </a>
+            </li>
             <li class="nav-item {%if $smarty.get.a==source || $smarty.get.a==source2%}active open{%/if%}">
                 <a href="javascript:;" class="nav-link nav-toggle">
                     <i class="icon-social-dribbble"></i>
@@ -293,24 +300,24 @@
                             <span class="title">园区渠道</span>
                         </a>
                     </li>
-                    
+
                     <li class="nav-item  {%if $smarty.get.a==source2%}open{%/if%}">
                         <a href="{%url c=admin a=source2%}" class="nav-link ">
                             <span class="title">普通渠道</span>
                         </a>
                     </li>
                 </ul>
-            </li>   
-            
+            </li>
+
             <li class="heading">
                 <h3 class="uppercase">配置</h3>
             </li>
             <li class="nav-item {%if $smarty.get.a==file%}active{%/if%}">
-				<a href="{%url c=admin a=file%}" class="nav-link">
-					<i class="icon-picture"></i>
+                <a href="{%url c=admin a=file%}" class="nav-link">
+                    <i class="icon-picture"></i>
                     <span class="title">文件管理</span>
-				</a>
-			</li>
+                </a>
+            </li>
             <li class="nav-item {%if $smarty.get.a==system || $smarty.get.a==dictionary%}active open{%/if%} ">
                 <a href="javascript:;" class="nav-link nav-toggle">
                     <i class="icon-settings"></i>
@@ -330,7 +337,7 @@
                     </li>
                 </ul>
             </li>
-            
+
         </ul>
         <!-- END SIDEBAR MENU -->
         <!-- END SIDEBAR MENU -->

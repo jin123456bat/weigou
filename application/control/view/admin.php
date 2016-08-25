@@ -34,7 +34,8 @@ class admin extends view
             'edit_question' => 'page',
             'notice' => 'page',
             'editnotice' => 'page',
-
+            'center' => 'page',
+            'editcenter' => 'page',
             'viporder' => 'user',
 
             'create_college' => 'college',
@@ -908,6 +909,26 @@ class admin extends view
         $note = $this->model("notice")->find();
 
         $this->assign('note', $note);
+        return $this;
+    }
+
+    function center()
+    {
+        $note = $this->model("center_list")->where("is_del=0")->select();
+
+        $this->assign('note', $note);
+        return $this;
+    }
+
+    function editcenter()
+    {
+
+        $id = $this->get('id');
+        if ($id) {
+            $note = $this->model("center_list")->where("is_del=0 and id=?", [$id])->find();
+
+            $this->assign('note', $note);
+        }
         return $this;
     }
 

@@ -73,4 +73,36 @@ class page extends control
 
         }
     }
+
+    function centersave()
+    {
+        $form = new form(config('form'));
+        if ($form->auth()) {
+            $id = $this->post('id');
+            $name = $this->post('name');
+            $info = $this->post('info');
+            $url = $this->post('add');
+
+            if ($id) {
+                $this->model('center_list')->where('id=?', [$id])->update([
+                    'name' => $name,
+                    'info' => $info,
+                    'url' => $url,
+
+                ]);
+            } else {
+                $this->model('center_list')->insert([
+                    'name' => $name,
+                    'info' => $info,
+                    'url' => $url,
+                    'is_del'=>0,
+
+                ]);
+            }
+
+            $this->response->setCode(302);
+            $this->response->addHeader('Location', $this->http->url('view', 'admin', 'center'));
+
+        }
+    }
 }
