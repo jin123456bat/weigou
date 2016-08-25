@@ -52,8 +52,26 @@
 <!-- END HEAD -->
 
 <body class="page-header-fixed page-sidebar-closed-hide-logo page-content-white">
-<!-- BEGIN HEADER -->
-{%include file='admin/public/header.html'%}
+<div class="page-header navbar navbar-fixed-top">
+    <!-- BEGIN HEADER INNER -->
+    <div class="page-header-inner ">
+        <!-- BEGIN LOGO -->
+        <div class="page-logo">
+            <a href="index.html">
+                <img src="{%$VIEW_ROOT%}/assets/layouts/layout/img/logo.png" alt="logo" class="logo-default"/> </a>
+
+            <div class="menu-toggler sidebar-toggler"></div>
+        </div>
+        <!-- END LOGO -->
+        <!-- BEGIN RESPONSIVE MENU TOGGLER -->
+        <a href="javascript:;" class="menu-toggler responsive-toggler" data-toggle="collapse"
+           data-target=".navbar-collapse"> </a>
+        <!-- END RESPONSIVE MENU TOGGLER -->
+        <!-- BEGIN TOP NAVIGATION MENU -->
+
+    </div>
+    <!-- END HEADER INNER -->
+</div>
 <!-- END HEADER -->
 <!-- BEGIN HEADER & CONTENT DIVIDER -->
 <div class="clearfix"></div>
@@ -87,33 +105,12 @@
         <div class="page-content">
             <!-- BEGIN PAGE HEADER-->
             <!-- BEGIN THEME PANEL -->
-            {%include file='admin/public/style.html'%}
+
             <!-- END THEME PANEL -->
             <!-- BEGIN PAGE BAR -->
 
             <!-- END PAGE BAR -->
-            <div id="carouselModal" class="modal fade" tabindex="-1" data-width="760">
-                <form class="form-horizontal" role="form" id="carouselForm">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-                        <h4 class="modal-title">添加引导图</h4>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label class="col-md-2 control-label">文件：</label>
 
-                            <div class="col-md-10">
-
-                                <span class="help-block"> <input type="file" name="guide" value="选择图片"></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" data-dismiss="modal" class="btn btn-outline dark">关闭</button>
-                        <button type="submit" class="btn green">保存</button>
-                    </div>
-                </form>
-            </div>
 
             <!-- BEGIN PAGE TITLE-->
             <h3 class="page-title"> 引导图
@@ -124,19 +121,23 @@
             <div class="portfolio-content portfolio-3">
                 <div class="clearfix">
 
-                    <button class="btn btn-xs green btn-outline" data-toggle="modal" data-target="#carouselModal">
-                        添加引导图1
+                    <button class="btn btn-xs green btn-outline" id="carouselForm" data-toggle="modal"
+                            data-target="#carouselModal">
+                        添加引导图
                     </button>
                 </div>
                 <div id="js-grid-lightbox-gallery" class="cbp">
-
+                    {%if $i%}
                     <div id="carousel_{%$i.id%}"
                          class="cbp-item web-design index">
                         <a href="{%url c=carousel a=detail1 id=$i.id%}"
                            class="cbp-caption cbp-singlePageInline" data-title="{%$i.title%}"
                            rel="nofollow">
                             <div class="cbp-caption-defaultWrap">
-                                <img src="{%$i|default:'http://placehold.it/640x320'%}" alt="">
+
+                                <img src="{%$i.path|default:'http://placehold.it/640x320'%}" alt=""
+                                     {%if empty($i.path)%}{%else%}style="width: 305px;height: 209px" {%/if%}>
+
                             </div>
                             <div class="cbp-caption-activeWrap">
                                 <div class="cbp-l-caption-alignLeft">
@@ -146,7 +147,7 @@
                             </div>
                         </a>
                     </div>
-
+                    {%/if%}
                 </div>
 
             </div>
@@ -198,7 +199,7 @@
         }
     });
 </script>
-<script src="{%$VIEW_ROOT%}/assets/pages/scripts/portfolio-3.js" type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/pages/scripts/source_portfolio-3.js" type="text/javascript"></script>
 <!-- END PAGE LEVEL SCRIPTS -->
 <!-- BEGIN THEME LAYOUT SCRIPTS -->
 <script src="{%$VIEW_ROOT%}/assets/layouts/layout/scripts/layout.min.js" type="text/javascript"></script>
@@ -220,47 +221,57 @@
         }
     });
 
-    $('#carouselForm').on('submit', function () {
-        var position = 'index';
-        $.post('{%url m=ajax c=carousel a=create%}', {position: position}, function (response) {
-            if (response.code == 1) {
-                var tpl = '<div id="carousel_' + response.body + '" class="cbp-item web-design ' + position + '">'
-                        + ' <a href="{%url c=carousel a=detail1%}&id=' + response.body + '" class="cbp-caption cbp-singlePageInline" data-title="" rel="nofollow">'
-                        + '	 <div class="cbp-caption-defaultWrap">'
-                        + '         <img src="http://placehold.it/300x300" alt=""> </div>'
-                        + '     <div class="cbp-caption-activeWrap">'
-                        + '         <div class="cbp-l-caption-alignLeft">'
-                        + '             <div class="cbp-l-caption-body">'
-                        + '                 <div class="cbp-l-caption-title"></div>'
-                        + '             </div>'
-                        + '         </div>'
-                        + '     </div>'
-                        + ' </a>'
-                        + '</div>';
-                jQuery("#js-grid-lightbox-gallery").cubeportfolio('appendItems', tpl, function () {
-                    alert(1);
-                    $('#carouselModal').modal('hide');
-                });
-            }
-            else {
-                App.alert({
-                    container: $('#alert_container').val(), // alerts parent container
-                    place: 'append', // append or prepent in container
-                    type: 'danger', // alert's type
-                    message: response.result,
-                    close: true,
-                    focus: true, // auto scroll to the alert after shown
-                    closeInSeconds: 3, // auto close after defined seconds
-                    icon: 'fa fa-remove' // put icon class before the message
-                });
-            }
-        });
-        return false;
-    });
+    $('#carouselForm').on('click', function () {
+                var position = 'index';
+                $.post('{%url m=ajax c=carousel a=create1%}',
+                        {
+                            position: position,
+                            source: {%$id%}
+            },
+            function (response) {
+                if (response.code == 1) {
+                    var tpl = '<div id="carousel_' + response.body + '" class="cbp-item web-design ' + position + '">'
+                            + ' <a href="{%url c=carousel a=detail1%}&id=' + response.body + '" class="cbp-caption cbp-singlePageInline" data-title="" rel="nofollow">'
+                            + '	 <div class="cbp-caption-defaultWrap">'
+                            + '         <img src="http://placehold.it/640x320" alt=""> </div>'
+                            + '     <div class="cbp-caption-activeWrap">'
+                            + '         <div class="cbp-l-caption-alignLeft">'
+                            + '             <div class="cbp-l-caption-body">'
+                            + '                 <div class="cbp-l-caption-title"></div>'
+                            + '             </div>'
+                            + '         </div>'
+                            + '     </div>'
+                            + ' </a>'
+                            + '</div>';
+                    jQuery("#js-grid-lightbox-gallery").cubeportfolio('appendItems', tpl, function () {
+
+                        $('#carouselModal').modal('hide');
+                    });
+                }
+                else {
+                    jQuery("#js-grid-lightbox-gallery").cubeportfolio('appendItems', tpl, function () {
+
+                        $('#carouselModal').modal('hide');
+                    });
+                    App.alert({
+                        container: $('#alert_container').val(), // alerts parent container
+                        place: 'append', // append or prepent in container
+                        type: 'danger', // alert's type
+                        message: response.result,
+                        close: true,
+                        focus: true, // auto scroll to the alert after shown
+                        closeInSeconds: 3, // auto close after defined seconds
+                        icon: 'fa fa-remove' // put icon class before the message
+                    });
+                }
+            });
+    return false;
+    })
+    ;
 
     $('#js-grid-lightbox-gallery').on('click', '.remove', function () {
         var id = $(this).data('id');
-        $.post('{%url m=ajax c=carousel a=remove%}', {id: id}, function (response) {
+        $.post('{%url m=ajax c=carousel a=remove1%}', {id: id}, function (response) {
             if (response.code == 1) {
                 $('#carousel_' + id).removeClass('index').addClass('isdelete');
                 jQuery("#js-grid-lightbox-gallery").cubeportfolio('filter', '.index');
@@ -290,7 +301,7 @@
             linktype: $('.cbp-l-inline-right').find('select[name=linktype]').val(),
             url: $('.cbp-l-inline-right').find('.hideorshow.' + $('.cbp-l-inline-right').find('select[name=linktype]').val()).val(),
         };
-        $.post('{%url m=ajax c=carousel a=save%}', data, function (response) {
+        $.post('{%url m=ajax c=carousel a=save1%}', data, function (response) {
             if (response.code != 1) {
                 App.alert({
                     container: $('#alert_container').val(), // alerts parent container
@@ -317,7 +328,7 @@
             var formData = new FormData();
             formData.append('file', file);
             var xhr = new XMLHttpRequest();
-            xhr.open('POST', '{%url m=api c=common a=upload%}', true);
+            xhr.open('POST', '{%url m=api c=common a=upload1%}', true);
             xhr.onload = function () {
                 if (xhr.status == 200 && xhr.readyState == 4) {
                     var response = xhr.response;

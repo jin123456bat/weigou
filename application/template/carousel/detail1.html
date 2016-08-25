@@ -2,9 +2,9 @@
     <div class="cbp-l-inline-left" style="width:40%;">
         <div class="row">
             <div class="col-sm-5 portfolio-tile">
-                <a href="{%resource file=$carousel.logo%}" class="cbp-lightbox">
-                    <img src="{%resource file=$carousel.logo%}" onerror="this.src='http://placehold.it/640x320';"
-                         alt="">
+                <a href="{%$carousel.path%}" class="cbp-lightbox">
+                    <img src="{%$carousel.path%}" onerror="this.src='http://placehold.it/640x320';"
+                         alt="" style="width: 305px;height: 209px;">
                 </a>
             </div>
 
@@ -13,7 +13,7 @@
     <div class="cbp-l-inline-right" style="width:60%;">
         <div class="cbp-l-inline-title">
             <button class="btn btn-outline yellow" id="changeLogo" data-id="{%$carousel.id%}">更改图片</button>
-            <input type="hidden" name="logo" value="{%$carousel.logo|default:''%}"/>
+            <input type="hidden" name="logo" value="{%$carousel.path|default:''%}"/>
         </div>
 
 

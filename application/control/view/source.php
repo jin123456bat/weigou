@@ -157,6 +157,19 @@ class source extends view
         $data = $this->model('source')->where('source.id=?', [$this->session->id])->find(['type', 'u_source']);
 
 
+        $this->assign('id', $this->session->id);
+
+        $img = $this->model("sourceimg")
+            ->table('upload', 'left join', 'upload.id=sourceimg.upload_id')
+            ->where("is_del=0 and source_id=?", [$this->session->id])
+            ->find([
+                "sourceimg.id",
+                "sourceimg.source_id",
+                "sourceimg.upload_id",
+                "upload.path",
+
+            ]);
+        $this->assign('i', $img);
         $this->assign('data', $data);
         return $this;
     }
