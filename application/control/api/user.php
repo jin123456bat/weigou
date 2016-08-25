@@ -279,6 +279,12 @@ class user extends common
                     $user['id'] = $this->model('user')->lastInsertId();
                     $userHelper->saveUserSession($user);
                     $userHelper->protectedUser($user);
+                    $img = $this->getsource($user);
+                    $user['imgpath'] = null;
+
+                    if ($img) {
+                        $user['imgpath'] = $img['path'];
+                    }
                     return new json(json::OK, NULL, $user);
                 }
             } else {
@@ -294,6 +300,12 @@ class user extends common
                     }
                     $userHelper->saveUserSession($user);
                     $userHelper->protectedUser($user);
+                    $img = $this->getsource($user);
+                    $user['imgpath'] = null;
+
+                    if ($img) {
+                        $user['imgpath'] = $img['path'];
+                    }
                     return new json(json::OK, NULL, $user);
                 } else {
                     return new json(json::PARAMETER_ERROR);
@@ -368,6 +380,12 @@ class user extends common
                         }
                         $userHelper->saveUserSession($user);
                         $userHelper->protectedUser($user);
+                        $img = $this->getsource($user);
+                        $user['imgpath'] = null;
+
+                        if ($img) {
+                            $user['imgpath'] = $img['path'];
+                        }
                         return new json(json::OK, NULL, $user);
                     }
                 } else {
@@ -403,6 +421,12 @@ class user extends common
                 $userHelper = new \application\helper\user();
                 $userHelper->saveUserSession($user);
                 $userHelper->protectedUser($user);
+                $img = $this->getsource($user);
+                $user['imgpath'] = null;
+
+                if ($img) {
+                    $user['imgpath'] = $img['path'];
+                }
                 return new json(json::OK, NULL, $user);
             }
         }
@@ -475,6 +499,12 @@ class user extends common
                     $user['id'] = $this->model('user')->lastInsertId();
                     $userHelper->saveUserSession($user);
                     $userHelper->protectedUser($user);
+                    $img = $this->getsource($user);
+                    $user['imgpath'] = null;
+
+                    if ($img) {
+                        $user['imgpath'] = $img['path'];
+                    }
                     return new json(json::OK, NULL, $user);
                 }
             } else {
@@ -490,6 +520,12 @@ class user extends common
                     }
                     $userHelper->saveUserSession($user);
                     $userHelper->protectedUser($user);
+                    $img = $this->getsource($user);
+                    $user['imgpath'] = null;
+
+                    if ($img) {
+                        $user['imgpath'] = $img['path'];
+                    }
                     return new json(json::OK, NULL, $user);
                 } else {
                     return new json(json::PARAMETER_ERROR);
@@ -567,6 +603,12 @@ class user extends common
                         }
                         $userHelper->saveUserSession($user);
                         $userHelper->protectedUser($user);
+                        $img = $this->getsource($user);
+                        $user['imgpath'] = null;
+
+                        if ($img) {
+                            $user['imgpath'] = $img['path'];
+                        }
                         return new json(json::OK, NULL, $user);
                     }
                 } else {
@@ -605,6 +647,12 @@ class user extends common
                 $userHelper = new \application\helper\user();
                 $userHelper->saveUserSession($user);
                 $userHelper->protectedUser($user);
+                $img = $this->getsource($user);
+                $user['imgpath'] = null;
+
+                if ($img) {
+                    $user['imgpath'] = $img['path'];
+                }
                 return new json(json::OK, NULL, $user);
             }
         } else {
@@ -675,6 +723,12 @@ class user extends common
                     $user['id'] = $this->model('user')->lastInsertId();
                     $userHelper->saveUserSession($user);
                     $userHelper->protectedUser($user);
+                    $img = $this->getsource($user);
+                    $user['imgpath'] = null;
+
+                    if ($img) {
+                        $user['imgpath'] = $img['path'];
+                    }
                     return new json(json::OK, NULL, $user);
                 }
             } else {
@@ -690,6 +744,12 @@ class user extends common
                     }
                     $userHelper->saveUserSession($user);
                     $userHelper->protectedUser($user);
+                    $img = $this->getsource($user);
+                    $user['imgpath'] = null;
+
+                    if ($img) {
+                        $user['imgpath'] = $img['path'];
+                    }
                     return new json(json::OK, NULL, $user);
                 } else {
                     return new json(json::PARAMETER_ERROR);
@@ -766,6 +826,12 @@ class user extends common
                         }
                         $userHelper->saveUserSession($user);
                         $userHelper->protectedUser($user);
+                        $img = $this->getsource($user);
+                        $user['imgpath'] = null;
+
+                        if ($img) {
+                            $user['imgpath'] = $img['path'];
+                        }
                         return new json(json::OK, NULL, $user);
                     }
                 } else {
@@ -811,6 +877,12 @@ class user extends common
                 }
                 $userHelper->saveUserSession($user);
                 $userHelper->protectedUser($user);
+                $img = $this->getsource($user);
+                $user['imgpath'] = null;
+
+                if ($img) {
+                    $user['imgpath'] = $img['path'];
+                }
                 return new json(json::OK, NULL, $user);
             }
         }
@@ -1201,6 +1273,12 @@ class user extends common
                 $user = $this->model('user')->where('id=?', [$uid])->find();
                 $userHelper->saveUserSession($user);
                 $userHelper->protectedUser($user);
+                $img = $this->getsource($user);
+                $user['imgpath'] = null;
+
+                if ($img) {
+                    $user['imgpath'] = $img['path'];
+                }
                 return new json(json::OK, NULL, $user);
             }
             return new json(json::PARAMETER_ERROR, '注册失败');
@@ -1239,20 +1317,68 @@ class user extends common
 
                 $userData['is_master'] = 0;
             }
-            $userData['school'] = 0;
+
             //判断是否有渠道
-            if (!empty($userData['source'])) {
+            /*
+                if (!empty($userData['source'])) {
                 //判断是否是学校的
                 $school = $this->model("source")->where("id=?", [$userData])->find(['school']);
                 if ($school['school'] == 1) {
                     $userData['school'] = 1;
                 }
 
+            }*/
+            $img = $this->getsource($userData);
+            $userData['imgpath'] = null;
+
+            if ($img) {
+                $userData['imgpath'] = $img['path'];
             }
+
 
             return new json(json::OK, NULL, $userData);
         }
         return new json(json::PARAMETER_ERROR, '密码错误');
+    }
+
+    function getsource($userData)
+    {
+        $souce = null;
+        if (empty($userData['source'])) {
+            //第一步 判断他是不是有渠道id
+            //没有 循环判断他的上级  一直找到有渠道id的一级
+            $user = $userData['oid'];
+            do {
+                if (empty($user['oid'])) {
+                    return null;
+                }
+                $user = $this->model("user")->where("id=?", [$userData['oid']])->find();
+                if (empty($user['source'])) {
+                    if (empty($user['oid'])) {
+                        return null;
+                    } else {
+                        continue;
+                    }
+                } else {
+                    $souce = $user['source'];
+                }
+
+            } while (empty($souce));
+        } else {
+            $souce = $userData['source'];
+        }
+        //有的话取渠道id 获取最上一级  拿轮波
+        $souce = $this->model("source")->where("id=?", [$souce])->find();
+        if (!empty($souce['u_source'])) {
+            $souce = $this->model("source")->where("id=?", [$souce['u_source']])->find();
+        }
+        //一级渠道
+        //获取一级渠道的是否有轮薄
+        $img = $this->model("sourceimg")
+            ->table("upload", "left join", "upload.id=sourceimg.upload_id")
+            ->where("sourceimg.source_id=? and is_del=0", [$souce['id']])
+            ->find("upload.path");
+        return $img;
     }
 
     /**
@@ -1595,8 +1721,8 @@ class user extends common
     {
         if (!empty($this->_response))
             return $this->_response;
+        $arr = $this->model("center_list")->where("is_del=0")->select();
 
-        $arr[] = array("name" => "我是大学生", "info" => "立即验证", "path" => "http://test.twillg.com/index.php?c=mobile");
         return new json(json::OK, NULL, $arr);
     }
 

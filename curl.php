@@ -7,7 +7,7 @@
  */
 
 
-$url = 'http://test.twillg.com/index.php?m=api&c=user&a=userclass';
+$url = 'http://127.0.0.1/index.php?m=api&c=user&a=userclass';
 $partner = 'ios';
 $key = "ios";
 $posts = array(
@@ -16,15 +16,15 @@ $posts = array(
 
 );
 $fields = array(
-    // "telephone" => '13373902670',
-    //'password' => '123456',
+    "telephone" => '13067778316',
+    'password' => '123456',
     //'address' => 579,
     //'prepay' => 0,
     //'tid' => 37
     //'id' => '65',
     //'invit' => 'Hqhpln',
     //'position' => 'index'
-    'orderno' => '16081715511619461182'
+    // 'orderno' => '16081715511619461182'
 
 );
 //排序
