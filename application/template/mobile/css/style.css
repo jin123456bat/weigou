@@ -4535,6 +4535,16 @@ a.line_btn{
     float: right;
     color: #fff;
 }
+
+.student-item select {
+    background-color: transparent;
+    border: none;
+    height: 40px;
+    line-height: 40px;
+    width: 77%;
+    float: right;
+    color: #fff;
+}
 .student-btn{
     margin-top: 20px;
 }

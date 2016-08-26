@@ -6,7 +6,7 @@
  * Time: 下午2:01
  */
 
-
+/*
 $url = 'http://127.0.0.1/index.php?m=api&c=user&a=login';
 $partner = 'ios';
 $key = "ios";
@@ -52,6 +52,32 @@ $posts['sign'] = $str;
 //$post_data = implode('&',$fields);
 
 //open connection
+$ch = curl_init();
+//set the url, number of POST vars, POST data
+curl_setopt($ch, CURLOPT_URL, $url);
+
+curl_setopt($ch, CURLOPT_POST, true);
+
+
+curl_setopt($ch, CURLOPT_POSTFIELDS, $posts); // 在HTTP中的“POST”操作。如果要传送一个文件，需要一个@开头的文件名
+
+ob_start();
+curl_exec($ch);
+$result = ob_get_contents();
+ob_end_clean();
+
+echo $result;
+
+//close connection
+curl_close($ch);
+*/
+
+$url = 'http://apis.haoservice.com/efficient/education';
+
+$posts=array(
+    "key"=>'5c45c8c5e41d46dcb4c2fab69629151c',
+    'idcard'=>'330881199311270534',
+    'realname'=>'余康明');
 $ch = curl_init();
 //set the url, number of POST vars, POST data
 curl_setopt($ch, CURLOPT_URL, $url);

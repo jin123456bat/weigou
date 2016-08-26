@@ -5,6 +5,7 @@ use system\core\ajax;
 use application\message\json;
 use system\core\random;
 use application\helper\sms;
+use application\helper\idcard;
 
 class user extends ajax
 {
@@ -1014,12 +1015,24 @@ class user extends ajax
 
         $userHelper = new \application\helper\user();
         $uid = $userHelper->isLogin();
+
         if (empty($uid))
             return new json(json::NOT_LOGIN);
+        $identify = $this->post("numberc");
 
         $user = $this->model("user")->where("id=?", [$uid])->find(["school"]);
         if ($user['school'] == 1) {
             return new json(json::PARAMETER_ERROR, "请勿重复验证");
+        }
+
+        //审核身份证号跟用户名是否匹配
+        if (strlen($identify) != 15 && strlen($identify) != 18 && strlen($identify) != 0)
+            return new json(json::PARAMETER_ERROR, '身份证号码必须是15或者18位');
+
+        if (!empty($identify)) {
+            if (idcard::auth($this->post('name'), $identify) == 0) {
+                return new json(json::PARAMETER_ERROR, '用户名和身份证号码不匹配');
+            }
         }
 
         //将学生信息保存到数据库
@@ -1028,6 +1041,9 @@ class user extends ajax
             "name" => $this->post("name"),
             "school" => $this->post("scname"),
             "card" => $this->post("num"),
+            "cartnum" => $identify,
+            "zhuanye" => $this->post("zhuanye"),
+            "cl" => $this->post("cl"),
         ])
         ) {
 

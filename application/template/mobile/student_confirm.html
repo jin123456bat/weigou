@@ -29,8 +29,17 @@
     <div class="student-head">
         <div class="student-pic"><img src="{%$VIEW_ROOT%}/mobile/image/touxiang.jpg"></div>
         <div class="school-name student-item">学校名称<input type="text" id="scname"></div>
+        <div class=" student-item">专&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;业<input type="text" id="zhuanye"></div>
+        <div class=" student-item">年&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;级<select id="class">
+            <option style="background-color: #fc8c8b" value="大一">大一</option>
+            <option style="background-color: #fc8c8b" value="大二">大二</option>
+            <option style="background-color: #fc8c8b" value="大三">大三</option>
+            <option style="background-color: #fc8c8b" value="大四">大四</option>
+        </select></div>
         <div class="student-name student-item">真实姓名<input type="text" id="name"></div>
         <div class="cart-num student-item">学生证号<input type="text" id="num"></div>
+        <div class=" student-item">身份证号<input type="text" id="numberc"></div>
+
     </div>
     <a class="coupon_btn student-btn" id="check">确定</a>
 
@@ -55,8 +64,19 @@
             var scname = $('#scname').val();
             var name = $('#name').val();
             var num = $('#num').val();
-            if(scname==""){
+            var numberc = $('#numberc').val();
+            var zhuanye = $('#zhuanye').val();
+            var cl = $('#class').val();
+            if (scname == "") {
                 msg("学校名称不能为空");
+                return false;
+            }
+            if (zhuanye == "") {
+                msg("专业不能为空");
+                return false;
+            }
+            if (cl == "") {
+                msg("年纪不能为空");
                 return false;
             }
             if (name == "") {
@@ -67,17 +87,24 @@
                 msg("学生证号不能为空");
                 return false;
             }
+            if (numberc == "") {
+                msg("身份证号不能为空");
+                return false;
+            }
 
             /*
-            var bankcard = $('input[name=bankcard]').val();
+             var bankcard = $('input[name=bankcard]').val();
              */
             $.post('{%url m=ajax c=user a=student%}', {
                 scname: scname,
                 name: name,
-                num: num
+                num: num,
+                numberc: numberc,
+                zhuanye: zhuanye,
+                cl:cl
             }, function (response) {
                 if (response.code == 1) {
-                  //  window.location = '{%url c=mobile a=index%}';
+                      window.location = '{%url c=mobile a=index%}';
                 }
                 else {
                     msg(response.result);

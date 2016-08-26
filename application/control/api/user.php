@@ -1329,6 +1329,7 @@ class user extends common
 
             }*/
             $img = $this->getsource($userData);
+
             $userData['imgpath'] = null;
 
             if ($img) {
@@ -1343,16 +1344,24 @@ class user extends common
 
     function getsource($userData)
     {
+
         $souce = null;
+
         if (empty($userData['source'])) {
+
             //第一步 判断他是不是有渠道id
             //没有 循环判断他的上级  一直找到有渠道id的一级
             $user = $userData['oid'];
+
             do {
-                if (empty($user['oid'])) {
+
+                if (empty($user)) {
+
                     return null;
                 }
-                $user = $this->model("user")->where("id=?", [$userData['oid']])->find();
+
+                $user = $this->model("user")->where("id=?", [$user])->find();
+
                 if (empty($user['source'])) {
                     if (empty($user['oid'])) {
                         return null;
