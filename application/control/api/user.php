@@ -1719,8 +1719,7 @@ class user extends common
 
     function  userclass()
     {
-        if (!empty($this->_response))
-            return $this->_response;
+
         $arr = $this->model("center_list")->where("is_del=0")->select();
 
         return new json(json::OK, NULL, $arr);

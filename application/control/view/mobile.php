@@ -1994,4 +1994,21 @@ class mobile extends view
         $this->assign("note", $note);
         return $this;
     }
+
+    function student_confirm()
+    {
+        $userHelper = new \application\helper\user();
+        $uid = $userHelper->isLogin();
+        if (empty($uid)) {
+            $this->response->setCode(302);
+            $this->response->addHeader('Location', $this->http->url('', 'mobile', 'login'));
+        }
+
+        $user = $this->model("user")->where("id=?", [$uid])->find();
+
+        // die(json_encode($user));
+        $this->assign('user', $user);
+        return $this;
+
+    }
 }

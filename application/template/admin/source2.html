@@ -181,6 +181,7 @@
                     <th>用户名</th>
                     <th>注册流量权限</th>
                     <th>销售流量权限</th>
+                    <th>是否是校园</th>
                     <th>链接地址</th>
                     <th>二维码</th>
                     <th>操作</th>
@@ -192,6 +193,7 @@
                                name="user" {%if $source[source].user==1%}checked="checked"{%/if%}></td>
                     <td><input class="editable" data-id="{%$source[source].id%}" data-name="product" type="checkbox"
                                {%if $source[source].product==1%}checked="checked"{%/if%}></td>
+                    <td>{%if $source[source].school==0%}否{%else%}是{%/if%}</td>
                     <td>
                         http://{%$smarty.server.HTTP_HOST%}/index.php?c=source&a=enter&id={%$source[source].id%}
                     </td>
