@@ -496,4 +496,18 @@ class datatables extends view
         }
         return new json($resultObj);
     }
+    
+    function refund()
+    {
+    	$resultObj = new \stdClass();
+    	$resultObj->draw = $this->post('draw');
+    	$resultObj->data = $this->model('refund')->datatables($this->post());
+    	$resultObj->recordsFiltered = count($resultObj->data);
+    	if ($this->post('length')!=-1)
+    	{
+    		$resultObj->data = array_slice($resultObj->data, $this->post('start'),$this->post('length'));
+    	}
+    	$resultObj->recordsTotal = $this->model('refund')->count();
+    	return new json($resultObj);
+    }
 }
