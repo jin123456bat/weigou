@@ -4,6 +4,7 @@ use system\core\view;
 use application\helper\erpSender;
 use application\helper\erp\oms;
 use system\core\image;
+use application\helper\jpush;
 class index extends view
 {
 	function __construct()
@@ -52,8 +53,8 @@ class index extends view
 	
 	function test()
 	{
-		/* $erpSender = new erpSender();
-		var_dump($erpSender->doSendOrder('1608150035033588512')); */
+		$jpush = new jpush('240594b6ccdf89fe91209e6b','802960b6f8210bd4c77afed8');
+		$jpush->push("1","2");
 	}
 	
 	function import()

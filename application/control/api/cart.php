@@ -167,7 +167,7 @@ class cart extends common
 
         if ($productHelper->canBuy($id, $content)) {
             $this->model('product')->transaction();
-            $cartHelper = new helper\cart();
+            $cartHelper = new \application\helper\cart();
             if ($cartHelper->add($this->_uid, $id, $content, $num, $bind)) {
                 $this->model('product')->commit();
                 $num = $this->model('cart')->where('uid=?',[$this->_uid])->find('sum(num) as num');
