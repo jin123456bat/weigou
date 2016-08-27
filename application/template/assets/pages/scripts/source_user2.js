@@ -187,7 +187,8 @@ var EcommerceOrders = function () {
         });
 
         function initComplete(row, data) {
-            var content = data.data;
+
+            var content = data.data || data;
             var pay_money = 0;
             for (var i = 0; i < content.length; i++) {
                 //console.log(data.data);
@@ -210,6 +211,15 @@ var EcommerceOrders = function () {
 
 
         }
+
+        grid.getDataTable().on('draw.dt', function (a, b) {
+            var data = b.aoData;
+            var temp = [];
+            for (var i = 0; i < data.length; i++) {
+                temp.push(data[i]._aData);
+            }
+            initComplete(a, temp);
+        });
 
         // handle group actionsubmit button click   导出exal
         grid.getTableWrapper().on('click', '.table-group-action-submit', function (e) {

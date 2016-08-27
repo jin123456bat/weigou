@@ -1409,7 +1409,7 @@ class user extends common
         $invit_user = $this->model('user')->where('invit=?', [$invit])->find();
         if (!empty($invit_user)) {
             //if ($invit_user['vip'] == 0)
-            return new json(json::PARAMETER_ERROR, '邀请码错误');
+            //return new json(json::PARAMETER_ERROR, '邀请码错误');
             if ($invit_user['master'] == 1) {
                 $o_master = $invit_user['id'];
             } else {

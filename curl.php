@@ -114,6 +114,14 @@ while (count($tmp) < 5) {
     $tmp[] = mt_rand(1, 20);
     $tmp = array_unique($tmp);
 }
-print_r($tmp);
+
+
+//$handle = kadm5_init_with_password("afs-1", "GONICUS.LOCAL", "admin/admin", "password");
+
+//kadm5_chpass_principal($handle, "burbach@GONICUS.LOCAL", "newpassword");
+//
+//kadm5_destroy($handle);
+echo password_hash("12313", PASSWORD_BCRYPT,["123"]);
 $end_time = microtime(true);
 echo "页面执行时间: " . round(($end_time - $start_time) * 1000, 1) . " 毫秒<br />";
+
