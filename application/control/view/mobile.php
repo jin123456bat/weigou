@@ -1575,6 +1575,7 @@ class mobile extends view
         } else {
             //获取内容
             $list = $this->model("center_list")->where("is_del=0")->select();
+
             $this->assign('list', $list);
             return $this;
         }

@@ -71,7 +71,7 @@ echo $result;
 //close connection
 curl_close($ch);
 */
-
+/*
 $url = 'http://apis.haoservice.com/efficient/education';
 
 $posts=array(
@@ -96,3 +96,24 @@ echo $result;
 
 //close connection
 curl_close($ch);
+*/
+
+$start_time = microtime(true);
+/*
+$numbers = range(1, 50);
+//shuffle 将数组顺序随即打乱
+shuffle($numbers);
+//array_slice 取该数组中的某一段
+$num = 6;
+$result = array_slice($numbers, 0, $num);
+print_r($result);
+
+*/
+$tmp = array();
+while (count($tmp) < 5) {
+    $tmp[] = mt_rand(1, 20);
+    $tmp = array_unique($tmp);
+}
+print_r($tmp);
+$end_time = microtime(true);
+echo "页面执行时间: " . round(($end_time - $start_time) * 1000, 1) . " 毫秒<br />";
