@@ -239,7 +239,7 @@ class userModel extends model
 				{
 					if ($order['column'] == $index)
 					{
-						$this->orderby($columns['name'],$order['dir']);
+						$this->orderby($columns['data'],$order['dir']);
 					}
 				}
 			}
