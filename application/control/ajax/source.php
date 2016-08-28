@@ -185,7 +185,12 @@ class source extends ajax
         $id = $this->post('id');
         if (empty($id))
         {
-	        $password = $this->post('password', '', 'md5');
+	        $password = $this->post('password');
+	        if (empty($password))
+	        {
+	        	return new json(json::PARAMETER_ERROR,'密码不能为空');
+	        }
+	        $password = md5($password);
 	        if($this->model('source')->where('id=?', [$id])->limit(1)->update('password', $password))
 	        {
 	        	return new json(json::OK);
