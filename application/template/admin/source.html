@@ -373,6 +373,7 @@
         var id = $(this).data('id');
         $('#passwordModal').find('input[name=id]').val(id);
         $('#passwordModal').modal('show');
+        $('#passwordModal').find('input[name=password]').val('');
     });
 
     $('#passwordForm').on('submit', function () {
