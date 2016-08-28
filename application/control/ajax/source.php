@@ -183,11 +183,21 @@ class source extends ajax
     function changepwd()
     {
         $id = $this->post('id');
-        $password = $this->post('password', '', 'md5');
-        $this->model('source')->where('id=?', [$id])->limit(1)->update('password', $password);
-        return new json(json::OK);
+        if (empty($id))
+        {
+	        $password = $this->post('password', '', 'md5');
+	        if($this->model('source')->where('id=?', [$id])->limit(1)->update('password', $password))
+	        {
+	        	return new json(json::OK);
+	        }
+	        else
+	        {
+	        	return new json(json::PARAMETER_ERROR,'密码更改失败');
+	        }
+	    }
+        return new json(json::PARAMETER_ERROR,'id不能为空');
     }
-
+    
     function power()
     {
         $id = $this->post('id');

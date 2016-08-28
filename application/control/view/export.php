@@ -63,12 +63,17 @@ class export extends view
 		{
 			$order_productModel->where('order.orderno in (?)',$orderno);
 		}
-		if ($this->post('all') == 'noselect')
+		else if ($this->post('all') == 'noselect')
 		{
 			if (!empty($orderno))
 			{
 				$order_productModel->where('order.orderno not in (?)',$orderno);
 			}
+		}
+		else
+		{
+			//导出全部的时候不包含未支付的订单
+			$order_productModel->where('pay_status != 0');
 		}
 		$data = $order_productModel
 		->table('order_package','left join','order_package.id=order_product.package_id')
