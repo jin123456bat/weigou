@@ -290,7 +290,12 @@ class order extends view
                                 return new json(json::PARAMETER_ERROR, '订单更改失败');
                             }
                         } else {
-                            //退款失败，回滚
+                            //退款失败，标记一下退款失败,
+                            $this->model('refund')->where('refundno=?',[$refundno])->limit(1)->update([
+                            	'completetime'=>$_SERVER['REQUEST_TIME'],
+                            	'status'=>2,
+                            ]);
+                            
                         }
                     } else {
                         if ($success_num >= 1) {
@@ -330,6 +335,10 @@ class order extends view
                             }
                         } else {
                             //退款失败  回滚
+                        	$this->model('refund')->where('refundno=?',[$refundno])->limit(1)->update([
+                        		'completetime'=>$_SERVER['REQUEST_TIME'],
+                        		'status'=>2,
+                        	]);
                         }
                     }
                 }
