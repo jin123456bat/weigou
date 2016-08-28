@@ -6,6 +6,24 @@
  * Time: 下午2:01
  */
 
+
+
+for ($i = 0; $i <= 10000000; $i++) {
+    $a = $i * $i;
+}
+
+
+
+//$XHPROF_ROOT = "/tools/xhprof/";
+//include_once $XHPROF_ROOT . "/xhprof_lib/utils/xhprof_lib.php";
+//include_once $XHPROF_ROOT . "/xhprof_lib/utils/xhprof_runs.php";
+
+//$xhprof_runs = new XHProfRuns_Default();
+//$run_id = $xhprof_runs->save_run($xhprof_data, "xhprof_testing");
+
+//echo "http://localhost/xhprof/xhprof_html/index.php?run={$run_id}&source=xhprof_testing\n";
+var_dump($xhprof_data);
+exit;
 /*
 $url = 'http://127.0.0.1/index.php?m=api&c=user&a=login';
 $partner = 'ios';
@@ -98,7 +116,7 @@ echo $result;
 curl_close($ch);
 */
 
-$start_time = microtime(true);
+
 /*
 $numbers = range(1, 50);
 //shuffle 将数组顺序随即打乱
@@ -121,7 +139,22 @@ while (count($tmp) < 5) {
 //kadm5_chpass_principal($handle, "burbach@GONICUS.LOCAL", "newpassword");
 //
 //kadm5_destroy($handle);
-echo password_hash("12313", PASSWORD_BCRYPT,["123"]);
+
+//echo sha1("123");
+echo $hash = password_hash("123456", PASSWORD_BCRYPT);
+
+//echo password_verify("123456789",$hash);
+$start_time = microtime(true);
+
+if (password_verify('123456', $hash)) {
+    echo 'Password is valid!';
+} else {
+    echo 'Invalid password.';
+}
+
 $end_time = microtime(true);
 echo "页面执行时间: " . round(($end_time - $start_time) * 1000, 1) . " 毫秒<br />";
 
+//$xhprof_data = xhprof_disable();
+
+//json_encode($xhprof_data);

@@ -1,4 +1,6 @@
 <?php
+xhprof_enable(XHPROF_FLAGS_CPU + XHPROF_FLAGS_MEMORY);
+
 use system\core\webApplication;
 
 set_error_handler(function ($errno, $errstr, $errfile, $errline) {
@@ -17,3 +19,5 @@ require_once ROOT . '/global.php';
 
 $config = config('system');
 (new webApplication($config))->run();
+
+

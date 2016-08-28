@@ -100,7 +100,7 @@ var EcommerceOrders = function () {
                     orderable: true
                 }, {
                     data: 'swift_money',
-                    name: 'IFNULL((select sum(a.money)-(select ifnull(sum(b.money),0) from swift as b where b.uid=user.id and b.type=1 and b.source = 8) from swift as a where a.uid=user.id and a.type=0 and a.source in (2,3,4,5,6,7)),"0.00")',
+                    name: '(IFNULL((select sum(swift.money) from swift where swift.uid=user.id and swift.type=0 and swift.source in (2,3,4,5,6,7) ),0) - (select ifnull(sum(b.money), 0) from swift as b where b.uid = user.id and b.type = 1 and b.source = 8))',
                     orderable: true
                 }, {
                     data: 'description',
