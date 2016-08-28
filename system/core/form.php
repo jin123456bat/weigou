@@ -32,6 +32,30 @@ class form extends base
         $result = false;
         if ($this->_config->csrf) {
             //token验证
+            /* $_X_CSRF_TOKEN = $this->post->X_CSRF_TOKEN;
+            if (empty($_X_CSRF_TOKEN))
+            {
+            	$_X_CSRF_TOKEN = $this->http->getHeader('HTTP_X_CSRF_TOKEN');
+            }
+            
+            $x_csrf_token_in_server = $_SESSION['x_csrf_token'];
+            foreach ($x_csrf_token_in_server as $index => $token)
+            {
+            	//token半个小时内有效
+            	if ($_SERVER['REQUEST_TIME'] - $token['time'] > 1800)
+            	{
+            		unset($_SESSION['x_csrf_token'][$index]);
+            		continue;
+            	}
+            	if ($token['token'] == $_X_CSRF_TOKEN && $_SERVER['REQUEST_TIME'] - $token['time'] < 1800)
+            	{
+            		$result1 = true;
+            	}
+            	else
+            	{
+            		$result1 = false;
+            	}
+            } */
             $result1 = ($this->post->X_CSRF_TOKEN === $this->session->x_csrf_token) || ($this->http->getHeader('HTTP_X_CSRF_TOKEN') === $this->session->x_csrf_token);
 
             //refer验证
@@ -68,6 +92,12 @@ class form extends base
     {
         $token = random::word(16);
         $this->session->x_csrf_token = $token;
+        /* $x_csrf_token = $this->session->x_csrf_token;
+        $x_csrf_token[] = [
+        	'token' => $token,
+        	'time'=> $_SERVER['REQUEST_TIME']
+        ];
+        $this->session->x_csrf_token = $x_csrf_token; */
         return $this->session->x_csrf_token;
     }
 }
