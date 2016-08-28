@@ -192,6 +192,7 @@ var EcommerceOrders = function () {
 		
 		function initComplete(row,data)
 		{
+
 			var content = data.data || data;
 			var pay_money = 0;
 			for(var i=0;i<content.length;i++)
