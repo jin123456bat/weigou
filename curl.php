@@ -6,12 +6,12 @@
  * Time: 下午2:01
  */
 
-
+/*
 
 for ($i = 0; $i <= 10000000; $i++) {
     $a = $i * $i;
 }
-
+*/
 
 
 //$XHPROF_ROOT = "/tools/xhprof/";
@@ -22,10 +22,9 @@ for ($i = 0; $i <= 10000000; $i++) {
 //$run_id = $xhprof_runs->save_run($xhprof_data, "xhprof_testing");
 
 //echo "http://localhost/xhprof/xhprof_html/index.php?run={$run_id}&source=xhprof_testing\n";
-var_dump($xhprof_data);
-exit;
-/*
-$url = 'http://127.0.0.1/index.php?m=api&c=user&a=login';
+
+
+$url = 'http://127.0.0.1/index.php?m=api&c=product&a=detail';
 $partner = 'ios';
 $key = "ios";
 $posts = array(
@@ -39,7 +38,7 @@ $fields = array(
     //'address' => 579,
     //'prepay' => 0,
     //'tid' => 37
-    //'id' => '65',
+    'id' => '60',
     //'invit' => 'Hqhpln',
     //'position' => 'index'
     // 'orderno' => '16081715511619461182'
@@ -88,7 +87,7 @@ echo $result;
 
 //close connection
 curl_close($ch);
-*/
+exit;
 /*
 $url = 'http://apis.haoservice.com/efficient/education';
 
