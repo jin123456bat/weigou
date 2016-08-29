@@ -56,6 +56,7 @@ class message extends common
 		$total = $this->model('message')->fetch($filter);
 		
 		$messageReturnModel = [
+			'data' => $message,
 			'total' =>  isset($total['count(*)'])?$total['count(*)']:0,
 			'count' => count($message),
 			'start' => $start,

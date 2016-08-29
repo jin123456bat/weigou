@@ -234,7 +234,7 @@ class product extends base
 	{
 		if (isset($p['bind']) && !empty($p['bind']))
 		{
-			$bind = $this->model('bind')->where('id=? and content=? and num=?',[$p['id'],$p['content'],$p['bind']])->select();
+			$bind = $this->model('bind')->where('pid=? and content=? and num=?',[$p['id'],$p['content'],$p['bind']])->select();
 			if (!empty($bind))
 			{
 				return $bind;
