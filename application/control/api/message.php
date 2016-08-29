@@ -54,13 +54,13 @@ class message extends common
 		unset($filter['length']);
 		$filter['parameter'] = 'count(*)';
 		$total = $this->model('message')->fetch($filter);
-		
+				
 		$messageReturnModel = [
-			'data' => $message,
-			'total' =>  isset($total['count(*)'])?$total['count(*)']:0,
-			'count' => count($message),
+			'current' => count($message),
+			'total' =>  isset($total[0]['count(*)'])?$total[0]['count(*)']:0,
 			'start' => $start,
 			'length' => $length,
+			'data' => $message,
 		];
 		return new json(json::OK,NULL,$messageReturnModel);
 	}
