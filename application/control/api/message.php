@@ -82,4 +82,28 @@ class message extends common
 		}
 		return new json(json::PARAMETER_ERROR,'消息不存在');
 	}
+	
+	/**
+	 * 未读消息的数量
+	 */
+	function unreadNum()
+	{
+		$userHelper = new \application\helper\user();
+		$uid = $userHelper->isLogin();
+		if(empty($uid))
+		{
+			return new json(json::NOT_LOGIN);
+		}
+		
+		$filter = [
+			'uid' => $uid,
+			'isread'=>0,
+			'isdelete' => 0,
+			'parameter' => ['count(*)'],
+		];
+		$count = $this->model('message')->fetch($filter);
+		$count = isset($count[0]['count(*)'])?$count[0]['count(*)']*1:0;
+		
+		return new json(json::OK,NULL,$count);
+	}
 }
