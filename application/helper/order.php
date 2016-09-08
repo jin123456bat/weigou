@@ -41,16 +41,14 @@ class order extends base
     {
         //判断订单是否存在
         $order = $this->model('order')->where('orderno=?', [$orderno])->find();
-        if (empty($order))
-        {
+        if (empty($order)) {
             return 0;
         }
-        
-        
+
+
         //订单状态不符合 无需推单
-        if ($order['pay_status']==0 || $order['pay_status']==2 || $order['pay_status']==3 || $order['status']==0)
-        {
-        	return 5;
+        if ($order['pay_status'] == 0 || $order['pay_status'] == 2 || $order['pay_status'] == 3 || $order['status'] == 0) {
+            return 5;
         }
 
         //判断是否已经拆分过了
@@ -220,22 +218,21 @@ class order extends base
                     $product['sku'] = $collection_price['sku'];
                 }
             }
-            
+
             //计算捆绑价格
             $productHelper = new \application\helper\product();
             $priceInBind = $productHelper->getPriceByBind($p);
-            if ($priceInBind)
-            {
-            	$product['price'] = $priceInBind['price'];
-            	$product['v1price'] = $priceInBind['v1price'];
-            	$product['v2price'] = $priceInBind['v2price'];
+            if ($priceInBind) {
+                $product['price'] = $priceInBind['price'];
+                $product['v1price'] = $priceInBind['v1price'];
+                $product['v2price'] = $priceInBind['v2price'];
             }
 
             //对于团购商品可能需要强制性的价格
             if (isset($p['price'])) {
                 $product['v2price'] = $product['v1price'] = $product['price'] = $p['price'];
             }
-            
+
             switch (intval($user['vip'])) {
                 case 0:
                     $totalamount += $product['price'] * $p['num'];
@@ -477,25 +474,23 @@ class order extends base
                     }
                 }
             }
-            
+
             //计算捆绑价格
             $priceInBind = $productHelper->getPriceByBind($p);
-            if ($priceInBind)
-            {
-            	switch ($user['vip'])
-            	{
-            		case '0':
-            			$price = $priceInBind['price'];
-            			break;
-            		case '1':
-            			$price = $priceInBind['v1price'];
-            			break;
-            		case '2':
-            			$price = $priceInBind['v2price'];
-            			break;
-            		default:
-            			$price = $priceInBind['price'];
-            	}
+            if ($priceInBind) {
+                switch ($user['vip']) {
+                    case '0':
+                        $price = $priceInBind['price'];
+                        break;
+                    case '1':
+                        $price = $priceInBind['v1price'];
+                        break;
+                    case '2':
+                        $price = $priceInBind['v2price'];
+                        break;
+                    default:
+                        $price = $priceInBind['price'];
+                }
             }
 
             //假如存在指定价格，按照指定价格计算
@@ -527,7 +522,7 @@ class order extends base
                     'pid' => $p['id'],
                     'content' => $p['content'],
                     'num' => $p['num'],
-                	'bind' => $productHelper->getSelled($p),
+                    'bind' => $productHelper->getSelled($p),
                     'price' => $price,
                     'refund' => 0,
                     'refundmoney' => 0,
@@ -548,7 +543,7 @@ class order extends base
                     'product' => [[
                         'pid' => $p['id'],
                         'num' => $p['num'],
-                    	'bind' => $productHelper->getSelled($p),
+                        'bind' => $productHelper->getSelled($p),
                         'price' => $price,
                         'content' => $p['content'],
                         'refund' => 0,
@@ -610,7 +605,7 @@ class order extends base
     function payedOrder($orderno, $pay_type, $pay_number, $pay_money, array $options = [])
     {
         $order = $this->model('order')->where('orderno=?', [$orderno])->find();
-        if (!empty($order) && $order['pay_status'] == '0' && $order['orderamount']==$pay_money) {
+        if (!empty($order) && $order['pay_status'] == '0' && $order['orderamount'] == $pay_money) {
             $data = [
                 'pay_status' => 1,
                 'pay_type' => $pay_type,
@@ -639,9 +634,22 @@ class order extends base
 
             if ($this->model('order_log')->add($orderno, '订单支付成功，等待处理')) {
                 $this->model('order')->commit();
-
-                $erpSender = new erpSender();
-                $erpSender->doSendOrder($orderno);
+                //判断仓库是否是自动推送
+                $is_auto = $this->model("store")
+                    ->table("order_package", "left join", "order_package.store_id=store.id")
+                    ->where("order_package.orderno=?", [$orderno])
+                    ->select(['is_auto']);
+                $bl = true;
+                foreach ($is_auto as $auto) {
+                    if ($auto['is_auto'] == 0) {
+                        $bl=false;
+                        break;
+                    }
+                }
+                if($bl) {
+                    $erpSender = new erpSender();
+                    $erpSender->doSendOrder($orderno);
+                }
 
                 return true;
             } else {
@@ -807,7 +815,7 @@ class order extends base
                 'createtime' => $_SERVER['REQUEST_TIME'],
                 'completetime' => 0,
                 'money' => $money,
-                'reason'=>''
+                'reason' => ''
             ])
             ) {
                 return false;
