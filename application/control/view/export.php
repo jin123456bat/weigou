@@ -23,7 +23,7 @@ class export extends view
 			exit();
 		}
 	}
-	
+
 	function vip()
 	{
 		$vip_orderModel = $this->model('vip_order');
@@ -54,7 +54,7 @@ class export extends view
 		$template = ROOT.'/extends/PHPExcel/vip.xlsx';
 		$this->response($data,$template,'VIP订单数据'.date('Y-m-d H:i:s'));
 	}
-	
+
 	function order()
 	{
 		$order_productModel = $this->model('order_product');
@@ -83,6 +83,7 @@ class export extends view
 		->table('suborder_store','left join','suborder_store.id=suborder_store_product.suborder_id')
 		->select([
 			'order.orderno',//订单号
+            'concat(replace(suborder_store.date,"-",""),suborder_store.id) as suborder_orderno',//订单短号
 			'order_package.id',//包裹号
 			'from_unixtime(order.createtime)',//订单时间
 			'(select name from user where order.uid=user.id) as username',//用户名
@@ -92,13 +93,15 @@ class export extends view
 			'product.inprice',//商品进价
 			'order_product.num',//数量
 			'order.orderamount',//订单金额
-			'order.pay_money',//支付金额 
+
+			'order.pay_money',//支付金额
+            'order_product.refund',//商品状态
 			'replace(replace(if(order.pay_type="","未支付",order.pay_type),"alipay","支付宝"),"wechat","微信")',//支付方式
 			'if(order.way_status=0,"未发货",from_unixtime(order.way_time))',//发货时间
 			'ifnull((select ship.name from ship where ship.code=order_package.ship_type),"") as ship_name',//快递公司
 			'order_package.ship_number',//快递单号
 			//'(select concat_ws(":",province.name,city.name,county.name,address.address,address.name,address.telephone,address.identify) from address,province,city,county where order.address=address.id and province.id=address.province and city.id=address.city and county.id=address.county) as address',//配送信息
-			
+
 			'(select province.name from province,address where order.address=address.id and province.id=address.province) as province',//省份
 			'(select city.name from city,address where order.address=address.id and city.id=address.city) as city',//省份
 			'(select county.name from county,address where order.address=address.id and county.id=address.county) as county',//省份
@@ -106,8 +109,8 @@ class export extends view
 			'(select address.name from address where address.id=order.address) as receive_name',
 			'(select address.telephone from address where address.id=order.address) as receive_telephone',
 			'(select address.identify from address where address.id=order.address) as receive_identify',
-			
-			
+
+
 			'order.pay_number',//支付编号
 			'if(product.outside=1 or product.outside=0,"无需报关",if(kouan=1,"已报关","未报关"))',//报关
 			'if(order.status=1,"有效","无效")',//状态
@@ -121,32 +124,45 @@ class export extends view
 			'order.discount',
 			'order.note',//商家备注
 			//'if(order.pay_status=1,"已支付","未支付")',//支付状态
-				
+
 			'ifnull((select sum(money) from swift where swift.orderno=order.orderno and swift.order_type=\'order\' and swift.source=2),0) as product1',
 			'ifnull((select sum(money) from swift where swift.orderno=order.orderno and swift.order_type=\'order\' and swift.source=3),0) as product2',
 			'ifnull((select sum(money) from swift where swift.orderno=order.orderno and swift.order_type=\'order\' and swift.source=4),0) as product3',
-			'order.invoice',//发票 
+			'order.invoice',//发票
 			'if(suborder_store.erp=1,"已推送","未推送") as erp',//erp信息
-			
+
 		]);
-		
-		
-		
+
+
+
 		//exit(json_encode($data));
-		
-		
+
+
 		$phpexcel_root = ROOT.'/extends/PHPExcel';
 		include $phpexcel_root.'/PHPExcel.php';
-		
+
 		$ship = $this->model('ship')->select('GROUP_CONCAT(ship.name) as name');
-		
+
 		//所有导出的订单
 		$orderno_array = [];
-		
+
 		foreach ($data as &$value)
 		{
+            switch ($value['refund'])
+            {
+            case 1:
+                $value['refund']="已退款";
+                break;
+            case 2:
+                $value['refund'] = "正在退款";
+                break;
+            default:
+                $value['refund'] = "未退款";
+                break;
+            }
+
 			$orderno_array[] = $value['orderno'];
-			
+
 			$shipname = $value['ship_name'];
 			//快递公司增加数据验证
 			$value['ship_name'] = new \stdClass();
@@ -162,7 +178,7 @@ class export extends view
 			$value['ship_name']->Formula1 = '"'.$ship[0]['name'].'"';
 			$value['ship_name']->value = $shipname;
 		}
-		
+
 		$orderno_array = array_unique($orderno_array);
 		foreach ($orderno_array as $orderno)
 		{
@@ -172,11 +188,11 @@ class export extends view
 			]);
 			$this->model('order_log')->add($orderno,'订单导出');
 		}
-		
+
 		$template = ROOT.'/extends/PHPExcel/order.xlsx';
 		$this->response($data,$template,'订单数据'.date('Y-m-d H:i:s'),3);
 	}
-	
+
 	/**
 	 * 提现导出
 	 */
@@ -207,7 +223,7 @@ class export extends view
 		$template = ROOT.'/extends/PHPExcel/drawal.xlsx';
 		$this->response($data,$template,'提现数据'.date('Y-m-d H:i:s'));
 	}
-	
+
 	/**
 	 * 商品导出
 	 */
@@ -257,7 +273,7 @@ class export extends view
 		$template = ROOT.'/extends/PHPExcel/product.xlsx';
 		$this->response($data,$template,'商品数据'.date('Y-m-d H:i:s'));
 	}
-	
+
 	/**
 	 * 用户导出
 	 */
@@ -279,7 +295,7 @@ class export extends view
 		}
 		$y_profit_time_start = strtotime(date('Y-m-d',time() - 24*3600));
 		$y_profit_time_end = $y_profit_time_start + 24*3600;
-		
+
 		$data = $this->model('user')->select([
 			'user.id',
 			'user.name',
@@ -302,7 +318,7 @@ class export extends view
 		$template = ROOT.'/extends/PHPExcel/user.xlsx';
 		$this->response($data,$template,'用户数据'.date('Y-m-d H:i:s'));
 	}
-	
+
 	private function response(array $data,$template,$filename,$start_line = 2)
 	{
 		$excel = new \application\helper\excel();
