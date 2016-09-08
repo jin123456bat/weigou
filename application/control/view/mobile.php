@@ -1992,6 +1992,8 @@ class mobile extends view
         if (!$note) {
             return $this->__404();
         }
+        $type = $this->get("type");
+        $this->assign("type", $type);
         $this->assign("note", $note);
         return $this;
     }

@@ -501,7 +501,7 @@ class order extends common
 
         if ($note) {
             $is_note = true;
-            $note_url = "http://" . $_SERVER['SERVER_NAME'] . '/index.php?c=mobile&a=notice';
+            $note_url = "http://" . $_SERVER['SERVER_NAME'] . '/index.php?c=mobile&a=notice&webview=1';
 
             $note_title = $note['title'];
         }
