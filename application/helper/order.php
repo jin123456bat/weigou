@@ -610,7 +610,7 @@ class order extends base
     function payedOrder($orderno, $pay_type, $pay_number, $pay_money, array $options = [])
     {
         $order = $this->model('order')->where('orderno=?', [$orderno])->find();
-        if (!empty($order) && $order['pay_status'] == '0') {
+        if (!empty($order) && $order['pay_status'] == '0' && $order['orderamount']==$pay_money) {
             $data = [
                 'pay_status' => 1,
                 'pay_type' => $pay_type,
