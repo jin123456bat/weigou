@@ -183,7 +183,7 @@ class source extends ajax
     function changepwd()
     {
         $id = $this->post('id');
-        if (empty($id))
+        if (!empty($id))
         {
 	        $password = $this->post('password');
 	        if (empty($password))
