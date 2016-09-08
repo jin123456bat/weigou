@@ -231,7 +231,7 @@ class cart extends common
     {
         $userHelper = new \application\helper\user();
         $uid = $userHelper->isLogin();
-        $uid = 770;
+
         if (empty($uid))
             return new json(json::NOT_LOGIN);
         $cart['count'] = $this->model('cart')

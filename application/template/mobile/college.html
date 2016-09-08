@@ -15,12 +15,14 @@
     <script type="text/javascript" src="{%$VIEW_ROOT%}/mobile/js/resolution.js"></script>
 </head>
 <body>
+{%if !isset($smarty.get.webview) || $smarty.get.webview!=1%}
     <div id="header">
         <header>
             <a href="{%url c=mobile a=index%}" class="left_btn"><i class="icon back"></i></a>
             <h1>创业学院</h1>
         </header>
     </div>
+{%/if%}
     <div id="content" style="padding-top: 50px;">
         <div class="college_box">
             <div class="bar flex_box">

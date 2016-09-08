@@ -197,7 +197,7 @@ var EcommerceOrders = function () {
 			var pay_money = 0;
 			for(var i=0;i<content.length;i++)
 			{
-                alert(content[i].pay_money);
+
 				//console.log(data.data);
 				if(content[i].pay_money){
 					//console.log(content[i]);
