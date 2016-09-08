@@ -149,6 +149,11 @@ class openapi extends erp
 			'concat(order.note,",",order.msg) as Remark',
 		]);
 		
+		if (empty($data['PayerName']))
+		{
+			$data['PayerName'] = $data['ConigneeName'];
+		}
+		
 		//配送方式
 		if (!empty($data['ShippingType']))
 		{
