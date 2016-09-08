@@ -276,7 +276,7 @@ var EcommerceOrders = function () {
 							}
 							else
 							{
-								return '<font style="cursor:pointer;" class="popovers" data-container="body" data-html="true" data-trigger="click hover" data-placement="right" data-content="'+('金额:'+full.pay_money+'<br>时间:'+unixtotime(full.pay_time,true,8))+'<br>单号:'+full.pay_number+'<br>余额:'+full.money+'" data-original-title="'+(full.pay_type=='alipay'?'支付宝':(full.pay_type=='wechat'?'微信':'余额'))+'">已支付('+full.pay_money+')</font>';
+								return '<font style="cursor:pointer;" class="popovers" data-container="body" data-html="true" data-trigger="click hover" data-placement="right" data-content="'+('金额:'+full.pay_money+'<br>时间:'+unixtotime(full.pay_time,true,8))+'<br>单号:'+full.pay_number+'<br>余额:'+full.money+'" data-original-title="'+(full.pay_type=='alipay'?'支付宝':(full.pay_type=='wechat'?'微信':'余额'))+'">已支付('+ (full.pay_type == 'alipay' ? '支付宝：' : (full.pay_type == 'wechat' ? '微信：' : '余额：'))+full.pay_money+')</font>';
 							}
 						}
 						return '';
@@ -340,17 +340,17 @@ var EcommerceOrders = function () {
 							content += '<button data-orderno="'+data+'" class="btn btn-xs red btn-outline quit">取消订单</button>';
 						}
 						//推送erp按钮
-						/*if(full.status=='1')
-						{
-							if(full.erp=='0')
+						//if(full.status=='1')
+						//{
+							if(full.is_erp=='0')
 							{
-								content += '<button data-orderno="'+data+'" class="btn btn-xs yellow btn-outline erp">推送ERP</button>';
+								content += '<button data-orderno="'+data+'" class="btn btn-xs yellow btn-outline erp">审核订单</button>';
 							}
-							else
+							/*else
 							{
 								content += '<button data-orderno="'+data+'" class="btn btn-xs yellow btn-outline erp">重推ERP</button>';
-							}
-						}*/
+							}*/
+						//}
 						//退款按钮
 						/*if(full.pay_status==1 || full.pay_status == 4)
 						{

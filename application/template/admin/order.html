@@ -638,27 +638,27 @@
 		
 		//同步到erp按钮
 		$('#datatable_orders').on('click','.erp',function(){
-			var orderno = $(this).data('orderno');
-			var ths = $(this);
-			$.post('{%url m=ajax c=order a=erp%}',{orderno:orderno},function(response){
-				if(response.code==1)
-				{
-					ths.html('重推ERP');
-				}
-				else
-				{
-					App.alert({
-						container: $('#alert_container').val(), // alerts parent container 
-						place: 'append', // append or prepent in container 
-						type: 'danger', // alert's type 
-						message: response.result,
-						close: true,
-						focus: false, // auto scroll to the alert after shown
-						closeInSeconds: 3, // auto close after defined seconds 
-						icon:'fa fa-remove' // put icon class before the message
-					});
-				}
-			});
+            if (window.confirm("您确定审核通过并推送至erp?")) {
+                var orderno = $(this).data('orderno');
+                var ths = $(this);
+                $.post('{%url m=ajax c=order a=erp%}', {orderno: orderno}, function (response) {
+                    if (response.code == 1) {
+                        ths.html('重推ERP');
+                    }
+                    else {
+                        App.alert({
+                            container: $('#alert_container').val(), // alerts parent container
+                            place: 'append', // append or prepent in container
+                            type: 'danger', // alert's type
+                            message: response.result,
+                            close: true,
+                            focus: false, // auto scroll to the alert after shown
+                            closeInSeconds: 3, // auto close after defined seconds
+                            icon: 'fa fa-remove' // put icon class before the message
+                        });
+                    }
+                });
+            }
 			return false;
 		});
 		

@@ -285,6 +285,11 @@ class user extends common
                     if ($img) {
                         $user['imgpath'] = $img['path'];
                     }
+                    $user['is_master'] = 1;
+                    if (empty($user['oid'])) {
+
+                        $user['is_master'] = 0;
+                    }
                     return new json(json::OK, NULL, $user);
                 }
             } else {
@@ -386,6 +391,11 @@ class user extends common
                         if ($img) {
                             $user['imgpath'] = $img['path'];
                         }
+                        $user['is_master'] = 1;
+                        if (empty($user['oid'])) {
+
+                            $user['is_master'] = 0;
+                        }
                         return new json(json::OK, NULL, $user);
                     }
                 } else {
@@ -426,6 +436,11 @@ class user extends common
 
                 if ($img) {
                     $user['imgpath'] = $img['path'];
+                }
+                $user['is_master'] = 1;
+                if (empty($user['oid'])) {
+
+                    $user['is_master'] = 0;
                 }
                 return new json(json::OK, NULL, $user);
             }
@@ -504,6 +519,11 @@ class user extends common
 
                     if ($img) {
                         $user['imgpath'] = $img['path'];
+                    }
+                    $user['is_master'] = 1;
+                    if (empty($user['oid'])) {
+
+                        $user['is_master'] = 0;
                     }
                     return new json(json::OK, NULL, $user);
                 }
@@ -609,6 +629,11 @@ class user extends common
                         if ($img) {
                             $user['imgpath'] = $img['path'];
                         }
+                        $user['is_master'] = 1;
+                        if (empty($user['oid'])) {
+
+                            $user['is_master'] = 0;
+                        }
                         return new json(json::OK, NULL, $user);
                     }
                 } else {
@@ -652,6 +677,11 @@ class user extends common
 
                 if ($img) {
                     $user['imgpath'] = $img['path'];
+                }
+                $user['is_master'] = 1;
+                if (empty($user['oid'])) {
+
+                    $user['is_master'] = 0;
                 }
                 return new json(json::OK, NULL, $user);
             }
@@ -728,6 +758,11 @@ class user extends common
 
                     if ($img) {
                         $user['imgpath'] = $img['path'];
+                    }
+                    $user['is_master'] = 1;
+                    if (empty($user['oid'])) {
+
+                        $user['is_master'] = 0;
                     }
                     return new json(json::OK, NULL, $user);
                 }
@@ -832,6 +867,11 @@ class user extends common
                         if ($img) {
                             $user['imgpath'] = $img['path'];
                         }
+                        $user['is_master'] = 1;
+                        if (empty($user['oid'])) {
+
+                            $user['is_master'] = 0;
+                        }
                         return new json(json::OK, NULL, $user);
                     }
                 } else {
@@ -882,6 +922,11 @@ class user extends common
 
                 if ($img) {
                     $user['imgpath'] = $img['path'];
+                }
+                $user['is_master'] = 1;
+                if (empty($user['oid'])) {
+
+                    $user['is_master'] = 0;
                 }
                 return new json(json::OK, NULL, $user);
             }
@@ -1278,6 +1323,11 @@ class user extends common
 
                 if ($img) {
                     $user['imgpath'] = $img['path'];
+                }
+                $user['is_master'] = 1;
+                if (empty($user['oid'])) {
+
+                    $user['is_master'] = 0;
                 }
                 return new json(json::OK, NULL, $user);
             }

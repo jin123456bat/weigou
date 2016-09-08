@@ -319,6 +319,44 @@ class datatables extends view
         $resultObj->recordsFiltered = count($resultObj->data);
         if ($this->post('length') != -1) {
             $resultObj->data = array_slice($resultObj->data, $this->post('start'), $this->post('length'));
+
+            //判断每个订单的是否需要推送
+            foreach ($resultObj->data as &$erp) {
+                $erp['is_erp'] = 1;
+                //判断一下是否有效
+                if($erp['status']==0){
+                    continue;
+                }
+                //是否已经付款
+                if ($erp['pay_status'] == 0 || $erp['pay_status'] == 3) {
+                    continue;
+                }
+                //是否发货
+                if ($erp['way_status'] != 0) {
+                    continue;
+                }
+                //判断当前订单仓库是否是自动的
+                $is_auto = $this->model("store")
+                    ->table("order_package", "left join", "order_package.store_id=store.id")
+                    ->where("order_package.orderno=?", [$erp['orderno']])
+                    ->select(['is_auto']);
+                $bl = true;
+                foreach ($is_auto as $auto) {
+                    if ($auto['is_auto'] == 0) {
+                        $bl = false;
+                        break;
+                    }
+                }
+                //departByStore判断是否为
+                if (!$bl) {
+                    $orderHelper = new \application\helper\order();
+                    $depart = $orderHelper->departByStore($erp['orderno']);
+
+                    if ($depart == 1 || $depart == 2) {
+                        $erp['is_erp'] = 0;
+                    }
+                }
+            }
         }
         $resultObj->recordsTotal = $this->model('order')->count();
         return new json($resultObj);
@@ -489,25 +527,24 @@ class datatables extends view
         foreach ($resultObj->data as &$data) {
 
             $data['oidname'] = $this->model("user")
-                ->where("id=(select oid from user where id=?)",[$data['uid']])
+                ->where("id=(select oid from user where id=?)", [$data['uid']])
                 ->find(['user.name']);
 
             $data['oidname'] = $data['oidname']['name'];
         }
         return new json($resultObj);
     }
-    
+
     function refund()
     {
-    	$resultObj = new \stdClass();
-    	$resultObj->draw = $this->post('draw');
-    	$resultObj->data = $this->model('refund')->datatables($this->post());
-    	$resultObj->recordsFiltered = count($resultObj->data);
-    	if ($this->post('length')!=-1)
-    	{
-    		$resultObj->data = array_slice($resultObj->data, $this->post('start'),$this->post('length'));
-    	}
-    	$resultObj->recordsTotal = $this->model('refund')->count();
-    	return new json($resultObj);
+        $resultObj = new \stdClass();
+        $resultObj->draw = $this->post('draw');
+        $resultObj->data = $this->model('refund')->datatables($this->post());
+        $resultObj->recordsFiltered = count($resultObj->data);
+        if ($this->post('length') != -1) {
+            $resultObj->data = array_slice($resultObj->data, $this->post('start'), $this->post('length'));
+        }
+        $resultObj->recordsTotal = $this->model('refund')->count();
+        return new json($resultObj);
     }
 }
