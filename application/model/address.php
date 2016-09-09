@@ -8,9 +8,6 @@ class addressModel extends model
 		parent::__construct($table);
 	}
 	
-	/* (non-PHPdoc)
-	 * @see \system\core\model::fetch()
-	 */
 	function fetch(array $filter = array())
 	{
 		if (isset($filter['isdelete']))
