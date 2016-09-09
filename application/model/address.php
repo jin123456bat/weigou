@@ -9,7 +9,7 @@ class addressModel extends model
 	}
 	
 	/**
-	 * 获取地址信息，11122
+	 * 获取地址信息，11122333
 	 * {@inheritDoc}
 	 * @see \system\core\model::fetch()
 	 */
