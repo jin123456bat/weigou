@@ -324,7 +324,10 @@ class datatables extends view
             foreach ($resultObj->data as &$erp) {
                 $erp['is_erp'] = 1;
                 //判断一下是否有效
-                if($erp['status']==0){
+                if ($erp['status'] == 0) {
+                    continue;
+                }
+                if ($erp['erp'] != 0) {
                     continue;
                 }
                 //是否已经付款

@@ -4,6 +4,7 @@ namespace application\control\ajax;
 use system\core\ajax;
 use application\message\json;
 use application\helper\erp;
+use application\helper\erpSender;
 use application\helper\pay;
 use application\helper\admin;
 use application\model\roleModel;
@@ -46,7 +47,7 @@ class order extends ajax
             return new json(json::PARAMETER_ERROR, 'product参数错误');
         }
 
-		//是否是模拟订单
+        //是否是模拟订单
         $prepay = $this->post('prepay', 0, 'intval');
 
         //优惠券
@@ -87,7 +88,7 @@ class order extends ajax
             //预订单到这里结束了
             return new json(json::OK, NULL, $order);
         }
-	
+
         //检查订单中的收货地址是否需要填写身份证号码
         if ($order['need_kouan'] == 1) {
             $address = $this->model('address')->where('id=?', [$address])->find();
@@ -105,7 +106,7 @@ class order extends ajax
                 return new json(json::PARAMETER_ERROR, '普通商品和进口商品不能和直邮商品同时支付，请选择部分商品支付');
             }
         }
-        
+
         if ($orderHelper->hasProductOutside(2)) {
             if ($orderHelper->hasProductOutside(3)) {
                 return new json(json::PARAMETER_ERROR, '直供商品不能和直邮商品同时支付，请选择部分商品支付');
@@ -122,8 +123,8 @@ class order extends ajax
         if ($this->model('order')->insert($order)) {
             //减少库存
             foreach ($product as $p) {
-            	
-            	$selled = $productHelper->getSelled($p);
+
+                $selled = $productHelper->getSelled($p);
 
                 if (!$productHelper->increaseStock($p['id'], $p['content'], -$p['num'] * $selled)) {
                     $this->model('order')->rollback();
@@ -170,17 +171,17 @@ class order extends ajax
             $clear = $this->post('clear', 0, 'intval');
             if ($clear) {
                 foreach ($product as $p) {
-                	$selled = $productHelper->getSelled($p);
-                	
-                    if (!$this->model('cart')->where('uid=? and pid=? and content=? and bind=?', [$uid, $p['id'], $p['content'],$selled])->increase('num', -$p['num'])) {
+                    $selled = $productHelper->getSelled($p);
+
+                    if (!$this->model('cart')->where('uid=? and pid=? and content=? and bind=?', [$uid, $p['id'], $p['content'], $selled])->increase('num', -$p['num'])) {
 
                         $this->model('order')->rollback();
                         return new json(json::PARAMETER_ERROR, '清空购物车失败');
                     }
 
-                    $num = $this->model('cart')->where('uid=? and pid=? and content=? and bind=?', [$uid, $p['id'], $p['content'],$selled])->find();
+                    $num = $this->model('cart')->where('uid=? and pid=? and content=? and bind=?', [$uid, $p['id'], $p['content'], $selled])->find();
                     if ($num['num'] <= 0) {
-                        if (!$this->model('cart')->where('uid=? and pid=? and content=? and bind=?', [$uid, $p['id'], $p['content'],$selled])->delete()) {
+                        if (!$this->model('cart')->where('uid=? and pid=? and content=? and bind=?', [$uid, $p['id'], $p['content'], $selled])->delete()) {
                             $this->model('order')->rollback();
                             return new json(json::PARAMETER_ERROR, '清空购物车失败');
                         }
@@ -203,44 +204,37 @@ class order extends ajax
      */
     function quit()
     {
-    	$orderno = $this->post('orderno');
-    	if (!empty($orderno))
-    	{
-    		if (!empty($this->model('task_user')->where('orderno=?', [$orderno])->find())) {
-    			return new json(json::PARAMETER_ERROR, '团购订单无法手动取消');
-    		}
-    		
-    		$orderHelper = new \application\helper\order();
-    	
-	    	$userHelper = new \application\helper\user();
-	    	$uid = $userHelper->isLogin();
-	    	if (empty($uid))
-	    	{
-	    		$adminHelper = new \application\helper\admin();
-	    		$aid = $adminHelper->getAdminId();
-	  			if (empty($aid))
-	  			{
-	  				return new json(json::NOT_LOGIN);
-	  			}
-	  			else
-	  			{
-	  				$order = $this->model('order')->where('orderno=?',[$orderno])->find();
-	  				if ($order['pay_status'] == 1 || $order['pay_status']==4)
-	  				{
-	  					$roleModel = $this->model('role');
-	  					$role = $adminHelper->getGroupId();
-	  					if (!$roleModel->checkPower($role, 'refund', roleModel::POWER_ALL)) {
-	  						return new json(json::PARAMETER_ERROR, '权限不足');
-	  					}
-	  					
-	  					if(!$orderHelper->refund($orderno))
-	  					{
-	  						return new json(json::PARAMETER_ERROR,'订单退款失败');
-	  					}
-	  				}
-	  			}
-	    	}
-	    	
+        $orderno = $this->post('orderno');
+        if (!empty($orderno)) {
+            if (!empty($this->model('task_user')->where('orderno=?', [$orderno])->find())) {
+                return new json(json::PARAMETER_ERROR, '团购订单无法手动取消');
+            }
+
+            $orderHelper = new \application\helper\order();
+
+            $userHelper = new \application\helper\user();
+            $uid = $userHelper->isLogin();
+            if (empty($uid)) {
+                $adminHelper = new \application\helper\admin();
+                $aid = $adminHelper->getAdminId();
+                if (empty($aid)) {
+                    return new json(json::NOT_LOGIN);
+                } else {
+                    $order = $this->model('order')->where('orderno=?', [$orderno])->find();
+                    if ($order['pay_status'] == 1 || $order['pay_status'] == 4) {
+                        $roleModel = $this->model('role');
+                        $role = $adminHelper->getGroupId();
+                        if (!$roleModel->checkPower($role, 'refund', roleModel::POWER_ALL)) {
+                            return new json(json::PARAMETER_ERROR, '权限不足');
+                        }
+
+                        if (!$orderHelper->refund($orderno)) {
+                            return new json(json::PARAMETER_ERROR, '订单退款失败');
+                        }
+                    }
+                }
+            }
+
             $this->model('order')->transaction();
 
             if ($orderHelper->quitOrder($orderno, false)) {
@@ -251,7 +245,7 @@ class order extends ajax
                 return new json(json::PARAMETER_ERROR, '取消失败');
             }
         }
-	    return new json(json::PARAMETER_ERROR);
+        return new json(json::PARAMETER_ERROR);
     }
 
     function del()
@@ -283,9 +277,16 @@ class order extends ajax
     {
         $orderno = $this->post('orderno');
         if (!empty($orderno)) {
-            $erp = new erp();
-            $result = $erp->ShopOrderPush($orderno);
-            var_dump($result);
+            //$erp = new erp();
+            //$result = $erp->ShopOrderPush($orderno);
+            $erpSender = new erpSender();
+            $result=$erpSender->doSendOrder($orderno);
+            //var_dump($result);
+            if($result){
+                return new json(json::OK);
+            }else{
+                return new json(json::PARAMETER_ERROR, '订单推送失败');
+            }
         }
     }
 
@@ -816,24 +817,22 @@ class order extends ajax
                             'way_status' => 1,
                             'way_type' => 2,
                             'way_time' => $_SERVER['REQUEST_TIME']
-                        ]))
-                        {
+                        ])
+                        ) {
                             $this->model('order')->rollback();
                             return new json(json::PARAMETER_ERROR, '订单发货失败，请重试');
                         }
-                    }
-                    else
-                    {
-                    	//订单还有部分包裹没有发货，物流状态更改为 部分发货
-                    	if (!$this->model('order')->where('orderno=?', [$orderno])->update([
-                    		'way_status' => 2,
-                    		'way_type' => 2,
-                    		'way_time' => $_SERVER['REQUEST_TIME']
-                    	]))
-                    	{
-                    		$this->model('order')->rollback();
-                    		return new json(json::PARAMETER_ERROR, '订单发货失败，请重试');
-                    	}
+                    } else {
+                        //订单还有部分包裹没有发货，物流状态更改为 部分发货
+                        if (!$this->model('order')->where('orderno=?', [$orderno])->update([
+                            'way_status' => 2,
+                            'way_type' => 2,
+                            'way_time' => $_SERVER['REQUEST_TIME']
+                        ])
+                        ) {
+                            $this->model('order')->rollback();
+                            return new json(json::PARAMETER_ERROR, '订单发货失败，请重试');
+                        }
                     }
                 }
                 $this->model('order')->commit();
