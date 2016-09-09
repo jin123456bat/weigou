@@ -342,13 +342,18 @@ class datatables extends view
                 $is_auto = $this->model("store")
                     ->table("order_package", "left join", "order_package.store_id=store.id")
                     ->where("order_package.orderno=?", [$erp['orderno']])
-                    ->select(['is_auto']);
+                    ->select(['store.is_auto', 'store.erp']);
                 $bl = true;
+
                 foreach ($is_auto as $auto) {
-                    if ($auto['is_auto'] == 0) {
-                        $bl = false;
-                        break;
+                    
+                    if (!empty($auto['erp'])) {
+                        if ($auto['is_auto'] == 0) {
+                            $bl = false;
+                            break;
+                        }
                     }
+
                 }
                 //departByStore判断是否为
                 if (!$bl) {

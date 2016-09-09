@@ -1536,7 +1536,6 @@ class mobile extends view
             $this->assign('note_title', $note_title);
             $this->assign('note_url', $note_url);
             $this->assign('order', $order);
-
             return $this;
         }
     }
