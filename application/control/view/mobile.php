@@ -1120,15 +1120,16 @@ class mobile extends view
                             'product.id',
                             'product.name',
                             'cart.num',
-                            'product.price',
-                            'product.v1price',
-                            'product.v2price',
+                            'product.price * cart.bind as price',//商品单价 * 用户选择的捆绑数
+                            'product.v1price * cart.bind as v1price',
+                            'product.v2price * cart.bind as v2price',
                             'product.outside',//是否是海外商品  是海外商品的话显示税率
                             'product.origin',
                             'cart.content', //选择的属性
                             'product.stock',
                             'product.auto_stock',
                             'product.freetax',
+                        	'product.bind'
                         ],
                     ];
 
@@ -1146,9 +1147,9 @@ class mobile extends view
                             $collection_price = $this->model('collection')->get($p['id'], $p['content']);
                             if (!empty($collection_price)) {
                                 if ($collection_price['available'] == 1) {
-                                    $p['price'] = $collection_price['price'];
-                                    $p['v1price'] = $collection_price['v1price'];
-                                    $p['v2price'] = $collection_price['v2price'];
+                                    $p['price'] = $collection_price['price'] * $p['bind'];
+                                    $p['v1price'] = $collection_price['v1price'] * $p['bind'];
+                                    $p['v2price'] = $collection_price['v2price'] * $p['bind'];
                                     $p['image'] = $this->model('upload')->get($collection_price['logo'], 'path');
                                     $p['stock'] = $collection_price['stock'];
                                 }
@@ -1182,23 +1183,19 @@ class mobile extends view
 
                 $this->assign('store', $store);
                 //下架商品
-
                 $cartl = $this->model("cart")
                     ->table('product', 'left join', 'product.id=cart.pid')
-                    ->where('cart.uid=? and product.status=0', [$uid])->select([
+                    ->where('cart.uid=? and ((product.status=0 and product.auto_status=0) or (auto_status=1 and (product.avaliabletime_from>? or product.avaliabletime_to<?)))', [$uid,$_SERVER['REQUEST_TIME'],$_SERVER['REQUEST_TIME']])->select([
                         "cart.num",
                         "product.name",
                         "product.id",
-                        "product.id",
-                        "product.price",
-                        "product.v1price",
-                        "product.v2price",
+                        "product.price * cart.bind as price",//乘以捆绑数
+                        "product.v1price * cart.bind as v1price",
+                        "product.v2price * cart.bind as v2price",
                     ]);
                 foreach ($cartl as &$p) {
                     $p['image'] = $productHelper->getListImage($p['id']);
                 }
-
-
                 $this->assign('cartl', $cartl);
 
                 $this->assign('province', $this->model('province')->select());
@@ -1614,11 +1611,17 @@ class mobile extends view
                 'product.short_description',//短描述
                 'product.freetax',//是否保税 1 包
                 'product.ztax',//是否保税 1 包
-
+                'product.selled',//起售数
             ]);
 
         //商品是否存在
-        if (!empty($product)) {
+        if (!empty($product))
+        {
+        	$product['price'] = $product['price'] * $product['selled'];
+        	$product['oldprice'] = $product['oldprice'] * $product['selled'];
+        	$product['v1price'] = $product['v1price'] * $product['selled'];
+        	$product['v2price'] = $product['v2price'] * $product['selled'];
+        	
             //商品上下架
             if (
                 ($product['auto_status'] == 1 && ($_SERVER['REQUEST_TIME'] < $product['avaliabletime_from'] || $_SERVER['REQUEST_TIME'] > $product['avaliabletime_to']))
@@ -1642,13 +1645,13 @@ class mobile extends view
                     $product['stock'] = $price_collection[0]['sum(stock)'];
                 }
                 if ($price_collection[0]['min(price)'] !== NULL && $price_collection[0]['max(price)'] !== NULL) {
-                    $product['price'] = $price_collection[0]['min(price)'] . '起';//.'~'.$price_collection[0]['max(price)'];
+                    $product['price'] = $price_collection[0]['min(price)'] * $product['selled'] . '起';//.'~'.$price_collection[0]['max(price)'];
                 }
                 if ($price_collection[0]['min(v1price)'] !== NULL && $price_collection[0]['max(v1price)'] !== NULL) {
-                    $product['v1price'] = $price_collection[0]['min(v1price)'] . '起';//.'~'.$price_collection[0]['max(v1price)'];
+                    $product['v1price'] = $price_collection[0]['min(v1price)'] * $product['selled'] . '起';//.'~'.$price_collection[0]['max(v1price)'];
                 }
                 if ($price_collection[0]['min(v2price)'] !== NULL && $price_collection[0]['max(v2price)'] !== NULL) {
-                    $product['v2price'] = $price_collection[0]['min(v2price)'] . '起';//.'~'.$price_collection[0]['max(v2price)'];
+                    $product['v2price'] = $price_collection[0]['min(v2price)'] * $product['selled'] . '起';//.'~'.$price_collection[0]['max(v2price)'];
                 }
             }
 
@@ -1699,7 +1702,15 @@ class mobile extends view
                     'available',
                 ]
             ];
-            $product['collection'] = $this->model('collection')->fetchAll($filter);
+            $collections = $this->model('collection')->fetchAll($filter);
+            foreach ($collections as &$collection)
+            {
+            	$collection['price'] = $collection['price'] * $product['selled'];
+            	$collection['v1price'] = $collection['v1price'] * $product['selled'];
+            	$collection['v2price'] = $collection['v2price'] * $product['selled'];
+            }
+            $product['collection'] = $collections;
+            
             $this->assign('product', $product);
             //die(json_encode($product));
             $this->assign('province', $this->model('province')->select());
@@ -1777,11 +1788,17 @@ class mobile extends view
                     'product.short_description',
                     'store.name as store',
                     'product.origin',
+                	'product.selled'
                 ]
             ];
             $product = $this->model('category_product')->fetchAll($product_filter);
             $productHelper = new product();
             foreach ($product as &$p) {
+            	$p['oldprice'] = $p['oldprice'] * $p['selled'];
+            	$p['price'] = $p['price'] * $p['selled'];
+            	$p['v1price'] = $p['v1price'] * $p['selled'];
+            	$p['v2price'] = $p['v2price'] * $p['selled'];
+            	
                 $p['origin'] = $this->model('country')->get($p['origin']);
 
                 $p['image'] = $productHelper->getListImage($p['id']);
@@ -1799,13 +1816,13 @@ class mobile extends view
                         $p['stock'] = $price_collection[0]['sum(stock)'];
                     }
                     if ($price_collection[0]['min(price)'] !== NULL && $price_collection[0]['max(price)'] !== NULL) {
-                        $p['price'] = $price_collection[0]['min(price)'] . '起';//.'~'.$price_collection[0]['max(price)'];
+                        $p['price'] = $price_collection[0]['min(price)'] * $p['selled'] . '起';//.'~'.$price_collection[0]['max(price)'];
                     }
                     if ($price_collection[0]['min(v1price)'] !== NULL && $price_collection[0]['max(v1price)'] !== NULL) {
-                        $p['v1price'] = $price_collection[0]['min(v1price)'] . '起';//.'~'.$price_collection[0]['max(v1price)'];
+                        $p['v1price'] = $price_collection[0]['min(v1price)'] * $p['selled'] . '起';//.'~'.$price_collection[0]['max(v1price)'];
                     }
                     if ($price_collection[0]['min(v2price)'] !== NULL && $price_collection[0]['max(v2price)'] !== NULL) {
-                        $p['v2price'] = $price_collection[0]['min(v2price)'] . '起';//.'~'.$price_collection[0]['max(v2price)'];
+                        $p['v2price'] = $price_collection[0]['min(v2price)'] * $p['selled'] . '起';//.'~'.$price_collection[0]['max(v2price)'];
                     }
                 }
             }
@@ -1916,6 +1933,7 @@ class mobile extends view
                 'store.name as store',
                 'product.origin',
                 'product.stock',
+            	'product.selled',
             ],
         ];
         $product = $this->model('product_top')
@@ -1931,6 +1949,11 @@ class mobile extends view
 
 
         foreach ($product as &$p) {
+        	$p['oldprice'] = $p['oldprice']  * $p['selled'];
+        	$p['price'] = $p['price']  * $p['selled'];
+        	$p['v1price'] = $p['v1price'] * $p['selled'];
+        	$p['v2price'] = $p['v2price'] * $p['selled'];
+        	
             if (in_array($p['id'], $theme)) {
                 $p['is_theme'] = 1;
             } else {
@@ -1952,13 +1975,13 @@ class mobile extends view
                     $p['stock'] = $price_collection[0]['sum(stock)'];
                 }
                 if ($price_collection[0]['min(price)'] !== NULL && $price_collection[0]['max(price)'] !== NULL) {
-                    $p['price'] = $price_collection[0]['min(price)'] . '起';//.'~'.$price_collection[0]['max(price)'];
+                    $p['price'] = $price_collection[0]['min(price)'] * $p['selled'] . '起';//.'~'.$price_collection[0]['max(price)'];
                 }
                 if ($price_collection[0]['min(v1price)'] !== NULL && $price_collection[0]['max(v1price)'] !== NULL) {
-                    $p['v1price'] = $price_collection[0]['min(v1price)'] . '起';//.'~'.$price_collection[0]['max(v1price)'];
+                    $p['v1price'] = $price_collection[0]['min(v1price)'] * $p['selled'] . '起';//.'~'.$price_collection[0]['max(v1price)'];
                 }
                 if ($price_collection[0]['min(v2price)'] !== NULL && $price_collection[0]['max(v2price)'] !== NULL) {
-                    $p['v2price'] = $price_collection[0]['min(v2price)'] . '起';//.'~'.$price_collection[0]['max(v2price)'];
+                    $p['v2price'] = $price_collection[0]['min(v2price)'] * $p['selled'] . '起';//.'~'.$price_collection[0]['max(v2price)'];
                 }
             }
         }

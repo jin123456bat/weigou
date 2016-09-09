@@ -32,10 +32,10 @@ class product extends common
                 'product.name',
                 'product.description',
                 'product.origin',
-                'product.oldprice',//下面4个是价格
-                'product.price',
-                'product.v1price',
-                'product.v2price',
+                'product.oldprice * product.sellled as oldprice',//下面4个是价格
+                'product.price * product.sellled as price',
+                'product.v1price * product.sellled as v1price',
+                'product.v2price * product.sellled as v2price',
                 'product.auto_status',//下面4个状态判断
                 'product.status',
                 'product.avaliabletime_from',
@@ -47,21 +47,13 @@ class product extends common
                 'product.outside',//是否是海外商品
                 'product.short_description',//短描述
                 'product.freetax',
+            	'product.selled',//起售数
             ]);
 
         //商品是否存在
         if (empty($product)) {
             return new json(json::PARAMETER_ERROR, '商品不存在');
         }
-
-        //商品上下架
-        /* if(
-            ($product['auto_status'] == 1 && ($_SERVER['REQUEST_TIME'] < $product['avaliabletime_from'] || $_SERVER['REQUEST_TIME'] > $product['avaliabletime_to']))
-            || ($product['auto_status'] == 0 && $product['status'] == 0)
-        )
-        {
-            return new json(40404,'商品已经下架');
-        } */
 
         //商品价格
         $filter = [
@@ -76,13 +68,13 @@ class product extends common
                 $product['stock'] = $price_collection[0]['sum(stock)'];
             }
             if ($price_collection[0]['min(price)'] !== NULL && $price_collection[0]['max(price)'] !== NULL) {
-                $product['price'] = $price_collection[0]['min(price)'] . '~' . $price_collection[0]['max(price)'];
+                $product['price'] = $price_collection[0]['min(price)'] * $product['selled'] . '~' . $price_collection[0]['max(price)'] * $product['selled'];
             }
             if ($price_collection[0]['min(v1price)'] !== NULL && $price_collection[0]['max(v1price)'] !== NULL) {
-                $product['v1price'] = $price_collection[0]['min(v1price)'] . '~' . $price_collection[0]['max(v1price)'];
+                $product['v1price'] = $price_collection[0]['min(v1price)'] * $product['selled'] . '~' . $price_collection[0]['max(v1price)'] * $product['selled'];
             }
             if ($price_collection[0]['min(v2price)'] !== NULL && $price_collection[0]['max(v2price)'] !== NULL) {
-                $product['v2price'] = $price_collection[0]['min(v2price)'] . '~' . $price_collection[0]['max(v2price)'];
+                $product['v2price'] = $price_collection[0]['min(v2price)'] * $product['selled'] . '~' . $price_collection[0]['max(v2price)'] * $product['selled'];
             }
         }
 
@@ -122,15 +114,20 @@ class product extends common
                 'available',
             ]
         ];
-        $product['collection'] = $this->model('collection')->fetchAll($filter);
+        $collections = $this->model('collection')->fetchAll($filter);
+        foreach ($collections as &$collection)
+        {
+        	$collection['price'] = $collection['price'] * $product['selled'];
+        	$collection['v1price'] = $collection['v1price'] * $product['selled'];
+        	$collection['v2price'] = $collection['v2price'] * $product['selled'];
+        }
+        $product['collection'] = $collections;
 
         $bind = $this->model('bind')->where('pid=?', [$id])->select();
         foreach ($bind as &$b) {
             if ($b['content'] != '') {
-
                 $stock = $this->model("collection")->where("pid=? and content=?", [$b['pid'], $b['content']])->find(['stock']);
                 $b['stock'] = $stock['stock'];
-
             } else {
                 $b['stock'] = $product['stock'];
             }
@@ -195,13 +192,14 @@ class product extends common
             'parameter' => [
                 'product.id',
                 'product.name',
-                'product.oldprice',
-                'product.price',
-                'product.v1price',
-                'product.v2price',
+                'product.oldprice * product.selled as oldprice',
+                'product.price * product.selled as price',
+                'product.v1price * product.selled as v1price',
+                'product.v2price * product.selled as v2price',
                 'product.short_description',
                 'store.name as store',
                 'product.origin',
+            	'product.selled',
             ]
         ];
         if (!empty($keywords)) {
@@ -235,13 +233,13 @@ class product extends common
                     $p['stock'] = $price_collection[0]['sum(stock)'];
                 }
                 if ($price_collection[0]['min(price)'] !== NULL && $price_collection[0]['max(price)'] !== NULL) {
-                    $p['price'] = $price_collection[0]['min(price)'] . '起';//'~'.$price_collection[0]['max(price)'];
+                    $p['price'] = $price_collection[0]['min(price)'] * $product['selled'] . '起';//'~'.$price_collection[0]['max(price)'];
                 }
                 if ($price_collection[0]['min(v1price)'] !== NULL && $price_collection[0]['max(v1price)'] !== NULL) {
-                    $p['v1price'] = $price_collection[0]['min(v1price)'] . '起';//'~'.$price_collection[0]['max(v1price)'];
+                    $p['v1price'] = $price_collection[0]['min(v1price)'] * $product['selled'] . '起';//'~'.$price_collection[0]['max(v1price)'];
                 }
                 if ($price_collection[0]['min(v2price)'] !== NULL && $price_collection[0]['max(v2price)'] !== NULL) {
-                    $p['v2price'] = $price_collection[0]['min(v2price)'] . '起';//'~'.$price_collection[0]['max(v2price)'];
+                    $p['v2price'] = $price_collection[0]['min(v2price)'] * $product['selled'] . '起';//'~'.$price_collection[0]['max(v2price)'];
                 }
             }
         }
@@ -284,6 +282,7 @@ class product extends common
                 'store.name as store',
                 'product.origin',
                 'product.stock',
+            	'product.selled',
             ]
         ];
         $product = $this->model('product_top')->fetchAll($product_filter);
@@ -306,13 +305,13 @@ class product extends common
                     $p['stock'] = $price_collection[0]['sum(stock)'];
                 }
                 if ($price_collection[0]['min(price)'] !== NULL && $price_collection[0]['max(price)'] !== NULL) {
-                    $p['price'] = $price_collection[0]['min(price)'] . '~' . $price_collection[0]['max(price)'];
+                    $p['price'] = $price_collection[0]['min(price)'] * $product['selled'] . '~' . $price_collection[0]['max(price)'] * $product['selled'];
                 }
                 if ($price_collection[0]['min(v1price)'] !== NULL && $price_collection[0]['max(v1price)'] !== NULL) {
-                    $p['v1price'] = $price_collection[0]['min(v1price)'] . '~' . $price_collection[0]['max(v1price)'];
+                    $p['v1price'] = $price_collection[0]['min(v1price)'] * $product['selled'] . '~' . $price_collection[0]['max(v1price)'] * $product['selled'];
                 }
                 if ($price_collection[0]['min(v2price)'] !== NULL && $price_collection[0]['max(v2price)'] !== NULL) {
-                    $p['v2price'] = $price_collection[0]['min(v2price)'] . '~' . $price_collection[0]['max(v2price)'];
+                    $p['v2price'] = $price_collection[0]['min(v2price)'] * $product['selled'] . '~' . $price_collection[0]['max(v2price)'] * $product['selled'];
                 }
             }
         }

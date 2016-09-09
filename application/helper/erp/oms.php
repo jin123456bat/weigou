@@ -337,7 +337,7 @@ class oms extends erp
 		//	'product.id as GoodsCommonid',
 			'product.barcode as GoodsSerial',
 			//'order_product.price as GoodsPayPrice',
-			'(order_product.num * product.inprice * 0.8) as GoodsPayPrice',//商品单价
+			'(order_product.num * order_product.bind * product.inprice * 0.8) as GoodsPayPrice',//商品总支付价格
 			'(order_product.num * order_product.bind) as GoodsNum',//商品数量
 		]);
 		

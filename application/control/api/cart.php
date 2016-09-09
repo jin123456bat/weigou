@@ -53,9 +53,9 @@ class cart extends common
                     'product.name',
                     'product.status',
                     'cart.num',
-                    'product.price',
-                    'product.v1price',
-                    'product.v2price',
+                    'product.price * cart.bind as price',
+                    'product.v1price * cart.bind as v1price',
+                    'product.v2price * cart.bind as v2price',
                     'product.outside',
                     'product.origin',
                     'cart.content',
@@ -63,6 +63,7 @@ class cart extends common
                     'product.stock',
                     'product.auto_stock',
                     'product.freetax',
+                	'cart.bind',
                 ],
             ];
 
@@ -84,9 +85,9 @@ class cart extends common
                         {
                             if ($collection_price['available'] == 1)
                             {
-                                $p['price'] = $collection_price['price'];
-                                $p['v1price'] = $collection_price['v1price'];
-                                $p['v2price'] = $collection_price['v2price'];
+                                $p['price'] = $collection_price['price'] * $p['bind'];
+                                $p['v1price'] = $collection_price['v1price'] * $p['bind'];
+                                $p['v2price'] = $collection_price['v2price'] * $p['bind'];
                                 $p['image'] = $this->model('upload')->get($collection_price['logo'], 'path');
                                 $p['stock'] = $collection_price['stock'];
                             }
@@ -105,9 +106,9 @@ class cart extends common
                     $priceInBind = $productHelper->getPriceByBind($p);
                     if ($priceInBind)
                     {
-                    	$p['price'] = $priceInBind['price'];
-                    	$p['v1price'] = $priceInBind['v1price'];
-                    	$p['v2price'] = $priceInBind['v2price'];
+                    	$p['price'] = $priceInBind['price'] * $priceInBind['num'];
+                    	$p['v1price'] = $priceInBind['v1price'] * $priceInBind['num'];
+                    	$p['v2price'] = $priceInBind['v2price'] * $priceInBind['num'];
                     }
 
 					//计算总价

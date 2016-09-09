@@ -66,4 +66,43 @@ class index extends view
 		}
 	}
 	
+	function upgrade()
+	{
+		if (file_exists('./upgrade') && file_get_contents('./upgrade')=='1')
+		{
+			exit('已经升级过了');
+		}
+		file_put_contents('./upgrade', '1');
+		$this->model('product')->transaction();
+		$products = $this->model('product')->where('selled>?',[1])->select();
+		foreach ($products as $product)
+		{
+			if(!$this->model('product')->where('id=?',[$product['id']])->limit(1)->update([
+				'oldprice' => $product['oldprice']/$product['selled'],//更改oldprice
+				'price' => $product['price']/$product['selled'],//更改v0价格
+				'v1price' => $product['v1price']/$product['selled'],//v1价格
+				'v2price' => $product['v2price']/$product['selled'],//v2价格
+				'inprice' => $product['inprice']/$product['selled'],//进价
+			]))
+			{
+				$this->model('product')->rollback();
+			}
+			
+			//更改colleciton
+			$collections = $this->model('collection')->where('pid=?',[$product['id']])->select();
+			foreach ($collections as $collection)
+			{
+				if(!$this->model('collection')->where('pid=? and content=?',[$collection['pid'],$collection['content']])->limit(1)->update([
+					'price' => $collection['price']/$product['selled'],//更改v0价格
+					'v1price' => $collection['v1price']/$product['selled'],//v1价格
+					'v2price' => $collection['v2price']/$product['selled'],//v2价格
+				]))
+				{
+					$this->model('product')->rollback();
+				}
+			}
+		}
+		$this->model('product')->commit();
+	}
+	
 }

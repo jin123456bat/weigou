@@ -252,7 +252,17 @@ class product extends base
 		if ($this->hasBind($p['id']) && isset($p['bind']) && !empty($p['bind']))
 		{
 			//设定了捆绑参数，也传递过来了，说明是新版本的接口，  这里使用接口传递过来的数量
-			$selled = $p['bind'];
+			//这里应该验证一下bind参数的数字是否匹配
+			if (!empty($this->model('bind')->where('pid=? and content=? and num=?',[$p['id'],$p['content'],$p['bind']])))
+			{
+				$selled = intval($p['bind']);
+			}
+			else
+			{
+				//对于使用了错误的bind参数，无视他，继续使用默认的selled参数
+				$selled = $this->model('product')->where('id=?', [$p['id']])->find('selled');
+				$selled = isset($selled['selled']) && !empty($selled['selled']) ? $selled['selled'] : 1;
+			}
 		}
 		else
 		{

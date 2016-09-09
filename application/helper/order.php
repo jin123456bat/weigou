@@ -226,6 +226,7 @@ class order extends base
                 $product['price'] = $priceInBind['price'];
                 $product['v1price'] = $priceInBind['v1price'];
                 $product['v2price'] = $priceInBind['v2price'];
+                $product['selled'] = $priceInBind['num'];
             }
 
             //对于团购商品可能需要强制性的价格
@@ -235,19 +236,19 @@ class order extends base
 
             switch (intval($user['vip'])) {
                 case 0:
-                    $totalamount += $product['price'] * $p['num'];
+                    $totalamount += $product['price'] * $p['num'] * $productHelper->getSelled($p);
                     $_current_product_unit_price = $product['price'];
                     break;
                 case 1:
-                    $totalamount += $product['v1price'] * $p['num'];
+                    $totalamount += $product['v1price'] * $p['num'] * $productHelper->getSelled($p);
                     $_current_product_unit_price = $product['v1price'];
                     break;
                 case 2:
-                    $totalamount += $product['v2price'] * $p['num'];
+                    $totalamount += $product['v2price'] * $p['num'] * $productHelper->getSelled($p);
                     $_current_product_unit_price = $product['v2price'];
                     break;
                 default:
-                    $totalamount += $product['price'] * $p['num'];
+                    $totalamount += $product['price'] * $p['num'] * $productHelper->getSelled($p);
                     $_current_product_unit_price = $product['price'];
             }
 
@@ -255,7 +256,7 @@ class order extends base
                 if ($product['freetax'] == 0) {
                     //计算行邮税应征数额
                     $tax_percent = $productHelper->getTaxFields($product['id']);
-                    $tax = $tax_percent * ($_current_product_unit_price * $p['num'] + $_current_product_fee);
+                    $tax = $tax_percent * ($_current_product_unit_price * $p['num'] * $productHelper->getSelled($p) + $_current_product_fee);
 
                     if (isset($_current_store_cal_tax[$product['store']])) {
                         $_current_store_cal_tax[$product['store']] += $tax;
@@ -267,7 +268,7 @@ class order extends base
                 }
             } else {
                 //计算税费 记得要包含当前商品的运费
-                $taxamount += $productHelper->calculationTax($product['id'], $_current_product_unit_price * $p['num'] + $_current_product_fee);
+                $taxamount += $productHelper->calculationTax($product['id'], $_current_product_unit_price * $p['num'] * $productHelper->getSelled($p) + $_current_product_fee);
             }
         }
 
@@ -509,12 +510,12 @@ class order extends base
             if ($product['outside'] == 3) {
                 if ($product['freetax'] == 0 && in_array($p['id'], $this->_current_posttax_product)) {
                     $tax_percent = $productHelper->getTaxFields($p['id']);
-                    $tax = $tax_percent * $p['num'] * $price;
+                    $tax = $tax_percent * $p['num'] * $price * $productHelper->getSelled($p);
                 } else {
                     $tax = 0;
                 }
             } else {
-                $tax = $productHelper->calculationTax($p['id'], $price * $p['num']);
+                $tax = $productHelper->calculationTax($p['id'], $price * $p['num'] * $productHelper->getSelled($p));
             }
 
             if ($index !== false) {

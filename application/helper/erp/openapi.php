@@ -169,7 +169,7 @@ class openapi extends erp
 		->where('suborder_store.id=?',[$suborder_id])
 		->where('order_product.refund=?',[0])
 		->select([
-			'order_product.price / product.selled as UnitPrice',
+			'order_product.price as UnitPrice',
 			'product.name as CommodityName',
 			'product.barcode as CommoditySN',
 			//'order_product.num * product.selled as CommodityAmount',  以前计算商品数量的方式废弃掉 用下面新的计算方式
