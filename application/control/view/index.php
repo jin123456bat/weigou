@@ -103,6 +103,7 @@ class index extends view
 			}
 		}
 		$this->model('product')->commit();
+		unlink('./upgrade');
 	}
 	
 }
