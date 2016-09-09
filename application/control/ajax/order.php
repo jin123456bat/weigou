@@ -275,16 +275,32 @@ class order extends ajax
      */
     function erp()
     {
+        /*权限*/
+
+        $adminHelper = new \application\helper\admin();
+        $aid = $adminHelper->getAdminId();
+        if (empty($aid)) {
+            return new json(json::NOT_LOGIN);
+        } else {
+
+
+            $roleModel = $this->model('role');
+            $role = $adminHelper->getGroupId();
+            if (!$roleModel->checkPower($role, 'refund', roleModel::POWER_ALL)) {
+                return new json(json::PARAMETER_ERROR, '权限不足');
+            }
+        }
+
         $orderno = $this->post('orderno');
         if (!empty($orderno)) {
             //$erp = new erp();
             //$result = $erp->ShopOrderPush($orderno);
             $erpSender = new erpSender();
-            $result=$erpSender->doSendOrder($orderno);
+            $result = $erpSender->doSendOrder($orderno);
             //var_dump($result);
-            if($result){
+            if ($result) {
                 return new json(json::OK);
-            }else{
+            } else {
                 return new json(json::PARAMETER_ERROR, '订单推送失败');
             }
         }
