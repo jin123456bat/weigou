@@ -1463,6 +1463,7 @@ class mobile extends view
     function order()
     {
         $userHelper = new user();
+
         if (!$userHelper->isLogin()) {
             $this->response->setCode(302);
             $this->response->addHeader('Location', $this->http->url('view', 'mobile', 'login'));
@@ -1535,6 +1536,7 @@ class mobile extends view
             $this->assign('note_title', $note_title);
             $this->assign('note_url', $note_url);
             $this->assign('order', $order);
+
             return $this;
         }
     }
