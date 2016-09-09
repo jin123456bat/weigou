@@ -77,7 +77,7 @@ class index extends view
 		$products = $this->model('product')->where('selled>?',[1])->select();
 		foreach ($products as $product)
 		{
-			if ($product['selled']!=1)
+			if ($product['selled']!=1 && $product['oldprice']!=0 || $product['inprice']!=0 || $product['price']!=0 || $product['v1price']!=0 || $product['v2price']!=0)
 			{
 				if(!$this->model('product')->where('id=?',[$product['id']])->limit(1)->update([
 					'oldprice' => $product['oldprice']/$product['selled'],//更改oldprice
@@ -89,7 +89,8 @@ class index extends view
 				{
 					$this->model('product')->rollback();
 					unlink('./upgrade');
-					exit('错误');
+					var_dump($product);
+					exit('错误1');
 				}
 			}
 			
@@ -97,7 +98,7 @@ class index extends view
 			$collections = $this->model('collection')->where('pid=?',[$product['id']])->select();
 			foreach ($collections as $collection)
 			{
-				if ($product['selled']!=1)
+				if ($product['selled']!=1 && $collection['price']!=0 || $collection['v1price']!=0 || $collection['v2price']!=0)
 				{
 					if(!$this->model('collection')->where('pid=? and content=?',[$collection['pid'],$collection['content']])->limit(1)->update([
 						'price' => $collection['price']/$product['selled'],//更改v0价格
@@ -107,13 +108,14 @@ class index extends view
 					{
 						$this->model('product')->rollback();
 						unlink('./upgrade');
-						exit('错误');
+						exit('错误2');
 					}
 				}
 			}
 		}
 		$this->model('product')->commit();
 		unlink('./upgrade');
+		echo "升级完成";
 	}
 	
 }
