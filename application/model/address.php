@@ -9,6 +9,7 @@ class addressModel extends model
 	}
 	
 	/**
+	 * 获取地址信息，不关联任何表
 	 * {@inheritDoc}
 	 * @see \system\core\model::fetch()
 	 */
