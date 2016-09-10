@@ -144,7 +144,7 @@
                     </li>
                 </ul>
             </li>
-            <li class="nav-item  {%if $smarty.get.a==viporder || $smarty.get.a==teacher || $smarty.get.a==drawal || $smarty.get.a==user || $smarty.get.a==coupon || $smarty.get.a==couponno%}active open{%/if%}">
+            <li class="nav-item  {%if $smarty.get.a==viporder || $smarty.get.a==study || $smarty.get.a==teacher || $smarty.get.a==drawal || $smarty.get.a==user || $smarty.get.a==coupon || $smarty.get.a==couponno%}active open{%/if%}">
                 <a href="javascript:;" class="nav-link nav-toggle">
                     <i class="icon-user"></i>
                     <span class="title">用户管理</span>
@@ -155,6 +155,12 @@
                         <a href="{%url c=admin a=user%}" class="nav-link ">
                             <i class="icon-users"></i>
                             <span class="title">用户管理</span>
+                        </a>
+                    </li>
+                    <li class="nav-item  {%if $smarty.get.a==study%}open{%/if%}">
+                        <a href="{%url c=admin a=study%}" class="nav-link ">
+                            <i class="icon-users"></i>
+                            <span class="title">学生管理</span>
                         </a>
                     </li>
                     <li class="nav-item {%if $smarty.get.a==drawal%}active{%/if%}">

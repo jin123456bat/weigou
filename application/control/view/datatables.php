@@ -346,7 +346,7 @@ class datatables extends view
                 $bl = true;
 
                 foreach ($is_auto as $auto) {
-                    
+
                     if (!empty($auto['erp'])) {
                         if ($auto['is_auto'] == 0) {
                             $bl = false;
@@ -548,6 +548,18 @@ class datatables extends view
         $resultObj = new \stdClass();
         $resultObj->draw = $this->post('draw');
         $resultObj->data = $this->model('refund')->datatables($this->post());
+        $resultObj->recordsFiltered = count($resultObj->data);
+        if ($this->post('length') != -1) {
+            $resultObj->data = array_slice($resultObj->data, $this->post('start'), $this->post('length'));
+        }
+        $resultObj->recordsTotal = $this->model('refund')->count();
+        return new json($resultObj);
+    }
+
+    function study(){
+        $resultObj = new \stdClass();
+        $resultObj->draw = $this->post('draw');
+        $resultObj->data = $this->model('student_info')->datatables($this->post());
         $resultObj->recordsFiltered = count($resultObj->data);
         if ($this->post('length') != -1) {
             $resultObj->data = array_slice($resultObj->data, $this->post('start'), $this->post('length'));

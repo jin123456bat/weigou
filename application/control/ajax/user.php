@@ -1024,6 +1024,9 @@ class user extends ajax
         if ($user['school'] == 1) {
             return new json(json::PARAMETER_ERROR, "请勿重复验证");
         }
+        if ($user['school'] == 2) {
+            return new json(json::PARAMETER_ERROR, "您已被拒绝通过");
+        }
 
         //审核身份证号跟用户名是否匹配
         if (strlen($identify) != 15 && strlen($identify) != 18 && strlen($identify) != 0)
@@ -1052,6 +1055,17 @@ class user extends ajax
             return new json(json::OK);
         } else {
             return new json(json::PARAMETER_ERROR, "验证失败，请重试");
+        }
+    }
+
+    function school()
+    {
+        $id = $this->post('id');
+        if ($id) {
+            $this->model("user")->where("id=?", [$id])->update(["school" => 2]);
+            return new json(json::OK);
+        } else {
+            return new json(json::PARAMETER_ERROR, "修改失败，请重试");
         }
     }
 }

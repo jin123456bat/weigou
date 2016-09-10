@@ -32,10 +32,10 @@ class product extends common
                 'product.name',
                 'product.description',
                 'product.origin',
-                'product.oldprice * product.sellled as oldprice',//下面4个是价格
-                'product.price * product.sellled as price',
-                'product.v1price * product.sellled as v1price',
-                'product.v2price * product.sellled as v2price',
+                'product.oldprice * product.selled as oldprice',//下面4个是价格
+                'product.price * product.selled as price',
+                'product.v1price * product.selled as v1price',
+                'product.v2price * product.selled as v2price',
                 'product.auto_status',//下面4个状态判断
                 'product.status',
                 'product.avaliabletime_from',

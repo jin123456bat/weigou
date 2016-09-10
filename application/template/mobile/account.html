@@ -30,11 +30,13 @@
                 </div>
                 <div class="wrap">
                     <div class="word white">{%$user.name%}</div>
-                    <div class="word white">{%if $user.school==0%}{%if $user.master==1%}导师{%else%}{%if
-                        $user.vip==0%}普通会员{%elseif
-                        $user.vip==1%}白金会员{%elseif $user.vip==2%}钻石会员{%/if%}{%/if%}{%else%}{%if
+                    <div class="word white">{%if $user.school==1%}{%if
                         $user.master==1%}BOSS{%else%}{%if $user.vip==0%}普通会员{%elseif
-                        $user.vip==1%}合伙人{%elseif $user.vip==2%}CEO{%/if%}{%/if%}{%/if%}
+                        $user.vip==1%}合伙人{%elseif $user.vip==2%}CEO{%/if%}{%/if%}{%else%}
+                        {%if $user.master==1%}导师{%else%}{%if
+                        $user.vip==0%}普通会员{%elseif
+                        $user.vip==1%}白金会员{%elseif $user.vip==2%}钻石会员{%/if%}{%/if%}
+                        {%/if%}
                     </div>
                 </div>
             </div>
@@ -68,7 +70,7 @@
                    href="{%if $user.vip==0%}{%if $user.school==0%}{%url c=mobile a=applyvip%}{%else%}{%url c=mobile a=vip%}{%/if%}{%else%}{%url c=mobile a=vip%}{%/if%}">
                     <div class="menu_icon huiyuan"></div>
                     <div class="menu_name">{%if $user.vip==0%}{%if
-                        $user.school==0%}申请会员{%else%}会员中心{%/if%}{%else%}会员中心{%/if%}
+                        $user.school==1%}会员中心{%else%}申请会员{%/if%}{%else%}会员中心{%/if%}
                     </div>
                     <div class="rightward"></div>
                 </a>

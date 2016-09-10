@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8 no-js"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9 no-js"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en">
+    <!--<![endif]-->
+    <!-- BEGIN HEAD -->
+
+    <head>
+        <meta charset="utf-8" />
+        <title>学生管理</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta content="width=device-width, initial-scale=1" name="viewport" />
+        <meta content="" name="description" />
+        <meta content="" name="author" />
+        <!-- BEGIN GLOBAL MANDATORY STYLES -->
+        <link href="{%$VIEW_ROOT%}/assets/global/css/font.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/plugins/uniform/css/uniform.default.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css" rel="stylesheet" type="text/css" />
+        <!-- END GLOBAL MANDATORY STYLES -->
+		<link href="{%$VIEW_ROOT%}/assets/global/plugins/datatables/datatables.min.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css" rel="stylesheet" type="text/css" />
+		<link href="{%$VIEW_ROOT%}/assets/global/plugins/select2/css/select2.min.css" rel="stylesheet" type="text/css" />
+		<link href="{%$VIEW_ROOT%}/assets/global/plugins/select2/css/select2-bootstrap.min.css" rel="stylesheet" type="text/css" />
+
+        <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css" rel="stylesheet" type="text/css" />
+        <!-- BEGIN THEME GLOBAL STYLES -->
+        <link href="{%$VIEW_ROOT%}/assets/global/css/components.min.css" rel="stylesheet" id="style_components" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/css/plugins.min.css" rel="stylesheet" type="text/css" />
+        <!-- END THEME GLOBAL STYLES -->
+        <!-- BEGIN THEME LAYOUT STYLES -->
+        <link href="{%$VIEW_ROOT%}/assets/layouts/layout/css/layout.min.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/layouts/layout/css/themes/darkblue.min.css" rel="stylesheet" type="text/css" id="style_color" />
+        <link href="{%$VIEW_ROOT%}/assets/layouts/layout/css/custom.min.css" rel="stylesheet" type="text/css" />
+        <!-- END THEME LAYOUT STYLES -->
+        <link rel="shortcut icon" href="favicon.ico" /> </head>
+    <!-- END HEAD -->
+
+    <body class="page-header-fixed page-sidebar-closed-hide-logo page-content-white">
+        <!-- BEGIN HEADER -->
+        {%include file='admin/public/header.html'%}
+        <!-- END HEADER -->
+        <!-- BEGIN HEADER & CONTENT DIVIDER -->
+        <div class="clearfix"> </div>
+        <!-- END HEADER & CONTENT DIVIDER -->
+        <!-- BEGIN CONTAINER -->
+        <div class="page-container">
+            <!-- BEGIN SIDEBAR -->
+            {%include file='admin/public/sidebar.html'%}
+            <!-- END SIDEBAR -->
+            <!-- BEGIN CONTENT -->
+            <div class="page-content-wrapper">
+                <!-- BEGIN CONTENT BODY -->
+                <div class="page-content">
+
+                    <div id="editModal" class="modal container fade" tabindex="-1">
+                        <form class="form-horizontal" role="form" id="editBankcardForm">
+                            <input type="hidden" name="id" value="">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                                <h4 class="modal-title">修改账户</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">账户类型</label>
+                                    <div class="col-md-10">
+                                        <select name="type" class="form-control">
+                                            <option value="alipay">支付宝</option>
+                                            <option value="bank">银行卡</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group bankcard_alipay bankcard_bank display-none">
+                                    <label class="col-md-2 control-label">账户</label>
+                                    <div class="col-md-10">
+                                        <input type="text" class="form-control" name="account" placeholder="收款人账户">
+                                        <span class="help-block"> 账号 </span>
+                                    </div>
+                                </div>
+                                <div class="form-group bankcard_alipay bankcard_bank display-none">
+                                    <label class="col-md-2 control-label">姓名</label>
+                                    <div class="col-md-10">
+                                        <input type="text" class="form-control" name="name" placeholder="收款人姓名">
+                                        <span class="help-block"> 收款人姓名 </span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group bankcard_bank display-none">
+                                    <label class="col-md-2 control-label">开户银行</label>
+                                    <div class="col-md-10">
+                                        <select name="bank" class="form-control">
+                                            <option>
+                                                中国建设银行
+                                            </option>
+                                            <option>
+                                                中国工商银行
+                                            </option>
+                                            <option>
+                                                中国农业银行
+                                            </option>
+                                            <option>
+                                                中国银行
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group bankcard_bank display-none">
+                                    <label class="col-md-2 control-label">开户支行</label>
+                                    <div class="col-md-10">
+                                        <input type="text" class="form-control" name="subbank" placeholder="开户行支行">
+                                        <span class="help-block"> 开户行支行 </span>
+                                    </div>
+                                </div>
+                                <div class="form-group bankcard_bank display-none">
+                                    <label class="col-md-2 control-label">开户银行省份</label>
+                                    <div class="col-md-10">
+                                        <select name="province" class="form-control">
+                                            {%section name=province loop=$province%}
+                                            <option value="{%$province[province].id%}">{%$province[province].name%}</option>
+                                            {%/section%}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group bankcard_bank display-none">
+                                    <label class="col-md-2 control-label">开户银行城市</label>
+                                    <div class="col-md-10">
+                                        <select name="city" class="form-control">
+                                            
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" data-dismiss="modal" class="btn btn-outline dark">取消</button>
+                                <button type="submit" class="btn green">保存</button>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- BEGIN PAGE HEADER-->
+                    <!-- BEGIN THEME PANEL -->
+                    {%include file='admin/public/style.html'%}
+                    <!-- END THEME PANEL -->
+                    <!-- BEGIN PAGE BAR -->
+                    <div class="page-bar">
+                        <ul class="page-breadcrumb">
+                            <li>
+                                <a href="index.php">首页</a>
+                                <i class="fa fa-circle"></i>
+                            </li>
+							<li>
+                                <span>用户管理</span>
+								<i class="fa fa-circle"></i>
+                            </li>
+                            <li>
+                                <span>学生管理</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- END PAGE BAR -->
+                    <!-- BEGIN PAGE TITLE-->
+                    <h3 class="page-title"> 学生管理
+                        <small>学生管理</small>
+                    </h3>
+                    <!-- END PAGE TITLE-->
+                    <!-- END PAGE HEADER-->
+                    <div class="row">
+                        <div class="col-md-12">
+                            <!-- Begin: life time stats -->
+                            <div class="portlet light portlet-fit portlet-datatable bordered">
+                                <div class="portlet-title">
+                                    <div class="caption">
+                                        <i class="icon-settings font-green"></i>
+                                        <span class="caption-subject font-green sbold uppercase"> 订单列表 </span>
+                                    </div>
+                                </div>
+                                <div class="portlet-body">
+                                    <div class="table-container">
+
+                                        <table class="table table-striped table-bordered table-hover table-checkable" id="datatable_orders">
+                                            <thead>
+                                                <tr role="row" class="heading">
+
+                                                    <th width="10%"> 姓名</th>
+                                                    <th width="10%"> 学校</th>
+                                                    <th width="10%"> 学生证号</th>
+                                                    <th width="10%"> 身份证号</th>
+                                                    <th width="10%"> 年级</th>
+                                                    <th width="10%"> 专业</th>
+                                                    <th width="15%"> 申请时间 </th>
+
+
+                                                    <th width="10%"> 通过 </th>
+                                                    <th width="10%"> 操作 </th>
+                                                </tr>
+                                                <tr role="row" class="filter">
+
+                                                    <td>
+                                                        <input type="text" class="form-control form-filter input-sm" name="name" placeholder="姓名">
+													</td>
+                                                    <td>
+                                                        <input type="text" class="form-control form-filter input-sm"
+                                                               name="school" placeholder="学校">
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" class="form-control form-filter input-sm"
+                                                               name="card" placeholder="学生证号">
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" class="form-control form-filter input-sm"
+                                                               name="cartnum" placeholder="身份证号">
+                                                    </td>
+                                                    <td>
+                                                        <select name="cl" class="form-control form-filter input-sm">
+                                                            <option value="">请选择...</option>
+                                                            <option value="大一">大一</option>
+                                                            <option value="大二">大二</option>
+                                                            <option value="大三">大三</option>
+                                                            <option value="大四">大四</option>
+
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" class="form-control form-filter input-sm"
+                                                               name="zhuanye" placeholder="专业">
+                                                    </td>
+
+
+
+
+                                                    <td>
+                                                        <div class="input-group date date-picker date-picker1 margin-bottom-5"
+                                                             data-date-format="yyyy-mm-dd">
+                                                            <input type="text" class="form-control form-filter input-sm"
+                                                                   readonly name="createtime_from" placeholder="从">
+                                                            <span class="input-group-btn">
+                                                                <button class="btn btn-sm default" type="button">
+                                                                    <i class="fa fa-calendar"></i>
+                                                                </button>
+                                                            </span>
+                                                        </div>
+                                                        <div class="input-group date date-picker date-picker2"
+                                                             data-date-format="yyyy-mm-dd">
+                                                            <input type="text" class="form-control form-filter input-sm"
+                                                                   readonly name="createtime_to" placeholder="到">
+                                                            <span class="input-group-btn">
+                                                                <button class="btn btn-sm default" type="button">
+                                                                    <i class="fa fa-calendar"></i>
+                                                                </button>
+                                                            </span>
+                                                        </div>
+                                                    </td>
+
+                                                    <td>
+														<select name="pass" class="form-control form-filter input-sm">
+															<option value="">请选择...</option>
+															<option value="2">已拒绝</option>
+															<option value="1">已通过</option>
+														</select>
+                                                    </td>
+                                                 
+                                                    <td>
+                                                        <div class="margin-bottom-5">
+                                                            <button class="btn btn-sm btn-success filter-submit margin-bottom">
+                                                                <i class="fa fa-search"></i> 搜索</button>
+                                                        </div>
+                                                        <button class="btn btn-sm btn-default filter-cancel">
+                                                            <i class="fa fa-times"></i> 重置</button>
+                                                    </td>
+                                                </tr>
+                                            </thead>
+                                            <tbody> </tbody>
+
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- End: life time stats -->
+                        </div>
+                    </div>
+                </div>
+                <!-- END CONTENT BODY -->
+            </div>
+            <!-- END CONTENT -->
+            <!-- BEGIN QUICK SIDEBAR -->
+            {%include file='admin/public/quick_sidebar.html'%}
+            <!-- END QUICK SIDEBAR -->
+        </div>
+        <!-- END CONTAINER -->
+        <!-- BEGIN FOOTER -->
+        {%include file='admin/public/footer.html'%}
+        <!-- END FOOTER -->
+        <!--[if lt IE 9]>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/respond.min.js"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/excanvas.min.js"></script> 
+<![endif]-->
+        <!-- BEGIN CORE PLUGINS -->
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/jquery.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/js.cookie.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/jquery.blockui.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/uniform/jquery.uniform.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js" type="text/javascript"></script>
+        <!-- END CORE PLUGINS -->
+		<script src="{%$VIEW_ROOT%}/assets/global/scripts/datatable.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/datatables/datatables.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js" type="text/javascript"></script>
+		<script src="{%$VIEW_ROOT%}/assets/global/plugins/select2/js/select2.full.min.js" type="text/javascript"></script>
+
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-modal/js/bootstrap-modalmanager.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-modal/js/bootstrap-modal.js" type="text/javascript"></script>
+        <!-- BEGIN THEME GLOBAL SCRIPTS -->
+        <script src="{%$VIEW_ROOT%}/assets/global/scripts/app.js" type="text/javascript"></script>
+        <!-- END THEME GLOBAL SCRIPTS -->
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js" charset="UTF-8" type="text/javascript"></script>
+		<script src="{%$VIEW_ROOT%}/assets/pages/scripts/study.js" type="text/javascript"></script>
+        <!-- BEGIN THEME LAYOUT SCRIPTS -->
+        <script src="{%$VIEW_ROOT%}/assets/layouts/layout/scripts/layout.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/layouts/layout/scripts/demo.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/layouts/global/scripts/quick-sidebar.min.js" type="text/javascript"></script>
+        <!-- END THEME LAYOUT SCRIPTS -->
+		<script type="text/javascript">
+		$.ajaxSetup({
+			headers:{
+				'X-CSRF-TOKEN':'{%$x_csrf_token%}'
+			}
+		});
+
+        $('select[name=type]').on('change',function(){
+            $('.bankcard_bank').addClass('display-none');
+            if($(this).val() == 'bank')
+            {
+                $('.bankcard_bank').removeClass('display-none');  
+            }
+            else if ($(this).val() == 'alipay')
+            {
+                $('.bankcard_alipay').removeClass('display-none');
+            }
+        
+        });
+
+        $('select[name=province]').on('change',function(){
+            $.get('{%url m=api c=common a=address%}',{type:'city',pid:$(this).val()},function(response){
+                if(response.code==1)
+                {
+                    $('select[name=city]').empty().append('<option value="" disabled selected>请选择开户城市</option>');
+                    for(var i=0;i<response.body.length;i++)
+                    {
+                        $('select[name=city]').append('<option value="'+response.body[i].id+'">'+response.body[i].name+'</option>');
+                    }
+                }
+            });
+        });
+
+        $('#editBankcardForm').on('submit',function(){
+            var type = $(this).find('select[name=type]').val();
+            var id = $(this).find('input[name=id]').val();
+            var account = $(this).find('input[name=account]').val();
+            var name = $(this).find('input[name=name]').val();
+
+            var bank = $(this).find('select[name=bank]').val();
+            var subbank = $(this).find('input[name=subbank]').val();
+            var province = $(this).find('select[name=province]').val();
+            var city = $(this).find('select[name=city]').val();
+            if (type == 'alipay')
+            {
+                var data = {
+                    id:id,
+                    type:type,
+                    account:account,
+                    name:name,
+                };
+            }
+            else
+            {
+                var data = {
+                    id:id,
+                    type:type,
+                    account:account,
+                    name:name,
+                    bank:bank,
+                    subbank:subbank,
+                    province:province,
+                    city:city,
+                }
+            }
+
+            $.post('{%url m=ajax c=bankcard a=save%}',data,function(response){
+                if(response.code==1)
+                {
+                    if (type == 'alipay')
+                    {
+                        var string = '支付宝';
+                        string += '<br>'+account;
+                        string += '<br>'+name;
+                    }
+                    else if (type=='bank')
+                    {
+                        var string = '银行卡';
+                        string += '<br>'+account;
+                        string += '<br>'+bank;
+                        string += '<br>'+subbank;
+                        string += '<br>'+name;
+                        string += '<br>'+$('select[name=province]').find('option:selected').text();
+                        string += '<br>'+$('select[name=city]').find('option:selected').text();
+                    }
+
+                    $('.edit[data-id='+id+']').parents('tr').find('td:eq(5)').html(string);
+
+                    $('#editModal').modal('hide');
+                }
+                else
+                {
+                    App.alert({
+                        container: $('#editModal .modal-body'), // alerts parent container 
+                        place: 'preppend', // append or prepent in container 
+                        type: 'danger', // alert's type 
+                        message: response.result,
+                        close: true,
+                        focus: true, // auto scroll to the alert after shown
+                        closeInSeconds: 3, // auto close after defined seconds 
+                        icon:'fa fa-remove'
+                    });
+                }
+            });
+
+            return false;
+        });
+		
+		$.fn.select2.defaults.set("theme", "bootstrap");
+		
+		function formatRepo(user) {
+            if(!user.loading)
+            {
+                var markup = "<table class='movie-result'><tr>";
+                markup += "<td valign='center'><img src='" + (user.gravatar==null?'http://placehold.it/50x50':user.gravatar) + "' width='50' heigth='50' /></td>";
+                markup += "<td align='center' valign='center'><h5> " + user.name + "</h5>";
+                markup += "<div class='movie-synopsis'> " + user.telephone + "</div>";
+                markup += "</td></tr></table>"
+                return markup;    
+            }
+		}
+
+		function formatRepoSelection(repo) {
+			return repo.name;
+		}
+
+		$(".select2").select2({
+			placeholder: '请选择用户',
+			allowClear: true,
+			language: {
+			   noResults: function(){
+				   return "没有找到任何匹配项";
+			   },
+			   inputTooShort:function(){
+				   return '请输入用户名称';
+				},
+				searching:function(){
+					return '正在努力搜索...';
+				},
+				loadingMore:function(){
+					return '载入更多...';
+				},
+				inputTooLong:function(){
+					return '输入太多了...';
+				}
+			},
+			ajax: {
+				url: "{%url m=ajax c=user a=search%}",
+				dataType: 'json',
+				delay: 250,
+				data: function(params) {
+					return {
+						keywords: params.term, // search term
+						length: params.page
+					};
+				},
+				processResults: function(data, page) {
+					return {
+						results: data.body.data
+					};
+				},
+				cache: true
+			},
+			escapeMarkup: function(markup) {
+				return markup;
+			},
+			minimumInputLength: 1,
+			templateResult: formatRepo,
+			templateSelection: formatRepoSelection
+		});
+		
+		//获取当前时间
+		function getNowFormatDate() {
+			var date = new Date();
+			var seperator1 = "-";
+			var seperator2 = ":";
+			var month = date.getMonth() + 1;
+			var strDate = date.getDate();
+			if (month >= 1 && month <= 9) {
+				month = "0" + month;
+			}
+			if (strDate >= 0 && strDate <= 9) {
+				strDate = "0" + strDate;
+			}
+			var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate
+					+ " " + date.getHours() + seperator2 + date.getMinutes()
+					+ seperator2 + date.getSeconds();
+			return currentdate;
+		}
+
+        $('#datatable_orders').on('click','.closeUser',function(){
+            var id = $(this).data('id');
+
+            $.post('{%url m=ajax c=user a=school%}',{id:id},function(response){
+                window.location.href=location.href;
+            });
+            return false;
+        });
+		
+		$('#datatable_orders').on('click','.pass',function(){
+			var id = $(this).data('id');
+			var ths = $(this);
+			$.post('{%url m=ajax c=drawal a=passHandle%}',{id:id},function(response){
+				if(response.code==1)
+				{
+					ths.parents('tr').find('.drawal-pass').html('已通过<br>'+getNowFormatDate());
+					ths.parents('tr').find('td:last').empty();
+				}
+				else
+				{
+					App.alert({
+						container: $('#alert_container').val(), // alerts parent container 
+						place: 'append', // append or prepent in container 
+						type: 'danger', // alert's type 
+						message: response.result,
+						close: true,
+						focus: true, // auto scroll to the alert after shown
+						closeInSeconds: 3, // auto close after defined seconds 
+						icon:'fa fa-remove' // put icon class before the message
+					});
+				}
+			});
+			return false;
+		});
+
+        $(document).on('click','.export',function(){
+            var ids = $('#datatable_orders_wrapper').find('tbody input.checkboxes:checked');
+            var ths = $(this);
+            var form = document.createElement("form");
+            form.action = '{%url c=export a=drawal%}';
+            form.target = '_blank';
+            form.method = 'post';
+            var input_all = document.createElement('input');
+            input_all.type = 'hidden';
+            input_all.name = 'all';
+
+            if (ths.data('all') == 'all')
+            {
+                input_all.value = 'all';
+            }
+            if (ths.data('all') == 'noselect')
+            {
+                input_all.value = 'noselect';
+                for(var i=0;i<ids.length;i++)
+                {
+                    var input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'id[]';
+                    input.value = ids[i].value;
+                    form.appendChild(input);
+                }
+            }
+            if (ths.data('all') == 'select')
+            {
+                input_all.value = 'select';
+                if(ids.length == 0)
+                {
+                    App.alert({
+                        type: 'danger',
+                        icon: 'warning',
+                        message: '没有选择任何数据',
+                        container: $('#datatable_orders_wrapper'),
+                        place: 'prepend'
+                    });
+                    return false;
+                }
+                else
+                {
+                    for(var i=0;i<ids.length;i++)
+                    {
+                        var input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = 'id[]';
+                        input.value = ids[i].value;
+                        form.appendChild(input);
+                    }
+                }
+            }
+
+            form.appendChild(input_all);
+            form.submit();
+            return false;
+        });
+		</script>
+    </body>
+
+</html>

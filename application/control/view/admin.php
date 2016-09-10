@@ -37,6 +37,7 @@ class admin extends view
             'center' => 'page',
             'editcenter' => 'page',
             'viporder' => 'user',
+            'study'=>'user',
 
             'create_college' => 'college',
             'edit_college' => 'college',
@@ -929,6 +930,10 @@ class admin extends view
 
             $this->assign('note', $note);
         }
+        return $this;
+    }
+
+    function study(){
         return $this;
     }
 
