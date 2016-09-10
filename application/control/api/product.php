@@ -131,6 +131,11 @@ class product extends common
             } else {
                 $b['stock'] = $product['stock'];
             }
+            
+            $b['price'] = $b['price'] * $b['num'];
+            $b['v1price'] = $b['v1price'] * $b['num'];
+            $b['v2price'] = $b['v2price'] * $b['num'];
+            $b['inprice'] = $b['inprice'] * $b['num'];
         }
         $product['bind'] = $bind;
 
