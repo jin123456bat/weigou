@@ -143,7 +143,9 @@
                                                         <div class="form-group">
                                                             <table class="table" id="BindTable">
                                                                 <thead>
-                                                                    <th class="radioPrototypeInBind display-none">规格</th><th>数量</th><th>进价</th><th>V0价</th><th>V1价</th><th>V2价</th><th>操作</th>
+                                                                    <th class="radioPrototypeInBind display-none">规格</th><th>数量</th>
+                                                                    <th>单位</th><th>进价</th><th>V0价</th><th>V1价</th><th>V2价</th>
+                                                                    <th>排序</th><th>操作</th>
                                                                 </thead>
                                                                 <tbody>
                                                                     <td class="radioPrototypeInBind display-none">
@@ -152,6 +154,10 @@
                                                                     </td>
                                                                     <td>
                                                                         <input type="text" name="num" class="form-control input-sm">
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type="text" name="unit"
+                                                                               class="form-control input-sm">
                                                                     </td>
                                                                     <td>
                                                                         <input type="text" name="inprice" class="form-control input-sm">
@@ -164,6 +170,10 @@
                                                                     </td>
                                                                     <td>
                                                                         <input type="text" name="v2price" class="form-control input-sm">
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type="text" name="sort"
+                                                                               class="form-control input-sm">
                                                                     </td>
                                                                     <td>
                                                                         <button class="btn btn-sm blue createBindBtn">添加</button>
@@ -731,7 +741,7 @@
 
 
             {%section name=bind loop=$bind%}
-            collection.setBind('{%$bind[bind].content%}','{%$bind[bind].num%}','{%$bind[bind].inprice%}','{%$bind[bind].price%}','{%$bind[bind].v1price%}','{%$bind[bind].v2price%}');
+            collection.setBind('{%$bind[bind].content%}','{%$bind[bind].num%}', '{%$bind[bind].unit%}','{%$bind[bind].inprice%}','{%$bind[bind].price%}','{%$bind[bind].v1price%}','{%$bind[bind].v2price%}', '{%$bind[bind].sort%}');
             {%/section%}
 
 			

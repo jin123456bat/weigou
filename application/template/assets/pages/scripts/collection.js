@@ -97,13 +97,15 @@ var collection = function(){
 					price:$(value).find('input[name=price]').val(),
 					v1price:$(value).find('input[name=v1price]').val(),
 					v2price:$(value).find('input[name=v2price]').val(),
+                    unit: $(value).find('input[name=unit]').val(),
+                    sort: $(value).find('input[name=sort]').val(),
 				}
 				bind.push(data);
 			});
 			return bind;
 		},
 
-		setBind:function(content,num,inprice,price,v1price,v2price){
+		setBind:function(content,num,unit,inprice,price,v1price,v2price,st){
 			$('#BindTable .createBindBtn').trigger('click');
 
 			$('#BindTable tbody tr').each(function(index,value){
@@ -112,6 +114,8 @@ var collection = function(){
 				{
 					$(value).find('select[name=content]').val(content);
 					$(value).find('input[name=num]').val(num);
+                    $(value).find('input[name=unit]').val(unit);
+                    $(value).find('input[name=sort]').val(st);
 					$(value).find('input[name=inprice]').val(inprice);
 					$(value).find('input[name=price]').val(price);
 					$(value).find('input[name=v1price]').val(v1price);

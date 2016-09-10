@@ -98,6 +98,7 @@ class product extends ajax
 					}
 				}
 			}
+
 			if (!$hasListImage)
 			{
 				$this->model('product')->rollback();
@@ -168,7 +169,7 @@ class product extends ajax
 			{
 				foreach ($this->post('bind') as $bind)
 				{
-					if (empty($bind['num']) || empty($bind['price']) || empty($bind['inprice']) || empty($bind['v1price']) || empty($bind['v2price']))
+					if (empty($bind['num']) || empty($bind['unit']) || empty($bind['sort']) || empty($bind['price']) || empty($bind['inprice']) || empty($bind['v1price']) || empty($bind['v2price']))
 					{
 						continue;
 					}
@@ -185,6 +186,8 @@ class product extends ajax
 						'price' => $bind['price'],
 						'v1price' => $bind['v1price'],
 						'v2price' => $bind['v2price'],
+                        'unit'=> $bind['unit'],
+                        'sort'=> $bind['sort'],
 					]))
 					{
 						$this->model('product')->rollback();
@@ -560,7 +563,7 @@ class product extends ajax
 			{
 				foreach ($this->post('bind') as $bind)
 				{
-					if (empty($bind['num']) || empty($bind['price']) || empty($bind['inprice']) || empty($bind['v1price']) || empty($bind['v2price']))
+					if (empty($bind['sort']) || empty($bind['unit']) || empty($bind['num']) || empty($bind['price']) || empty($bind['inprice']) || empty($bind['v1price']) || empty($bind['v2price']))
 					{
 						continue;
 					}
@@ -579,6 +582,8 @@ class product extends ajax
 						'price' => $bind['price'],
 						'v1price' => $bind['v1price'],
 						'v2price' => $bind['v2price'],
+                        'unit' => $bind['unit'],
+                        'sort' => $bind['sort'],
 					]))
 					{
 						$this->model('product')->rollback();
@@ -785,7 +790,7 @@ class product extends ajax
 
 					//运费
 					$product_fee = (string)$product[16];
-					
+
 					//供应商
 					$publish = trim((string)$product[17]);
 					if (!empty($publish))
