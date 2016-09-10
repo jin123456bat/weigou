@@ -312,12 +312,29 @@ class order extends common
                         'store.name as store',
                         'product.outside',
                         'order_product.refund',
+                        'order_product.bind',
                     ]);
 
                 $productHelper = new \application\helper\product();
                 foreach ($product as &$p) {
                     $p['image'] = $productHelper->getListImage($p['id']);
                     $p['tax'] = $productHelper->getTaxFields($p['id']);
+                    if ($p['content'] != '' || $p['bind'] > 1) {
+
+                        $unit = $this->model("bind")->where("content=? and num=? and pid=?", [$p['content'], $p['bind'], $p['id']])->find(['unit']);
+
+                        $unit = $unit['unit'];
+
+
+                    }
+
+                    if ($p['content'] != '' && $p['bind'] >= 1) {
+                        $p['name'] .= "(" . $p['content'] . "," . $p['bind'] . $unit . ")";
+                    } elseif ($p['content'] != '') {
+                        $p['name'] .= "(" . $p['content'] . ")";
+                    } elseif ($p['bind'] > 1) {
+                        $p['name'] .= "(" . $p['bind'] . $unit . ")";
+                    }
                 }
 
                 $st['product'] = $product;
@@ -392,6 +409,7 @@ class order extends common
 
         $userHelper = new user();
         $uid = $userHelper->isLogin();
+
         if (empty($uid))
             return new json(json::NOT_LOGIN);
 
@@ -462,13 +480,30 @@ class order extends common
                     'product.id',
                     'product.name',
                     'order_product.content',
+                    'order_product.bind',
                     'order_product.price',
                     'product.oldprice',
+
                 ]);
             foreach ($t_order['product'] as &$product) {
                 $total_product_num += $product['num'];
                 $product['image'] = $productHelper->getListImage($product['id']);
                 $product['tax'] = $productHelper->getTaxFields($product['id']);
+                if ($product['content'] != '' || $product['bind'] > 1) {
+
+                    $unit = $this->model("bind")->where("content=? and num=? and pid=?", [$product['content'], $product['bind'],$product['pid']])->find(['unit']);
+
+                    $unit=$unit['unit'];
+
+                }
+
+                if($product['content'] != '' && $product['bind'] >= 1){
+                    $product['name'] .= "(" . $product['content'] . "," . $product['bind'] . $unit . ")";
+                }elseif($product['content'] != ''){
+                    $product['name'] .= "(" . $product['content'] . ")";
+                }elseif($product['bind'] > 1){
+                    $product['name'] .= "(" . $product['bind'] . $unit . ")";
+                }
             }
             $t_order['product_num'] = $total_product_num;
 

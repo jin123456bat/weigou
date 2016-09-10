@@ -25,6 +25,7 @@ class cart extends common
      */
     function lists()
     {
+
         if (empty($this->_uid))
             return new json(json::NOT_LOGIN);
 
@@ -36,6 +37,7 @@ class cart extends common
             ->where('product.isdelete=?', [0])
             ->groupby('store.id')
             ->select('store.id,store.name');
+
         $productHelper = new product();
 
         //用户信息
@@ -64,13 +66,15 @@ class cart extends common
                     'product.auto_stock',
                     'product.freetax',
                 	'cart.bind',
+                    'bind.unit'
+
                 ],
             ];
 
             $amount = 0;
             $tax = 0;
             //筛选出仓库下的商品
-            $product = $this->model('cart')->fetchAll($product_filter);
+            $product = $this->model('cart')->table('bind','left join','bind.pid=cart.pid')->where('bind.content=cart.content and bind.num=cart.num')->fetchAll($product_filter);
             if (!empty($product)) {
                 foreach ($product as &$p) {
                     $p['origin'] = $this->model('country')->get($p['origin']);
@@ -110,14 +114,16 @@ class cart extends common
                     	$p['v1price'] = $priceInBind['v1price'] * $priceInBind['num'];
                     	$p['v2price'] = $priceInBind['v2price'] * $priceInBind['num'];
                     }
-
+                    $p['unit']=empty($p['unit']) ? '' : $p['unit'];
                     //将商品名称增加 规格 还有捆绑数量
-                    if($p['content']!='' && $p['bind']>1){
-                        $p['name'] .= "(".$p['content'].",".$p['bind']."件)";
+                    if($p['content']!='' && $p['bind']>=1){
+                        $p['name'] .= "(".$p['content'].",".$p['bind']. $p['unit'].")";
                     }elseif($p['content'] != ''){
                         $p['name'] .= "(" . $p['content'] . ")";
                     }elseif($p['bind'] > 1){
-                        $p['name'] .= "(" . $p['bind'] . "件)";
+
+                        $p['name'] .= "(" . $p['bind'] . $p['unit'] . ")";
+
                     }
 
 

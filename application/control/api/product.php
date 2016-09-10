@@ -123,7 +123,7 @@ class product extends common
         }
         $product['collection'] = $collections;
 
-        $bind = $this->model('bind')->where('pid=?', [$id])->select();
+        $bind = $this->model('bind')->where('pid=?', [$id])->orderby('sort','asc')->select();
         foreach ($bind as &$b) {
             if ($b['content'] != '') {
                 $stock = $this->model("collection")->where("pid=? and content=?", [$b['pid'], $b['content']])->find(['stock']);
