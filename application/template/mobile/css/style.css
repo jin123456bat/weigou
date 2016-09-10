@@ -4550,9 +4550,9 @@ a.line_btn{
 }
 .student-foot{
     width: 94%;
-    margin: 0 auto;
-    bottom: 0;
-    position: absolute;
+        /*margin: 0 auto;
+        bottom: 0;
+        position: absolute;*/
     margin:3%;
 }
 .student-foot p{

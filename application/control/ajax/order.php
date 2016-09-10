@@ -286,7 +286,7 @@ class order extends ajax
 
             $roleModel = $this->model('role');
             $role = $adminHelper->getGroupId();
-            if (!$roleModel->checkPower($role, 'refund', roleModel::POWER_ALL)) {
+            if (!$roleModel->checkPower($role, 'order', roleModel::POWER_ALL)) {
                 return new json(json::PARAMETER_ERROR, '权限不足');
             }
         }

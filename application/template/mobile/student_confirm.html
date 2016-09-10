@@ -43,7 +43,7 @@
         <div class=" student-item">身份证号<input type="text" id="numberc"></div>
 
     </div>
-    <a class="coupon_btn student-btn" id="check">确定</a>
+    <a class="coupon_btn student-btn clearfix" id="check" style="position: static;">确定</a>
 
     <div class="student-foot">
         <p>如何成为淘微购轻创特别合伙人？</p>
@@ -60,11 +60,6 @@
         // alert("您已经验证过，无需重复验证");
         msg("您已经验证过，无需重复验证");
         {%/if%}
-
-        {%if $user.school == 2 %}
-            // alert("您已经验证过，无需重复验证");
-            msg("您已被拒绝");
-            {%/if%}
 
 
         $("#check").click(function () {

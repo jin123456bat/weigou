@@ -1129,7 +1129,7 @@ class mobile extends view
                             'product.stock',
                             'product.auto_stock',
                             'product.freetax',
-                        	'product.bind'
+                            'cart.bind',
                         ],
                     ];
 

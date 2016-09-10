@@ -7,14 +7,15 @@
  */
 
 
-$url = 'http://127.0.0.1/index.php?m=api&c=product&a=detail';
+$url = 'http://test.twillg.com/index.php?m=api&c=user&a=login';
 $partner = 'ios';
 $key = "ios";
 $posts = array(
     "partner" => $partner
 );
 $fields = array(
-    'id' => '68',
+    'telephone' => '13067778316',
+    'password' => '123456',
 
 );
 //排序

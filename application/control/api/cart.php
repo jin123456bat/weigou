@@ -111,6 +111,16 @@ class cart extends common
                     	$p['v2price'] = $priceInBind['v2price'] * $priceInBind['num'];
                     }
 
+                    //将商品名称增加 规格 还有捆绑数量
+                    if($p['content']!='' && $p['bind']>1){
+                        $p['name'] .= "(".$p['content'].",".$p['bind']."件)";
+                    }elseif($p['content'] != ''){
+                        $p['name'] .= "(" . $p['content'] . ")";
+                    }elseif($p['bind'] > 1){
+                        $p['name'] .= "(" . $p['bind'] . "件)";
+                    }
+
+
 					//计算总价
 					switch ($user['vip']) {
 						case 0:
@@ -137,6 +147,8 @@ class cart extends common
                         default:return new json(json::PARAMETER_ERROR, '系统错误，请重新登陆');
 					}
                 }
+
+
                 $st['product'] = $product;//商品内容
                 $st['amount'] = $amount;//商品总价
                 $st['tax'] = $tax;//税款
