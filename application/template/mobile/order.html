@@ -376,7 +376,7 @@
                         {%/if%}
                         {%if $order[order].way_status==1 && $order[order].receive==1%}
                         <div class="btn wuliu grey" data-orderno="{%$order[order].orderno%}">订单跟踪</div>
-                        <div class="btn receive grey" data-orderno="{%$order[order].orderno%}">删除订单</div>
+                        <div class="btn del grey" data-orderno="{%$order[order].orderno%}">删除订单</div>
                         {%/if%}
                         {%else%}
                         <div class="btn del grey" data-orderno="{%$order[order].orderno%}">删除订单</div>
@@ -477,11 +477,11 @@
 
                         {%if $order[order].way_status==1 && $order[order].receive==0%}
                         <div class="btn receive red" data-orderno="{%$order[order].orderno%}">确认收货</div>
-                        <div class="btn receive grey" data-orderno="{%$order[order].orderno%}">订单跟踪</div>
+                        <div class="btn wuliu grey" data-orderno="{%$order[order].orderno%}">订单跟踪</div>
                         {%/if%}
                         {%if $order[order].way_status==1 && $order[order].receive==1%}
-                        <div class="btn receive grey" data-orderno="{%$order[order].orderno%}">订单跟踪</div>
-                        <div class="btn receive grey" data-orderno="{%$order[order].orderno%}">删除订单</div>
+                        <div class="btn wuliu grey" data-orderno="{%$order[order].orderno%}">订单跟踪</div>
+                        <div class="btn del grey" data-orderno="{%$order[order].orderno%}">删除订单</div>
                         {%/if%}
                         {%else%}
                         <div class="btn del grey" data-orderno="{%$order[order].orderno%}">删除订单</div>
@@ -584,11 +584,11 @@
 
                         {%if $order[order].way_status==1 && $order[order].receive==0%}
                         <div class="btn receive red" data-orderno="{%$order[order].orderno%}">确认收货</div>
-                        <div class="btn receive grey" data-orderno="{%$order[order].orderno%}">订单跟踪</div>
+                        <div class="btn wuliu grey" data-orderno="{%$order[order].orderno%}">订单跟踪</div>
                         {%/if%}
                         {%if $order[order].way_status==1 && $order[order].receive==1%}
-                        <div class="btn receive grey" data-orderno="{%$order[order].orderno%}">订单跟踪</div>
-                        <div class="btn receive grey" data-orderno="{%$order[order].orderno%}">删除订单</div>
+                        <div class="btn wuliu grey" data-orderno="{%$order[order].orderno%}">订单跟踪</div>
+                        <div class="btn del grey" data-orderno="{%$order[order].orderno%}">删除订单</div>
                         {%/if%}
                         {%else%}
                         <div class="btn del grey" data-orderno="{%$order[order].orderno%}">删除订单</div>
@@ -690,11 +690,11 @@
 
                         {%if $order[order].way_status==1 && $order[order].receive==0%}
                         <div class="btn receive red" data-orderno="{%$order[order].orderno%}">确认收货</div>
-                        <div class="btn receive grey" data-orderno="{%$order[order].orderno%}">订单跟踪</div>
+                        <div class="btn wuliu grey" data-orderno="{%$order[order].orderno%}">订单跟踪</div>
                         {%/if%}
                         {%if $order[order].way_status==1 && $order[order].receive==1%}
-                        <div class="btn receive grey" data-orderno="{%$order[order].orderno%}">订单跟踪</div>
-                        <div class="btn receive grey" data-orderno="{%$order[order].orderno%}">删除订单</div>
+                        <div class="btn wuliu grey" data-orderno="{%$order[order].orderno%}">订单跟踪</div>
+                        <div class="btn del grey" data-orderno="{%$order[order].orderno%}">删除订单</div>
                         {%/if%}
                         {%else%}
                         <div class="btn del grey" data-orderno="{%$order[order].orderno%}">删除订单</div>
@@ -796,11 +796,11 @@
 
                         {%if $order[order].way_status==1 && $order[order].receive==0%}
                         <div class="btn receive red" data-orderno="{%$order[order].orderno%}">确认收货</div>
-                        <div class="btn receive grey" data-orderno="{%$order[order].orderno%}">订单跟踪</div>
+                        <div class="btn wuliu grey" data-orderno="{%$order[order].orderno%}">订单跟踪</div>
                         {%/if%}
                         {%if $order[order].way_status==1 && $order[order].receive==1%}
-                        <div class="btn receive grey" data-orderno="{%$order[order].orderno%}">订单跟踪</div>
-                        <div class="btn receive grey" data-orderno="{%$order[order].orderno%}">删除订单</div>
+                        <div class="btn wuliu grey" data-orderno="{%$order[order].orderno%}">订单跟踪</div>
+                        <div class="btn del grey" data-orderno="{%$order[order].orderno%}">删除订单</div>
                         {%/if%}
                         {%else%}
                         <div class="btn del grey" data-orderno="{%$order[order].orderno%}">删除订单</div>
@@ -895,6 +895,7 @@
     });
 
     $('.quit').on('click', function () {
+
         var orderno = $(this).data('orderno');
         var ths = $(this);
         $.post('{%url m=ajax c=order a=quit%}', {orderno: orderno}, function (response) {
@@ -911,15 +912,34 @@
         return false;
     });
 
-    $('.receive').on('click', function () {
+    $('.quit').on('click', function () {
+
         var orderno = $(this).data('orderno');
         var ths = $(this);
-        $.post('{%url m=ajax c=order a=receive%}', {orderno: orderno}, function (response) {
+        $.post('{%url m=ajax c=order a=quit%}', {orderno: orderno}, function (response) {
             if (response.code == 1) {
-                msg('确认收货成功', function () {
-                    ths.parents('.order').find('.status').text('交易成功');
+                msg('订单取消成功', function () {
+                    ths.parents('.order').find('.status').text('订单关闭');
                     ths.parents('.order').find('.btn').remove();
                 });
+            }
+            else {
+                msg(response.result);
+            }
+        });
+        return false;
+    });
+
+    $('.del').on('click', function () {
+        var orderno = $(this).data('orderno');
+        var ths = $(this);
+        $.post('{%url m=ajax c=order a=del%}', {orderno: orderno}, function (response) {
+            if (response.code == 1) {
+                //msg('订单删除成功', function () {
+                window.location.href= window.location.href;
+                    //ths.parents('.order').find('.status').text('交易成功');
+                   // ths.parents('.order').remove();
+
             }
             else {
                 msg(response.result);
