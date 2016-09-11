@@ -232,11 +232,20 @@ class product extends base
 	 */
 	function getPriceByBind($p)
 	{
+
+
 		if (isset($p['bind']) && !empty($p['bind']))
 		{
-			$bind = $this->model('bind')->where('pid=? and content=? and num=?',[$p['id'],$p['content'],$p['bind']])->find();
+
+			//$bind = $this->model('bind')->where('pid=? and content=? and num=?',[$p['id'],$p['content'],$p['bind']])->find();
+            $bind=$this->model("bind")->where("pid=? and content=? and num=?",[$p['id'],$p['content'],$p['bind']])->find();
+            $bind = $this->model("bind")->where("pid=? and content=? and num=?", [$p['id'], $p['content'], $p['bind']])->find();
+
+
+
 			if (!empty($bind))
 			{
+
 				return $bind;
 			}
 		}

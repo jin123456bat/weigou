@@ -7,7 +7,7 @@
  */
 
 
-$url = 'http://test.twillg.com/index.php?m=api&c=cart&a=lists';
+$url = 'http://test.twillg.com/index.php?m=api&c=order&a=create';
 $partner = 'ios';
 $key = "ios";
 $posts = array(
@@ -15,19 +15,25 @@ $posts = array(
 );
 $fields = array(
     "address" => 483,
-    "clear" => 1,
-    "prepay" => 0,
+    "clear" => 0,
+    "prepay" => 1,
     "product" => json_encode(array([
-        "id"=>61,
-        "num"=>1,
+        "id"=>68,
+        "num"=>10,
         "content"=>'',
         "bind"=>1
     ],[
-        "id" => 60,
-        "num" => 2,
-        "content" => '紫色',
+        "id" => 1518,
+        "num" => 10,
+        "content" => '',
         "bind" => 2
-    ]))
+    ]
+    , [
+            "id" => 1518,
+            "num" => 10,
+            "content" => '',
+            "bind" => 3
+        ]))
 
 
 );

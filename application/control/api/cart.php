@@ -29,7 +29,7 @@ class cart extends common
         if (empty($this->_uid))
             return new json(json::NOT_LOGIN);
 
-        
+
         //筛选所有仓库
         $store = $this->model('cart')
             ->table('product', 'left join', 'product.id=cart.pid')

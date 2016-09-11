@@ -212,6 +212,7 @@ class order extends base
                 $collection_price = $this->model('collection')->get($p['id'], $p['content']);
                 if (!empty($collection_price)) {
                     $product['price'] = $collection_price['price'];
+
                     $product['v1price'] = $collection_price['v1price'];
                     $product['v2price'] = $collection_price['v2price'];
                     $product['image'] = $this->model('upload')->get($collection_price['logo'], 'path');
@@ -222,12 +223,16 @@ class order extends base
             //计算捆绑价格
             $productHelper = new \application\helper\product();
             $priceInBind = $productHelper->getPriceByBind($p);
+
             if ($priceInBind) {
+
                 $product['price'] = $priceInBind['price'];
+
                 $product['v1price'] = $priceInBind['v1price'];
                 $product['v2price'] = $priceInBind['v2price'];
                 $product['selled'] = $priceInBind['num'];
             }
+
 
             //对于团购商品可能需要强制性的价格
             if (isset($p['price'])) {
@@ -238,6 +243,7 @@ class order extends base
                 case 0:
                     $totalamount += $product['price'] * $p['num'] * $productHelper->getSelled($p);
                     $_current_product_unit_price = $product['price'];
+
                     break;
                 case 1:
                     $totalamount += $product['v1price'] * $p['num'] * $productHelper->getSelled($p);

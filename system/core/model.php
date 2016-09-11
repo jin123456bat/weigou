@@ -167,6 +167,7 @@ class model
         if (is_array($field))
             $field = implode(',', $field);
         $sql = 'select ' . $field . ' from ' . $this->getTable() . ' ' . $this->getWhere() . $this->getGroupby() . ' ' . $this->getOrderby() . ' ' . $this->getLimit();
+
         if ($returnSql)
 
             return $sql;
