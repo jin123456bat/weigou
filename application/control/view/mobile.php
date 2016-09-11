@@ -2031,7 +2031,7 @@ class mobile extends view
             $this->response->addHeader('Location', $this->http->url('', 'mobile', 'login'));
         }
 
-        $user = $this->model("user")->where("id=?", [$uid])->find();
+        $user = $this->model("user")->table("upload","left join","upload.id=user.gravatar")->where("user.id=?", [$uid])->find(["user.*","upload.path"]);
 
         // die(json_encode($user));
         $this->assign('user', $user);

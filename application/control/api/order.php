@@ -48,11 +48,13 @@ class order extends common
     {
         $userHelper = new user();
         $uid = $userHelper->isLogin();
+       // $uid=323;
         if (empty($uid))
             return new json(json::NOT_LOGIN);
 
         //商品信息
         $product = $this->data('product', '');
+
         $product = json_decode($product, true);
         if (empty($product)) {
             return new json(json::PARAMETER_ERROR, '请选择要购买的商品');

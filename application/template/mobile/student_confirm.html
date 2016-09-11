@@ -29,7 +29,8 @@
 {%/if%}
 <div id="content">
     <div class="student-head">
-        <div class="student-pic"><img src="{%$VIEW_ROOT%}/mobile/image/touxiang.jpg"></div>
+        <div class="student-pic"><img {%if empty($user.path) %}src="http://placehold.it/80x80?text=头像"
+                                      {%else%} src="{%$user.path%}" {%/if%}></div>
         <div class="school-name student-item">学校名称<input type="text" id="scname"></div>
         <div class=" student-item">专&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;业<input type="text" id="zhuanye"></div>
         <div class=" student-item">年&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;级<select id="class">

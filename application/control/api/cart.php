@@ -29,6 +29,7 @@ class cart extends common
         if (empty($this->_uid))
             return new json(json::NOT_LOGIN);
 
+        
         //筛选所有仓库
         $store = $this->model('cart')
             ->table('product', 'left join', 'product.id=cart.pid')
@@ -54,6 +55,7 @@ class cart extends common
                     'product.id',
                     'product.name',
                     'product.status',
+                    'product.selled',
                     'cart.num',
                     'product.price * cart.bind as price',
                     'product.v1price * cart.bind as v1price',
@@ -65,7 +67,7 @@ class cart extends common
                     'product.stock',
                     'product.auto_stock',
                     'product.freetax',
-                	'cart.bind',
+                    'cart.bind',
 
 
                 ],
@@ -81,38 +83,34 @@ class cart extends common
                     $p['image'] = $productHelper->getListImage($p['id']);
                     $p['tax'] = $productHelper->getTaxFields($p['id']);
 
+                    //判断bind表是否存在绑定的
+                    $p['status'] = $this->cartstatus($p);
+
+
                     //规格价格替换
-                    if (!empty($p['content']))
-                    {
+                    if (!empty($p['content'])) {
                         $collection_price = $this->model('collection')->get($p['id'], $p['content']);
-                        if (!empty($collection_price))
-                        {
-                            if ($collection_price['available'] == 1)
-                            {
+                        if (!empty($collection_price)) {
+                            if ($collection_price['available'] == 1) {
                                 $p['price'] = $collection_price['price'] * $p['bind'];
                                 $p['v1price'] = $collection_price['v1price'] * $p['bind'];
                                 $p['v2price'] = $collection_price['v2price'] * $p['bind'];
                                 $p['image'] = $this->model('upload')->get($collection_price['logo'], 'path');
                                 $p['stock'] = $collection_price['stock'];
-                            }
-                            else
-                            {
+                            } else {
                                 return new json(json::PARAMETER_ERROR, '系统错误，请清空购物车后重新下单');
                             }
-                        }
-                        else
-                        {
+                        } else {
                             return new json(json::PARAMETER_ERROR, '系统错误，请清空购物车后重新下单');
                         }
                     }
-                    
+
                     //捆绑销售的单价
                     $priceInBind = $productHelper->getPriceByBind($p);
-                    if ($priceInBind)
-                    {
-                    	$p['price'] = $priceInBind['price'] * $priceInBind['num'];
-                    	$p['v1price'] = $priceInBind['v1price'] * $priceInBind['num'];
-                    	$p['v2price'] = $priceInBind['v2price'] * $priceInBind['num'];
+                    if ($priceInBind) {
+                        $p['price'] = $priceInBind['price'] * $priceInBind['num'];
+                        $p['v1price'] = $priceInBind['v1price'] * $priceInBind['num'];
+                        $p['v2price'] = $priceInBind['v2price'] * $priceInBind['num'];
                     }
                     if ($p['content'] != '' || $p['bind'] > 1) {
 
@@ -123,21 +121,21 @@ class cart extends common
 
                     }
                     //将商品名称增加 规格 还有捆绑数量
-                    if($p['content']!='' && $p['bind']>=1){
-                        $p['name'] .= "(".$p['content'].",".$p['bind']. $unit.")";
-                    }elseif($p['content'] != ''){
+                    if ($p['content'] != '' && $p['bind'] >= 1) {
+                        $p['name'] .= "(" . $p['content'] . "," . $p['bind'] . $unit . ")";
+                    } elseif ($p['content'] != '') {
                         $p['name'] .= "(" . $p['content'] . ")";
-                    }elseif($p['bind'] > 1){
+                    } elseif ($p['bind'] > 1) {
 
                         $p['name'] .= "(" . $p['bind'] . $unit . ")";
 
                     }
 
 
-					//计算总价
-					switch ($user['vip']) {
-						case 0:
-                        	$amount += $p['price'] * $p['num'];
+                    //计算总价
+                    switch ($user['vip']) {
+                        case 0:
+                            $amount += $p['price'] * $p['num'];
                             $temp_tax = $p['tax'] * $p['price'] * $p['num'];
                             if (in_array($p['outside'], [2, 3]) && $p['freetax'] == 0) {
                                 $tax += $temp_tax;
@@ -157,8 +155,9 @@ class cart extends common
                                 $tax += $temp_tax;
                             }
                             break;
-                        default:return new json(json::PARAMETER_ERROR, '系统错误，请重新登陆');
-					}
+                        default:
+                            return new json(json::PARAMETER_ERROR, '系统错误，请重新登陆');
+                    }
                 }
 
 
@@ -170,6 +169,51 @@ class cart extends common
         }
 
         return new json(json::OK, NULL, $store);
+    }
+
+    function cartstatus($product)
+    {
+        if ($product['status'] == 0) {
+            return $product['status'];
+        }
+        //
+        if ($product['content'] != '') {
+            if ($product['bind'] > 1) {
+                $bind = $this->model("bind")->where('content=? and num=? and pid=?', [$product['content'], $product['bind'], $product['id']])->find();
+                if (!$bind) {
+                    return 0;
+                } else {
+                    return 1;
+                }
+            } elseif ($product['bind'] == 1) {
+                $bind = $this->model("bind")->where('content=? and num=? and pid=?', [$product['content'], $product['bind'], $product['id']])->find();
+                if (!$bind) {
+                    //找collent表
+                    $collection = $this->model("collection")->where("content=? and pid=?", [$product['content'], $product['id']])->find();
+                    if (!$collection) {
+                        return 0;
+                    } else {
+                        return 1;
+                    }
+                } else {
+                    return 1;
+                }
+            }
+        } else {
+            //判断bind参数是否跟商品的售卖数相同
+            if ($product['bind'] == $product['selled']) {
+                return 1;
+            } else {
+                $bind = $this->model("bind")->where("pid=? and num=? and content=''", [$product['id'], $product['bind']])->find();
+                if ($bind) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            }
+            //不同 走bind表 核对
+
+        }
     }
 
     /**
@@ -188,15 +232,15 @@ class cart extends common
 
         $productHelper = new helper\product();
 
-        $bind = $this->data('bind',$productHelper->getSelled(['id'=>$id,'content'=>$content,'num'=>$num]),'intval');
+        $bind = $this->data('bind', $productHelper->getSelled(['id' => $id, 'content' => $content, 'num' => $num]), 'intval');
 
         if ($productHelper->canBuy($id, $content)) {
             $this->model('product')->transaction();
             $cartHelper = new \application\helper\cart();
             if ($cartHelper->add($this->_uid, $id, $content, $num, $bind)) {
                 $this->model('product')->commit();
-                $num = $this->model('cart')->where('uid=?',[$this->_uid])->find('sum(num) as num');
-                return new json(json::OK,NULL,$num['num']);
+                $num = $this->model('cart')->where('uid=?', [$this->_uid])->find('sum(num) as num');
+                return new json(json::OK, NULL, $num['num']);
             } else {
                 $this->model('product')->rollback();
                 return new json(json::PARAMETER_ERROR, '添加到购物车失败');
