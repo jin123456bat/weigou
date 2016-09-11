@@ -232,20 +232,11 @@ class product extends base
 	 */
 	function getPriceByBind($p)
 	{
-
-
 		if (isset($p['bind']) && !empty($p['bind']))
 		{
-
-			//$bind = $this->model('bind')->where('pid=? and content=? and num=?',[$p['id'],$p['content'],$p['bind']])->find();
-            $bind=$this->model("bind")->where("pid=? and content=? and num=?",[$p['id'],$p['content'],$p['bind']])->find();
-            $bind = $this->model("bind")->where("pid=? and content=? and num=?", [$p['id'], $p['content'], $p['bind']])->find();
-
-
-
-			if (!empty($bind))
+			$bind = $this->model('bind')->where('pid=? and content=? and num=?',[$p['id'],$p['content'],$p['bind']])->find();
+            if (!empty($bind))
 			{
-
 				return $bind;
 			}
 		}
@@ -258,14 +249,11 @@ class product extends base
 	 */
 	function getSelled($p)
 	{
-
 		if ($this->hasBind($p['id']) && isset($p['bind']) && !empty($p['bind']))
 		{
-
 			//设定了捆绑参数，也传递过来了，说明是新版本的接口，  这里使用接口传递过来的数量
 			//这里应该验证一下bind参数的数字是否匹配
-
-			if (!empty($this->model('bind')->where('pid=? and content=? and num=?',[$p['id'],$p['content'],$p['bind']])))
+			if (!empty($this->model('bind')->where('pid=? and content=? and num=?',[$p['id'],$p['content'],$p['bind']])->find()))
 			{
 				$selled = intval($p['bind']);
 			}
@@ -278,12 +266,9 @@ class product extends base
 		}
 		else
 		{
-            //check collection
-
-                //没有设定捆绑参数,使用默认的捆绑数量
-                $selled = $this->model('product')->where('id=?', [$p['id']])->find('selled');
-                $selled = isset($selled['selled']) && !empty($selled['selled']) ? $selled['selled'] : 1;
-
+            //没有设定捆绑参数,使用默认的捆绑数量
+            $selled = $this->model('product')->where('id=?', [$p['id']])->find('selled');
+            $selled = isset($selled['selled']) && !empty($selled['selled']) ? $selled['selled'] : 1;
 		}
 		return $selled;
 	}
@@ -293,7 +278,6 @@ class product extends base
 	 */
 	function hasBind($id)
 	{
-
 		return !empty($this->model('bind')->where('pid=?',[$id])->find());
 	}
 	
