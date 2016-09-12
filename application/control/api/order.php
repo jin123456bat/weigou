@@ -99,6 +99,28 @@ class order extends common
             //预订单到这里结束了
             return new json(json::OK, NULL, $order);
         }
+        //检查订单中的收货地址是否需要填写身份证号码
+        if ($order['need_kouan'] == 1) {
+            $address = $this->model('address')->where('id=?', [$address])->find();
+            if (empty($address['identify'])) {
+                return new json(json::PARAMETER_ERROR, '当前选择的收货地址中没有填写身份证号码，请填写身份证号码后在下单');
+            }
+        }
+        //一个订单中不允许多个类型的商品存在
+        if ($orderHelper->hasProductOutside(0) || $orderHelper->hasProductOutside(1)) {
+            if ($orderHelper->hasProductOutside(2)) {
+                return new json(json::PARAMETER_ERROR, '普通商品和进口商品不能和直供商品同时支付，请选择部分商品支付');
+            }
+            if ($orderHelper->hasProductOutside(3)) {
+                return new json(json::PARAMETER_ERROR, '普通商品和进口商品不能和直邮商品同时支付，请选择部分商品支付');
+            }
+        }
+
+        if ($orderHelper->hasProductOutside(2)) {
+            if ($orderHelper->hasProductOutside(3)) {
+                return new json(json::PARAMETER_ERROR, '直供商品不能和直邮商品同时支付，请选择部分商品支付');
+            }
+        }
 
         if (empty(floatval($order['orderamount']))) {
             return new json(json::PARAMETER_ERROR, '创建订单失败');

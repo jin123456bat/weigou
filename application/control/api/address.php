@@ -195,7 +195,7 @@ class address extends common
 		$address = $this->data('address','');
 		if (empty($address))
 			return new json(json::PARAMETER_ERROR,'请填写详细地址');
-		
+
 		$identify = $this->data('identify','');
 		if (strlen($identify)!=15 && strlen($identify)!=18 && strlen($identify)!=0)
 			return new json(json::PARAMETER_ERROR,'身份证号码必须是15或者18位');
