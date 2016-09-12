@@ -48,7 +48,7 @@ class order extends common
     {
         $userHelper = new user();
         $uid = $userHelper->isLogin();
-        $uid=2111;
+
         if (empty($uid))
             return new json(json::NOT_LOGIN);
 
