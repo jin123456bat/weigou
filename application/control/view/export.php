@@ -190,7 +190,7 @@ class export extends view
 		}
 
 		$template = ROOT.'/extends/PHPExcel/order.xlsx';
-		$this->response($data,$template,'订单数据'.date('Y-m-d H:i:s'),3);
+		$this->response($data,$template,'订单数据'.date('Y-m-d H:i:s'));
 	}
 
 	/**
