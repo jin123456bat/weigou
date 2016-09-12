@@ -21,6 +21,7 @@
             padding-top: 15px;
             padding-bottom: 10px;
             color: #fff;
+            font-size: 13px;
             line-height: 1.5;
         }
 
@@ -29,7 +30,7 @@
             background: #fff;
             margin-top: 10px;
             overflow: hidden;
-            font-size: 14px;
+            font-size: 13px;
             line-height: 1.8;
         }
 
@@ -49,6 +50,12 @@
             font-size: 14px;
             text-align: center;
             background: #fff;
+        }
+
+        .order-detail {
+            margin-left: 2.5%;
+            padding: 15px 0;
+            border-bottom: 1px solid #f0f0f0;
         }
     </style>
 </head>
@@ -83,40 +90,85 @@
             {%if $order.pay_status==1 && $order.way_status==0%}
             <div class="ol-text2">
                 您的款项我们已经收到，我们会尽快为您派送
+                <!-- <br/>
                 <br/>
-                <br/>
-                物流信息：订单提交成功
-                <br/>
-                {%($order.createtime)|date_format:'Y-m-d H:i:s'%}
+                <a href="{%url c=mobile a=wuliu%}&orderno={%$order.orderno%}">
+                    物流信息：订单提交成功
+                    <br/>
+                    {%($order.createtime)|date_format:'Y-m-d H:i:s'%}
+                </a> -->
             </div>
+            <a href="{%url c=mobile a=wuliu%}&orderno={%$order.orderno%}">
+                <div class="ol-wuliua">
+                    <img src="{%$VIEW_ROOT%}/mobile/image/xr.png" style="float: right;width: 20px;margin-top: 10px;">
+
+                    <div>
+                        物流信息：订单提交成功
+                    </div>
+                    <div>{%($order.createtime)|date_format:'Y-m-d H:i:s'%}</div>
+                </div>
+            </a>
+
             {%/if%}
             {%if $order.way_status==1 && $order.receive == 0%}
             <div class="ol-text2">
                 您购买的商品已经发货，预计3-5日送达您的手中，请注意手中的手机，准备好收快递哦~
-                <br/>
-                <br/>
-                {%if $courier.info%}
-                物流信息：{%$courier.info%}
-                {%else%}
-                物流信息：等待物流取货
-                {%/if%}
-                <br/>
-                {%($order.createtime)|date_format:'Y-m-d H:i:s'%}
+                <!--  <br/>
+                 <br/>
+                 <a href="{%url c=mobile a=wuliu%}&orderno={%$order.orderno%}">
+                     {%if isset($courier.info)%}
+                     物流信息：{%$courier.info%}
+                     {%else%}
+                     物流信息：等待物流取货
+                     {%/if%}
+                     <br/>
+                     {%($order.createtime)|date_format:'Y-m-d H:i:s'%}
+                 </a> -->
             </div>
+            <a href="{%url c=mobile a=wuliu%}&orderno={%$order.orderno%}">
+                <div class="ol-wuliua">
+                    <img src="{%$VIEW_ROOT%}/mobile/image/xr.png" style="float: right;width: 20px;margin-top: 10px;">
+
+                    <div>
+                        {%if isset($courier.info)%}
+                        物流信息：{%$courier.info%}
+                        {%else%}
+                        物流信息：等待物流取货
+                        {%/if%}
+                    </div>
+                    <div>{%($order.createtime)|date_format:'Y-m-d H:i:s'%}</div>
+                </div>
+            </a>
             {%/if%}
             {%if $order.receive==1%}
             <div class="ol-text2">
                 这个订单已经完成，感谢您对我们的支持与信任
-                <br/>
-                <br/>
-                {%if $courier.info%}
-                物流信息：{%$courier.info%}
-                {%else%}
-                物流信息：等待物流取货
-                {%/if%}
-                <br/>
-                {%($order.createtime)|date_format:'Y-m-d H:i:s'%}
+                <!--   <br/>
+                  <br/>
+                  <a href="{%url c=mobile a=wuliu%}&orderno={%$order.orderno%}">
+                      {%if isset($courier.info)%}
+                      物流信息：{%$courier.info%}
+                      {%else%}
+                      物流信息：等待物流取货
+                      {%/if%}
+                      <br/>
+                      {%($order.createtime)|date_format:'Y-m-d H:i:s'%}
+                  </a> -->
             </div>
+            <a href="{%url c=mobile a=wuliu%}&orderno={%$order.orderno%}">
+                <div class="ol-wuliua">
+                    <img src="{%$VIEW_ROOT%}/mobile/image/xr.png" style="float: right;width: 20px;margin-top: 10px;">
+
+                    <div>
+                        {%if isset($courier.info)%}
+                        物流信息：{%$courier.info%}
+                        {%else%}
+                        物流信息：等待物流取货
+                        {%/if%}
+                    </div>
+                    <div>{%($order.createtime)|date_format:'Y-m-d H:i:s'%}</div>
+                </div>
+            </a>
             {%/if%}
             {%else%}
             <div class="ol-text2">
@@ -140,24 +192,25 @@
     <div class="order-line2">
         {%section name=store loop=$store%}
         <div class="order-head">{%$store[store].name%}发货</div>
-        <div class="order-hr"></div>
         {%section name=product loop=$store[store].product%}
         <div class="order-detail clearfix productLink" data-id="{%$store[store].product[product].id%}">
-            <div class="order-img"><img src="{%$store[store].product[product].image%}"></div>
-            <div class="order-text clearfix">
-                <div class="order-text-right">
-                    <div class="otr-itme1">￥{%$store[store].product[product].price%}</div>
-                    <div class="otr-itme2">×{%$store[store].product[product].num%}</div>
-                    {%if $store[store].product[product].refund==1 || $store[store].product[product].refund==2%}
-                    <div class="otr-itme2" style="color: red;">(已退款)</div>
-                    {%/if%}
-                </div>
-                <div class="order-text-left">
-                    {%if $order.is_task%}
-                    <div class="" style="display:inline; color:red;">团</div>
-                    {%/if%}
-                    <div class="otl-item1">{%$store[store].product[product].name%}</div>
-                    <div class="otl-itme2">{%$store[store].product[product].content%}</div>
+            <div class="clearfix" style="margin-right: 2.5%;">
+                <div class="order-img"><img src="{%$store[store].product[product].image%}"></div>
+                <div class="order-text clearfix">
+                    <div class="order-text-right">
+                        <div class="otr-itme1">￥{%$store[store].product[product].price%}</div>
+                        <div class="otr-itme2">×{%$store[store].product[product].num%}</div>
+                        {%if $store[store].product[product].refund==1 || $store[store].product[product].refund==2%}
+                        <div class="otr-itme2" style="color: red;">(已退款)</div>
+                        {%/if%}
+                    </div>
+                    <div class="order-text-left">
+                        {%if $order.is_task%}
+                        <div class="" style="display:inline; color:red;">团</div>
+                        {%/if%}
+                        <div class="otl-item1">{%$store[store].product[product].name%}</div>
+                        <div class="otl-itme2">{%$store[store].product[product].content%}</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -165,25 +218,31 @@
         {%/section%}
     </div>
 
-    <div class="order-line3-head">
-        <div class="order-line3-right">￥{%$order.orderamount%}</div>
-        <div class="order-line3-left">应付总额</div>
-    </div>
-    <div class="order-line3">
-        <div class="order-line3-right">￥{%$order.goodsamount%}</div>
-        <div class="order-line3-left">商品总价</div>
-    </div>
-    <div class="order-line3">
-        <div class="order-line3-right">-￥{%$order.discount%}</div>
-        <div class="order-line3-left">优惠</div>
-    </div>
-    <div class="order-line3">
-        <div class="order-line3-right">￥{%$order.feeamount%}</div>
-        <div class="order-line3-left">运费</div>
-    </div>
-    <div class="order-line3">
-        <div class="order-line3-right">￥{%$order.taxamount%}</div>
-        <div class="order-line3-left">税费</div>
+    <div class="order-line-wrap">
+
+        <div class="order-line3-head">
+            <div class="order-line3-right">￥{%$order.orderamount%}</div>
+            <div class="order-line3-left">应付总额</div>
+        </div>
+        <div class="order-line3">
+            <div class="order-line3-right">￥{%$order.goodsamount%}</div>
+            <div class="order-line3-left">商品总价</div>
+        </div>
+        <div class="order-line3">
+            <div class="order-line3-right">-￥{%$order.discount%}</div>
+            <div class="order-line3-left">优惠</div>
+        </div>
+        <div class="order-line3">
+            <div class="order-line3-right">￥{%$order.feeamount%}</div>
+            <div class="order-line3-left">运费</div>
+        </div>
+        <div class="order-line3">
+            <div class="order-line3-right" style="color: #959595;">
+                <del>￥{%$order.taxamount%}</del>
+            </div>
+            <div class="order-line3-left">税费</div>
+        </div>
+
     </div>
 
     <!--  <div class="order-line3" style="margin-top: 10px;">
@@ -219,15 +278,15 @@
     <!-- 此部分需要后台改动 -->
     <div class="white-block">
         <div>订单编号：{%$order.orderno%}
-            <div class="btn-ol">复制</div>
+            <!-- <div class="btn-ol">复制</div> -->
         </div>
         <div>下单时间：{%($order.createtime)|date_format:'Y-m-d H:i:s'%}</div>
     </div>
 
-    <!-- 请在此处嵌入电话号码 -->
-    <a href="tel:10086">
+    <a href="">
         <div class="ol-phone">
-            <img src="{%$VIEW_ROOT%}/mobile/image/lxkf.png" style="width: 20px;margin-bottom: -5px;margin-right: 5px;">联系客服
+            <img src="{%$VIEW_ROOT%}/mobile/image/lxkf2.png"
+                 style="width: 20px;margin-bottom: -4px;margin-right: 10px;">联系客服
         </div>
     </a>
 
@@ -242,15 +301,15 @@
                 {%/if%}
                 {%/if%}
                 {%if $order.pay_status==1 && $order.way_status==0%}
-                <div class="order-foot1-btn1 " data-orderno='{%$order.orderno%}'>订单跟踪</div>
+                <div class="order-foot1-btn1 zhui" data-orderno='{%$order.orderno%}'>订单跟踪</div>
                 <div class="order-foot1-btn1 quit" data-orderno='{%$order.orderno%}'>取消订单</div>
                 {%/if%}
                 {%if $order.way_status==1 && $order.receive == 0%}
-                <div class="order-foot1-btn1 " data-orderno='{%$order.orderno%}'>订单跟踪</div>
+                <div class="order-foot1-btn1 zhui" data-orderno='{%$order.orderno%}'>订单跟踪</div>
                 <div class="order-foot1-btn1 receive" data-orderno='{%$order.orderno%}'>确认收货</div>
                 {%/if%}
                 {%if $order.receive==1%}
-                <div class="order-foot1-btn1 " data-orderno='{%$order.orderno%}'>订单跟踪</div>
+                <div class="order-foot1-btn1 zhui" data-orderno='{%$order.orderno%}'>订单跟踪</div>
                 <div class="order-foot1-btn1 quit" data-orderno='{%$order.orderno%}'>取消订单</div>
 
                 {%/if%}
@@ -304,6 +363,14 @@
         var paytype = $('#paytype').val();
         window.location = '{%url c=order a=payment%}&orderno=' + orderno + '&paytype=' + paytype;
     });
+
+
+    $('.zhui').on('click', function () {
+        var orderno = $('#orderno').val();
+
+        window.location = '{%url c=mobile a=wuliu%}&orderno=' + orderno;
+    });
+
 
     $(".op-itme-second").click(function () {
         $(".op-itme3-2 img").css("display", "block");

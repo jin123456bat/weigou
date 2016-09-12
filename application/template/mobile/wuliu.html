@@ -26,7 +26,7 @@
 </div>
 {%/if%}
 <div class="wuliu-title" {%if isset($smarty.get.webview) && $smarty.get.webview==1%}style="margin-top:0px;"{%/if%}>
-    <img src="{%$VIEW_ROOT%}/mobile/image/profit.png">
+    <img src="{%$VIEW_ROOT%}/mobile/image/wuliiu2.png">
 
     <div class="wul-text">
         {%if isset($wuliu)%}
@@ -44,60 +44,62 @@
     {%if isset($wuliu.list) || isset($ti) || isset($fu) || isset($qu) || isset($su)%}
     {%if isset($su)%}
     <div class="wul-itme">
-        <div class="wul-point"><img src="{%$VIEW_ROOT%}/mobile/image/wancheng.png" alt=""></div>
+        <div class="wul-point1 j-icon"></div>
         <div class="wul-content">
-            <div class="wul-text10">[{%$su.zone|default:''%}] {%$su.remark%}</div>
+            <div class="wul-text10">{%$su.zone|default:''%} {%$su.remark%}</div>
             <div class="wul-text20">{%$su.datetime%}</div>
         </div>
     </div>
     {%/if%}
 
+
     {%if isset($wuliu)%}
     {%section name=wuliu loop=$wuliu.list%}
 
     <div class="wul-itme">
-        <div class="wul-icon"><img src="{%$VIEW_ROOT%}/mobile/image/wancheng.png" alt=""></div>
+        <div class="wul-point1 j-icon"><img src="{%$VIEW_ROOT%}/mobile/image/wancheng.png" alt=""></div>
         <div class="wul-content">
-            <div class="wul-text10">[{%$wuliu.list[wuliu].zone|default:''%}] {%$wuliu.list[wuliu].remark%}</div>
+            <div class="wul-text10">{%$wuliu.list[wuliu].zone|default:''%} {%$wuliu.list[wuliu].remark%}</div>
             <div class="wul-text20">{%$wuliu.list[wuliu].datetime%}</div>
         </div>
     </div>
     {%/section%}
     {%/if%}
 
-
-
-
     {%if isset($qu)%}
     <div class="wul-itme">
-        <div class="wul-icon"><img src="{%$VIEW_ROOT%}/mobile/image/huoche.png" alt=""></div>
+        <div class="wul-icon j-icon"><img src="{%$VIEW_ROOT%}/mobile/image/huoche.png" alt=""></div>
         <div class="wul-content">
-            <div class="wul-text10">[{%$qu.zone|default:''%}] {%$qu.remark%}</div>
+            <div class="wul-text10">{%$qu.zone|default:''%} {%$qu.remark%}</div>
             <div class="wul-text20">{%$qu.datetime%}</div>
         </div>
     </div>
     {%/if%}
+
     {%if isset($fu)%}
     <div class="wul-itme">
-        <div class="wul-icon"><img src="{%$VIEW_ROOT%}/mobile/image/zhi.png" alt=""></div>
+        <div class="wul-icon j-icon"><img src="{%$VIEW_ROOT%}/mobile/image/zhi.png" alt=""></div>
         <div class="wul-content">
-            <div class="wul-text10">[{%$fu.zone|default:''%}] {%$fu.remark%}</div>
+            <div class="wul-text10">{%$fu.zone|default:''%} {%$fu.remark%}</div>
             <div class="wul-text20">{%$fu.datetime%}</div>
         </div>
     </div>
     {%/if%}
+
     {%if isset($ti)%}
     <div class="wul-itme">
-        <div class="wul-icon"><img src="{%$VIEW_ROOT%}/mobile/image/ding.png" alt=""></div>
+        <div class="wul-icon j-icon"><img src="{%$VIEW_ROOT%}/mobile/image/ding.png" alt=""></div>
         <div class="wul-content">
-            <div class="wul-text10">[{%$ti.zone|default:''%}] {%$ti.remark%}</div>
+            <div class="wul-text10">{%$ti.zone|default:''%} {%$ti.remark%}</div>
             <div class="wul-text20">{%$ti.datetime%}</div>
         </div>
     </div>
     {%/if%}
+
+
     {%else%}
     <div class="wul-itme">
-        <div class="wul-point1"></div>
+        <div class="wul-point j-icon"></div>
         <div class="wul-content" style="margin-bottom: 30px;">
             <div class="wul-text10">尚未找到任何物流信息</div>
         </div>
@@ -105,7 +107,15 @@
     {%/if%}
 </section>
 <script>
-    $(".wul-content").eq(0).children("div").css("color", "red");
+    $(".wul-content").eq(0).children("div").css("color", "#09bd69");
+    if ($(".j-icon:first").hasClass("wul-point1"))
+        $(".j-icon:first").removeClass("wul-point1").addClass("wul-point");
+    else if ($(".j-icon:first").hasClass("wul-icon")) {
+        var oldSrc = $(".j-icon:first img").attr("src");
+        var newSrc = oldSrc.substring(0, oldSrc.length - 4) + "2.png";
+        $(".j-icon:first img").attr("src", newSrc);
+    }
+
 </script>
 </body>
 </html>
