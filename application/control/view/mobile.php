@@ -332,7 +332,7 @@ class mobile extends view
                 $this->assign('log', $log); */
                 //获取物流信息
                 $courier = $this->model("order_package")->where("orderno=?", [$orderno])->find();
-             
+
                 if ($courier['ship_number']) {
 
 

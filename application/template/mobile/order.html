@@ -30,24 +30,25 @@
         background: #FFFFFF;
         margin-bottom: 10px;
         display: block;
+        font-size: 13px;
     }
 
     .order .header {
-        height: 30px;
+        height: 35px;
+        line-height: 35px;
+        margin-left: 2.5%;
         display: block;
-        border-bottom: 1px solid #ddd;
+        color: #525252;
+        border-bottom: 1px solid #eee;
     }
 
     .order .header .time {
-        margin-left: 3%;
-        line-height: 30px;
         display: inline;
     }
 
     .order .header .status {
-        margin-right: 3%;
+        margin-right: 2.5%;
         float: right;
-        line-height: 30px;
         display: inline;
     }
 
@@ -59,7 +60,7 @@
         height: 90px;
         padding-left: 5%;
         display: block;
-        border-bottom: 1px solid #F0F0F0;
+        border-bottom: 1px solid #eee;
     }
 
     .order .body .product .img {
@@ -148,12 +149,13 @@
 
     .order .bottom {
         display: block;
+        padding: 10px 0 7px;
     }
 
     .order .bottom .total {
         height: 40px;
         line-height: 40px;
-        font-size: 12px;
+        font-size: 13px;
         margin-right: 2.5%;
         text-align: right;
     }
@@ -174,7 +176,7 @@
 
     .order .bottom .button .btn {
         margin-top: 2px;
-        padding: 3px 5px;
+        padding: 3px 8px;
         min-width: 70px;
         display: inline-block;
         margin-bottom: 10px;
@@ -184,7 +186,7 @@
 
         color: #fff;
         box-sizing: border-box;
-        margin-left: 5px;
+        margin-left: 15px;
         float: right;
     }
 
@@ -194,9 +196,14 @@
     }
 
     .order .bottom .button .btn.grey {
-        border: 1px solid #bbb;
-        color: #bbb;
+        border: 1px solid #a7a7a7;
+        color: #a7a7a7;
     }
+
+    /* .order-text{
+         margin-left: 22%;
+         width: 75%;
+     }*/
 
     /*修改自2016-08-05*/
     .od-info {
@@ -216,9 +223,8 @@
     }
 
     .new-order-wrap {
-        width: 95%;
-        margin: 0 auto;
-        padding: 10px 0;
+        margin-left: 2.5%;
+        padding: 15px 0;
         border-bottom: 1px solid #f0f0f0;
     }
 
@@ -243,6 +249,7 @@
         right: 5%;
         top: 10%;
     }
+
 
 </style>
 <body>
@@ -277,7 +284,7 @@
         <div class="orderListCont1 contitem">
             {%if $is_note%}
             <div class="od-info clearfix">
-                <a href="{%$note_url%}"> <img src="{%$VIEW_ROOT%}/mobile/image/tz.png">{%$note_title%}</a>
+                <a href="{%$note_url%}" style="color:#323232;"> <img src="{%$VIEW_ROOT%}/mobile/image/tz.png">{%$note_title%}</a>
             </div>
             {%/if%}
             {%section name=order loop=$order%}
@@ -467,7 +474,7 @@
                         {%/if%}
                         {%/if%}
                         {%if $order[order].pay_status==1 && $order[order].way_status==0%}
-                        <div class="btn receive grey" data-orderno="{%$order[order].orderno%}">订单跟踪</div>
+                        <div class="btn wuliu grey" data-orderno="{%$order[order].orderno%}">订单跟踪</div>
                         {%if !$order[order].is_task%}
                         <div class="btn quit grey" data-orderno="{%$order[order].orderno%}">取消订单</div>
                         {%/if%}
@@ -574,7 +581,7 @@
                         {%/if%}
                         {%/if%}
                         {%if $order[order].pay_status==1 && $order[order].way_status==0%}
-                        <div class="btn receive grey" data-orderno="{%$order[order].orderno%}">订单跟踪</div>
+                        <div class="btn wuliu grey" data-orderno="{%$order[order].orderno%}">订单跟踪</div>
                         {%if !$order[order].is_task%}
                         <div class="btn quit grey" data-orderno="{%$order[order].orderno%}">取消订单</div>
                         {%/if%}
@@ -680,7 +687,7 @@
                         {%/if%}
                         {%/if%}
                         {%if $order[order].pay_status==1 && $order[order].way_status==0%}
-                        <div class="btn receive grey" data-orderno="{%$order[order].orderno%}">订单跟踪</div>
+                        <div class="btn wuliu grey" data-orderno="{%$order[order].orderno%}">订单跟踪</div>
                         {%if !$order[order].is_task%}
                         <div class="btn quit grey" data-orderno="{%$order[order].orderno%}">取消订单</div>
                         {%/if%}
@@ -786,7 +793,7 @@
                         {%/if%}
                         {%/if%}
                         {%if $order[order].pay_status==1 && $order[order].way_status==0%}
-                        <div class="btn receive grey" data-orderno="{%$order[order].orderno%}">订单跟踪</div>
+                        <div class="btn wuliu grey" data-orderno="{%$order[order].orderno%}">订单跟踪</div>
                         {%if !$order[order].is_task%}
                         <div class="btn quit grey" data-orderno="{%$order[order].orderno%}">取消订单</div>
                         {%/if%}
@@ -894,8 +901,8 @@
         return false;
     });
 
-    $('.quit').on('click', function () {
 
+    $('.quit').on('click', function () {
         var orderno = $(this).data('orderno');
         var ths = $(this);
         $.post('{%url m=ajax c=order a=quit%}', {orderno: orderno}, function (response) {
@@ -904,42 +911,33 @@
                     ths.parents('.order').find('.status').text('订单关闭');
                     ths.parents('.order').find('.btn').remove();
                 });
-            }
-            else {
+            } else {
                 msg(response.result);
             }
         });
         return false;
     });
 
-    $('.quit').on('click', function () {
-
-        var orderno = $(this).data('orderno');
-        var ths = $(this);
-        $.post('{%url m=ajax c=order a=quit%}', {orderno: orderno}, function (response) {
-            if (response.code == 1) {
-                msg('订单取消成功', function () {
-                    ths.parents('.order').find('.status').text('订单关闭');
-                    ths.parents('.order').find('.btn').remove();
-                });
-            }
-            else {
-                msg(response.result);
-            }
-        });
-        return false;
-    });
 
     $('.del').on('click', function () {
         var orderno = $(this).data('orderno');
         var ths = $(this);
         $.post('{%url m=ajax c=order a=del%}', {orderno: orderno}, function (response) {
-            if (response.code == 1) {
-                //msg('订单删除成功', function () {
-                window.location.href= window.location.href;
-                    //ths.parents('.order').find('.status').text('交易成功');
-                   // ths.parents('.order').remove();
+            window.location = '{%url c=mobile a=order%}';
+            return false;
+        });
+        return false;
+    });
 
+    $('.receive').on('click', function () {
+        var orderno = $(this).data('orderno');
+        var ths = $(this);
+        $.post('{%url m=ajax c=order a=receive%}', {orderno: orderno}, function (response) {
+            if (response.code == 1) {
+                msg('确认收货成功', function () {
+                    ths.parents('.order').find('.status').text('交易成功');
+                    ths.parents('.order').find('.btn').remove();
+                });
             }
             else {
                 msg(response.result);
