@@ -298,6 +298,7 @@
                                                                         <thead>
                                                                             <tr>
                                                                                 <th> 商品名 </th>
+                                                                                <th>条形码</th>
                                                                                 <th> 仓库</th>
                                                                                 <th> 规格 </th>
                                                                                 <th> 状态 </th>
@@ -315,6 +316,9 @@
                                                                             <tr>
                                                                            		<td>
                                                                                     {%$product[product].name%}
+                                                                                </td>
+                                                                                <td>
+                                                                                    {%$product[product].barcode%}
                                                                                 </td>
                                                                                 <td>
                                                                                     {%$product[product].storename%}
