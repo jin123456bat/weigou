@@ -246,29 +246,51 @@ class export extends view
 		$data = $productModel->select([
 			'product.id',
 			'product.sku',
+            'product.barcode',//条形码
+            'product.inprice',//进价
+            'product.selled',//售卖数
+            'product.down_reason',//下架原因
 			'product.name',
-			'replace(replace(replace(replace(product.outside,0,"普通商品"),1,"进口商品"),2,"直供商品"),3,"直邮商品")',
+			'replace(replace(replace(replace(product.outside,0,"普通商品"),1,"进口商品"),2,"直供商品"),3,"直邮商品")',//类别
+
+            'if(product.freetax=1,"是","否")',
+            'product.sort',//排序
+            'product.oldprice',
+            'product.price',
+            'product.v1price',
+            'product.v2price',
+            'product.stock',
+            'replace(replace(if(product.auto_status=1,if(product.avaliabletime_from<now() and product.avaliabletime_to>now(),1,0),product.status),1,"上架"),0,"下架")',//商品状态
+
+            'product.fee',//邮费
+            '(select publish.name from publish where product.publish=publish.id) as publish',//供应商
+            '(select name from country where product.origin=country.id)',//来源国
+            '(select name from store where product.store=store.id)',//仓库
+            '(select GROUP_CONCAT( province.name ) from province,product_province where province.id= product_province.province_id and product.id=product_province.product_id) as product_province',//包邮地区
+            'concat_ws(",",if((select count(*) from task where task.pid=product.id and task.isdelete=0)>=1,"团购",""),if((select count(*) from product_top where product.id=product_top.pid)>=1,"首页","")) as prototype',//属性
+
+
+
 			'(select name from category,category_product where category_product.cid=category.id and category_product.pid=product.id and category_product.isdelete=0 limit 0,1) as category1',//第一个分类
+
+            'ifnull(if(product.outside=3,(select tax from posttaxno where product.postTaxNo=posttaxno.id),if(product.outside=2,(select 0.7*((xtax+ztax)/(1-xtax)) from tax as tax_table where product.ztax=tax_table.id),null)),0) as tax',//税率
 			'(select name from category,category_product where category_product.cid=category.id and category_product.pid=product.id and category_product.isdelete=0 limit 1,1) as category2',//第二个分类
-			'concat_ws(",",if((select count(*) from task where task.pid=product.id and task.isdelete=0)>=1,"团购",""),if((select count(*) from product_top where product.id=product_top.pid)>=1,"首页","")) as prototype',//属性
-			'if(product.freetax=1,"是","否")',
-			'(select publish.name from publish where product.publish=publish.id) as publish',
-			'product.sort',
-			'ifnull(if(product.outside=3,(select tax from posttaxno where product.postTaxNo=posttaxno.id),if(product.outside=2,(select 0.7*((xtax+ztax)/(1-xtax)) from tax as tax_table where product.ztax=tax_table.id),null)),0) as tax',//税率
-			'product.oldprice',
-			'product.price',
-			'product.v1price',
-			'product.v2price',
-			'(select name from country where product.origin=country.id)',//来源国
-			'(select name from store where product.store=store.id)',//仓库
-			'product.stock',
-			'replace(replace(if(product.auto_status=1,if(product.avaliabletime_from<now() and product.avaliabletime_to>now(),1,0),product.status),1,"上架"),0,"下架")',//商品状态
-			'product.fee',
-			'(select GROUP_CONCAT( province.name ) from province,product_province where province.id= product_province.province_id and product.id=product_province.product_id) as product_province',//包邮地区
-			'product.barcode',//条形码
-			'product.selled',//售卖数
-			'product.inprice',//进价
-			'product.down_reason',//下架原因
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 		]);
 		$template = ROOT.'/extends/PHPExcel/product.xlsx';
 		$this->response($data,$template,'商品数据'.date('Y-m-d H:i:s'));
