@@ -332,7 +332,8 @@ class mobile extends view
                 $this->assign('log', $log); */
                 //获取物流信息
                 $courier = $this->model("order_package")->where("orderno=?", [$orderno])->find();
-
+                $courier['ship_number'] = '882158054224398287';
+                $courier['ship_type'] = 'yt';
                 if ($courier['ship_number']) {
 
 
@@ -2030,7 +2031,7 @@ class mobile extends view
             $this->response->addHeader('Location', $this->http->url('', 'mobile', 'login'));
         }
 
-        $user = $this->model("user")->table("upload","left join","upload.id=user.gravatar")->where("user.id=?", [$uid])->find(["user.*","upload.path"]);
+        $user = $this->model("user")->table("upload","left join","upload.id=user.gravatar")->where("id=?", [$uid])->find(["user.*","upload"]);
 
         // die(json_encode($user));
         $this->assign('user', $user);
