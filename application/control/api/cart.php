@@ -259,6 +259,7 @@ class cart extends common
 
         $userHelper = new \application\helper\user();
         $uid = $userHelper->isLogin();
+
         if (empty($uid))
             return new json(json::NOT_LOGIN);
 
@@ -286,6 +287,37 @@ class cart extends common
             $this->model('cart')
                 //->table('product', 'left join', 'product.id=cart.pid')
                 ->where('cart.uid=? and cart.pid =(?)', [$uid, $c['pid']])->delete();
+        }
+
+        //删除不存在bind的商品
+        $cart = $this->model("cart")->where("uid=?", [$uid])->select();
+        if ($cart) {
+            foreach ($cart as $c) {
+                //属性不为空 判断bind表是否存在
+
+                $bind = $this->model("bind")->where("pid=? and num=? and content=?", [$c['pid'], $c['bind'], $c['content']])->find();
+                if (!$bind) {
+                    $this->model('cart')
+                        //->table('product', 'left join', 'product.id=cart.pid')
+                        ->where('cart.uid=? and cart.pid =(?) and content=? and num=? and bind', [$uid, $c['pid'],$c['content'],$c['num'],$c['bind']])->delete();
+                    continue;
+                } else {
+                    $bind = $this->model("collection")
+                        ->table("product", 'left join', 'product.id=collection.pid')
+                        ->where("collection.pid=? and collection.content=? and product.selled=?", [$c['pid'], $c['content'], $c['bind']])->find();
+
+                    if (!$bind) {
+                        $this->model('cart')
+                            //->table('product', 'left join', 'product.id=cart.pid')
+                            ->where('cart.uid=? and cart.pid =(?) and content=? and num=? and bind', [$uid, $c['pid'], $c['content'], $c['num'], $c['bind']])->delete();
+                        continue;
+                    }
+                    continue;
+
+                }
+
+
+            }
         }
 
 
