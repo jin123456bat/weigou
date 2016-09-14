@@ -417,7 +417,11 @@ class order extends common
 
             $order['store'] = $store;
 
-            $order['is_task'] = !empty($this->model('task_user')->where('orderno=?', [$orderno])->find());
+            $task = $this->model('task_user')->where('orderno=?', [$t_order['orderno']])->find();
+            $t_order['is_task'] = !empty($task);
+            if ($t_order['is_task']) {
+                $t_order['tast_status'] = $task['status'];
+            }
             $order['wuliu'] = $wuliu;
             return new json(json::OK, NULL, $order);
         }
@@ -434,7 +438,7 @@ class order extends common
 
         $userHelper = new user();
         $uid = $userHelper->isLogin();
-
+        $uid=2112;
         if (empty($uid))
             return new json(json::NOT_LOGIN);
 
@@ -532,8 +536,11 @@ class order extends common
                 }
             }
             $t_order['product_num'] = $total_product_num;
-
-            $t_order['is_task'] = !empty($this->model('task_user')->where('orderno=?', [$t_order['orderno']])->find());
+                $task= $this->model('task_user')->where('orderno=?', [$t_order['orderno']])->find();
+            $t_order['is_task'] = !empty($task);
+            if($t_order['is_task']){
+                $t_order['tast_status']=$task['status'];
+            }
         }
 
         unset($filter['start']);

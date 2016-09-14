@@ -7,7 +7,7 @@
  */
 
 
-$url = 'http://127.0.0.1/index.php?m=api&c=coupon&a=mylistsfailure';
+$url = 'http://127.0.0.1/index.php?m=api&c=order&a=mylists';
 $partner = 'ios';
 $key = "ios";
 $posts = array(
