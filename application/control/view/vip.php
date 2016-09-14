@@ -218,9 +218,16 @@ class vip extends view
 					{
 						if($vipHelper->payedOrder($orderno,$type,$pay_number,$pay_money,$options))
 						{
-							$this->model('wechatpay_cache')->where('orderno=?',[$orderno])->delete();
 							return '<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>';
 						}
+						else
+						{
+							return '订单无法成功';
+						}
+					}
+					else
+					{
+						return '支付失败';
 					}
 				}
 				break;

@@ -43,7 +43,7 @@ class vip extends base
 		if (!empty($vip_order))
 		{
 			$user = $this->model('user')->where('id=?',[$vip_order['uid']])->find();
-			if ($user['vip'] == $vip_order['vip_from'])
+			if ($user['vip'] == $vip_order['vip_from'] && $pay_money == $vip_order['payamount'])
 			{
 				$data = [
 					'paytype' => $pay_type,
