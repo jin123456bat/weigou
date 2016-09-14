@@ -54,7 +54,7 @@
                 </tr>
                 {%foreach from=$userd  item=u%}
                 <tr>
-                    <td><img src="{%$u.path%}" alt=""></td>
+                    <td><img {%if empty($u.path)%}src="{%$u.path%}"{%else%}src="{%$u.path%}"{%/if%} alt=""></td>
                     <td>{%$u.name%}</td>
                     <td>{%$u.createtime%}</td>
                 </tr>

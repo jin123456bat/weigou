@@ -481,6 +481,7 @@ class mobile extends view
 
     function myinvit()
     {
+
         $userHelper = new \application\helper\user();
         $uid = $userHelper->isLogin();
         if (empty($uid)) {
@@ -2054,7 +2055,8 @@ class mobile extends view
 
     }
 
-    function myinvit1(){
+    function myinvita(){
+
         $userHelper = new \application\helper\user();
         $uid = $userHelper->isLogin();
 

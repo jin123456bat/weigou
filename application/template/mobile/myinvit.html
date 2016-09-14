@@ -60,19 +60,19 @@
 	$('#shareBtn').on('click',function(){
 		$('#black_bg').show();
 	});
-	
+
 	$(".spread-share .ss-head").click(function(){
         $("#black_bg").hide();
     })
-	
+
 	$('.sharetoqq').on('click',function(){
 		window.location = 'http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url={%url c=mobile a=invitUrl id=$user.id|default:"" share_uid=$user.id|default:"" urlencode=1%}&title={%$share.title|default:""%}&desc={%$share.desc%}&site=淘微购{%if !empty($share.logo)%}&pics={%resource file=$share.logo full=1 urlencode=1%}{%/if%}';
 	});
-	
+
 	$('.sharetoweibo').on('click',function(){
 		window.location = 'http://service.weibo.com/share/share.php?appkey={%$weibo_appkey%}{%if !empty($share.logo)%}&pic={%resource file=$share.logo full=1 urlencode=1%}{%/if%}&title={%$share.desc|default:"分享标题"%}&url={%url c=mobile a=invitUrl id=$user.id|default:"" share_uid=$user.id|default:"" urlencode=1%}&source=bshare&retcode=0&ralateUid={%$user.weibo_uid|default:""%}';
 	});
-	
+
 	wx.config({
 		debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
 		appId: '{%$jsApiTicket.appId|default:""%}', // 必填，公众号的唯一标识
@@ -117,8 +117,8 @@
 			'openCard',
 		] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
 	});
-	
-	
+
+
 	wx.ready(function(){
 		//分享给朋友
 		wx.onMenuShareAppMessage({
