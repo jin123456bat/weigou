@@ -187,7 +187,7 @@ class mobile extends view
 
 
             if ($response['resultcode'] == 200) {
-
+                $response['result']['list']= array_reverse($response['result']['list']);
                 $this->assign('wuliu', $response['result']);
             }
 
@@ -2031,7 +2031,7 @@ class mobile extends view
             $this->response->addHeader('Location', $this->http->url('', 'mobile', 'login'));
         }
 
-        $user = $this->model("user")->table("upload","left join","upload.id=user.gravatar")->where("id=?", [$uid])->find(["user.*","upload"]);
+        $user = $this->model("user")->table("upload","left join","upload.id=user.gravatar")->where("user.id=?", [$uid])->find(["user.*","upload.path"]);
 
         // die(json_encode($user));
         $this->assign('user', $user);

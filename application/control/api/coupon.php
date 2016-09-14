@@ -116,7 +116,7 @@ class coupon extends common
     {
         $userHelper = new user();
         $uid = $userHelper->isLogin();
-        $uid = 1946;
+
         if (empty($uid))
             return new json(json::NOT_LOGIN);
 
@@ -138,12 +138,12 @@ class coupon extends common
             ]
         ];
 
-        $coupon = $this->model('coupon')->fetch($filter);
+        $coupon = $this->model('coupon')->where("endtime>unix_timestamp(now())")->fetch($filter);
 
         foreach ($coupon as &$cou) {
             $cou['product_id'] = empty($cou['product_id']) ? 0 : 1;
-            $cou['createtime'] = date('Y-m-d H:i:s', $cou['createtime']);
-            $cou['endtime'] = date('Y-m-d H:i:s', $cou['endtime']);
+            $cou['createtime'] = date('Y-m-d ', $cou['createtime']);
+            $cou['endtime'] = date('Y-m-d ', $cou['endtime']);
         }
 
 
@@ -172,7 +172,7 @@ class coupon extends common
     {
         $userHelper = new user();
         $uid = $userHelper->isLogin();
-        $uid = 262;
+
         if (empty($uid))
             return new json(json::NOT_LOGIN);
 
@@ -193,7 +193,7 @@ class coupon extends common
             ]
         ];
 
-        $coupon = $this->model('coupon')->where("isdelete=1 or used=1 and uid=?", [$uid])->select([
+        $coupon = $this->model('coupon')->where("(isdelete=1 or used=1 or endtime<unix_timestamp(now())) and uid=?", [$uid])->select([
             'coupon.id',
             'coupon.name',
             'coupon.createtime',
@@ -207,8 +207,8 @@ class coupon extends common
 
         foreach ($coupon as &$cou) {
             $cou['product_id'] = empty($cou['product_id']) ? 0 : 1;
-            $cou['createtime'] = date('Y-m-d H:i:s', $cou['createtime']);
-            $cou['endtime'] = date('Y-m-d H:i:s', $cou['endtime']);
+            $cou['createtime'] = date('Y-m-d ', $cou['createtime']);
+            $cou['endtime'] = date('Y-m-d', $cou['endtime']);
         }
 
 
