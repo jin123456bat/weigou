@@ -91,33 +91,34 @@ class userModel extends model
 			{
 				$this->where('money <= ?',[$post['money_to']]);
 			}
-			if ($post['vip'] != '')
-			{
-				$this->where('vip=?',[$post['vip']]);
-			}
-			if ($post['master'] != '')
-			{
-				$this->where('master=?',[$post['master']]);
-			}
-			if (!empty(intval($post['o_master'])))
-			{
-				$this->where('o_master = ?',[intval($post['o_master'])]);
-			}
+            if(isset($post['vip'])) {
+                if ($post['vip'] != '') {
+                    $this->where('vip=?', [$post['vip']]);
+                }
+            }
+            if (isset($post['master'])) {
+                if ($post['master'] != '') {
+                    $this->where('master=?', [$post['master']]);
+                }
+            }
+            if (isset($post['o_master'])) {
+                if (!empty(intval($post['o_master']))) {
+                    $this->where('o_master = ?', [intval($post['o_master'])]);
+                }
+            }
 			if (!empty(intval($post['oid'])))
 			{
 				$this->where('oid = ?',[intval($post['oid'])]);
 			}
-			if ($post['source'] != '')
-			{
-				if ($post['source'] == '-1')
-				{
-					$this->where('user.source is null');
-				}
-				else
-				{
-					$this->where('user.source = ?',[$post['source']]);
-				}
-			}
+            if(isset($post['source'])) {
+                if ($post['source'] != '') {
+                    if ($post['source'] == '-1') {
+                        $this->where('user.source is null');
+                    } else {
+                        $this->where('user.source = ?', [$post['source']]);
+                    }
+                }
+            }
 		}
 		$result = $this->select($parameter);
 		return $result;
