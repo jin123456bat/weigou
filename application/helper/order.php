@@ -865,6 +865,7 @@ class order extends base
 
             if ($order['pay_type'] == 'wechat') {
                 if ($response['return_code'] == 'SUCCESS') {
+                    die(json_encode($response));
                     if ($response['result_code'] == 'SUCCESS') {
                         //开启事务
                         $this->model('order')->transaction();

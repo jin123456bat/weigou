@@ -91,7 +91,7 @@ class export extends view
 			'product.sku',//商品SKU
 			'product.name',//商品名称
 			'product.inprice',//商品进价
-			'order_product.num',//数量
+			'if(order_product.num*order_product.bind=0,order_product.num,order_product.num*order_product.bind) as num',//数量
 			'order.orderamount',//订单金额
 
 			'order.pay_money',//支付金额
