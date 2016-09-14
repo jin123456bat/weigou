@@ -58,7 +58,7 @@ class messageModel extends model
 		]);
 	}
 	
-	function fetch($filter = [])
+	function fetch(array $filter = [])
 	{
 		if (isset($filter['uid']))
 		{
