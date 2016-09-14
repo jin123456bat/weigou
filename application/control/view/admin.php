@@ -38,7 +38,7 @@ class admin extends view
             'editcenter' => 'page',
             'viporder' => 'user',
             'study' => 'user',
-            'team' => 'user',
+            'team' => 'team',
 
             'create_college' => 'college',
             'edit_college' => 'college',
@@ -962,6 +962,11 @@ class admin extends view
     }
 
     function study()
+    {
+        return $this;
+    }
+
+    function team()
     {
         return $this;
     }
