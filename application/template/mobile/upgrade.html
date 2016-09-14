@@ -155,12 +155,13 @@
                 var btn = $('.select_box .active');
                 var current = btn.data('current');
                 var vip = btn.data('vip');
+                var paytype = $('.row.active').data('type');
                 $.post('{%url m=ajax c=vip a=order%}', {
                     type: current + '-' + vip,
-                    paytype: 'wechat'
+                    paytype: paytype
                 }, function (response) {
                     if (response.code == 1) {
-                        window.location = '{%url c=vip a=payment paytype=wechat%}&id=' + response.body.id;
+                        window.location = '{%url c=vip a=payment%}&paytype='+paytype+'&id=' + response.body.id;
                     }
                     else
                     {
