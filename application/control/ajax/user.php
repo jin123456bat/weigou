@@ -1028,10 +1028,17 @@ class user extends ajax
             return new json(json::PARAMETER_ERROR, "您已被拒绝通过");
         }
 
+
         //审核身份证号跟用户名是否匹配
         if (strlen($identify) != 15 && strlen($identify) != 18 && strlen($identify) != 0)
             return new json(json::PARAMETER_ERROR, '身份证号码必须是15或者18位');
-
+        //判断年龄
+        $date = strtotime(substr('370702199411024812', 6, 8));//获得出生年月日的时间戳
+        $today = strtotime('today');//获得今日的时间戳
+        $diff = floor(($today - $date) / 86400 / 365);//得到两个日期相差的大体年数
+        if($diff<16 || $diff>30){
+            return new json(json::PARAMETER_ERROR, '您的年龄不符合我们个规定');
+        }
         if (!empty($identify)) {
             if (idcard::auth($this->post('name'), $identify) == 0) {
                 return new json(json::PARAMETER_ERROR, '用户名和身份证号码不匹配');

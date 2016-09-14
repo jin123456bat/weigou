@@ -2043,6 +2043,7 @@ class mobile extends view
         if (empty($uid)) {
             $this->response->setCode(302);
             $this->response->addHeader('Location', $this->http->url('', 'mobile', 'login'));
+
         }
 
         $user = $this->model("user")->table("upload","left join","upload.id=user.gravatar")->where("user.id=?", [$uid])->find(["user.*","upload.path"]);
@@ -2051,5 +2052,30 @@ class mobile extends view
         $this->assign('user', $user);
         return $this;
 
+    }
+
+    function myinvit1(){
+        $userHelper = new \application\helper\user();
+        $uid = $userHelper->isLogin();
+
+        if (empty($uid)) {
+            $this->response->setCode(302);
+            $this->response->addHeader('Location', $this->http->url('', 'mobile', 'login'));
+
+        }
+
+        $user = $this->model("user")->where("id=?",[$uid])->find();
+
+        $this->assign('user',$user);
+
+        $userd = $this->model("user")->table("upload", "left join", "upload.id=user.gravatar")->where("user.oid=?", [$uid])->select(["user.*", "upload.path"]);
+
+        foreach($userd as &$u){
+            $u['createtime']=date("Y-m-d H:i:s",$u['regtime']);
+        }
+        $this->assign('userd', $userd);
+        $this->assign('count',count($userd));
+
+        return $this;
     }
 }

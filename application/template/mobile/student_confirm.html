@@ -21,7 +21,7 @@
 {%if !isset($smarty.get.webview) || $smarty.get.webview!=1%}
 <div id="header">
     <header>
-        <a href="{%url c=mobile a=account%}" class="left_btn"><i class="icon back"></i></a>
+        <a href="javascript:window.history.go(-1);" class="left_btn"><i class="icon back"></i></a>
 
         <h1>学生身份验证</h1>
     </header>
@@ -29,7 +29,7 @@
 {%/if%}
 <div id="content">
     <div class="student-head">
-
+        
         <div class="school-name student-item">学校名称<input type="text" id="scname"></div>
         <div class=" student-item">专&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;业<input type="text" id="zhuanye"></div>
         <div class=" student-item">年&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;级<select id="class">
@@ -55,10 +55,32 @@
     {%include file='mobile/public/msg.html'%}
 </div>
 
+<div id="student-mask" class="g_tips_mask" style="display:none;">
+    <a href="{%url c=mobile a=myinvit%}">
+    <div class="student-mask-con">
+
+            <img src="{%$VIEW_ROOT%}/mobile/image/a1.png">
+        <span class="student-mask-yes">Let's Go&gt;</span>
+
+    </div>
+    </a>
+</div>
+
 <script>
+//弹出层
+
+$(".student-mask-con").click(function(){
+    window.location.href="{%url c=mobile a=myinvit1%}";
+    return false;
+});
+$(document).click(function(){
+    $("#student-mask").hide();
+});
+
+
     {%if $user.school == 1 %}
         // alert("您已经验证过，无需重复验证");
-        msg("您已经验证过，无需重复验证");
+        window.location.href="{%url c=mobile a=myinvit1%}";
         {%/if%}
 
 
@@ -106,7 +128,8 @@
                 cl:cl
             }, function (response) {
                 if (response.code == 1) {
-                      window.location = '{%url c=mobile a=index%}';
+                    $("#student-mask").show();
+                    return false;//关键是这里，阻止冒泡
                 }
                 else {
                     msg(response.result);
