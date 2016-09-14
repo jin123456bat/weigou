@@ -343,6 +343,7 @@ class order extends common
                 foreach ($product as &$p) {
                     $p['image'] = $productHelper->getListImage($p['id']);
                     $p['tax'] = $productHelper->getTaxFields($p['id']);
+                    $p['price'] = $p['price'] * $p['bind'];
                     if ($p['content'] != '' || $p['bind'] > 1) {
 
                         $unit = $this->model("bind")->where("content=? and num=? and pid=?", [$p['content'], $p['bind'], $p['id']])->find(['unit']);
@@ -428,8 +429,8 @@ class order extends common
      */
     function mylists()
     {
-        if (!empty($this->_response))
-            return $this->_response;
+        //if (!empty($this->_response))
+        //   return $this->_response;
 
         $userHelper = new user();
         $uid = $userHelper->isLogin();
@@ -510,22 +511,23 @@ class order extends common
 
                 ]);
             foreach ($t_order['product'] as &$product) {
+                $product['price'] = $product['price'] * $product['bind'];
                 $total_product_num += $product['num'];
                 $product['image'] = $productHelper->getListImage($product['id']);
                 $product['tax'] = $productHelper->getTaxFields($product['id']);
                 if ($product['content'] != '' || $product['bind'] > 1) {
 
-                    $unit = $this->model("bind")->where("content=? and num=? and pid=?", [$product['content'], $product['bind'],$product['pid']])->find(['unit']);
+                    $unit = $this->model("bind")->where("content=? and num=? and pid=?", [$product['content'], $product['bind'], $product['pid']])->find(['unit']);
 
-                    $unit=$unit['unit'];
+                    $unit = $unit['unit'];
 
                 }
 
-                if($product['content'] != '' && $product['bind'] >= 1){
+                if ($product['content'] != '' && $product['bind'] >= 1) {
                     $product['name'] .= "(" . $product['content'] . "," . $product['bind'] . $unit . ")";
-                }elseif($product['content'] != ''){
+                } elseif ($product['content'] != '') {
                     $product['name'] .= "(" . $product['content'] . ")";
-                }elseif($product['bind'] > 1){
+                } elseif ($product['bind'] > 1) {
                     $product['name'] .= "(" . $product['bind'] . $unit . ")";
                 }
             }

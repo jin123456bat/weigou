@@ -37,7 +37,8 @@ class admin extends view
             'center' => 'page',
             'editcenter' => 'page',
             'viporder' => 'user',
-            'study'=>'user',
+            'study' => 'user',
+            'team' => 'user',
 
             'create_college' => 'college',
             'edit_college' => 'college',
@@ -162,20 +163,24 @@ class admin extends view
                 ->select([
                     'product.*',
                     'order_product.num',
-                    '(order_product.num*product.selled) as truenum',
+                    'order_product.bind',
+                    'order_product.content',
+                    '(order_product.num) as truenum',
                     'order_product.content',
                     'order_product.price as order_price',
                     'order_product.id as order_product_id',
                     'order_product.refund',
                     'order_product.refundmoney',
                     'store.name as storename',
-                    'if(suborder_store.erp=1,"已推送","未推送") as erp'
+                    'if(suborder_store.erp=1,"已推送","未推送") as erp',
+
                 ]);
 
 
             $product_total_num = 0;
 
             foreach ($product as &$p) {
+
                 if (!empty($p['content'])) {
                     $collection = $this->model('collection')->where('pid=? and content=? and isdelete=?', [$p['id'], $p['content'], 0])->find();
                     if (!empty($collection)) {
@@ -183,7 +188,30 @@ class admin extends view
                         $p['v1price'] = $collection['v1price'];
                         $p['v2price'] = $collection['v2price'];
                     }
+
+
                 }
+                //判断bind是否存在
+                if ($p['content'] != '' || $p['bind'] > 1) {
+
+                    $unit = $this->model("bind")->where("content=? and num=? and pid=?", [$p['content'], $p['bind'], $p['id']])->find(['unit']);
+
+                    $unit = $unit['unit'];
+
+
+                }
+
+                if ($p['content'] != '' && $p['bind'] >= 1) {
+                    $p['name'] .= "(" . $p['content'] . "," . $p['bind'] . $unit . ")";
+                } elseif ($p['content'] != '') {
+                    $p['name'] .= "(" . $p['content'] . ")";
+                } elseif ($p['bind'] > 1) {
+                    $p['name'] .= "(" . $p['bind'] . $unit . ")";
+                }
+                //num*bind *价格
+
+
+                $p['order_price'] = $p['order_price'] * $p['bind'];
 
                 $product_total_num += $p['num'];
             }
@@ -933,7 +961,8 @@ class admin extends view
         return $this;
     }
 
-    function study(){
+    function study()
+    {
         return $this;
     }
 

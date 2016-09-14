@@ -179,6 +179,24 @@ class datatables extends view
         return new json($resultObj);
     }
 
+    function team()
+    {
+        $resultObj = new \stdClass();
+        if ($this->post('customActionType') == 'group_action') {
+            switch ($this->post('customActionName')) {
+            }
+        }
+        $resultObj->draw = $this->post('draw');
+        $resultObj->data = $this->model('user')->datatables($this->post());
+        $resultObj->recordsFiltered = count($resultObj->data);
+        if ($this->post('length') != -1) {
+            $resultObj->data = array_slice($resultObj->data, $this->post('start'), $this->post('length'));
+        }
+
+        $resultObj->recordsTotal = $this->model('user')->count();
+        return new json($resultObj);
+    }
+
     /**
      * 渠道
      */
@@ -556,7 +574,8 @@ class datatables extends view
         return new json($resultObj);
     }
 
-    function study(){
+    function study()
+    {
         $resultObj = new \stdClass();
         $resultObj->draw = $this->post('draw');
         $resultObj->data = $this->model('student_info')->datatables($this->post());
