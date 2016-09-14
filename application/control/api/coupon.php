@@ -193,7 +193,7 @@ class coupon extends common
             ]
         ];
 
-        $coupon = $this->model('coupon')->where("(isdelete=1 or used=1 or endtime<unix_timestamp(now())) and uid=?", [$uid])->select([
+        $coupon = $this->model('coupon')->where("(isdelete=1 or used=1 or endtime<unix_timestamp(now())) and uid=?", [$uid])->limit($this->data('start'), $this->data('length'))->select([
             'coupon.id',
             'coupon.name',
             'coupon.createtime',

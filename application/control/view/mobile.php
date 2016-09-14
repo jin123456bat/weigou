@@ -1050,7 +1050,21 @@ class mobile extends view
         return $this->__404();
     }
 
-    function college()
+    function college(){
+        $userHelper = new \application\helper\user();
+        $uid = $userHelper->isLogin();
+        if (empty($uid)) {
+            $this->response->setCode(302);
+            $this->response->addHeader('Location', $this->http->url('', 'mobile', 'login'));
+        }
+
+        $user = $this->model("user")->table("upload", "left join", "upload.id=user.gravatar")->where("user.id=?", [$uid])->find(["user.*", "upload.path"]);
+
+        // die(json_encode($user));
+        $this->assign('user', $user);
+        return $this;
+    }
+    function college14()
     {
         $filter = [
             'isdelete' => 0,

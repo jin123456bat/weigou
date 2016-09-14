@@ -7,14 +7,15 @@
  */
 
 
-$url = 'http://127.0.0.1/index.php?m=api&c=coupon&a=mylists';
+$url = 'http://127.0.0.1/index.php?m=api&c=coupon&a=mylistsfailure';
 $partner = 'ios';
 $key = "ios";
 $posts = array(
     "partner" => $partner
 );
 $fields = array(
-
+    "start"=>0,
+    "length" => 10,
     "address" => 483,
     "clear" => 0,
     "prepay" => 1,
