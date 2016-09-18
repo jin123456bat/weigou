@@ -1035,7 +1035,7 @@ class user extends ajax
         if (strlen($identify) != 15 && strlen($identify) != 18 && strlen($identify) != 0)
             return new json(json::PARAMETER_ERROR, '身份证号码必须是15或者18位');
         //判断年龄
-        $date = strtotime(substr('370702199411024812', 6, 8));//获得出生年月日的时间戳
+        $date = strtotime(substr($identify, 6, 8));//获得出生年月日的时间戳
         $today = strtotime('today');//获得今日的时间戳
         $diff = floor(($today - $date) / 86400 / 365);//得到两个日期相差的大体年数
         if($diff<16 || $diff>30){
