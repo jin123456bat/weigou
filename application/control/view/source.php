@@ -141,7 +141,7 @@ class source extends view
         $this->assign('data', $data);
         $power = $this->model('source')->where('id=?', [$this->session->id])->find();
 
-        if (!empty($power['u_source']) || $power['type'] == 1) {
+        if (!empty($power['u_source']) ) {
             $this->setViewname('nopower');
         }
 

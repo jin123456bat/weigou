@@ -391,7 +391,7 @@ class order extends common
 
                                 // die(json_encode($response['result']));
                                 $wuliu['wuliu_notice'] = $response['result']['list'][0]['remark'];
-                                $wuliu['wuliu_time'] = $response['result']['list'][0]['datetime'];
+                                $wuliu['wuliu_time'] = strtotime($response['result']['list'][0]['datetime']);
                             } else {
                                 $wuliu['wuliu_notice'] = '等待物流最新信息';
                                 $wuliu['wuliu_time'] =$order['way_time'];
@@ -433,12 +433,12 @@ class order extends common
      */
     function mylists()
     {
-        //if (!empty($this->_response))
-        //   return $this->_response;
+        if (!empty($this->_response))
+           return $this->_response;
 
         $userHelper = new user();
         $uid = $userHelper->isLogin();
-        $uid=2112;
+
         if (empty($uid))
             return new json(json::NOT_LOGIN);
 

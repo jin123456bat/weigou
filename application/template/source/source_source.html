@@ -333,8 +333,7 @@
         var password = $(this).find('input[name=password]').val();
         var user = $(this).find('input[name=user]:checked').length;
         var product = $(this).find('input[name=product]:checked').length;
-        var ctype = { % $ctype %
-    };
+        var ctype ={%$ctype%};
     $.post('{%url m=ajax c=source a=create%}', {
         name: name,
         phone: phone,
