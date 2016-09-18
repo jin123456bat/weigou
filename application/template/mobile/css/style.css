@@ -1144,14 +1144,14 @@ a.line_btn{
 .goods_info{
     background-color: #fff;
     margin: 10px 0;
-    font-size: 14px;
+    font-size: 13px;
     height: 45px;
     line-height: 45px;
     padding: 0 10px;
 }
 .goods_info span{
     font-size: 14px;
-    margin-left: 10px;
+    margin-left: 6px;
 }
 .goods_info span:last-child{
     right: 10px;
@@ -2059,7 +2059,7 @@ a.line_btn{
 }
 .menu_wrap{
     border-top: 1px solid #eee;
-    margin-bottom: 15px;
+    margin-bottom: 50px;
     background-color: #fff;
 }
 .menu_wrap li{
@@ -2321,6 +2321,8 @@ a.line_btn{
 .coupon_box .coupon .item{
     margin-bottom: 10px;
     height: 90px;
+    margin-left: 3%;
+    width: 94%;
     color: #fff;
 }
 .coupon .use{
@@ -4564,4 +4566,119 @@ a.line_btn{
     line-height: 20px;
     color: #666666;
     margin-top: 10px;
+}
+.student-mask-con{
+    width: 70%;
+    position: absolute;
+    margin: 0 auto;
+    top: 50%;
+    left:50%;
+    -webkit-transform:translate(-50%,-50%);
+
+}
+.student-mask-con img{
+    display: block;
+    width: 100%;
+}
+.student-mask-yes{
+       width: 30%;
+    height: 25px;
+    border-radius: 13px;
+    text-align: center;
+    line-height: 25px;
+    font-size: 14px;
+    color: orange;
+    /* background-color: #fff; */
+    margin: auto;
+    margin-top: -30px;
+    display: block;
+    left: 0;
+    right: 0;
+    position: absolute;
+}
+
+.myinvit-top{
+    padding-top: 50px;
+    width: 100%;
+}
+.myt-item1{
+    font-size: 18px;
+    color: #111;
+    width: 100%;
+    text-align: center;
+    padding: 25px 0;
+}
+.myt-item1 div{
+    line-height: 26px;
+}
+.myt-item2{
+    font-size: 13px;
+    color: #333;
+    width: 250px;
+    margin:0 auto;
+}
+.myt-item2 div{
+    line-height: 18px;
+}
+.myt-item3{
+    width: 40%;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    font-size: 18px;
+    background-color: #f32529;+
+    border-radius: 6px;
+    margin-left: 30%;
+    margin-top: 40px;
+}
+.myt-item3 a{
+    display: block;
+    color: #fff;
+}
+.myinvit-mid{
+    border-top: 1px solid #eee;
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+    font-size: 14px;
+    border-bottom: 1px solid #eee;
+    margin-top: 20px;
+    text-align: center;
+}
+.myinvit-mid span{
+    color: #f32529;
+}
+.myinvit-bottom{
+    width: 100%;
+    margin-top: 30px;
+}
+.myb-title{
+    font-size: 18px;
+    text-align: center;
+    color: #111;
+}
+.myb-con{
+    width: 100%;
+}
+.myb-con table{
+    width: 100%;
+    margin-top: 30px;
+}
+.myb-con table img{
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+}
+.myb-con table tr th,td{
+    width:30%;
+    height: 50px;
+    text-align: center;
+    color: #666666;
+}
+.myb-con .tishi{
+    width: 100%;
+    text-align: center;
+    font-size: 14px;
+    color: #999999;
+    margin-top: 80px;
 }

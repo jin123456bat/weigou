@@ -27,7 +27,7 @@
                     <img src="{%resource file=$user.gravatar%}" onerror="this.src='http://placehold.it/80x80?text=头像';">
                 </div>
                 <div class="name">{%$user.name%}</div>
-                <div class="level">{%if $user.school==1%}{%if $user.vip==0%}普通会员{%elseif $user.vip==1%}合伙人{%elseif $user.vip==2%}CEO{%/if%}{%else%} {%if $user.vip==0%}普通会员{%elseif $user.vip==1%}白金会员{%elseif $user.vip==2%}钻石会员{%/if%}{%/if%}</div>
+                <div class="level"> {%if $user.vip==0%}普通会员{%elseif $user.vip==1%}白金会员{%elseif $user.vip==2%}钻石会员{%/if%}</div>
             </div>
             <div class="banner">
                 <a class="banner_item" href="{%url c=mobile a=team%}">
