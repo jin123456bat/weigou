@@ -88,21 +88,21 @@
                     <div class="banner_word">会员中心</div>
                 </div>
                 {%/if%}
-            <div class="banner_item" onClick="window.location = '{%url c=mobile a=task%}'">
-                <div class="banner_icon four"></div>
-                <div class="banner_word">免费VIP</div>
-            </div>
+            <!--<div class="banner_item" onClick="window.location = '{%url c=mobile a=task%}'">-->
+                <!--<div class="banner_icon four"></div>-->
+                <!--<div class="banner_word">免费VIP</div>-->
+            <!--</div>-->
             {%else%}
             <div class="banner_item" onClick="window.location='{%url c=mobile a=applyvip%}';">
                 <div class="banner_icon one"></div>
                 <div class="banner_word">申请VIP</div>
             </div>
-            <div class="banner_item" onClick="window.location='{%url c=mobile a=login%}';">
-                <div class="banner_icon four"></div>
-                <div class="banner_word">免费VIP</div>
-            </div>
+            <!--<div class="banner_item" onClick="window.location='{%url c=mobile a=login%}';">-->
+                <!--<div class="banner_icon four"></div>-->
+                <!--<div class="banner_word">免费VIP</div>-->
+            <!--</div>-->
             {%/if%}
-            <div class="banner_item" onClick="window.location='{%url c=mobile a=college%}';">
+            <div class="banner_item" onClick="window.location='{%url c=mobile a=college%}&webview=1';">
                 <div class="banner_icon three"></div>
                 <div class="banner_word">创业学院</div>
             </div>

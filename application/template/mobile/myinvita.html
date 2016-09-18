@@ -18,7 +18,7 @@
     <script type="text/javascript" src="{%$VIEW_ROOT%}/mobile/js/js.js"></script>
 </head>
 <body>
-{%if !isset($smarty.get.webview) || $smarty.get.webview!=1%}
+{%if !isset($smarty.get.webview) || $smarty.get.webview!=1%}{%else%}
 <div id="header">
     <header>
         <a href="javascript:window.history.go(-1);" class="left_btn"><i class="icon back"></i></a>
