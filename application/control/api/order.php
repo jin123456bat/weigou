@@ -374,7 +374,7 @@ class order extends common
                     //获取当前订单是否已经发货
                     if ($order['receive'] == 1) {
                         $wuliu['wuliu_notice'] = '订单已完成';
-                        $wuliu['wuliu_time'] = date("Y-m-d H:i:s", $order['receive_time']);
+                        $wuliu['wuliu_time'] =  $order['receive_time'];
                     } else {
                         $iorder = $this->model("order_package")->where("orderno=?", [$orderno])->find();
                         if ($iorder['ship_status'] == 1) {
@@ -394,11 +394,11 @@ class order extends common
                                 $wuliu['wuliu_time'] = $response['result']['list'][0]['datetime'];
                             } else {
                                 $wuliu['wuliu_notice'] = '等待物流最新信息';
-                                $wuliu['wuliu_time'] = date("Y-m-d H:i:s", $order['way_time']);
+                                $wuliu['wuliu_time'] =$order['way_time'];
                             }
                         } else {
                             $wuliu['wuliu_notice'] = '等待物流取货';
-                            $wuliu['wuliu_time'] = date("Y-m-d H:i:s", $order['way_time']);
+                            $wuliu['wuliu_time'] =  $order['way_time'];
                         }
                     }
 
@@ -406,12 +406,12 @@ class order extends common
                     //判断是否是否有ship_number
 
                 } else {
-                    $wuliu['wuliu_notice'] = '订单提交成功';
-                    $wuliu['wuliu_time'] = date("Y-m-d H:i:s", $order['pay_time']);
+                    $wuliu['wuliu_notice'] = '订单支付成功';
+                    $wuliu['wuliu_time'] = $order['pay_time'];
                 }
             } else {
-                $wuliu['wuliu_notice'] = '';
-                $wuliu['wuliu_time'] = '';
+                $wuliu['wuliu_notice'] = '订单提交成功';
+                $wuliu['wuliu_time'] =  $order['createtime'];
             }
 
 

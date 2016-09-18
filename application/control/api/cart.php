@@ -299,7 +299,7 @@ class cart extends common
                 if (!$bind) {
                     $this->model('cart')
                         //->table('product', 'left join', 'product.id=cart.pid')
-                        ->where('cart.uid=? and cart.pid =(?) and content=? and num=? and bind', [$uid, $c['pid'],$c['content'],$c['num'],$c['bind']])->delete();
+                        ->where('cart.uid=? and cart.pid =(?) and content=? and num=? and bind=?', [$uid, $c['pid'],$c['content'],$c['num'],$c['bind']])->delete();
                     continue;
                 } else {
                     $bind = $this->model("collection")
@@ -309,7 +309,7 @@ class cart extends common
                     if (!$bind) {
                         $this->model('cart')
                             //->table('product', 'left join', 'product.id=cart.pid')
-                            ->where('cart.uid=? and cart.pid =(?) and content=? and num=? and bind', [$uid, $c['pid'], $c['content'], $c['num'], $c['bind']])->delete();
+                            ->where('cart.uid=? and cart.pid =(?) and content=? and num=? and bind=?', [$uid, $c['pid'], $c['content'], $c['num'], $c['bind']])->delete();
                         continue;
                     }
                     continue;
