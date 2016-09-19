@@ -275,7 +275,7 @@ class order extends common
     function detail()
     {
         if (!empty($this->_response)) {
-          //  return $this->_response;
+            return $this->_response;
         }
 
 
@@ -418,7 +418,7 @@ class order extends common
 
             $order['store'] = $store;
 
-            $task = $this->model('task_user')->where('orderno=?', [$t_order['orderno']])->find();
+            $task = $this->model('task_user')->where('orderno=?', [$orderno])->find();
             $t_order['is_task'] = !empty($task);
             if ($t_order['is_task']) {
                 $t_order['tast_status'] = $task['status'];

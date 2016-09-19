@@ -27,7 +27,7 @@ class source extends common
 
         $userHelper = new helper\user();
         $uid = $userHelper->isLogin();
-        $uid = 1946;
+
         if (empty($uid))
             return new json(json::NOT_LOGIN);
 

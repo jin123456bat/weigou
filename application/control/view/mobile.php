@@ -1340,7 +1340,7 @@ class mobile extends view
     {
         $userHelper = new \application\helper\user();
         $uid = $userHelper->isLogin();
-        $uid = 1946;
+
         if (empty($uid)) {
             $this->response->setCode(302);
             $this->response->addHeader('Location', $this->http->url('view', 'mobile', 'login'));
