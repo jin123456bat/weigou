@@ -25,7 +25,7 @@ class cart extends common
      */
     function lists()
     {
-        $this->_uid=2119;
+
         if (empty($this->_uid))
             return new json(json::NOT_LOGIN);
 
