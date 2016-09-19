@@ -275,7 +275,7 @@ class order extends common
     function detail()
     {
         if (!empty($this->_response)) {
-            return $this->_response;
+          //  return $this->_response;
         }
 
 
@@ -390,6 +390,7 @@ class order extends common
                             if ($response['resultcode'] == 200) {
 
                                 // die(json_encode($response['result']));
+                                $response['result']['list']= array_reverse($response['result']['list']);
                                 $wuliu['wuliu_notice'] = $response['result']['list'][0]['remark'];
                                 $wuliu['wuliu_time'] = strtotime($response['result']['list'][0]['datetime']);
                             } else {

@@ -277,6 +277,7 @@ class cart extends common
         $userHelper = new \application\helper\user();
         $uid = $userHelper->isLogin();
 
+
         if (empty($uid))
             return new json(json::NOT_LOGIN);
         $cart = $this->model('cart')
@@ -289,28 +290,55 @@ class cart extends common
                 ->where('cart.uid=? and cart.pid =(?)', [$uid, $c['pid']])->delete();
         }
 
+
         //删除不存在bind的商品
         $cart = $this->model("cart")->where("uid=?", [$uid])->select();
+
         if ($cart) {
             foreach ($cart as $c) {
                 //属性不为空 判断bind表是否存在
 
                 $bind = $this->model("bind")->where("pid=? and num=? and content=?", [$c['pid'], $c['bind'], $c['content']])->find();
+
                 if (!$bind) {
-                    $this->model('cart')
-                        //->table('product', 'left join', 'product.id=cart.pid')
-                        ->where('cart.uid=? and cart.pid =(?) and content=? and num=? and bind=?', [$uid, $c['pid'],$c['content'],$c['num'],$c['bind']])->delete();
+
+                    if ($c['content'] != '') {
+                        $bind1 = $this->model("product")
+                            ->table("collection", "left join", "collection.pid=product.id")
+                            ->where("collection.content=? and selled=?", [$c['content'], $c['bind']])
+                            ->find();
+                        if (!$bind1) {
+
+
+                            $this->model('cart')
+                                //->table('product', 'left join', 'product.id=cart.pid')
+                                ->where('cart.uid=? and cart.pid =(?) and content=? and num=? and bind=?', [$uid, $c['pid'], $c['content'], $c['num'], $c['bind']])->delete();
+                        }
+
+                    } else {
+                        $bind1 = $this->model("product")->where("id=?", [$c['pid']])->find();
+                        if ($c['bind'] != $bind1['selled']) {
+
+
+                            $this->model('cart')
+                                //->table('product', 'left join', 'product.id=cart.pid')
+                                ->where('cart.uid=? and cart.pid =(?) and content=? and num=? and bind=?', [$uid, $c['pid'], $c['content'], $c['num'], $c['bind']])->delete();
+                        }
+                    }
                     continue;
                 } else {
-                    $bind = $this->model("collection")
-                        ->table("product", 'left join', 'product.id=collection.pid')
-                        ->where("collection.pid=? and collection.content=? and product.selled=?", [$c['pid'], $c['content'], $c['bind']])->find();
 
-                    if (!$bind) {
-                        $this->model('cart')
-                            //->table('product', 'left join', 'product.id=cart.pid')
-                            ->where('cart.uid=? and cart.pid =(?) and content=? and num=? and bind=?', [$uid, $c['pid'], $c['content'], $c['num'], $c['bind']])->delete();
-                        continue;
+                    if($c['content']!='') {
+                        $bind = $this->model("collection")
+                            ->table("product", 'left join', 'product.id=collection.pid')
+                            ->where("collection.pid=? and collection.content=? and product.selled=?", [$c['pid'], $c['content'], $c['bind']])->find();
+
+                        if (!$bind) {
+                            $this->model('cart')
+                                //->table('product', 'left join', 'product.id=cart.pid')
+                                ->where('cart.uid=? and cart.pid =(?) and content=? and num=? and bind=?', [$uid, $c['pid'], $c['content'], $c['num'], $c['bind']])->delete();
+                            continue;
+                        }
                     }
                     continue;
 

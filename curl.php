@@ -7,14 +7,14 @@
  */
 
 
-$url = 'http://127.0.0.1/index.php?m=api&c=order&a=detail';
+$url = 'http://127.0.0.1/index.php?m=api&c=cart&a=cleardown';
 $partner = 'ios';
 $key = "ios";
 $posts = array(
     "partner" => $partner
 );
 $fields = array(
-    "orderno"=>'16091417043221126558',
+    "orderno"=>'16091816134221195988',
     "start"=>0,
     "length" => 10,
     "address" => 483,
