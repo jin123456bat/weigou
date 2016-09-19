@@ -145,8 +145,15 @@ class mobile extends view
 
     function wuliu()
     {
+
         $id = $this->get('orderno');
-        $package = $this->model('order_package')->where('orderno=?', [$id])->find();
+        if($id) {
+            $package = $this->model('order_package')->where('orderno=?', [$id])->find();
+        }else{
+            $id = $this->get('id');
+            $package = $this->model('order_package')->where('id=?', [$id])->find();
+            $id=$package['orderno'];
+        }
 
 
         //获取订单信息

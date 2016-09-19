@@ -1396,56 +1396,58 @@ class user extends common
     {
 
         $souce = null;
-	$source=$this->model('source')->where("uid=? and isdelete=0",[$userData['id']])->find();
-	
-	if($source){
-		if(empty($source['u_source'])){
-		$souce=$source['id'];	
-		}else{
-		$souce=$source['u_source'];
-		}
-	}else{
-	
+        $source = $this->model('source')->where("uid=? and isdelete=0", [$userData['id']])->find();
 
-        if (empty($userData['source']) || $userData['source']==0) {
-
-            //第一步 判断他是不是有渠道id
-            //没有 循环判断他的上级  一直找到有渠道id的一级
-            $user = $userData['oid'];
-
-            do {
-
-                if (empty($user)) {
-
-                    return null;
-                }
-
-		  $source=$this->model('source')->where("uid=? and isdelete=0",[$user])->find();
-
-        	if($source){
-                	if(empty($source['u_source'])){
-               		 $souce=$source['id'];
-                	}else{
-                	$souce=$source['u_source'];
-               		 }
-        	}else{
-			$user = $this->model("user")->where("id=?", [$user])->find();
-
-               		 if (empty($user['source']) || $user['source']==0) {
-                    	if (empty($user['oid'])) {
-                       	 return null;
-                    	} else {
-			$user=$user['oid'];
-                        continue;
-                    	}
-                } else {
-                    $souce = $user['source'];
-                }}
-
-            } while (empty($souce));
+        if ($source) {
+            if (empty($source['u_source'])) {
+                $souce = $source['id'];
+            } else {
+                $souce = $source['u_source'];
+            }
         } else {
-            $souce = $userData['source'];
-        }}
+
+
+            if (empty($userData['source']) || $userData['source'] == 0) {
+
+                //第一步 判断他是不是有渠道id
+                //没有 循环判断他的上级  一直找到有渠道id的一级
+                $user = $userData['oid'];
+
+                do {
+
+                    if (empty($user)) {
+
+                        return null;
+                    }
+
+                    $source = $this->model('source')->where("uid=? and isdelete=0", [$user])->find();
+
+                    if ($source) {
+                        if (empty($source['u_source'])) {
+                            $souce = $source['id'];
+                        } else {
+                            $souce = $source['u_source'];
+                        }
+                    } else {
+                        $user = $this->model("user")->where("id=?", [$user])->find();
+
+                        if (empty($user['source']) || $user['source'] == 0) {
+                            if (empty($user['oid'])) {
+                                return null;
+                            } else {
+                                $user = $user['oid'];
+                                continue;
+                            }
+                        } else {
+                            $souce = $user['source'];
+                        }
+                    }
+
+                } while (empty($souce));
+            } else {
+                $souce = $userData['source'];
+            }
+        }
         //有的话取渠道id 获取最上一级  拿轮波
         $souce = $this->model("source")->where("id=?", [$souce])->find();
         if (!empty($souce['u_source'])) {
