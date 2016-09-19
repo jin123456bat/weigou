@@ -339,8 +339,7 @@ class mobile extends view
                 $this->assign('log', $log); */
                 //获取物流信息
                 $courier = $this->model("order_package")->where("orderno=?", [$orderno])->find();
-                $courier['ship_number'] = '882158054224398287';
-                $courier['ship_type'] = 'yt';
+
                 if ($courier['ship_number']) {
 
 
@@ -349,6 +348,7 @@ class mobile extends view
                     $response = json_decode($response, true);
 
                     if ($response['resultcode'] == 200) {
+                        $response['result']['list'] = array_reverse($response['result']['list']);
                         $courier['info'] = $response['result']['list'][0]['remark'];
 
                     }
