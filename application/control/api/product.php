@@ -279,7 +279,7 @@ class product extends common
             'parameter' => [
                 'product.id',
                 'product.name',
-                'product.oldprice',
+                'product.oldprice * product.selled as oldprice',
                 'product.price * product.selled as price',
                 'product.v1price * product.selled as v1price',
                 'product.v2price * product.selled as v2price',
