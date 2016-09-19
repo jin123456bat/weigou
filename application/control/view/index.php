@@ -66,7 +66,7 @@ class index extends view
 		}
 	}
 	
-	function upgrade()
+	/* function upgrade()
 	{
 		if (file_exists('./upgrade') && file_get_contents('./upgrade')=='1')
 		{
@@ -116,6 +116,6 @@ class index extends view
 		$this->model('product')->commit();
 		unlink('./upgrade');
 		echo "升级完成";
-	}
+	} */
 	
 }
