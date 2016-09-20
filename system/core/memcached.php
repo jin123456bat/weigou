@@ -10,12 +10,14 @@ use system\core\inter\config;
 class memcached
 {
 	private $_memcached;
-	
+    static private $_instance;
 	function __construct(config $config)
 	{
+
 		if ($config->open)
 		{
 			$this->_memcached = new \Memcache();
+
 			if(is_array($config->server))
 			{
 				foreach ($config->server as $key=>$host)
@@ -31,6 +33,13 @@ class memcached
 			}
 		}
 	}
+
+    static function getInstance()
+    {
+        if (empty(self::$_instance))
+            self::$_instance = new self(config('memcached'));
+        return self::$_instance;
+    }
 	
 	/**
 	 * 判断memcached扩展是否已经加载

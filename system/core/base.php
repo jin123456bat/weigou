@@ -59,6 +59,8 @@ class base
         $this->http = http::getInstance();
         $this->file = file::getInstance();
         $this->cookie = cookie::getInstance();
+
+        $this->memcache=memcached::getInstance();
     }
 
     /**
