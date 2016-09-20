@@ -643,9 +643,12 @@ class order extends common
                                 'order_product.price',
                                 'order_product.content',
                                 'order_product.num',
+                                'order_product.bind',
+
                             ]);
                         foreach ($product_array as &$product) {
                             $product['image'] = $productHelper->getListImage($product['id']);
+                            $product['price']= $product['price']* $product['bind'];
                         }
 
                         $p['ship_type'] = $this->model('ship')->get($p['ship_type']);

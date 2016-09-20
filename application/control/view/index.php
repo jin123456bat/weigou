@@ -117,5 +117,21 @@ class index extends view
 		unlink('./upgrade');
 		echo "升级完成";
 	} */
-	
+/*
+    function cartdown(){
+        $product=$this->model("order_product")->where("bind>1")->select();
+        $this->model('product')->transaction();
+        foreach($product as $p){
+            $price=$p['price']/$p['bind'];
+            if(!$this->model("order_product")->where("id=?",[$p['id']])->update(["price"=>$price])){
+                $this->model('product')->rollback();
+
+                exit('错误2');
+            }
+        }
+        $this->model('product')->commit();
+        exit('ok');
+
+    }
+*/
 }
