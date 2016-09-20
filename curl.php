@@ -5,7 +5,18 @@
  * Date: 16-8-8
  * Time: 下午2:01
  */
+$array = array('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z');
+for($a='A';$a<='R';$a++){
+    $index = array_search($a, $array);
+    $sum += ($index + 1) * pow(26, 0);
+    echo $sum."<br />";
+}
+exit;
+$a = array('apple'=>1, 'banana'=>2, 'orange'=>3);
+var_dump($a);
 
+array_splice($a, 2, 0, array("dfa"=>'23'));
+var_dump($a);exit;
 
 $url = 'http://127.0.0.1/index.php?m=api&c=category&a=product';
 $partner = 'ios';
