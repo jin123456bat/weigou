@@ -346,7 +346,12 @@ class datatables extends view
                     continue;
                 }
                 if ($erp['erp'] != 0) {
+                    //判断是否推送成功
+                    $sub_erp=$this->model("suborder_store")->where("main_orderno=?",[$erp['orderno']])->find();
+                    if($sub_erp['erp']!=0){
                     continue;
+                    }
+
                 }
                 //是否已经付款
                 if ($erp['pay_status'] == 0 || $erp['pay_status'] == 3) {
