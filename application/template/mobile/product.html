@@ -57,7 +57,7 @@
             <a href="#" class="right_btn" id="share_btn"><i class="icon share"></i></a>
         </header>
     </div>
-    <div id="content clearfix" style="padding-top: 106px;padding-bottom: 42px;">
+    <div id="content clearfix" style="padding-top: 50px;padding-bottom: 42px;">
         <div class="goods_box">
             <div class="goods_pic booth">
                 <div class="swiper-container">
@@ -120,7 +120,7 @@
     <div class="g_tips_mask" id="g_tips_mask1" style="display:none;">
         <ul class="gtm_details ths  ">
             <li>· {%$product.store%}</li>
-            <li>· 适用税率：跨境电商税{%$ztax%}%</li>
+            <li>· 适用税率：跨境电商税{%$product.tax*100%}%</li>
 
         </ul>
     </div>
@@ -130,7 +130,7 @@
     <div class="g_tips_mask" id="g_tips_mask2" style="display:none;">
         <ul class="gtm_details ths  ">
             <li>· {%$product.store%}</li>
-            <li>· 适用税率：跨境电商税{%$ztax%}%</li>
+            <li>· 适用税率：跨境电商税{%$product.tax*100%}%</li>
             <li>· 此商品包税</li>
         </ul>
     </div>

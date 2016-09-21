@@ -1734,7 +1734,7 @@ class mobile extends view
             $product['collection'] = $collections;
             
             $this->assign('product', $product);
-            //die(json_encode($product));
+            
             $this->assign('province', $this->model('province')->select());
 
             $filter = [
@@ -1768,16 +1768,6 @@ class mobile extends view
             //获取购物车数量
             $cartnum = $this->model("cart")->where("uid=?", [$uid])->find('sum(num) as cou');
             $this->assign('num', $cartnum['cou'] > 0 ? $cartnum['cou'] : 0);
-            //税收
-            $sui = 0;
-            if (intval($product['ztax']) > 0) {
-                $sui = $this->model('tax')->where("id=?", [$product['ztax']])->find(['ztax']);
-
-                $sui = $sui['ztax'];
-            }
-            $sui *= 100;
-
-            $this->assign('ztax', $sui);
 
             return $this;
         }
