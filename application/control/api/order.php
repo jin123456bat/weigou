@@ -434,12 +434,11 @@ class order extends common
      */
     function mylists()
     {
-        if (!empty($this->_response))
-           return $this->_response;
+        //if (!empty($this->_response))
+           //return $this->_response;
 
         $userHelper = new user();
         $uid = $userHelper->isLogin();
-
         if (empty($uid))
             return new json(json::NOT_LOGIN);
 

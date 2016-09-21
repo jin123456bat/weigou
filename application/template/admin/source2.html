@@ -128,6 +128,15 @@
                     </div>
                     <div class="modal-body">
                         <div class="form-group">
+                            <label class="col-md-2 control-label">是否导师</label>
+
+                            <div class="col-md-10">
+                                <input type="checkbox" name="issour" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
                             <label class="col-md-2 control-label">注册流量权限</label>
 
                             <div class="col-md-10">
@@ -271,6 +280,7 @@
         var usertelephone = $(this).find('input[name=usertelephone]').val();
         var user = $(this).find('input[name=user]:checked').length;
         var school = $(this).find('input[name=school]:checked').length;
+        var issour = $(this).find('input[name=issour]:checked').length;
         var product = $(this).find('input[name=product]:checked').length;
 
 
@@ -280,6 +290,7 @@
             user: user,
             school: school,
             product: product,
+            issour: issour,
             usertelephone: usertelephone
         }, function (response) {
             if (response.code == 1) {

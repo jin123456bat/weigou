@@ -21,6 +21,13 @@ class source extends ajax
 
         if (!empty($this->post('type'))) {   //子渠道添加
             $u_source = $this->session->id;
+            if (!empty($userp = $this->model('user')->where('telephone=?', [$phone])->find())) {
+                if($userp['source']!=$u_source){
+                    return new json(json::PARAMETER_ERROR, '手机号必须是当前渠道下人员的手机号');
+                }
+            }else{
+                return new json(json::PARAMETER_ERROR, '手机号必须是当前渠道下人员的手机号');
+            }
         } else {
             $u_source = NULL;
         }
@@ -31,6 +38,7 @@ class source extends ajax
         if (!empty($this->model('source')->where('name=? and isdelete=?', [$name, 0])->find())) {
             return new json(json::PARAMETER_ERROR, '该渠道商已经存在');
         }
+
         if (!empty($userp = $this->model('user')->where('telephone=?', [$phone])->find())) {
             $uid = $userp['id'];
         } else {
@@ -125,6 +133,7 @@ class source extends ajax
         $password = $this->post('password', '', 'md5');
         $user = $this->post('user');
         $school = $this->post('school');
+        $issour = $this->post('issour');
         $product = $this->post('product');
         $usertelephone = $this->post('usertelephone');
 
@@ -134,17 +143,31 @@ class source extends ajax
         }
 
         if (!empty($usertelephone)) {
-            $uid = $this->model('user')->where('telephone=?', [$usertelephone])->find([
-                'id'
-            ]);
-            if(empty($uid)){
+            $uid = $this->model('user')->where('telephone=?', [$usertelephone])->find();
+            if (empty($uid)) {
                 return new json(json::PARAMETER_ERROR, '手机号码还没注册');
             }
         } else {
             return new json(json::PARAMETER_ERROR, '手机号码还没注册');
         }
 
-
+        //判断用户是否是导师
+        if ($issour == 1) {
+            //判断原来用户是否是导师 不是 则变成导师 帮顶上级导师
+            if ($uid['master'] != 1) {
+                if (empty($uid['oid'])) {
+                    $this->model("user")->where("id=?", [$uid['id']])->update([
+                        'oid' => '269',
+                        'o_master' => '269',
+                        'vip' => '2',
+                        'master' => '1']);
+                } else {
+                    $this->model("user")->where("id=?", [$uid['id']])->update([
+                        'vip' => '2',
+                        'master' => '1']);
+                }
+            }
+        }
         $array = [
             'name' => $name,
             'password' => $password,
@@ -183,26 +206,21 @@ class source extends ajax
     function changepwd()
     {
         $id = $this->post('id');
-        if (!empty($id))
-        {
-	        $password = $this->post('password');
-	        if (empty($password))
-	        {
-	        	return new json(json::PARAMETER_ERROR,'密码不能为空');
-	        }
-	        $password = md5($password);
-	        if($this->model('source')->where('id=?', [$id])->limit(1)->update('password', $password))
-	        {
-	        	return new json(json::OK);
-	        }
-	        else
-	        {
-	        	return new json(json::PARAMETER_ERROR,'密码更改失败');
-	        }
-	    }
-        return new json(json::PARAMETER_ERROR,'id不能为空');
+        if (!empty($id)) {
+            $password = $this->post('password');
+            if (empty($password)) {
+                return new json(json::PARAMETER_ERROR, '密码不能为空');
+            }
+            $password = md5($password);
+            if ($this->model('source')->where('id=?', [$id])->limit(1)->update('password', $password)) {
+                return new json(json::OK);
+            } else {
+                return new json(json::PARAMETER_ERROR, '密码更改失败');
+            }
+        }
+        return new json(json::PARAMETER_ERROR, 'id不能为空');
     }
-    
+
     function power()
     {
         $id = $this->post('id');
