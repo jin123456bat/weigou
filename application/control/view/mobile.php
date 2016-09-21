@@ -1767,6 +1767,10 @@ class mobile extends view
             //获取购物车数量
             $cartnum = $this->model("cart")->where("uid=?", [$uid])->find('sum(num) as cou');
             $this->assign('num', $cartnum['cou'] > 0 ? $cartnum['cou'] : 0);
+            
+            
+            $bind = $this->model('bind')->where('pid=?',[$id])->select();
+            $this->assign('bind', $bind);
 
             return $this;
         }
