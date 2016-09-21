@@ -1632,7 +1632,6 @@ class mobile extends view
                 'product.outside',//是否是海外商品
                 'product.short_description',//短描述
                 'product.freetax',//是否保税 1 包
-                'product.ztax',//是否保税 1 包
                 'product.selled',//起售数
             ]);
 
