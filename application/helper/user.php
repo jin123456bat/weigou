@@ -243,4 +243,9 @@ class user extends base
     {
         return $this->encrypt($password, $salt) === $encrypted_password;
     }
+	/**
+	 * 判断是否登陆，并且获取用户id
+	 * @return NULL
+	 */
+
 }

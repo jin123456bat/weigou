@@ -1632,7 +1632,6 @@ class mobile extends view
                 'product.outside',//是否是海外商品
                 'product.short_description',//短描述
                 'product.freetax',//是否保税 1 包
-                'product.ztax',//是否保税 1 包
                 'product.selled',//起售数
             ]);
 
@@ -1734,7 +1733,7 @@ class mobile extends view
             $product['collection'] = $collections;
             
             $this->assign('product', $product);
-            //die(json_encode($product));
+            
             $this->assign('province', $this->model('province')->select());
 
             $filter = [
@@ -1768,16 +1767,10 @@ class mobile extends view
             //获取购物车数量
             $cartnum = $this->model("cart")->where("uid=?", [$uid])->find('sum(num) as cou');
             $this->assign('num', $cartnum['cou'] > 0 ? $cartnum['cou'] : 0);
-            //税收
-            $sui = 0;
-            if (intval($product['ztax']) > 0) {
-                $sui = $this->model('tax')->where("id=?", [$product['ztax']])->find(['ztax']);
-
-                $sui = $sui['ztax'];
-            }
-            $sui *= 100;
-
-            $this->assign('ztax', $sui);
+            
+            
+            $bind = $this->model('bind')->where('pid=?',[$id])->select();
+            $this->assign('bind', $bind);
 
             return $this;
         }
