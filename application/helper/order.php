@@ -78,7 +78,7 @@ class order extends base
                 $feeamount = 0;
                 $taxamount = 0;
                 foreach ($product as $p) {
-                    $goodsamount += $p['price'] * $p['num'];//计算商品总价
+                    $goodsamount += $p['price'] * $p['num']*$p['bind'];//计算商品总价
                     $feeamount += $p['fee'];//计算运费总价
                     $taxamount += $p['tax'];//计算税款总价
                 }

@@ -133,7 +133,7 @@ class index extends view
 
         }
     */
-
+    /*
     function sendupdate()
     {
 
@@ -192,5 +192,12 @@ class index extends view
             }
 
         }
+    }
+    */
+
+    function orderoff(){
+        echo 12;
+        $orders=$this->model("order_package")->where('orderno in (select `order`.orderno from `order` where  pay_status=0 and status=1 and unix_timestamp(now())-createtime>=3600 and (select task_user.orderno from task_user where task_user.orderno=order.orderno) is null)')->select(['id','orderno']);
+        die(json_encode($orders));
     }
 }
