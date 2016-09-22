@@ -1638,11 +1638,11 @@ class mobile extends view
         //商品是否存在
         if (!empty($product))
         {
-        	$product['price'] = $product['price'] * $product['selled'];
-        	$product['oldprice'] = $product['oldprice'] * $product['selled'];
-        	$product['v1price'] = $product['v1price'] * $product['selled'];
-        	$product['v2price'] = $product['v2price'] * $product['selled'];
-        	
+        	$product['price'] = $product['price'] ;
+        	$product['oldprice'] = $product['oldprice'] ;
+        	$product['v1price'] = $product['v1price'] ;
+        	$product['v2price'] = $product['v2price'] ;
+
             //商品上下架
             if (
                 ($product['auto_status'] == 1 && ($_SERVER['REQUEST_TIME'] < $product['avaliabletime_from'] || $_SERVER['REQUEST_TIME'] > $product['avaliabletime_to']))
@@ -1666,13 +1666,13 @@ class mobile extends view
                     $product['stock'] = $price_collection[0]['sum(stock)'];
                 }
                 if ($price_collection[0]['min(price)'] !== NULL && $price_collection[0]['max(price)'] !== NULL) {
-                    $product['price'] = $price_collection[0]['min(price)'] * $product['selled'] . '起';//.'~'.$price_collection[0]['max(price)'];
+                    $product['price'] = $price_collection[0]['min(price)']  . '起';//.'~'.$price_collection[0]['max(price)'];
                 }
                 if ($price_collection[0]['min(v1price)'] !== NULL && $price_collection[0]['max(v1price)'] !== NULL) {
-                    $product['v1price'] = $price_collection[0]['min(v1price)'] * $product['selled'] . '起';//.'~'.$price_collection[0]['max(v1price)'];
+                    $product['v1price'] = $price_collection[0]['min(v1price)'] . '起';//.'~'.$price_collection[0]['max(v1price)'];
                 }
                 if ($price_collection[0]['min(v2price)'] !== NULL && $price_collection[0]['max(v2price)'] !== NULL) {
-                    $product['v2price'] = $price_collection[0]['min(v2price)'] * $product['selled'] . '起';//.'~'.$price_collection[0]['max(v2price)'];
+                    $product['v2price'] = $price_collection[0]['min(v2price)']  . '起';//.'~'.$price_collection[0]['max(v2price)'];
                 }
             }
 
@@ -1731,9 +1731,9 @@ class mobile extends view
             	$collection['v2price'] = $collection['v2price'] * $product['selled'];
             }
             $product['collection'] = $collections;
-            
+
             $this->assign('product', $product);
-            
+
             $this->assign('province', $this->model('province')->select());
 
             $filter = [
@@ -1767,8 +1767,8 @@ class mobile extends view
             //获取购物车数量
             $cartnum = $this->model("cart")->where("uid=?", [$uid])->find('sum(num) as cou');
             $this->assign('num', $cartnum['cou'] > 0 ? $cartnum['cou'] : 0);
-            
-            
+
+
             $bind = $this->model('bind')->where('pid=?',[$id])->select();
             $this->assign('bind', $bind);
 
@@ -1809,10 +1809,10 @@ class mobile extends view
             $product = $this->model('category_product')->fetchAll($product_filter);
             $productHelper = new product();
             foreach ($product as &$p) {
-            	$p['oldprice'] = $p['oldprice'] * $p['selled'];
-            	$p['price'] = $p['price'] * $p['selled'];
-            	$p['v1price'] = $p['v1price'] * $p['selled'];
-            	$p['v2price'] = $p['v2price'] * $p['selled'];
+            	$p['oldprice'] = $p['oldprice'];
+            	$p['price'] = $p['price'] ;
+            	$p['v1price'] = $p['v1price'];
+            	$p['v2price'] = $p['v2price'];
             	
                 $p['origin'] = $this->model('country')->get($p['origin']);
 
@@ -1964,10 +1964,10 @@ class mobile extends view
 
 
         foreach ($product as &$p) {
-        	$p['oldprice'] = $p['oldprice']  * $p['selled'];
-        	$p['price'] = $p['price']  * $p['selled'];
-        	$p['v1price'] = $p['v1price'] * $p['selled'];
-        	$p['v2price'] = $p['v2price'] * $p['selled'];
+        	$p['oldprice'] = $p['oldprice'] ;
+        	$p['price'] = $p['price']  ;
+        	$p['v1price'] = $p['v1price'] ;
+        	$p['v2price'] = $p['v2price'] ;
         	
             if (in_array($p['id'], $theme)) {
                 $p['is_theme'] = 1;
@@ -1990,13 +1990,13 @@ class mobile extends view
                     $p['stock'] = $price_collection[0]['sum(stock)'];
                 }
                 if ($price_collection[0]['min(price)'] !== NULL && $price_collection[0]['max(price)'] !== NULL) {
-                    $p['price'] = $price_collection[0]['min(price)'] * $p['selled'] . '起';//.'~'.$price_collection[0]['max(price)'];
+                    $p['price'] = $price_collection[0]['min(price)'] . '起';//.'~'.$price_collection[0]['max(price)'];
                 }
                 if ($price_collection[0]['min(v1price)'] !== NULL && $price_collection[0]['max(v1price)'] !== NULL) {
-                    $p['v1price'] = $price_collection[0]['min(v1price)'] * $p['selled'] . '起';//.'~'.$price_collection[0]['max(v1price)'];
+                    $p['v1price'] = $price_collection[0]['min(v1price)']  . '起';//.'~'.$price_collection[0]['max(v1price)'];
                 }
                 if ($price_collection[0]['min(v2price)'] !== NULL && $price_collection[0]['max(v2price)'] !== NULL) {
-                    $p['v2price'] = $price_collection[0]['min(v2price)'] * $p['selled'] . '起';//.'~'.$price_collection[0]['max(v2price)'];
+                    $p['v2price'] = $price_collection[0]['min(v2price)']  . '起';//.'~'.$price_collection[0]['max(v2price)'];
                 }
             }
         }

@@ -182,11 +182,11 @@
                 <li class="stock">
                     <span class="red">
                     {%if isset($user) && $user.vip==1%}
-                                       ￥{%$product.v1price%}
+                                       ￥{% $product.v1price*$product.selled %}
                     {%elseif isset($user) && $user.vip==2%}
-                    ￥{%$product.v2price%}
+                    ￥{%$product.v2price*$product.selled%}
                     {%else%}
-                    ￥{%$product.price%}
+                    ￥{%$product.price*$product.selled%}
                     {%/if%}
                     </span>
                     <span class="black">{%if $product.auto_stock==0%}（不限库存）{%elseif $product.stock<10%}（库存不足）{%elseif $product.stock>10%}(库存充足){%/if%}</span>
