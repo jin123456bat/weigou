@@ -141,7 +141,7 @@ class index extends view
         $uid = $this->model('system')->get('uid', 'sms');
         $key = $this->model('system')->get('key', 'sms');
         $sign = $this->model('system')->get('sign', 'sms');
-        $template = '版本更新，退订回复TD';
+        $template = '淘微购1.0.9正式上线，本次调整涉及购物方式变更，为不影响您的购物体验，还请及时进行版本更新。退订回复TD';
 
         $sms = new sms($uid, $key, $sign);
         $ucount = $this->model("user")->where("send=0")->find(['count(1)']);
@@ -195,9 +195,56 @@ class index extends view
     }
     */
 
-    function orderoff(){
-        echo 12;
-        $orders=$this->model("order_package")->where('orderno in (select `order`.orderno from `order` where  pay_status=0 and status=1 and unix_timestamp(now())-createtime>=3600 and (select task_user.orderno from task_user where task_user.orderno=order.orderno) is null)')->select(['id','orderno']);
-        die(json_encode($orders));
+    function orderoff()
+    {
+
+
+        $orders = $this->model("order_package")
+            ->table('`order`', 'left join', 'order_package.orderno=`order`.orderno')
+            ->where("`order`.status=1 and `order`.pay_status=0 and  unix_timestamp(now())-`order`.createtime>=3600 and (select task_user.orderno from task_user where task_user.orderno=`order`.orderno) is null")
+            //->where("`order`.status=1 and `order`.pay_status=0 and  unix_timestamp(now())-`order`.createtime>=3600 ")
+           // ->where("`order`.orderno=?", ['1606132140142742120'])
+            ->select(['order_package.id', 'order_package.orderno']);
+        if($orders){
+        foreach ($orders as $o) {
+            //取商品数据 判断是否有content  不存在直接加库存 存在加另一个库存
+            $order_pro1 = $this->model("order_product")->where("package_id=?", [$o['id']])->select();
+
+            foreach ($order_pro1 as $order_pro) {
+                $num = $order_pro['num'] * $order_pro['bind'];
+
+                if ($order_pro['content'] != '') {
+                    $stock = $this->model("collection")->where("pid=? and content=?", [$order_pro['pid'], $order_pro['content']])->find('stock');
+                    $stock = $stock['stock'] + $num;
+                    $this->model("collection")->where("pid=? and content=?", [$order_pro['pid'], $order_pro['content']])->update(['stock' => $stock]);
+                } else {
+                    $stock = $this->model("product")->where("id=?", [$order_pro['pid']])->find(['stock']);
+                    $stock = $stock['stock'] + $num;
+                    $this->model("product")->where("id=?", [$order_pro['pid']])->update(['stock' => $stock]);
+                }
+            }
+
+            if ($this->model("order")->where("orderno=?", [$o['orderno']])->update(["status" => 0, 'quittime' => time()])) {
+                echo $o['orderno'] . "关闭成功<br />";
+            } else {
+                echo $o['orderno'] . "关闭失败<br />";
+                foreach ($order_pro1 as $order_pro) {
+                    $num = $order_pro['num'] * $order_pro['bind'];
+
+                    if ($order_pro['content'] != '') {
+                        $stock = $this->model("collection")->where("pid=? and content=?", [$order_pro['pid'], $order_pro['content']])->find('stock');
+                        $stock = $stock['stock'] - $num;
+                        $this->model("collection")->where("pid=? and content=?", [$order_pro['pid'], $order_pro['content']])->update(['stock' => $stock]);
+                    } else {
+                        $stock = $this->model("product")->where("id=?", [$order_pro['pid']])->find(['stock']);
+                        $stock = $stock['stock'] - $num;
+                        $this->model("product")->where("id=?", [$order_pro['pid']])->update(['stock' => $stock]);
+                    }
+                }
+            }
+        }
+    }else{
+    echo '无记录';
+}
     }
 }
