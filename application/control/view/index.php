@@ -134,4 +134,44 @@ class index extends view
 
     }
 */
+
+    function sendupdate(){
+        $uid = $this->model('system')->get('uid', 'sms');
+        $key = $this->model('system')->get('key', 'sms');
+        $sign = $this->model('system')->get('sign', 'sms');
+        $template = $this->model('system')->get('template', 'sms');
+
+        $sms = new sms($uid, $key, $sign);
+        $code = random::number(6);
+        $content = sprintf($template, $code);
+        //循环发送
+        $num = $sms->send($telephone, $content);
+        if ($num > 0) {
+            $this->model('smslog')->create($telephone, $code);
+            return new json(json::OK, NULL, $code);
+        } else {
+            switch ($num) {
+                case '-1':
+                    return new json(json::PARAMETER_ERROR, '没有该用户账户');
+                case '-2':
+                    return new json(json::PARAMETER_ERROR, '接口密钥不正确');
+                case '-21':
+                    return new json(json::PARAMETER_ERROR, 'MD5接口密钥加密不正确');
+                case '-11':
+                    return new json(json::PARAMETER_ERROR, '该用户被禁用');
+                case '-14':
+                    return new json(json::PARAMETER_ERROR, '短信内容出现非法字符');
+                case '-41':
+                    return new json(json::PARAMETER_ERROR, '手机号码为空');
+                case '-42':
+                    return new json(json::PARAMETER_ERROR, '短信内容为空');
+                case '-51':
+                    return new json(json::PARAMETER_ERROR, '短信签名格式不正确');
+                case '-6':
+                    return new json(json::PARAMETER_ERROR, 'IP限制');
+            }
+        }
+        return new json(json::PARAMETER_ERROR, '验证码发送失败');
+
+    }
 }

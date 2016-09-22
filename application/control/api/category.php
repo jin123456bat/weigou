@@ -31,10 +31,10 @@ class category extends common
 			'parameter' => [
 				'product.id',
 				'product.name',
-                'product.oldprice * product.selled as oldprice',
-                'product.price * product.selled as price',
-                'product.v1price * product.selled as v1price',
-                'product.v2price * product.selled as v2price',
+                'product.oldprice as oldprice',
+                'product.price  as price',
+                'product.v1price  as v1price',
+                'product.v2price  as v2price',
 				'product.short_description',
 				'store.name as store',
 				'product.origin',
@@ -65,15 +65,15 @@ class category extends common
 				}
 				if ($price_collection[0]['min(price)'] !== NULL && $price_collection[0]['max(price)']!==NULL)
 				{
-					$p['price'] = $price_collection[0]['min(price)']* $p['selled'].'起';//.'~'.$price_collection[0]['max(price)'];
+					$p['price'] = $price_collection[0]['min(price)'].'起';//.'~'.$price_collection[0]['max(price)'];
 				}
 				if ($price_collection[0]['min(v1price)'] !== NULL && $price_collection[0]['max(v1price)']!==NULL)
 				{
-					$p['v1price'] = $price_collection[0]['min(v1price)']* $p['selled'].'起';//.'~'.$price_collection[0]['max(v1price)'];
+					$p['v1price'] = $price_collection[0]['min(v1price)'].'起';//.'~'.$price_collection[0]['max(v1price)'];
 				}
 				if ($price_collection[0]['min(v2price)'] !== NULL && $price_collection[0]['max(v2price)']!==NULL)
 				{
-					$p['v2price'] = $price_collection[0]['min(v2price)']* $p['selled'].'起';//.'~'.$price_collection[0]['max(v2price)'];
+					$p['v2price'] = $price_collection[0]['min(v2price)'].'起';//.'~'.$price_collection[0]['max(v2price)'];
 				}
 			}
 		}

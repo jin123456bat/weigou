@@ -571,9 +571,7 @@ class product extends ajax
                 }
             }
             return $result;
-        }
-
-        ;
+        };
 
 
         $config = config('file');
@@ -630,6 +628,7 @@ class product extends ajax
                 $result = [];
 
                 foreach ($data as $product) {
+
                     if (emptyProduct($product)) {
                         continue;
                     }
@@ -637,11 +636,15 @@ class product extends ajax
                     if (empty($product)) {
                         continue;
                     }
-
                     //商品id
                     $product_id = (string)$product[0];
+
                     if (empty($product_id)) {
                         $product_id = NULL;
+                    }else{
+                        if(!$this->model("product")->where("id=?",[$product_id])->find()){
+                            $product_id = NULL;
+                        }
                     }
 
                     //商品sku
@@ -758,9 +761,12 @@ class product extends ajax
 
                     //单位
                     $unit = trim((string)$product[28]);
+                    $bind1=array();
                     if (count($bind) > 1) {
                         for ($b = 0; $b < count($bind); $b++) {
-                            if (!isset($bind[$b]['inprice'])) {
+
+                            if (!isset($bind[$b]['inprice']) || $bind[$b]['inprice'] == 0) {
+
                                 unset($bind[$b]);
                                 continue;
                             }
@@ -770,28 +776,39 @@ class product extends ajax
                                 continue;
                             }
 
-                            if (!isset($bind[$b]['price'])) {
+                            if (!isset($bind[$b]['price']) || $bind[$b]['price'] == 0) {
                                 unset($bind[$b]);
 
                                 continue;
                             }
 
-                            if (!isset($bind[$b]['v1price'])) {
+                            if (!isset($bind[$b]['v1price']) || $bind[$b]['v1price']==0) {
                                 unset($bind[$b]);
                                 continue;
                             }
 
-                            if (!isset($bind[$b]['v2price'])) {
+                            if (!isset($bind[$b]['v2price']) || $bind[$b]['v2price']==0) {
                                 unset($bind[$b]);
                                 continue;
                             }
 
 
                             $bind[$b]['unit'] = $unit;
+                            $bind1[]= $bind[$b];
                         }
                     }
 
 
+                    $countbind=count($bind1)-1;
+                    if($countbind>0) {
+                        $product_price = $bind1[$countbind]['price'];
+
+                        //v1价
+                        $product_v1price = $bind1[$countbind]['v1price'];
+
+                        //v2价
+                        $product_v2price = $bind1[$countbind]['v2price'];
+                    }
                     if (!empty($publish)) {
                         $publish = $this->model('publish')->where('name=?', [$publish])->find();
                         if (!empty($publish)) {
@@ -826,7 +843,9 @@ class product extends ajax
 
                     if (empty($product_id)) {
                         $productData = $productHelper->createProductData($product);
+
                         $sql = $this->model('product')->insert($productData);
+                        $product_id=$this->model("product")->lastInsertId();
                     } else {
                         $product['modifytime'] = $_SERVER['REQUEST_TIME'];
                         $sql = $this->model('product')->where('id=?', [$product_id])->update($product);
@@ -834,14 +853,23 @@ class product extends ajax
 
                     //生成导入结果
                     $product['id'] = $product_id;
-                    if (count($bind) > 1) {
-                        $j = 1;
-                        foreach ($bind as &$b) {
 
+                    if (count($bind1) > 1) {
+                        $j = 1;
+                        $this->model("bind")->where("pid=?", [$product_id])->delete();
+                        $bind1=array_reverse($bind1);
+                        foreach ($bind1 as &$b) {
                             $b['pid'] = $product_id;
                             $b['sort'] = $j;
-                            $b['content']='';
-                            $this->model("bind")->insert($b);
+                            $b['content'] = '';
+                            try {
+                                $this->model("bind")->insert($b);
+
+                            } catch (Exception $e) {
+
+
+                                return new json(json::PARAMETER_ERROR, '商品' . $b['pid'] . "错误");
+                            }
                             $j++;
                         }
                     }

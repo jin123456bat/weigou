@@ -113,6 +113,7 @@
                         <tr>
                             <th>名称</th>
                             <th>推送</th>
+                            <th>是否对接ERP</th>
                             <th>操作</th>
                         </tr>
                         </thead>
@@ -124,8 +125,9 @@
                                     for="erp">自动</label>
                                 <input type="radio" name="erp" id="erpc" value="0" checked><label
                                     for="erpc">手动</label></td>
-
+                            <td>否</td>
                             <td>
+
                                 <button class="btn btn-xs green-stripe default createBtn">添加</button>
                             </td>
                         </tr>
@@ -145,6 +147,8 @@
                                         for="erpc{%$store[store].id%}">手动</label>
                             </td>
                             {%/if%}
+                            <td>{%if empty($store[store].erp)%}否{%else%}是{%/if%}</td>
+
                             <td>
                                 <button class="btn btn-xs yellow-stripe default modify" data-id="{%$store[store].id%}">
                                     编辑

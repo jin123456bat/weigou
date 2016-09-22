@@ -32,10 +32,10 @@ class product extends common
                 'product.name',
                 'product.description',
                 'product.origin',
-                'product.oldprice * product.selled as oldprice',//下面4个是价格
-                'product.price * product.selled as price',
-                'product.v1price * product.selled as v1price',
-                'product.v2price * product.selled as v2price',
+                'product.oldprice  as oldprice',//下面4个是价格
+                'product.price  as price',
+                'product.v1price  as v1price',
+                'product.v2price  as v2price',
                 'product.auto_status',//下面4个状态判断
                 'product.status',
                 'product.avaliabletime_from',
@@ -68,13 +68,13 @@ class product extends common
                 $product['stock'] = $price_collection[0]['sum(stock)'];
             }
             if ($price_collection[0]['min(price)'] !== NULL && $price_collection[0]['max(price)'] !== NULL) {
-                $product['price'] = $price_collection[0]['min(price)'] * $product['selled'] . '~' . $price_collection[0]['max(price)'] * $product['selled'];
+                $product['price'] = $price_collection[0]['min(price)']  . '~' . $price_collection[0]['max(price)'] ;
             }
             if ($price_collection[0]['min(v1price)'] !== NULL && $price_collection[0]['max(v1price)'] !== NULL) {
-                $product['v1price'] = $price_collection[0]['min(v1price)'] * $product['selled'] . '~' . $price_collection[0]['max(v1price)'] * $product['selled'];
+                $product['v1price'] = $price_collection[0]['min(v1price)']  . '~' . $price_collection[0]['max(v1price)'];
             }
             if ($price_collection[0]['min(v2price)'] !== NULL && $price_collection[0]['max(v2price)'] !== NULL) {
-                $product['v2price'] = $price_collection[0]['min(v2price)'] * $product['selled'] . '~' . $price_collection[0]['max(v2price)'] * $product['selled'];
+                $product['v2price'] = $price_collection[0]['min(v2price)']  . '~' . $price_collection[0]['max(v2price)'];
             }
         }
 
@@ -197,10 +197,10 @@ class product extends common
             'parameter' => [
                 'product.id',
                 'product.name',
-                'product.oldprice * product.selled as oldprice',
-                'product.price * product.selled as price',
-                'product.v1price * product.selled as v1price',
-                'product.v2price * product.selled as v2price',
+                'product.oldprice  as oldprice',
+                'product.price  as price',
+                'product.v1price  as v1price',
+                'product.v2price  as v2price',
                 'product.short_description',
                 'store.name as store',
                 'product.origin',
@@ -238,13 +238,13 @@ class product extends common
                     $p['stock'] = $price_collection[0]['sum(stock)'];
                 }
                 if ($price_collection[0]['min(price)'] !== NULL && $price_collection[0]['max(price)'] !== NULL) {
-                    $p['price'] = $price_collection[0]['min(price)'] * $product['selled'] . '起';//'~'.$price_collection[0]['max(price)'];
+                    $p['price'] = $price_collection[0]['min(price)']  . '起';//'~'.$price_collection[0]['max(price)'];
                 }
                 if ($price_collection[0]['min(v1price)'] !== NULL && $price_collection[0]['max(v1price)'] !== NULL) {
-                    $p['v1price'] = $price_collection[0]['min(v1price)'] * $product['selled'] . '起';//'~'.$price_collection[0]['max(v1price)'];
+                    $p['v1price'] = $price_collection[0]['min(v1price)']  . '起';//'~'.$price_collection[0]['max(v1price)'];
                 }
                 if ($price_collection[0]['min(v2price)'] !== NULL && $price_collection[0]['max(v2price)'] !== NULL) {
-                    $p['v2price'] = $price_collection[0]['min(v2price)'] * $product['selled'] . '起';//'~'.$price_collection[0]['max(v2price)'];
+                    $p['v2price'] = $price_collection[0]['min(v2price)']  . '起';//'~'.$price_collection[0]['max(v2price)'];
                 }
             }
         }
@@ -279,10 +279,10 @@ class product extends common
             'parameter' => [
                 'product.id',
                 'product.name',
-                'product.oldprice * product.selled as oldprice',
-                'product.price * product.selled as price',
-                'product.v1price * product.selled as v1price',
-                'product.v2price * product.selled as v2price',
+                'product.oldprice  as oldprice',
+                'product.price  as price',
+                'product.v1price as v1price',
+                'product.v2price as v2price',
                 'product.short_description',
                 'store.name as store',
                 'product.origin',
@@ -310,13 +310,13 @@ class product extends common
                     $p['stock'] = $price_collection[0]['sum(stock)'];
                 }
                 if ($price_collection[0]['min(price)'] !== NULL && $price_collection[0]['max(price)'] !== NULL) {
-                    $p['price'] = $price_collection[0]['min(price)'] * $p['selled'] . '~' . $price_collection[0]['max(price)'] * $p['selled'];
+                    $p['price'] = $price_collection[0]['min(price)']  . '~' . $price_collection[0]['max(price)'] ;
                 }
                 if ($price_collection[0]['min(v1price)'] !== NULL && $price_collection[0]['max(v1price)'] !== NULL) {
-                    $p['v1price'] = $price_collection[0]['min(v1price)'] * $p['selled'] . '~' . $price_collection[0]['max(v1price)'] * $p['selled'];
+                    $p['v1price'] = $price_collection[0]['min(v1price)']  . '~' . $price_collection[0]['max(v1price)'] ;
                 }
                 if ($price_collection[0]['min(v2price)'] !== NULL && $price_collection[0]['max(v2price)'] !== NULL) {
-                    $p['v2price'] = $price_collection[0]['min(v2price)'] * $p['selled'] . '~' . $price_collection[0]['max(v2price)'] * $p['selled'];
+                    $p['v2price'] = $price_collection[0]['min(v2price)']  . '~' . $price_collection[0]['max(v2price)'] ;
                 }
             }
         }
