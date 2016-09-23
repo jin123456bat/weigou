@@ -149,6 +149,22 @@ class export extends view
                     break;
             }
 
+            //判断有没有bind
+            $op=$this->model("order_product")
+                ->where("package_id=?",[$value['id']])
+                ->select();
+            //替换inprice
+            foreach($op as $pp){
+
+            if($bind=$this->model("bind")->where("content=? and num=? and pid=?",[$pp['content'],$pp['bind'],$pp['pid']])->find()){
+
+
+
+                $value['inprice']= $bind['inprice'];
+
+
+            }
+            }
             $orderno_array[] = $value['orderno'];
 
             $shipname = $value['ship_name'];
