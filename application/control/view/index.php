@@ -245,6 +245,6 @@ class index extends view
         }
     }else{
     echo '无记录';
-}
+    }
     }
 }

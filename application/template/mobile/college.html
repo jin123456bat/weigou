@@ -19,7 +19,6 @@
 </head>
 <body>
 {%if !isset($smarty.get.webview) || $smarty.get.webview!=1%}
-{%else%}
 <div id="header">
     <header>
         <a href="javascript:window.history.go(-1);" class="left_btn"><i class="icon back"></i></a>
@@ -27,6 +26,8 @@
         <h1>学生身份验证</h1>
     </header>
 </div>
+{%else%}
+
 {%/if%}
 <div id="content">
     <div class="student-head">

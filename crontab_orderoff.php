@@ -17,8 +17,10 @@ function call($control, $action, $array = array())
         $out .= "Connection: Close\r\n\r\n";
         $length = fwrite($fp, $out);
         fclose($fp);
+        echo '执行成功';
         return true;
     }
 }
+
 
 call('index', 'orderoff');
