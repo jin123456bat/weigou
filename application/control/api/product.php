@@ -136,6 +136,10 @@ class product extends common
             $b['v1price'] = $b['v1price'] * $b['num'];
             $b['v2price'] = $b['v2price'] * $b['num'];
             $b['inprice'] = $b['inprice'] * $b['num'];
+            $b['price']=sprintf("%.2f", $b['price']);
+            $b['v1price'] = sprintf("%.2f", $b['v1price']);
+            $b['v2price'] = sprintf("%.2f", $b['v2price']);
+            $b['inprice'] = sprintf("%.2f", $b['inprice']);
         }
         $product['bind'] = $bind;
 

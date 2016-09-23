@@ -130,7 +130,10 @@ class cart extends common
                         $p['name'] .= "(" . $p['bind'] . $unit . ")";
 
                     }
-
+                    $p['price'] = sprintf("%.2f", $p['price']);
+                     $p['v1price'] = sprintf("%.2f", $p['v1price']);
+                     $p['v2price'] = sprintf("%.2f", $p['v2price']);
+                    /* $p['inprice'] = sprintf("%.2f", $p['inprice']);*/
 
                     //计算总价
                     switch ($user['vip']) {

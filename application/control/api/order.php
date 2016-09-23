@@ -344,6 +344,7 @@ class order extends common
                     $p['image'] = $productHelper->getListImage($p['id']);
                     $p['tax'] = $productHelper->getTaxFields($p['id']);
                     $p['price'] = $p['price'] * $p['bind'];
+                    $p['price']=sprintf('%.2f', $p['price']);
                     if ($p['content'] != '' || $p['bind'] > 1) {
 
                         $unit = $this->model("bind")->where("content=? and num=? and pid=?", [$p['content'], $p['bind'], $p['id']])->find(['unit']);
@@ -516,6 +517,7 @@ class order extends common
                 ]);
             foreach ($t_order['product'] as &$product) {
                 $product['price'] = $product['price'] * $product['bind'];
+                $product['price']= sprintf("%.2f", $product['price']);
                 $total_product_num += $product['num'];
                 $product['image'] = $productHelper->getListImage($product['id']);
                 $product['tax'] = $productHelper->getTaxFields($product['id']);
