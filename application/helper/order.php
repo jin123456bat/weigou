@@ -761,13 +761,16 @@ class order extends base
      */
     function refund($orderno, $order_product_id = NULL)
     {
+
         $order = $this->model('order')->where('orderno=?', [$orderno])->find();
         if (!empty($order)) {
             if ($order['pay_status'] != 1 && $order['pay_status'] != 4) {
                 return false;
             }
+
             //计算要退款的金额
             if (empty($order_product_id)) {
+
                 //查找订单尚未退款的金额
                 $extra_money = $this->model('order_package')
                     ->table('order_product', 'left join', 'order_product.package_id=order_package.id')
@@ -917,6 +920,7 @@ class order extends base
                                 }
 
                                 $this->model('order')->commit();
+
                                 return true;
                             } else {
                                 $this->model('order')->rollback();
@@ -930,7 +934,9 @@ class order extends base
                     return false;
                 }
             } else if ($order['pay_type'] == 'alipay') {
+
                 if (isset($response['is_success']) && strtoupper($response['is_success']) === 'T') {
+
                     //开启事务
                     $this->model('order')->transaction();
 
@@ -962,9 +968,11 @@ class order extends base
                                 'order_product.refundtime' => $_SERVER['REQUEST_TIME'],
                             ])
                         ) {
+
                             $this->model('order')->commit();
                             return true;
                         } else {
+
                             $this->model('order')->rollback();
                             return false;
                         }

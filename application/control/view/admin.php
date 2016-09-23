@@ -191,6 +191,11 @@ class admin extends view
 
 
                 }
+                if($bind= $this->model("bind")->where("content=? and num=? and pid=?", [$p['content'], $p['bind'], $p['id']])->find()){
+                    $p['price'] = $bind['price'];
+                    $p['v1price'] = $bind['v1price'];
+                    $p['v2price'] = $bind['v2price'];
+                }
                 //判断bind是否存在
                 if ($p['content'] != '' || $p['bind'] > 1) {
 

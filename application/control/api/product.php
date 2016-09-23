@@ -238,13 +238,13 @@ class product extends common
                     $p['stock'] = $price_collection[0]['sum(stock)'];
                 }
                 if ($price_collection[0]['min(price)'] !== NULL && $price_collection[0]['max(price)'] !== NULL) {
-                    $p['price'] = $price_collection[0]['min(price)']  . '起';//'~'.$price_collection[0]['max(price)'];
+                    $p['price'] = $price_collection[0]['min(price)']  ;//'~'.$price_collection[0]['max(price)'];
                 }
                 if ($price_collection[0]['min(v1price)'] !== NULL && $price_collection[0]['max(v1price)'] !== NULL) {
-                    $p['v1price'] = $price_collection[0]['min(v1price)']  . '起';//'~'.$price_collection[0]['max(v1price)'];
+                    $p['v1price'] = $price_collection[0]['min(v1price)'] ;//'~'.$price_collection[0]['max(v1price)'];
                 }
                 if ($price_collection[0]['min(v2price)'] !== NULL && $price_collection[0]['max(v2price)'] !== NULL) {
-                    $p['v2price'] = $price_collection[0]['min(v2price)']  . '起';//'~'.$price_collection[0]['max(v2price)'];
+                    $p['v2price'] = $price_collection[0]['min(v2price)']  ;//'~'.$price_collection[0]['max(v2price)'];
                 }
             }
         }
