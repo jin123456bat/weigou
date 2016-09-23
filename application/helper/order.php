@@ -792,16 +792,16 @@ class order extends base
 
                 //计算应该退款金额 包含税费
                 if (empty($order['coupon'])) {
-                    $money = $order_product['price'] * $order_product['num'] + $order_product['tax'];
+                    $money = $order_product['price'] * $order_product['num'] * $order_product['bind'] + $order_product['tax'];
                 } else {
                     $coupon = $this->model('coupon')->where('id=?', [$order['coupon']])->find();
                     if (empty($coupon['product_id'])) {
-                        $money = $order_product['price'] * $order_product['num'] + $order_product['tax'] - ($order_product['price'] * $order_product['num'] + $order_product['tax']) / ($order['goodsamount'] + $order['taxamount']) * $coupon['value'];
+                        $money = $order_product['price'] * $order_product['num'] * $order_product['bind'] + $order_product['tax'] - ($order_product['price'] * $order_product['num'] + $order_product['tax']) / ($order['goodsamount'] + $order['taxamount']) * $coupon['value'];
                     } else {
                         if ($coupon['product_id'] == $order_product['pid']) {
-                            $money = $order_product['price'] * $order_product['num'] + $order_product['tax'] - $coupon['value'];
+                            $money = $order_product['price'] * $order_product['num']* $order_product['bind'] + $order_product['tax'] - $coupon['value'];
                         } else {
-                            $money = $order_product['price'] * $order_product['num'] + $order_product['tax'];
+                            $money = $order_product['price'] * $order_product['num'] * $order_product['bind'] + $order_product['tax'];
                         }
                     }
                 }
@@ -865,7 +865,6 @@ class order extends base
 
             if ($order['pay_type'] == 'wechat') {
                 if ($response['return_code'] == 'SUCCESS') {
-                    die(json_encode($response));
                     if ($response['result_code'] == 'SUCCESS') {
                         //开启事务
                         $this->model('order')->transaction();

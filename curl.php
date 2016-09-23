@@ -7,14 +7,14 @@
  */
 
 
-$url = 'http://127.0.0.1/index.php?m=api&c=category&a=product';
+$url = 'http://www.twillg.com/index.php?m=api&c=product&a=detail';
 $partner = 'ios';
 $key = "ios";
 $posts = array(
     "partner" => $partner
 );
 $fields = array(
-    "id"=>"1518",
+    "id"=>"747",
     "telephone"=>'13067778316',
     'password'=>'123456',
     "orderno"=>'16090916193319463200',

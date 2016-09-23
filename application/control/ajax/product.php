@@ -808,6 +808,8 @@ class product extends ajax
 
                         //v2价
                         $product_v2price = $bind1[$countbind]['v2price'];
+                        //售卖数
+                        $product_selled = $bind1[$countbind]['num'];
                     }
                     if (!empty($publish)) {
                         $publish = $this->model('publish')->where('name=?', [$publish])->find();
