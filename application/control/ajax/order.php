@@ -3,7 +3,6 @@ namespace application\control\ajax;
 
 use system\core\ajax;
 use application\message\json;
-use application\helper\erp;
 use application\helper\erpSender;
 use application\helper\pay;
 use application\helper\admin;
@@ -272,27 +271,6 @@ class order extends ajax
             }
         }
         return new json(json::PARAMETER_ERROR);
-    }
-
-    function del()
-    {
-        $userHelper = new \application\helper\user();
-        $uid = $userHelper->isLogin();
-        if (empty($uid))
-            return new json(json::NOT_LOGIN);
-
-        $orderno = $this->post('orderno');
-        if (!empty($orderno)) {
-            //删除订单
-            if ($this->model('order')->where('uid=? and orderno=?', [$uid, $orderno])->update([
-                "isdelete" => 1
-            ])
-            ) {
-                return new json(json::OK);
-            }
-
-        }
-        return new json(json::PARAMETER_ERROR, '删除失败');
     }
 
 

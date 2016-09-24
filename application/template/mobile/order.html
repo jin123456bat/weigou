@@ -19,7 +19,7 @@
 </head>
 <style type="text/css">
     .fixtop {
-        z-index: 99999999999;
+        z-index: 1;
     }
 
     body {
@@ -922,10 +922,21 @@
     $('.del').on('click', function () {
         var orderno = $(this).data('orderno');
         var ths = $(this);
-        $.post('{%url m=ajax c=order a=del%}', {orderno: orderno}, function (response) {
-            window.location = '{%url c=mobile a=order%}';
-            return false;
-        });
+        window.confirm('您确认删除订单吗？',function(result){
+        	if(result)
+        	{
+        		$.post('{%url m=ajax c=order a=delete%}', {orderno: orderno}, function (response) {
+                    if(response.code==1)
+                   	{
+                   		ths.parents('.order').remove();
+                   	}
+                    else
+                   	{
+                   		msg(response.result);
+                   	}
+                });
+        	}
+        })
         return false;
     });
 
