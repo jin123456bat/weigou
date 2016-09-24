@@ -1159,6 +1159,7 @@ class mobile extends view
                     $tax = 0;
                     //筛选出仓库下的商品
                     $product = $this->model('cart')->fetchAll($product_filter);
+                    
                     foreach ($product as &$p) {
                         $p['origin'] = $this->model('country')->get($p['origin']);
                         $p['image'] = $productHelper->getListImage($p['id']);
@@ -1172,7 +1173,10 @@ class mobile extends view
                                     $p['price'] = $collection_price['price'] * $p['bind'];
                                     $p['v1price'] = $collection_price['v1price'] * $p['bind'];
                                     $p['v2price'] = $collection_price['v2price'] * $p['bind'];
-                                    $p['image'] = $this->model('upload')->get($collection_price['logo'], 'path');
+                                    if (!empty($collection_price['logo']))
+                                    {
+                                    	$p['image'] = $this->model('upload')->get($collection_price['logo'], 'path');
+                                    }
                                     $p['stock'] = $collection_price['stock'];
                                 }
                             }
@@ -1197,11 +1201,14 @@ class mobile extends view
                                 $tax += $productHelper->calculationTax($p['id'], $amount);
                         }
                     }
+                    
                     $st['product'] = $product;//商品内容
                     $st['amount'] = $amount;//商品总价
                     $st['tax'] = $tax;//实收税款
                     $st['discount'] = 0;//活动优惠? 这个价格怎么出来的?
                 }
+                
+               
 
                 $this->assign('store', $store);
                 //下架商品

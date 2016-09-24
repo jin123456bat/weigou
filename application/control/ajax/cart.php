@@ -16,7 +16,9 @@ class cart extends ajax
         $id = $this->post('id');
         $content = $this->post('content', '');
         $num = $this->post('num', 1, 'intval');
-
+        $bind = $this->post('bind',NULL);
+        
+        
         $userHelper = new helper\user();
         $uid = $userHelper->isLogin();
         if (empty($uid))
@@ -24,8 +26,10 @@ class cart extends ajax
 
         $productHelper = new helper\product();
 
-        $bind = $productHelper->getSelled(['id' => $id, 'content' => $content, 'num' => $num]);
-
+    	if (empty($bind))
+        {
+        	$bind = $productHelper->getSelled(['id' => $id, 'content' => $content, 'num' => $num]);
+        }
 
         if ($productHelper->canBuy($id, $content)) {
 
