@@ -1181,6 +1181,14 @@ class mobile extends view
                                 }
                             }
                         }
+                        
+                        $bindPrice = $productHelper->getPriceByBind($p);
+                        if ($bindPrice)
+                        {
+                        	$p['price'] = $bindPrice['price'] * $bindPrice['num'];
+                        	$p['v1price'] = $bindPrice['v1price'] * $bindPrice['num'];
+                        	$p['v2price'] = $bindPrice['v2price'] * $bindPrice['num'];
+                        }
 
                         //计算总价
                         switch ($user['vip']) {

@@ -68,11 +68,11 @@
                                 <div class="word">{%$store[store].product[product].content%}</div>
                                 <div id="number" class="number flex_box" style="display: none;">
                                     <a id="count_down" class="inC flex" data-id="{%$store[store].product[product].id%}"
-                                       data-content="{%$store[store].product[product].content%}">-</a>
+                                       data-content="{%$store[store].product[product].content%}" data-bind="{%$store[store].product[product].bind%}">-</a>
                                     <input id="goods_count" readonly name="goods_count" type="text" class="qty flex"
                                            value="{%$store[store].product[product].num%}">
                                     <a id="count_up" class="deC flex" data-id="{%$store[store].product[product].id%}"
-                                       data-content="{%$store[store].product[product].content%}">+</a>
+                                       data-content="{%$store[store].product[product].content%}" data-bind="{%$store[store].product[product].bind%}">+</a>
                                 </div>
                             </div>
                             <div class="right">
@@ -97,7 +97,7 @@
                         <font id="tax">{%$store[store].product[product].tax * 100%}</font>
                     </div>
                     <a class="del_btn" style="display: none;" data-id="{%$store[store].product[product].id%}"
-                       data-content="{%$store[store].product[product].content%}"></a>
+                       data-content="{%$store[store].product[product].content%}" data-bind="{%$store[store].product[product].bind%}"></a>
                 </div>
             </div>
             {%/section%}
@@ -599,11 +599,12 @@ $(".goods_wrap").find(".goods:last").children().css('border','none');
         });
     }
 
-    var remove_product = function (id, content, num, callback) {
+    var remove_product = function (id, content, num,bind, callback) {
         var data = {
             id: id,
             content: content,
             num: -num,
+            bind:bind,
         }
         $.post('{%url m=ajax c=cart a=add%}', data, function (response) {
             if (response.code != 1) {
@@ -867,6 +868,7 @@ $(".goods_wrap").find(".goods:last").children().css('border','none');
                     id: $(value).find('#count_down').data('id'),
                     content: $(value).find('#count_down').data('content'),
                     num: $(value).find('#goods_count').val(),
+                    bind:$(value).find('#count_down').data('bind'),
                 };
                 data.push(product);
             });
@@ -929,6 +931,7 @@ $(".goods_wrap").find(".goods:last").children().css('border','none');
                     id: $(value).find('#count_down').data('id'),
                     content: $(value).find('#count_down').data('content'),
                     num: $(value).find('#goods_count').val(),
+                    bind:$(value).find('#count_down').data('bind'),
                 };
                 data.push(product);
             });
@@ -959,7 +962,13 @@ $(".goods_wrap").find(".goods:last").children().css('border','none');
             var ths = $(this);
 
             $(".confirm").click(function () {
-                remove_product1($(".del_btn").data('id'), $(this).data('content'), $(this).parents('.goods').find('#goods_count').val(), function () {
+            	
+                remove_product(
+                		$(".del_btn").data('id'), 
+                		ths.data('content'),
+                		ths.parents('.goods').find('#goods_count').val(),
+                		ths.parents('.goods').find('#count_down').data('bind'),
+                		function () {
                     ths.parents('.goods').remove();
                 });
 
@@ -989,7 +998,7 @@ $(".goods_wrap").find(".goods:last").children().css('border','none');
                 $.each(store, function (index, value) {
                     var goods = $(value).find('.goods.active');
                     $.each(goods, function (index, value) {
-                        remove_product1($(value).find('#count_down').data('id'), $(value).find('#count_down').data('content'), $(value).find('#goods_count').val(), function () {
+                        remove_product($(value).find('#count_down').data('id'), $(value).find('#count_down').data('content'), $(value).find('#goods_count').val(), $(value).find('#count_down').data('bind'), function () {
                             goods.remove();
                         });
                     });
@@ -1042,7 +1051,8 @@ $(".goods_wrap").find(".goods:last").children().css('border','none');
                 $.post('{%url m=ajax c=cart a=add%}', {
                     id: $(this).data('id'),
                     content: $(this).data('content'),
-                    num: -1
+                    num: -1,
+                    bind:$(this).data('bind'),
                 }, function (response) {
                     if (response.code == 2) {
                         window.location = '{%url m=mobile a=login%}';
@@ -1073,7 +1083,8 @@ $(".goods_wrap").find(".goods:last").children().css('border','none');
                 $.post('{%url m=ajax c=cart a=add%}', {
                     id: $(this).data('id'),
                     content: $(this).data('content'),
-                    num: 1
+                    num: 1,
+                    bind:$(this).data('bind'),
                 }, function (response) {
                     if (response.code == 2) {
                         window.location = '{%url m=mobile a=login%}';
@@ -1089,17 +1100,6 @@ $(".goods_wrap").find(".goods:last").children().css('border','none');
                 });
             }
             return false;
-        });
-        $("input[id^=goods_count]").keyup(function () {
-            var cart_id = $(this).attr("cart_id");
-            var count = $("#goods_count").val().replace(/\D/g, '');
-            if (count == "") {
-                count = 1;
-            }
-            if (count > 0) {
-                $("#goods_count").val(count);
-            }
-            $(this).parents('.goods').find('#goods_num').html('×' + count);
         });
     })
 

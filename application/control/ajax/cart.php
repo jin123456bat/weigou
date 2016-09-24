@@ -49,6 +49,11 @@ class cart extends ajax
         return new json(json::PARAMETER_ERROR, '该商品无法购买');
     }
 
+    /**
+     * 删除用户的指定商品
+     * 所有规格和捆绑数量
+     * @return \application\message\json
+     */
     function del()
     {
         $id = $this->post('id');
@@ -62,6 +67,10 @@ class cart extends ajax
         return new json(json::OK, '删除商品成功');
     }
 
+    /**
+     * 删除用户下的指定仓库的所有商品
+     * @return \application\message\json
+     */
     function delall()
     {
         $id = $this->post('id');
@@ -81,6 +90,10 @@ class cart extends ajax
         return new json(json::OK, '删除商品成功');
     }
 
+    /**
+     * 删除指定用户的所有无效商品
+     * @return \application\message\json
+     */
     function deldown()
     {
         $userHelper = new helper\user();
