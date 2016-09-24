@@ -25,6 +25,32 @@ class order extends ajax
             }
         }
     }
+    
+    /**
+     * 订单删除功能
+     */
+    function delete()
+    {
+    	$orderno = $this->post('orderno');
+    	$userHelper = new user();
+    	$uid = $userHelper->isLogin();
+    	if (empty($uid)) {
+    		return new json(json::NOT_LOGIN);
+    	}
+    
+    	if (empty($orderno)) {
+    		return new json(json::PARAMETER_ERROR, '订单编号不能为空');
+    	}
+    
+    	if ($this->model('order')->where('orderno=?', [$orderno])->limit(1)->update([
+    		'isdelete' => 1,
+    		'deletetime' => $_SERVER['REQUEST_TIME']
+    	])
+    	) {
+    		return new json(json::OK);
+    	}
+    	return new json(json::PARAMETER_ERROR, '不要重复删除订单嘛');
+    }
 
     /**
      * 创建订单
