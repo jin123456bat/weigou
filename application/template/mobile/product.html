@@ -195,10 +195,7 @@
                 {%if !empty($product.collection) || !empty($bind)%}
                 <li class="clearfix" id="size">
                     <div class="left">
-                        {%section loop=$product.radioPrototype name=radioPrototype%} {%$product.radioPrototype[radioPrototype].name%} 、 {%/section%}
-                        {%if !empty($bind)%}
-                        	数量
-                        {%/if%}
+                        规格
                     </div>
                     <div class="right">
                         {%section name=collection loop=$product.collection%} {%if $product.collection[collection].available==1%} {%$product.collection[collection].content|replace:',':'、'%} {%break%} {%/if%} {%/section%}
@@ -1064,9 +1061,9 @@ $(document).ready(function() {
        					$('#unitprice').html($(bind_dom[i]).data('price'));
        					var price = parseFloat($(bind_dom[i]).data('price')) * parseInt(num);
        				}
-       				$('#collection_price').html('￥' + price);
+       				$('#collection_price').html('￥' + parseFloat(price).toFixed(2));
        				$('#selected_unitprice').val(price);
-       	        	$('.all_box .stock .red').html('￥' + parseFloat(price) * parseInt($('#goods_count').val()));
+       	        	$('.all_box .stock .red').html('￥' + parseFloat(parseFloat(price) * parseInt($('#goods_count').val())).toFixed(2));
        				
        			}
        		}
@@ -1192,10 +1189,10 @@ $(document).ready(function() {
             		var price = parseFloat(temp_collection.price) * parseInt(default_selled);
            		}
             }
-            $('#collection_price').html('￥' + price);
+            $('#collection_price').html('￥' + parseFloat(price).toFixed(2));
             $('#selected_unitprice').val(price);
              
-        	$('.all_box .stock .red').html('￥' + (parseFloat(price) * parseInt($('#goods_count').val())));
+        	$('.all_box .stock .red').html('￥' + parseFloat(parseFloat(price) * parseInt($('#goods_count').val())).toFixed(2));
             
             if ($('#product_autostock').data('value') == '1') {
                 if (temp_collection.stock > 10) {
@@ -1368,7 +1365,7 @@ $(document).ready(function() {
             $("#goods_count").val(count);
            
             
-           	$('.all_box .stock .red').html('￥'+(count * parseFloat($('#selected_unitprice').val())));
+           	$('.all_box .stock .red').html('￥'+parseFloat(count * parseFloat($('#selected_unitprice').val())).toFixed(2));
            	
         }
     });
@@ -1381,7 +1378,7 @@ $(document).ready(function() {
         if (count > 0) {
             $("#goods_count").val(count);
             
-            $('.all_box .stock .red').html('￥'+(count * parseFloat($('#selected_unitprice').val())));
+            $('.all_box .stock .red').html('￥'+parseFloat(count * parseFloat($('#selected_unitprice').val())).toFixed(2));
         }
     });
     
