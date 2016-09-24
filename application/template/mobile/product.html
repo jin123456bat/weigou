@@ -228,7 +228,7 @@
         </div>
         <div id="size_box" class="size_box" style="display: none;">
             <div class="title">
-                {%section loop=$product.radioPrototype name=radioPrototype%} {%$product.radioPrototype[radioPrototype].name%} {%if !$smarty.section.radioPrototype.last%}、{%/if%} {%/section%}
+                	规格
                 <span class="up"></span>
             </div>
             <div class="img_box clearfix">
@@ -237,9 +237,14 @@
                 </div>
                 <div class="right">
                     <div class="stock">
-                        <span class="red" id="collection_price">￥0</span>
-                        <span class="black" id="collection_stock">（库存充足）</span>
+                        <span class="red" style="color:#000000;" id="collection_price">￥0</span>
+                        <span class="black" style="color: grey;" id="collection_stock">（库存充足）</span>
                     </div>
+                    {%if !empty($bind)%}
+                    <div class="unitprice">
+                    	单价:<div id="unitprice" style="display:inline; color:#f32529;">￥123</div>
+                    </div>
+                    {%/if%}
                     <div class="size">
                         已选:<span>
                         {%section name=collection loop=$product.collection%}
@@ -265,10 +270,10 @@
                 {%/section%}
         		{%if !empty($bind)%}
                 <li>
-                    <h6>数量</h6>
+                    <h6>非系统默认数量请留意价格变动</h6>
                     <div class="bind_box clearfix">
                         {%section name=bind loop=$bind%}
-                        <div class="grid {%if $smarty.section.bind.first%}active{%/if%}" data-num="{%$bind[bind].num%}">{%$bind[bind].num%}{%$bind[bind].unit%}</div>
+                        <div class="grid {%if $smarty.section.bind.first%}active{%/if%}" data-num="{%$bind[bind].num%}">{%$bind[bind].num%}{%$bind[bind].unit%}装</div>
                         {%/section%}
                     </div>
                 </li>
@@ -1031,14 +1036,14 @@ $(document).ready(function() {
        				
        				if(choose_size.length!=0)
        				{
-	       				var size = '已选:<span>' + choose_size.join('</span>,<span>') + '</span>,<span>'+num+unit+'</span>';
+	       				var size = '已选:<span>' + choose_size.join('</span>,<span>') + '</span>,<span>'+num+unit+'装</span>';
 	       				$('.size').html(size);
 	       				
 	       				$('#size .right').html(choose_size.join(',')+','+num+unit);
        				}
        				else
    					{
-       					var size = '已选:<span>'+num+unit+'</span>';
+       					var size = '已选:<span>'+num+unit+'装</span>';
 	       				$('.size').html(size);
 	       				
 	       				$('#size .right').html(num+unit);
@@ -1046,14 +1051,17 @@ $(document).ready(function() {
        				
        				if($('#user_vip')==2)
  					{
+       					$('#unitprice').html($(bind_dom[i]).data('v2price'));
  						var price = parseFloat($(bind_dom[i]).data('v2price')) * parseInt(num);
  					}
        				else if($('#user_vip')==1)
      				{
+       					$('#unitprice').html($(bind_dom[i]).data('v1price'));
        					var price = parseFloat($(bind_dom[i]).data('v1price')) * parseInt(num);
      				}
        				else
        				{
+       					$('#unitprice').html($(bind_dom[i]).data('price'));
        					var price = parseFloat($(bind_dom[i]).data('price')) * parseInt(num);
        				}
        				$('#collection_price').html('￥' + price);
@@ -1102,7 +1110,7 @@ $(document).ready(function() {
        	{
         	if($(bind_dom[i]).data('content') == choose_size.join(','))
        		{
-        		var div = $('<div class="grid" data-num="'+$(bind_dom[i]).data('num')+'">'+$(bind_dom[i]).data('num')+$(bind_dom[i]).data('unit')+'</div>');
+        		var div = $('<div class="grid" data-num="'+$(bind_dom[i]).data('num')+'">'+$(bind_dom[i]).data('num')+$(bind_dom[i]).data('unit')+'装</div>');
         		if(!has_active_div)
         		{
         			div.addClass('active');
@@ -1149,10 +1157,12 @@ $(document).ready(function() {
            	{
             	if(has_active_div)
            		{
+            		$('#unitprice').html(selected_bind.v1price);
            			var price = parseFloat(selected_bind.v1price) * parseInt(selected_bind.num);
            		}
             	else
            		{
+            		$('#unitprice').html(temp_collection.v1price);
             		var price = parseFloat(temp_collection.v1price) * parseInt(default_selled);
            		}
             }
@@ -1160,10 +1170,12 @@ $(document).ready(function() {
 	        {
             	if(has_active_div)
             	{
+            		$('#unitprice').html(selected_bind.v2price);
             		var price = parseFloat(selected_bind.v2price) * parseInt(selected_bind.num);
             	}
             	else
            		{
+            		$('#unitprice').html(temp_collection.v2price);
             		var price = parseFloat(temp_collection.v2price) * parseInt(default_selled);
            		}
             }
@@ -1171,10 +1183,12 @@ $(document).ready(function() {
            	{
             	if(has_active_div)
            		{
+            		$('#unitprice').html(selected_bind.price);
             		var price = parseFloat(selected_bind.price) * parseInt(selected_bind.num);
            		}
             	else
            		{
+            		$('#unitprice').html(temp_collection.price);
             		var price = parseFloat(temp_collection.price) * parseInt(default_selled);
            		}
             }
@@ -1185,14 +1199,14 @@ $(document).ready(function() {
             
             if ($('#product_autostock').data('value') == '1') {
                 if (temp_collection.stock > 10) {
-                    $('#collection_stock').html('库存充足');
+                    $('#collection_stock').html('(库存充足)');
                 } else if (temp_collection.stock > 0) {
                     $('#collection_stock').html('剩余:' + temp_collection.stock);
                 } else {
-                    $('#collection_stock').html('库存不足');
+                    $('#collection_stock').html('(库存不足)');
                 }
             } else {
-                $('#collection_stock').html('库存充足');
+                $('#collection_stock').html('(库存充足)');
             }
 
             if (temp_collection.logo != null && temp_collection.logo != '') {
