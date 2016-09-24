@@ -13,17 +13,17 @@ class user extends base
     function isLogin()
     {
 
-        //if ($this->session->role === 'user')
-        //	return $this->session->user_id;
+        if ($this->session->role === 'user')
+        	return $this->session->user_id;
         //用memcached代替
-        if ($key = $this->cookie->__get("PHPSESSID")) {
+        /* if ($key = $this->cookie->__get("PHPSESSID")) {
 
             if ($user = $this->memcache->__get($key)) {
                 if ($user['role'] === 'user')
                     return $user['user_id'];
             }
 
-        }
+        } */
         return 0;
     }
 
@@ -33,25 +33,9 @@ class user extends base
      */
     function saveUserSession($user)
     {
-
         if (!empty($user)) {
-            if ($key = $this->cookie->__get("PHPSESSID")) {
-
-                $this->memcache->__unset($key);
-            }
-
-
-            //$_SESSION['user_id'] = $user['id'];
-            //$_SESSION['role'] = 'user';
-            $use['user_id'] = $user['id'];
-            $use['role'] = 'user';
-            //生成一个id
-
-            //将session存到cookie
-            $this->memcache->__set($key, $use);
-
-
-
+			$this->session->user_id = $user['id'];
+			$this->session->role = 'user';
             return true;
         }
         return false;
