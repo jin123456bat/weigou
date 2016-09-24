@@ -192,10 +192,13 @@
                     <span class="black">{%if $product.auto_stock==0%}（不限库存）{%elseif $product.stock<10%}（库存不足）{%elseif $product.stock>10%}(库存充足){%/if%}</span>
                     <a class="close_btn" onClick="$('#black_bg').hide();"></a>
                 </li>
-                {%if !empty($product.collection)%}
+                {%if !empty($product.collection) || !empty($bind)%}
                 <li class="clearfix" id="size">
                     <div class="left">
-                        {%section loop=$product.radioPrototype name=radioPrototype%} {%$product.radioPrototype[radioPrototype].name%} {%if !$smarty.section.radioPrototype.last%}、{%/if%} {%/section%}
+                        {%section loop=$product.radioPrototype name=radioPrototype%} {%$product.radioPrototype[radioPrototype].name%} 、 {%/section%}
+                        {%if !empty($bind)%}
+                        	数量
+                        {%/if%}
                     </div>
                     <div class="right">
                         {%section name=collection loop=$product.collection%} {%if $product.collection[collection].available==1%} {%$product.collection[collection].content|replace:',':'、'%} {%break%} {%/if%} {%/section%}
@@ -260,11 +263,29 @@
                     </div>
                 </li>
                 {%/section%}
+        		{%if !empty($bind)%}
+                <li>
+                    <h6>数量</h6>
+                    <div class="bind_box clearfix">
+                        {%section name=bind loop=$bind%}
+                        <div class="grid {%if $smarty.section.bind.first%}active{%/if%}" data-num="{%$bind[bind].num%}">{%$bind[bind].num%}{%$bind[bind].unit%}</div>
+                        {%/section%}
+                    </div>
+                </li>
+                {%/if%}
             </ul>
             <div class="btn_box">
-                {%section name=collection loop=$product.collection%} {%if $product.collection[collection].available==1%}
-                <div class="collection hide" data-content="{%$product.collection[collection].content%}" data-price="{%$product.collection[collection].price%}" data-v1price="{%$product.collection[collection].v1price%}" data-v2price="{%$product.collection[collection].v2price%}" data-stock="{%$product.collection[collection].stock%}" data-logo="{%$product.collection[collection].logo%}"></div>
-                {%/if%} {%/section%}
+                {%section name=collection loop=$product.collection%}
+	                {%if $product.collection[collection].available==1%}
+	                <div class="collection hide" data-content="{%$product.collection[collection].content%}" data-price="{%$product.collection[collection].price%}" data-v1price="{%$product.collection[collection].v1price%}" data-v2price="{%$product.collection[collection].v2price%}" data-stock="{%$product.collection[collection].stock%}" data-logo="{%$product.collection[collection].logo%}"></div>
+	                {%/if%}
+				{%/section%}
+				{%section name=bind loop=$bind%}
+					<div class="binddiv hide" data-sort="{%$bind[bind].sort%}" data-unit="{%$bind[bind].unit%}" data-price="{%$bind[bind].price%}" data-v1price="{%$bind[bind].v1price%}" data-v2price="{%$bind[bind].v2price%}" data-content="{%$bind[bind].content%}" data-num="{%$bind[bind].num%}"></div>
+				{%/section%}
+				
+				<div id="default_selled" class="hide" data-selled="{%$product.selled%}"></div>
+                <div id="default_unit" class="hide" data-unit="{%$product.MeasurementUnit%}"></div>
                 <div class="hide" id="product_autostock" data-value="{%$product.auto_stock%}"></div>
                 <a class="long_btn" id="save_collection">确认</a>
             </div>
@@ -471,6 +492,15 @@
             <a href="{%url c=mobile a=forgetpwd%}" class="left">忘记密码</a>
         </div>
     </div>
+    <!-- 用户VIP等级,为空的话就是尚未登录 -->
+    <input type="hidden" id="user_vip" value="{%if isset($user)%}{%$user.vip%}{%/if%}">
+    {%if isset($user) && $user.vip==2%}
+    <input type="hidden" id="selected_unitprice" value="{%$product.v2price%}">
+    {%else if isset($user) && $user.vip==1%}
+    <input type="hidden" id="selected_unitprice" value="{%$product.v1price%}">
+    {%else%}
+    <input type="hidden" id="selected_unitprice" value="{%$product.price%}">
+    {%/if%}
     {%include file='mobile/public/msg.html'%}
 </body>
 <script type="text/javascript">
@@ -547,6 +577,7 @@ $('#loginBtn').on('click', function() {
     }, function(response) {
         if (response.code == 1) {
             msg('登陆成功');
+            $('#user_vip').val(response.body.vip);
             $('.task-login').hide('normal', function() {
                 //加载我的地址列表
                 $.get('{%url m=ajax c=address a=mylists%}', function(response) {
@@ -976,15 +1007,74 @@ $(document).ready(function() {
         }
         return null;
     }
+    
+    $('#size_box .choose_size .bind_box .grid').live('click',function(){
+    	$(this).siblings().removeClass('active');
+        $(this).addClass('active');
+        
+        var choose_size = [];
+        var grid_box = $('.choose_size .grid_box');
+        for (var i = 0; i < grid_box.length; i++)
+        {
+            choose_size.push($(grid_box[i]).find('.active').html());
+        }
+        
+        var bind_dom = $('.binddiv');
+        for(var i=0;i<bind_dom.length;i++)
+       	{
+        	if($(bind_dom[i]).data('content') == choose_size.join(','))
+       		{
+        		if($(this).data('num')==$(bind_dom[i]).data('num'))
+       			{
+        			var num = $(bind_dom[i]).data('num');
+       				var unit = $(bind_dom[i]).data('unit');
+       				
+       				if(choose_size.length!=0)
+       				{
+	       				var size = '已选:<span>' + choose_size.join('</span>,<span>') + '</span>,<span>'+num+unit+'</span>';
+	       				$('.size').html(size);
+	       				
+	       				$('#size .right').html(choose_size.join(',')+','+num+unit);
+       				}
+       				else
+   					{
+       					var size = '已选:<span>'+num+unit+'</span>';
+	       				$('.size').html(size);
+	       				
+	       				$('#size .right').html(num+unit);
+   					}
+       				
+       				if($('#user_vip')==2)
+ 					{
+ 						var price = parseFloat($(bind_dom[i]).data('v2price')) * parseInt(num);
+ 					}
+       				else if($('#user_vip')==1)
+     				{
+       					var price = parseFloat($(bind_dom[i]).data('v1price')) * parseInt(num);
+     				}
+       				else
+       				{
+       					var price = parseFloat($(bind_dom[i]).data('price')) * parseInt(num);
+       				}
+       				$('#collection_price').html('￥' + price);
+       				$('#selected_unitprice').val(price);
+       	        	$('.all_box .stock .red').html('￥' + parseFloat(price) * parseInt($('#goods_count').val()));
+       				
+       			}
+       		}
+       	}
+        
+        return false;
+    });
 
-    $('.grid').on('click', function() {
-
-        $(this).siblings().removeClass('active');
+    $('#size_box .choose_size .grid_box .grid').on('click', function() {
+    	$(this).siblings().removeClass('active');
         $(this).addClass('active');
 
         var choose_size = [];
         var grid_box = $('.choose_size .grid_box');
-        for (var i = 0; i < grid_box.length; i++) {
+        for (var i = 0; i < grid_box.length; i++)
+        {
             choose_size.push($(grid_box[i]).find('.active').html());
         }
 
@@ -1000,14 +1090,99 @@ $(document).ready(function() {
                 logo: $(collection_box[i]).data('logo'),
             });
         }
-
+        
+        var bind_dom = $('.binddiv');
+        $('.bind_box').empty();
+        var has_active_div = false;
+        var selected_bind = null;
+        var default_selled = $('#default_selled').data('selled');
+        var default_unit = $('#default_unit').data('unit');
+        
+        for(var i=0;i<bind_dom.length;i++)
+       	{
+        	if($(bind_dom[i]).data('content') == choose_size.join(','))
+       		{
+        		var div = $('<div class="grid" data-num="'+$(bind_dom[i]).data('num')+'">'+$(bind_dom[i]).data('num')+$(bind_dom[i]).data('unit')+'</div>');
+        		if(!has_active_div)
+        		{
+        			div.addClass('active');
+        			has_active_div = true;
+        			selected_bind = {
+        				'content':$(bind_dom[i]).data('content'),
+        				'num':$(bind_dom[i]).data('num'),
+        				'price':$(bind_dom[i]).data('price'),
+        				'v1price':$(bind_dom[i]).data('v1price'),
+        				'v2price':$(bind_dom[i]).data('v2price'),
+        			};
+        			default_selled = $(bind_dom[i]).data('num');
+        			default_unit = $(bind_dom[i]).data('unit');
+        		}
+        		$('.bind_box').append(div);
+       		}
+       	}
+        
+        if(bind_dom.length>0 && !has_active_div)
+        {
+        	$('.bind_box').append('<div class="grid active">'+default_selled+default_unit+'</div>');
+        }
+       
         var temp_collection = get_collection(choose_size, collection);
         if (temp_collection != null) {
-            $('.size').html('已选:<span>' + temp_collection.content.split(',').join('</span>,<span>') + '</span>');
-            $('#size .right').html(temp_collection.content);
-
-            $('#collection_price').html('￥' + temp_collection.price);
-
+        	var size = '已选:<span>' + temp_collection.content.split(',').join('</span>,<span>') + '</span>';
+        	if(bind_dom.length>0)
+            {
+        		size += ',<span>'+default_selled+default_unit+'</span>';
+            }
+            $('.size').html(size);
+            
+            if(bind_dom.length>0)
+           	{
+            	$('#size .right').html(temp_collection.content+','+default_selled+default_unit);
+           	}
+            else
+           	{
+            	$('#size .right').html(temp_collection.content);
+           	}
+            
+            //价格
+            if($('#user_vip').val()==1)
+           	{
+            	if(has_active_div)
+           		{
+           			var price = parseFloat(selected_bind.v1price) * parseInt(selected_bind.num);
+           		}
+            	else
+           		{
+            		var price = parseFloat(temp_collection.v1price) * parseInt(default_selled);
+           		}
+            }
+            else if($('#user_vip').val()==2)
+	        {
+            	if(has_active_div)
+            	{
+            		var price = parseFloat(selected_bind.v2price) * parseInt(selected_bind.num);
+            	}
+            	else
+           		{
+            		var price = parseFloat(temp_collection.v2price) * parseInt(default_selled);
+           		}
+            }
+            else
+           	{
+            	if(has_active_div)
+           		{
+            		var price = parseFloat(selected_bind.price) * parseInt(selected_bind.num);
+           		}
+            	else
+           		{
+            		var price = parseFloat(temp_collection.price) * parseInt(default_selled);
+           		}
+            }
+            $('#collection_price').html('￥' + price);
+            $('#selected_unitprice').val(price);
+             
+        	$('.all_box .stock .red').html('￥' + (parseFloat(price) * parseInt($('#goods_count').val())));
+            
             if ($('#product_autostock').data('value') == '1') {
                 if (temp_collection.stock > 10) {
                     $('#collection_stock').html('库存充足');
@@ -1075,15 +1250,21 @@ $(document).ready(function() {
     });
 
     $('.confirm_btn').on('click', function() {
+    	
+    	var choose_size = [];
+        var grid_box = $('.choose_size .grid_box');
+        for (var i = 0; i < grid_box.length; i++)
+        {
+            choose_size.push($(grid_box[i]).find('.active').html());
+        }
+    	
         if ($('input[name=add_to_cart]').val() == 1) {
             $.post('{%url m=ajax c=cart a=add%}', {
                 id: '{%$smarty.get.id%}',
-                content: $.trim($('#size .right').html()).replace('、', ','),
+                content: choose_size.join(','),
                 num: $('#goods_count').val(),
+                bind:$('#size_box .choose_size .bind_box .grid.active').data('num'),
             }, function(response) {
-
-               // var returndata = JSON.parse(response);
-
                 if (response.code == 1) {
 			    $(".car_num").html(response.body);
                     msg('添加到购物车成功');
@@ -1097,8 +1278,9 @@ $(document).ready(function() {
         } else {
             var product = {
                 id: '{%$smarty.get.id%}',
-                content: $.trim($('#size .right').html()).replace('、', ','),
+                content: choose_size.join(','),
                 num: $('#goods_count').val(),
+                bind:$('#size_box .choose_size .bind_box .grid.active').data('num'),
             };
 
             $.post('{%url m=ajax c=coupon a=mylistsDynamic%}', {
@@ -1161,6 +1343,8 @@ $(document).ready(function() {
         if (count > 1) {
             count--;
             $("#goods_count").val(count);
+            
+            $('.all_box .stock .red').html('￥'+(count * parseFloat($('#selected_unitprice').val())));
         }
     });
     $("a[id^=count_up]").click(function() {
@@ -1168,6 +1352,10 @@ $(document).ready(function() {
         if (count > 0) {
             count++;
             $("#goods_count").val(count);
+           
+            
+           	$('.all_box .stock .red').html('￥'+(count * parseFloat($('#selected_unitprice').val())));
+           	
         }
     });
     $("input[id^=goods_count]").keyup(function() {
@@ -1178,9 +1366,11 @@ $(document).ready(function() {
         }
         if (count > 0) {
             $("#goods_count").val(count);
+            
+            $('.all_box .stock .red').html('￥'+(count * parseFloat($('#selected_unitprice').val())));
         }
     });
-
+    
     $('.choose_size li .grid.active:first').trigger('click');
 })
 

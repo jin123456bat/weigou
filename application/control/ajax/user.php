@@ -625,7 +625,7 @@ class user extends ajax
                 }
             }
 
-            return new json(json::OK);
+            return new json(json::OK,NULL,$userData);
         }
         return new json(json::PARAMETER_ERROR, '密码错误');
     }

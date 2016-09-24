@@ -1633,11 +1633,14 @@ class mobile extends view
                 'product.short_description',//短描述
                 'product.freetax',//是否保税 1 包
                 'product.selled',//起售数
+                'product.MeasurementUnit',
             ]);
 
         //商品是否存在
         if (!empty($product))
         {
+        	$product['MeasurementUnit'] = $this->model('dictionary')->get($product['MeasurementUnit'],'name');
+        	
         	$product['price'] = $product['price'] ;
         	$product['oldprice'] = $product['oldprice'] ;
         	$product['v1price'] = $product['v1price'] ;
@@ -1771,7 +1774,7 @@ class mobile extends view
 
             $bind = $this->model('bind')->where('pid=?',[$id])->select();
             $this->assign('bind', $bind);
-
+            
             return $this;
         }
         return $this->__404();
