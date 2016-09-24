@@ -323,7 +323,7 @@ class mobile extends view
                             'product.name',
                             'product.id',
                             'order_product.num',
-                            'order_product.price',
+                            'order_product.price * order_product.bind as price',
                             'order_product.content',
                             'order_product.refund',
                         ]);
@@ -1527,7 +1527,7 @@ class mobile extends view
                         'product.id',
                         'product.name',
                         'order_product.content',
-                        'order_product.price',
+                        'order_product.price*order_product.bind as price',
                         'product.oldprice',
                         'product.outside',
                     ]);
