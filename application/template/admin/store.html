@@ -321,8 +321,17 @@
         $.post('{%url m=ajax c=store a=create%}', {name: name, radio: radio}, function (response) {
 
             if (response.code == 1) {
-                var tpl = '<tr><td class="editable" data-type="text" data-name="name">' + response.body.name + '</td><td><button class="btn btn-xs yellow-stripe default modify" data-id="' + response.body.id + '">编辑</button><button class="btn btn-xs red-stripe deafult remove" data-id="' + response.body.id + '">删除</button></td></tr>';
-                $(tpl).insertAfter($('#store tbody tr:first'));
+                /*var tpl = '<tr><td class="editable" data-type="text" data-name="name">' + response.body.name + '</td>' +
+                        +'<td class "edierp" > < input type = "radio" name = "erp{%$store[store].id%}" value = "1" id = "erp{%$store[store].id%}" > < label  for= "erp{%$store[store].id%}" > 自动 < / label >    < input type = "radio"
+                name = "erp{%$store[store].id%}"
+                value = "0"
+                checked
+                id = "erpc{%$store[store].id%}" > < label
+                for= "erpc{%$store[store].id%}" > 手动 < / label >
+                < / td >
+                        '<td><button class="btn btn-xs yellow-stripe default modify" data-id="' + response.body.id + '">编辑</button><button class="btn btn-xs red-stripe deafult remove" data-id="' + response.body.id + '">删除</button></td></tr>';
+                $(tpl).insertAfter($('#store tbody tr:first'));*/
+                window.location.href= window.location.href;
             }
             else {
                 App.alert({
