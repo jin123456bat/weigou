@@ -344,7 +344,7 @@ var EcommerceOrders = function () {
 						//{
 							if(full.is_erp=='0')
 							{
-								content += '<button data-orderno="'+data+'" class="btn btn-xs yellow btn-outline erp">审核订单</button>';
+								content += '<button data-orderno="'+data+'" class="btn btn-xs yellow btn-outline erp" style="color: white; background-color: black;">审核订单</button>';
 							}
 							/*else
 							{
