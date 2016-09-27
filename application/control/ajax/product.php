@@ -322,7 +322,7 @@ class product extends ajax
         $id = $this->post('id');
         if (!empty($id)) {
             if ($this->model('product_top')->where('pid=?', [$id])->delete()) {
-                $this->model("admin_log")->insertlog($admin, '商品管理，将商品从首页下架', 1);
+                $this->model("admin_log")->insertlog($admin, '商品管理，将商品从首页下架,商品id：'.$id, 1);
                 return new json(json::OK);
             }
             $this->model("admin_log")->insertlog($admin, '商品管理，将商品从首页下架（参数错误）');
@@ -351,7 +351,7 @@ class product extends ajax
                 ];
                 if ($this->model('product_top')->insert($data)) {
                     $data = $this->model('product_top')->table('product', 'left join', 'product.id=product_top.pid')->where('product.id=?', [$id])->find('product.name,product.id,product_top.sort');
-                    $this->model("admin_log")->insertlog($admin, '商品管理，将商品推送到首页', 1);
+                    $this->model("admin_log")->insertlog($admin, '商品管理，将商品推送到首页，商品id:'.$id, 1);
                     return new json(json::OK, NULL, $data);
                 }
                 $this->model("admin_log")->insertlog($admin, '商品管理，将商品推送到首页(请求参数错误)');
