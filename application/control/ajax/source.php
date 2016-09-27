@@ -9,6 +9,7 @@ class source extends ajax
 {
     function create()
     {
+        $admin=$this->session->id;
         $name = $this->post('name');
         $name1 = $name;
         $phone = $this->post('phone');
@@ -23,9 +24,11 @@ class source extends ajax
             $u_source = $this->session->id;
             if (!empty($userp = $this->model('user')->where('telephone=?', [$phone])->find())) {
                 if($userp['source']!=$u_source){
+                    $this->model("admin_log")->insertlog($admin, '创建渠道失败（手机号必须是当前渠道下人员的手机号）' );
                     return new json(json::PARAMETER_ERROR, '手机号必须是当前渠道下人员的手机号');
                 }
             }else{
+                $this->model("admin_log")->insertlog($admin, '创建渠道失败（手机号必须是当前渠道下人员的手机号）');
                 return new json(json::PARAMETER_ERROR, '手机号必须是当前渠道下人员的手机号');
             }
         } else {
@@ -33,9 +36,11 @@ class source extends ajax
         }
 
         if (empty($name) || empty($phone) || empty($wechat)) {
+            $this->model("admin_log")->insertlog($admin, '创建渠道失败（请填写完完整）');
             return new json(json::PARAMETER_ERROR, '请填写完完整');
         }
         if (!empty($this->model('source')->where('name=? and isdelete=?', [$name, 0])->find())) {
+            $this->model("admin_log")->insertlog($admin, '创建渠道失败（该渠道商已经存在）');
             return new json(json::PARAMETER_ERROR, '该渠道商已经存在');
         }
 
@@ -103,6 +108,7 @@ class source extends ajax
             if ($this->model('user')->insert($userdata)) {
                 $uid = $this->model('user')->lastInsertId();
             } else {
+                $this->model("admin_log")->insertlog($admin, '创建渠道失败（创建不成功）');
                 return new json(json::PARAMETER_ERROR, '创建不成功');
             }
 
@@ -122,13 +128,16 @@ class source extends ajax
         ];
         if ($this->model('source')->insert($array)) {
             $array['id'] = $this->model('source')->lastInsertId();
+            $this->model("admin_log")->insertlog($admin, '创建渠道成功,渠道id：'.$array['id'],1);
             return new json(json::OK, NULL, $array);
         }
+        $this->model("admin_log")->insertlog($admin, '创建渠道失败（请求参数错误）');
         return new json(json::PARAMETER_ERROR);
     }
 
     function create2()
     {
+        $admin=$this->session->id;
         $name = $this->post('name');
         $password = $this->post('password', '', 'md5');
         $user = $this->post('user');
@@ -139,15 +148,18 @@ class source extends ajax
 
 
         if (!empty($this->model('source')->where('name=? and isdelete=?', [$name, 0])->find())) {
+            $this->model("admin_log")->insertlog($admin, '创建普通渠道失败（该渠道商已经存在）');
             return new json(json::PARAMETER_ERROR, '该渠道商已经存在');
         }
 
         if (!empty($usertelephone)) {
             $uid = $this->model('user')->where('telephone=?', [$usertelephone])->find();
             if (empty($uid)) {
+                $this->model("admin_log")->insertlog($admin, '创建普通渠道失败（手机号码还没注册）');
                 return new json(json::PARAMETER_ERROR, '手机号码还没注册');
             }
         } else {
+            $this->model("admin_log")->insertlog($admin, '创建普通渠道失败（手机号码还没注册）');
             return new json(json::PARAMETER_ERROR, '手机号码还没注册');
         }
 
@@ -183,13 +195,17 @@ class source extends ajax
         ];
         if ($this->model('source')->insert($array)) {
             $array['id'] = $this->model('source')->lastInsertId();
+            $this->model("admin_log")->insertlog($admin, '创建普通渠道成功，渠道id：'.$array['id'],1);
             return new json(json::OK, NULL, $array);
+
         }
+        $this->model("admin_log")->insertlog($admin, '创建普通渠道失败（请求参数错误）');
         return new json(json::PARAMETER_ERROR);
     }
 
     function remove()
     {
+        $admin=$this->session->id;
         $id = $this->post('id');
         if (!empty($id)) {
             if ($this->model('source')->where('id=?', [$id])->limit(1)->update([
@@ -197,37 +213,46 @@ class source extends ajax
                 'deletetime' => $_SERVER['REQUEST_TIME']
             ])
             ) {
+                $this->model("admin_log")->insertlog($admin, '删除渠道成功，渠道id：' . $id, 1);
                 return new json(json::OK);
             }
         }
+        $this->model("admin_log")->insertlog($admin, '删除渠道失败（请求参数错误）' );
         return new json(json::PARAMETER_ERROR);
     }
 
     function changepwd()
     {
+        $admin=$this->session->id;
         $id = $this->post('id');
         if (!empty($id)) {
             $password = $this->post('password');
             if (empty($password)) {
+                $this->model("admin_log")->insertlog($admin, '渠道修改密码失败（密码不能为空）');
                 return new json(json::PARAMETER_ERROR, '密码不能为空');
             }
             $password = md5($password);
             if ($this->model('source')->where('id=?', [$id])->limit(1)->update('password', $password)) {
+                $this->model("admin_log")->insertlog($admin, '渠道修改密码成功，id：'.$id,1);
                 return new json(json::OK);
             } else {
+                $this->model("admin_log")->insertlog($admin, '渠道修改密码失败（密码更改失败）');
                 return new json(json::PARAMETER_ERROR, '密码更改失败');
             }
         }
+        $this->model("admin_log")->insertlog($admin, '渠道修改密码失败（id不能为空）');
         return new json(json::PARAMETER_ERROR, 'id不能为空');
     }
 
     function power()
     {
+        $admin=$this->session->id;
         $id = $this->post('id');
         $name = $this->post('name');
         if (in_array($name, ['user', 'product'])) {
             $source = $this->model('source')->where('id=?', [$id])->find();
             $this->model('source')->where('id=?', [$id])->limit(1)->update($name, $source[$name] == 1 ? 0 : 1);
+            $this->model("admin_log")->insertlog($admin, '渠道修改权限成功，渠道id：'.$id,1);
             return new json(json::OK);
         }
     }

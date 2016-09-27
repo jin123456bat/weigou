@@ -10,14 +10,17 @@ class coupon extends ajax
 	 */
 	function remove()
 	{
+        $admin=$this->session->id;
 		$id = $this->post('id');
 		if($this->model('coupon')->where('id=?',[$id])->limit(1)->update([
 			'isdelete'=>1,
 			'deletetime' => $_SERVER['REQUEST_TIME']
 		]))
 		{
+            $this->model("admin_log")->insertlog($admin, '删除优惠卷成功,优惠卷id：' . $id, 1);
 			return new json(json::OK);
 		}
+        $this->model("admin_log")->insertlog($admin, '删除优惠卷失败（请求参数错误）');
 		return new json(json::PARAMETER_ERROR);
 	}
 	

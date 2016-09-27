@@ -1154,9 +1154,9 @@ a.line_btn{
     margin-left: 6px;
 }
 .goods_info span:last-child{
-    right: 10px;
-    color: #999;
-    position: absolute;
+    /*right: 10px;*/
+    /*color: #999;*/
+    /*position: absolute;*/
 }
 .goods_box .goods_details .flag{
     padding: 10px 0 10px 30px;

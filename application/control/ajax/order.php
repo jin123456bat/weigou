@@ -12,43 +12,46 @@ class order extends ajax
 {
     function note()
     {
+        $admin = $this->session->id;
         $orderno = $this->post('orderno');
         if (!empty($orderno)) {
             $note = $this->post('note');
             if ($note !== NULL) {
                 $this->model('order')->where('orderno=?', [$orderno])->limit(1)->update('note', $note);
+                $this->model("admin_log")->insertlog($admin, '订单备注成功，订单号：' . $orderno . "内容：" . $note, 1);
                 return new json(json::OK, NULL, $note);
             } else {
                 $note = $this->model('order')->where('orderno=?', [$orderno])->find('note');
+
                 return new json(json::OK, NULL, $note);
             }
         }
     }
-    
+
     /**
      * 订单删除功能
      */
     function delete()
     {
-    	$orderno = $this->post('orderno');
-    	$userHelper = new user();
-    	$uid = $userHelper->isLogin();
-    	if (empty($uid)) {
-    		return new json(json::NOT_LOGIN);
-    	}
-    
-    	if (empty($orderno)) {
-    		return new json(json::PARAMETER_ERROR, '订单编号不能为空');
-    	}
-    
-    	if ($this->model('order')->where('orderno=?', [$orderno])->limit(1)->update([
-    		'isdelete' => 1,
-    		'deletetime' => $_SERVER['REQUEST_TIME']
-    	])
-    	) {
-    		return new json(json::OK);
-    	}
-    	return new json(json::PARAMETER_ERROR, '不要重复删除订单嘛');
+        $orderno = $this->post('orderno');
+        $userHelper = new user();
+        $uid = $userHelper->isLogin();
+        if (empty($uid)) {
+            return new json(json::NOT_LOGIN);
+        }
+
+        if (empty($orderno)) {
+            return new json(json::PARAMETER_ERROR, '订单编号不能为空');
+        }
+
+        if ($this->model('order')->where('orderno=?', [$orderno])->limit(1)->update([
+            'isdelete' => 1,
+            'deletetime' => $_SERVER['REQUEST_TIME']
+        ])
+        ) {
+            return new json(json::OK);
+        }
+        return new json(json::PARAMETER_ERROR, '不要重复删除订单嘛');
     }
 
     /**
@@ -229,9 +232,11 @@ class order extends ajax
      */
     function quit()
     {
+        $admin = $this->session->id;
         $orderno = $this->post('orderno');
         if (!empty($orderno)) {
             if (!empty($this->model('task_user')->where('orderno=?', [$orderno])->find())) {
+                $this->model("admin_log")->insertlog($admin, '取消订单失败（团购订单无法手动取消）');
                 return new json(json::PARAMETER_ERROR, '团购订单无法手动取消');
             }
 
@@ -250,10 +255,12 @@ class order extends ajax
                         $roleModel = $this->model('role');
                         $role = $adminHelper->getGroupId();
                         if (!$roleModel->checkPower($role, 'refund', roleModel::POWER_ALL)) {
+                            $this->model("admin_log")->insertlog($admin, '取消订单失败（权限不足）');
                             return new json(json::PARAMETER_ERROR, '权限不足');
                         }
 
                         if (!$orderHelper->refund($orderno)) {
+                            $this->model("admin_log")->insertlog($admin, '取消订单失败（订单退款失败）');
                             return new json(json::PARAMETER_ERROR, '订单退款失败');
                         }
                     }
@@ -264,12 +271,15 @@ class order extends ajax
 
             if ($orderHelper->quitOrder($orderno, false)) {
                 $this->model('order')->commit();
+                $this->model("admin_log")->insertlog($admin, '取消订单成功，订单号：' . $orderno, 1);
                 return new json(json::OK);
             } else {
                 $this->model('order')->rollback();
+                $this->model("admin_log")->insertlog($admin, '取消订单失败（订单退款失败）');
                 return new json(json::PARAMETER_ERROR, '取消失败');
             }
         }
+        $this->model("admin_log")->insertlog($admin, '取消订单失败（参数错误）');
         return new json(json::PARAMETER_ERROR);
     }
 
@@ -281,9 +291,11 @@ class order extends ajax
     {
         /*权限*/
 
+        $admin = $this->session->id;
         $adminHelper = new \application\helper\admin();
         $aid = $adminHelper->getAdminId();
         if (empty($aid)) {
+            $this->model("admin_log")->insertlog($admin, '订单审核失败（用户未登陆）');
             return new json(json::NOT_LOGIN);
         } else {
 
@@ -291,6 +303,7 @@ class order extends ajax
             $roleModel = $this->model('role');
             $role = $adminHelper->getGroupId();
             if (!$roleModel->checkPower($role, 'order', roleModel::POWER_ALL)) {
+                $this->model("admin_log")->insertlog($admin, '订单审核失败（权限不足）');
                 return new json(json::PARAMETER_ERROR, '权限不足');
             }
         }
@@ -303,8 +316,10 @@ class order extends ajax
             $result = $erpSender->doSendOrder($orderno);
             //var_dump($result);
             if ($result) {
+                $this->model("admin_log")->insertlog($admin, '订单审核成功,订单号:' . $orderno, 1);
                 return new json(json::OK);
             } else {
+                $this->model("admin_log")->insertlog($admin, '订单审核失败（订单推送失败）');
                 return new json(json::PARAMETER_ERROR, '订单推送失败');
             }
         }
@@ -399,14 +414,17 @@ class order extends ajax
      */
     function refund()
     {
+        $admin = $this->session->id;
         $adminHelper = new admin();
         if (empty($adminHelper->getAdminId())) {
+            $this->model("admin_log")->insertlog($admin, '订单商品退款失败（用户未登陆）');
             return new json(json::NOT_LOGIN, '请重新登陆');
         }
 
         $roleModel = $this->model('role');
         $role = $adminHelper->getGroupId();
         if (!$roleModel->checkPower($role, 'refund', roleModel::POWER_ALL)) {
+            $this->model("admin_log")->insertlog($admin, '订单商品退款失败（权限不足）');
             return new json(json::PARAMETER_ERROR, '权限不足');
         }
 
@@ -424,16 +442,21 @@ class order extends ajax
                 if (empty($order_product_id)) {
                     //订单取消
                     if ($orderHelper->quitOrder($orderno)) {
+                        $this->model("admin_log")->insertlog($admin, '订单商品退款成功,订单商品：' . $orderno, 1);
                         return new json(json::OK, NULL, $order['pay_type'] == 'alipay' ? '正在退款' : '退款完成');
                     } else {
+                        $this->model("admin_log")->insertlog($admin, '订单商品退款失败（订单取消失败）');
                         return new json(json::PARAMETER_ERROR, '订单取消失败');
                     }
                 } else {
+                    $this->model("admin_log")->insertlog($admin, '订单商品退款成功,订单商品：' . $orderno, 1);
                     return new json(json::OK, NULL, $order['pay_type'] == 'alipay' ? '正在退款' : '退款完成');
                 }
             }
+            $this->model("admin_log")->insertlog($admin, '订单商品退款失败（退款失败）');
             return new json(json::PARAMETER_ERROR, '退款失败');
         }
+        $this->model("admin_log")->insertlog($admin, '订单商品退款失败（参数错误）');
         return new json(json::PARAMETER_ERROR);
     }
 
@@ -452,20 +475,24 @@ class order extends ajax
 
     function confirmSend()
     {
+        $admin = $this->session->id;
         $data = $this->post('data');
         $data = json_decode($data, true);
         $orderno = $this->post('orderno');
         if (!empty($data) && !empty($orderno)) {
             $order = $this->model('order')->where('orderno=?', [$orderno])->find();
             if (empty($order)) {
+                $this->model("admin_log")->insertlog($admin, '订单发货失败（订单不存在）');
                 return new json(json::PARAMETER_ERROR, '订单不存在');
             }
 
             if ($order['status'] != 1) {
+                $this->model("admin_log")->insertlog($admin, '订单发货失败（订单无效）');
                 return new json(json::PARAMETER_ERROR, '订单无效');
             }
 
             if ($order['way_status'] == 1) {
+                $this->model("admin_log")->insertlog($admin, '订单发货失败（订单已发货）');
                 return new json(json::PARAMETER_ERROR, '订单已发货');
             }
 
@@ -477,6 +504,7 @@ class order extends ajax
             foreach ($data as $ship) {
                 if (empty($ship['ship_type']) || empty($ship['ship_number'])) {
                     $this->model('order_package')->rollback();
+                    $this->model("admin_log")->insertlog($admin, '订单发货失败（请填写所有的快递单号和配送方式）');
                     return new json(json::PARAMETER_ERROR, '请填写所有的快递单号和配送方式');
                 }
 
@@ -488,6 +516,7 @@ class order extends ajax
                 ])
                 ) {
                     $this->model('order_package')->rollback();
+                    $this->model("admin_log")->insertlog($admin, '订单发货失败（参数错误）');
                     return new json(json::PARAMETER_ERROR);
                 }
             }
@@ -499,10 +528,12 @@ class order extends ajax
             ])
             ) {
                 $this->model('order_package')->rollback();
+                $this->model("admin_log")->insertlog($admin, '订单发货失败（参数错误）');
                 return new json(json::PARAMETER_ERROR);
             }
 
             $this->model('order_package')->commit();
+            $this->model("admin_log")->insertlog($admin, '订单发货成功，订单号：' . $orderno, 1);
             return new json(json::OK);
             /* //获取现在所有的商品
             $pre_product = $this->model('order_package')
@@ -609,6 +640,7 @@ class order extends ajax
 
     function importWay()
     {
+        $admin = $this->session->id;
         ini_set('memory_limit', '512M');
         $config = config('file');
         //文件类型
@@ -637,6 +669,7 @@ class order extends ajax
                         $rowNum = 1000;
                     }
                 } catch (\Exception $e) {
+                    $this->model("admin_log")->insertlog($admin, '订单导入物流信息失败（无法做为一个excel文件解析）');
                     return new json(json::PARAMETER_ERROR, '无法做为一个excel文件解析');
                 }
 
@@ -652,6 +685,7 @@ class order extends ajax
                 }
 
                 if (empty($data)) {
+                    $this->model("admin_log")->insertlog($admin, '订单导入物流信息失败（该文档中不包含任何信息）');
                     return new json(json::PARAMETER_ERROR, '该文档中不包含任何信息');
                 }
 
@@ -676,6 +710,7 @@ class order extends ajax
                     }
 
                     if (count($order) != 4) {
+                        $this->model("admin_log")->insertlog($admin, '订单导入物流信息失败（上传文件内容格式错误）');
                         return new json(json::PARAMETER_ERROR, '上传文件内容格式错误');
                     }
 
@@ -840,6 +875,7 @@ class order extends ajax
                         ])
                         ) {
                             $this->model('order')->rollback();
+                            $this->model("admin_log")->insertlog($admin, '订单导入物流信息失败（订单发货失败，请重试）');
                             return new json(json::PARAMETER_ERROR, '订单发货失败，请重试');
                         }
                     } else {
@@ -851,17 +887,20 @@ class order extends ajax
                         ])
                         ) {
                             $this->model('order')->rollback();
+                            $this->model("admin_log")->insertlog($admin, '订单导入物流信息失败（订单发货失败，请重试）');
                             return new json(json::PARAMETER_ERROR, '订单发货失败，请重试');
                         }
                     }
                 }
                 $this->model('order')->commit();
-
+                $this->model("admin_log")->insertlog($admin, '订单导入物流信息成功,订单id：' . $result_order, 1);
                 return new json(json::OK, NULL, $result_order);
             } else {
+                $this->model("admin_log")->insertlog($admin, '订单导入物流信息失败（无法读取该文件）');
                 return new json(json::PARAMETER_ERROR, '无法读取该文件');
             }
         } else {
+            $this->model("admin_log")->insertlog($admin, '订单导入物流信息失败（文件上传失败，请检查文件类型或文件大小）');
             return new json(json::PARAMETER_ERROR, '文件上传失败，请检查文件类型或文件大小');
         }
     }

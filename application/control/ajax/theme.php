@@ -85,6 +85,7 @@ class theme extends ajax
 	 */
 	function save()
 	{
+        $admin=$this->session->id;
 		$id = $this->post('id');
 		$title = $this->post('title','');
 		$logo = $this->post('logo',NULL,'intval');
@@ -115,8 +116,10 @@ class theme extends ajax
 					}
 				}
 			}
+            $this->model("admin_log")->insertlog($admin, '保存主题成功，id：' . $id, 1);
 			return new json(json::OK);
 		}
+        $this->model("admin_log")->insertlog($admin, '保存主题失败（请求参数错误）');
 		return new json(json::PARAMETER_ERROR);
 	}
 	
@@ -125,11 +128,14 @@ class theme extends ajax
 	 */
 	function removeSubTheme()
 	{
+        $admin = $this->session->id;
 		$id = $this->post('id');
 		if($this->model('subtheme')->where('id=?',[$id])->delete())
 		{
+            $this->model("admin_log")->insertlog($admin, '主题删除快速链接成功,id:' . $id, 1);
 			return new json(json::OK);
 		}
+        $this->model("admin_log")->insertlog($admin, '主题删除快速链接成功');
 		return new json(json::PARAMETER_ERROR);
 	}
 	
@@ -139,14 +145,18 @@ class theme extends ajax
 	 */
 	function remove()
 	{
+        $admin = $this->session->id;
 		$id = $this->post('id');
 		if($this->model('theme')->where('id=?',[$id])->update([
 			'isdelete'=>1,
 			'deletetime' => $_SERVER['REQUEST_TIME']
 		]))
 		{
+
+            $this->model("admin_log")->insertlog($admin, '删除主题成功,id:' . $id, 1);
 			return new json(json::OK);
 		}
+        $this->model("admin_log")->insertlog($admin, '删除主题失败（请求参数不对）');
 		return new json(json::PARAMETER_ERROR);
 	}
 	
@@ -155,6 +165,7 @@ class theme extends ajax
 	 */
 	function createSubTheme()
 	{
+        $admin=$this->session->id;
 		$theme_id = $this->post('theme_id');
 		$title = $this->post('title','');
 		$subtitle = $this->post('subtitle','');
@@ -178,8 +189,10 @@ class theme extends ajax
 				'subtitle' => $subtitle,
 				'sort' => $total[0]['count(*)'],
 			];
+            $this->model("admin_log")->insertlog($admin, '主题添加快速链接成功,id:'.$theme_id, 1);
 			return new json(json::OK,NULL,$data);
 		}
+        $this->model("admin_log")->insertlog($admin, '主题添加快速链接失败（请求参数错误）', 1);
 		return new json(json::PARAMETER_ERROR);
 	}
 	
@@ -188,6 +201,7 @@ class theme extends ajax
 	 */
 	function createTheme()
 	{
+        $admin=$this->session->id;
 		$title = $this->post('title','新主题');
 		$logo = $this->post('logo',NULL,'intval');
 		if(empty($logo))
@@ -207,8 +221,10 @@ class theme extends ajax
 				'title' => $title,
 				'logo' => $this->model('upload')->get($logo,'path'),
 			];
+            $this->model("admin_log")->insertlog($admin, '创建主题成功', 1);
 			return new json(json::OK,NULL,$data);
 		}
+        $this->model("admin_log")->insertlog($admin, '创建主题失败（请求参数错误）');
 		return new json(json::PARAMETER_ERROR);
 	}
 }

@@ -6,6 +6,7 @@ class question extends control
 {
 	function create()
 	{
+        $admin=$this->session->id;
 		$form = new form(config('form'));
 		if ($form->auth())
 		{
@@ -26,12 +27,14 @@ class question extends control
 					'cid' => $cid,
 				]))
 				{
+                    $this->model("admin_log")->insertlog($admin, '添加问题成功', 1);
 					$this->response->setCode(302);
 					$this->response->addHeader('Location',$this->http->url('','admin','question'));
 				}
 			}
 			else
 			{
+                $this->model("admin_log")->insertlog($admin, '添加问题成功' , 1);
 				$this->response->setCode(302);
 				$this->response->addHeader('Location',$this->http->url('','admin','question'));
 			}
@@ -40,6 +43,7 @@ class question extends control
 	
 	function save()
 	{
+        $admin=$this->session->id;
 		$form = new form(config('form'));
 		if ($form->auth())
 		{
@@ -58,6 +62,7 @@ class question extends control
 					'modifytime' => $_SERVER['REQUEST_TIME'],
 				]))
 				{
+                    $this->model("admin_log")->insertlog($admin, '编辑分类成功,分类id：' . $cid, 1);
 					$this->response->setCode(302);
 					$this->response->addHeader('Location',$this->http->url('','admin','question'));
 				}
@@ -67,6 +72,7 @@ class question extends control
 	
 	function create_category()
 	{
+        $admin=$this->session->id;
 		$form = new form(config('form'));
 		if ($form->auth())
 		{
@@ -83,6 +89,7 @@ class question extends control
 					'createtime' => $_SERVER['REQUEST_TIME']
 				]))
 				{
+                    $this->model("admin_log")->insertlog($admin, '创建分类成功', 1);
 					$this->response->setCode(302);
 					$this->response->addHeader('Location',$this->http->url('','admin','question'));
 				}
@@ -94,6 +101,7 @@ class question extends control
 					'sort' => $sort,
 				]))
 				{
+                    $this->model("admin_log")->insertlog($admin, '创建分类成功', 1);
 					$this->response->setCode(302);
 					$this->response->addHeader('Location',$this->http->url('','admin','question'));
 				}

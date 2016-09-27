@@ -6,6 +6,7 @@ class college extends ajax
 {
 	function create()
 	{
+        $admin=$this->session->id;
 		$data = $this->post();
 		$data['logo1'] = empty(intval($data['logo1']))?NULL:intval($data['logo1']);
 		$data['logo2'] = empty(intval($data['logo2']))?NULL:intval($data['logo2']);
@@ -14,17 +15,22 @@ class college extends ajax
 		$data['isdelete'] = 0;
 		$data['deletetime'] = 0;
 		$data['modifytime'] = $_SERVER['REQUEST_TIME'];
-		if (empty($data['uid']))
-			return new json(json::PARAMETER_ERROR,'请选择导师');
+		if (empty($data['uid'])) {
+            $this->model("admin_log")->insertlog($admin, '添加课程失败（请选择导师）');
+            return new json(json::PARAMETER_ERROR, '请选择导师');
+        }
 		if($this->model('college')->insert($data))
 		{
+            $this->model("admin_log")->insertlog($admin, '添加课程成功', 1);
 			return new json(json::OK);
 		}
+        $this->model("admin_log")->insertlog($admin, '添加课程失败（请求参数错误）');
 		return new json(json::PARAMETER_ERROR);
 	}
 	
 	function save()
 	{
+        $admin = $this->session->id;
 		$data = $this->post();
 		$data['logo1'] = empty(intval($data['logo1']))?NULL:intval($data['logo1']);
 		$data['logo2'] = empty(intval($data['logo2']))?NULL:intval($data['logo2']);
@@ -33,36 +39,45 @@ class college extends ajax
 		unset($data['id']);
 		if (empty(intval($data['uid'])))
 		{
+            $this->model("admin_log")->insertlog($admin, '添加课程失败（请选择导师）');
 			return new json(json::PARAMETER_ERROR,'请选择导师');
 		}
 		$data['modifytime'] = $_SERVER['REQUEST_TIME'];
 		if($this->model('college')->where('id=?',[$id])->limit(1)->update($data))
 		{
+            $this->model("admin_log")->insertlog($admin, '添加课程成功', 1);
 			return new json(json::OK);
 		}
+        $this->model("admin_log")->insertlog($admin, '添加课程失败（请求参数错误）');
 		return new json(json::PARAMETER_ERROR);
 	}
 	
 	function remove()
 	{
+        $admin = $this->session->id;
 		$id = $this->post('id');
 		if($this->model('college')->where('id=?',[$id])->limit(1)->update([
 			'isdelete' => 1,
 			'deletetime' => $_SERVER['REQUEST_TIME']
 		]))
 		{
+            $this->model("admin_log")->insertlog($admin, '删除课程成功，课程id：'.$id, 1);
 			return new json(json::OK);
 		}
+        $this->model("admin_log")->insertlog($admin, '删除课程失败（请求参数错误）');
 		return new json(json::PARAMETER_ERROR);
 	}
 	
 	function good()
 	{
+        $admin=$this->session->id;
 		$id = $this->post('id');
 		if($this->model('college')->where('id=?',[$id])->limit(1)->update(['isgood'=>1]))
 		{
+            $this->model("admin_log")->insertlog($admin, '课程置顶失败，id：' . $id, 1);
 			return new json(json::OK);
 		}
+        $this->model("admin_log")->insertlog($admin, '课程置顶失败（请求参数错误）');
 		return new json(json::PARAMETER_ERROR);
 	}
 	

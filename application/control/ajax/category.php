@@ -27,30 +27,36 @@ class category extends ajax
 		}
 		
 		$data['modifytime'] = $_SERVER['REQUEST_TIME'];
-		
+		$admin=$this->session->id;
 		if($this->model('category')->where('id=?',[$id])->update($data))
 		{
+            $this->model("admin_log")->insertlog($admin, '保存分类信息成功', 1);
 			return new json(json::OK);
 		}
+        $this->model("admin_log")->insertlog($admin, '保存分类信息失败（参数错误）');
 		return new json(json::PARAMETER_ERROR);
 	}
 	
 	
 	function remove()
 	{
+        $admin=$this->session->id;
 		$id = $this->post('id',0,'intval');
 		if($this->model('category')->where('id=?',[$id])->update([
 			'isdelete'=>1,
 			'deletetime' => $_SERVER['REQUEST_TIME']
 		]))
 		{
+            $this->model("admin_log")->insertlog($admin, '删除分类信息成功', 1);
 			return new json(json::OK);
 		}
+        $this->model("admin_log")->insertlog($admin, '删除分类信息失败（参数错误）');
 		return new json(json::PARAMETER_ERROR);
 	}
 	
 	function create()
 	{
+        $admin=$this->session->id;
 		$name = $this->post('name','');
 		$description = $this->post('description','');
 		$sort = $this->post('sort',1);
@@ -88,8 +94,10 @@ class category extends ajax
 				c_category.name as c_name,
 				category.cid
 			');
+            $this->model("admin_log")->insertlog($admin, '新增分类信息成功', 1);
 			return new json(json::OK,NULL,$data);
 		}
+        $this->model("admin_log")->insertlog($admin, '新增分类信息失败（参数错误）');
 		return new json(json::PARAMETER_ERROR);
 	}
 }

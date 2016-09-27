@@ -8,6 +8,7 @@ class carousel extends ajax
 {
     function save()
     {
+        $admin=$this->session->id;
         $id = $this->post('id');
         if ($this->model('carousel')->where('id=?', [$id])->update([
             'title' => $this->post('title', ''),
@@ -18,8 +19,10 @@ class carousel extends ajax
             'logo' => empty($this->post('logo', NULL, 'intval')) ? NULL : $this->post('logo', NULL, 'intval'),
         ])
         ) {
+            $this->model("admin_log")->insertlog($admin, '修改首页轮薄图成功,id：' . $id, 1);
             return new json(json::OK);
         }
+        $this->model("admin_log")->insertlog($admin, '修改首页轮薄图失败（请求参数不正确）' , 1);
         return new json(json::PARAMETER_ERROR);
     }
 
@@ -37,6 +40,7 @@ class carousel extends ajax
 
     function create()
     {
+        $admin=$this->session->id;
         $total = $this->model('carousel')->where('isdelete=?', [0])->select('count(*)');
         if ($this->model('carousel')->insert([
             'title' => '',
@@ -52,8 +56,10 @@ class carousel extends ajax
         ])
         ) {
             $cid = $this->model('carousel')->lastInsertId();
+            $this->model("admin_log")->insertlog($admin, '新增首页轮薄图成功,id：' . $cid, 1);
             return new json(json::OK, NULL, $cid);
         }
+        $this->model("admin_log")->insertlog($admin, '新增首页轮薄图失败' );
         return new json(json::PARAMETER_ERROR);
     }
 
@@ -78,14 +84,17 @@ class carousel extends ajax
 
     function remove()
     {
+        $admin=$this->session->id;
         $id = $this->post('id');
         if ($this->model('carousel')->where('id=?', [$id])->update([
             'isdelete' => 1,
             'deletetime' => $_SERVER['REQUEST_TIME']
         ])
         ) {
+            $this->model("admin_log")->insertlog($admin, '删除首页轮薄图成功,id：' . $id, 1);
             return new json(json::OK);
         }
+        $this->model("admin_log")->insertlog($admin, '删除首页轮薄图失败（请求参数不正确）');
         return new json(json::PARAMETER_ERROR);
     }
 

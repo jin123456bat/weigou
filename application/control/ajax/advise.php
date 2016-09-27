@@ -6,6 +6,7 @@ class advise extends ajax
 {
 	function create()
 	{
+        $admin=$this->session->id;
 		$title = $this->post('title');
 		if (!empty($title))
 		{
@@ -19,19 +20,23 @@ class advise extends ajax
 				'num' => 0,
 			]))
 			{
+                $this->model("admin_log")->insertlog($admin, '新增投诉成功', 1);
 				return new json(json::OK,NULL,[
 					'id' => $this->model('advise')->lastInsertId(),
 					'title' => $title,
 					'sort' => isset($num['count(*)']) && !empty($num['count(*)'])?$num['count(*)']:0,
 				]);
 			}
+            $this->model("admin_log")->insertlog($admin, '新增投诉失败（请求参数不正确）');
 			return new json(json::PARAMETER_ERROR);
 		}
+        $this->model("admin_log")->insertlog($admin, '新增投诉失败（请求参数不正确）');
 		return new json(json::PARAMETER_ERROR,'title不能为空');
 	}
 	
 	function remove()
 	{
+        $admin = $this->session->id;
 		$adminHelper = new \application\helper\admin();
 		if (empty($adminHelper->getAdminId()))
 			return new json(json::NOT_LOGIN);
@@ -44,21 +49,27 @@ class advise extends ajax
 			'deletetime'=>$_SERVER['REQUEST_TIME']
 		]))
 		{
+            $this->model("admin_log")->insertlog($admin, '删除投诉成功，id:' . $id, 1);
 			return new json(json::OK);
 		}
+        $this->model("admin_log")->insertlog($admin, '删除投诉失败（请求参数错误）');
 		return new json(json::PARAMETER_ERROR);
 	}
 	
 	function clear()
 	{
+        $admin=$this->session->id;
 		$adminHelper = new \application\helper\admin();
 		if (empty($adminHelper->getAdminId()))
 			return new json(json::NOT_LOGIN);
 		
 		$id = $this->post('id');
-		if (empty($id))
-			return new json(json::PARAMETER_ERROR);
+		if (empty($id)) {
+            $this->model("admin_log")->insertlog($admin, '清空投诉失败（请求参数错误）' );
+            return new json(json::PARAMETER_ERROR);
+        }
 		$this->model('advise_user')->where('aid=?',[$id])->delete();
+        $this->model("admin_log")->insertlog($admin, '清空投诉成功，id:'.$id,1);
 		return new json(json::OK);
 	}
 	

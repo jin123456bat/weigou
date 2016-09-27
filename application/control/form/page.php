@@ -8,6 +8,7 @@ class page extends control
 {
     function createPage()
     {
+        $admin=$this->session->id;
         $form = new form(config('form'));
         if ($form->auth()) {
             $title = $this->post('title', '');
@@ -24,6 +25,7 @@ class page extends control
                 'modifytime' => $_SERVER['REQUEST_TIME'],
             ])
             ) {
+                $this->model("admin_log")->insertlog($admin, '新增页面成功', 1);
                 $this->response->setCode(302);
                 $this->response->addHeader('Location', $this->http->url('view', 'admin', 'page'));
             }
@@ -32,6 +34,7 @@ class page extends control
 
     function save()
     {
+        $admin=$this->session->id;
         $form = new form(config('form'));
         if ($form->auth()) {
             $title = $this->post('title', '');
@@ -46,6 +49,7 @@ class page extends control
                 'modifytime' => $_SERVER['REQUEST_TIME']
             ])
             ) {
+                $this->model("admin_log")->insertlog($admin, '修改页面成功,id:' . $id, 1);
                 $this->response->setCode(302);
                 $this->response->addHeader('Location', $this->http->url('view', 'admin', 'page'));
             }
@@ -54,6 +58,7 @@ class page extends control
 
     function notesave()
     {
+        $admin=$this->session->id;
         $form = new form(config('form'));
         if ($form->auth()) {
             $title = $this->post('title', '');
@@ -67,7 +72,7 @@ class page extends control
                 '`status`' => $status,
 
             ]);
-
+            $this->model("admin_log")->insertlog($admin, '修改公告成功', 1);
             $this->response->setCode(302);
             $this->response->addHeader('Location', $this->http->url('view', 'admin', 'notice'));
 
@@ -76,6 +81,7 @@ class page extends control
 
     function centersave()
     {
+        $admin=$this->session->id;
         $form = new form(config('form'));
         if ($form->auth()) {
             $id = $this->post('id');
@@ -99,7 +105,7 @@ class page extends control
 
                 ]);
             }
-
+            $this->model("admin_log")->insertlog($admin, '修改个人中心成功', 1);
             $this->response->setCode(302);
             $this->response->addHeader('Location', $this->http->url('view', 'admin', 'center'));
 

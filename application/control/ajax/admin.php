@@ -24,13 +24,15 @@ class admin extends ajax
 	
 	function changePassword()
 	{
+        $admin=$this->session->id;
 		$id = $this->post('id');
 		$password = $this->post('password');
 		if (!empty($password))
 		{
-			if(strlen($password) <= 6)
-				return new json(json::PARAMETER_ERROR,'密码长度太短');
-			
+			if(strlen($password) <= 6) {
+                $this->model("admin_log")->insertlog($admin, '管理员更改密码失败（密码长度太短）');
+                return new json(json::PARAMETER_ERROR, '密码长度太短');
+            }
 			$adminHelper = new \application\helper\admin();
 			$salt = random::word(6);
 			$password = $adminHelper->encrypt($password,$salt);
@@ -39,23 +41,29 @@ class admin extends ajax
 				'salt' => $salt,
 			]))
 			{
+                $this->model("admin_log")->insertlog($admin, '管理员更改密码成功，用户id：'.$id,1);
 				return new json(json::OK);
 			}
+            $this->model("admin_log")->insertlog($admin, '管理员更改密码失败（参数错误）');
 			return new json(json::PARAMETER_ERROR);
 		}
 		else
 		{
+            $this->model("admin_log")->insertlog($admin, '管理员更改密码成功，用户id：' . $id, 1);
 			return new json(json::OK);
 		}
 	}
 	
 	function remove()
 	{
+        $admin=$this->session->id;
 		$id = $this->post('id');
 		if($this->model('admin')->where('id=?',[$id])->delete())
 		{
+            $this->model("admin_log")->insertlog($admin, '管理员删除失败，用户id：' . $id, 1);
 			return new json(json::OK);
 		}
+        $this->model("admin_log")->insertlog($admin, '管理员删除失败（请求内容错误）');
 		return new json(json::PARAMETER_ERROR);
 	}
 	
@@ -64,10 +72,13 @@ class admin extends ajax
 	 */
 	function role()
 	{
+        $admin=$this->session->id;
 		$id = $this->post('id');
 		$role = $this->post('role');
 		$this->model('admin')->where('id=?',[$id])->limit(1)->update('role',$role);
-		return new json(json::OK);
+        $this->model("admin_log")->insertlog($admin, '管理员更改用户组成功,用户id：' . $id, 1);
+
+        return new json(json::OK);
 	}
 	
 	/**

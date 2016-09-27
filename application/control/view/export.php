@@ -49,6 +49,8 @@ class export extends view
             'ifnull((select money from swift where order_type=\'vip\' and swift.orderno=vip_order.orderno and source=7),0) as vip3',
         ]);
         $template = ROOT . '/extends/PHPExcel/vip.xlsx';
+        $admin = $this->session->id;
+        $this->model("admin_log")->insertlog($admin, '导出vip订单记录成功', 1);
         $this->response($data, $template, 'VIP订单数据' . date('Y-m-d H:i:s'));
     }
 
@@ -150,21 +152,18 @@ class export extends view
             }
 
             //判断有没有bind
-            $op=$this->model("order_product")
-                ->where("package_id=?",[$value['id']])
-                ->select();
+            $op = $this->model("order_product")
+                ->table("product", "left join", "product.id=order_product.pid")
+                ->where("package_id=? and product.barcode=?", [$value['id'], $value['barcode']])
+                ->find();
+
             //替换inprice
-            foreach($op as $pp){
-
-            if($bind=$this->model("bind")->where("content=? and num=? and pid=?",[$pp['content'],$pp['bind'],$pp['pid']])->find()){
 
 
-
-                $value['inprice']= $bind['inprice'];
-
-
+            if ($bind = $this->model("bind")->where("content=? and num=? and pid=?", [$op['content'], $op['bind'], $op['pid']])->find()) {
+                $value['inprice'] = $bind['inprice'];
             }
-            }
+
             $orderno_array[] = $value['orderno'];
 
             $shipname = $value['ship_name'];
@@ -192,7 +191,10 @@ class export extends view
             $this->model('order_log')->add($orderno, '订单导出');
         }
 
+
         $template = ROOT . '/extends/PHPExcel/order.xlsx';
+        $admin = $this->session->id;
+        $this->model("admin_log")->insertlog($admin, '导出订单记录成功', 1);
         $this->response($data, $template, '订单数据' . date('Y-m-d H:i:s'));
     }
 
@@ -221,6 +223,8 @@ class export extends view
             'if(drawal.passtime!=0,from_unixtime(drawal.passtime),"")',
         ]);
         $template = ROOT . '/extends/PHPExcel/drawal.xlsx';
+        $admin = $this->session->id;
+        $this->model("admin_log")->insertlog($admin, '导出提现记录成功', 1);
         $this->response($data, $template, '提现数据' . date('Y-m-d H:i:s'));
     }
 
@@ -368,11 +372,11 @@ class export extends view
             $datan[$i]['sort'] = $d['sort'];///排序
             $datan[$i]['oldprice'] = $d['oldprice'];//原价
 
-            $unit='';
+            $unit = '';
             if ($bind) {
                 for ($j = 0; $j < 3; $j++) {
                     if (isset($bind[$j])) {
-                        $unit= $bind[$j]['unit'];
+                        $unit = $bind[$j]['unit'];
                         $datan[$i]['price' . $j] = $bind[$j]['price'];
                         $datan[$i]['v1price' . $j] = $bind[$j]['v1price'];
                         $datan[$i]['v2price' . $j] = $bind[$j]['v2price'];
@@ -420,6 +424,8 @@ class export extends view
         }
         //die(json_encode($datan));
         $template = ROOT . '/extends/PHPExcel/product.xlsx';
+        $admin=$this->session->id;
+        $this->model("admin_log")->insertlog($admin, '导出商品信息成功', 1);
         $this->response($datan, $template, '商品数据' . date('Y-m-d H:i:s'));
     }
 
@@ -462,6 +468,8 @@ class export extends view
             'user.wechat_no'
         ]);
         $template = ROOT . '/extends/PHPExcel/user.xlsx';
+        $admin = $this->session->id;
+        $this->model("admin_log")->insertlog($admin, '导出用户信息成功', 1);
         $this->response($data, $template, '用户数据' . date('Y-m-d H:i:s'));
     }
 

@@ -10,15 +10,15 @@ namespace application\model;
 
 use system\core\model;
 
-class admin_log extends model
+class admin_logModel extends model
 {
     function __construct($table)
     {
         parent::__construct($table);
     }
 
-    function insertlog($uid,$content){
+    function insertlog($uid,$content, $success=0){
 
-        $this->insert(['admin_id'=>$uid,'content'=>$content]);
+        $this->insert(['admin_id'=>$uid,'content'=>$content,'success'=>$success]);
     }
 }

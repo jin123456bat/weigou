@@ -9,17 +9,20 @@ class teacher extends ajax
 	 */
 	function create()
 	{
+        $admin=$this->session->id;
 		$uid = $this->post('uid');
 		if (!empty($uid))
 		{
 			if(!empty($this->model('teacher')->where('uid=?',[$uid])->find()))
 			{
+                $this->model("admin_log")->insertlog($admin, '设置轮值导师失败（导师已经存在）');
 				return new json(json::PARAMETER_ERROR,'导师已经存在');
 			}
 			
 			$user = $this->model('user')->where('id=?',[$uid])->find();
 			if ($user['master'] != 1)
 			{
+                $this->model("admin_log")->insertlog($admin, '设置轮值导师失败（该用户还未成为导师）');
 				return new json(json::PARAMETER_ERROR,'该用户还未成为导师');
 			}
 			
@@ -36,20 +39,26 @@ class teacher extends ajax
 					'sort' => $count[0]['count(*)'],
 					'uid' => $uid,
 				];
+                $this->model("admin_log")->insertlog($admin, '设置轮值导师成功，导师id：'.$uid,1);
 				return new json(json::OK,NULL,$data);
 			}
+            $this->model("admin_log")->insertlog($admin, '设置轮值导师失败（添加到数据库失败）');
 			return new json(json::PARAMETER_ERROR,'添加到数据库失败');
 		}
+        $this->model("admin_log")->insertlog($admin, '设置轮值导师失败（请求参数错误）');
 		return new json(json::PARAMETER_ERROR);
 	}
 	
 	function remove()
 	{
+        $admin=$this->session->id;
 		$uid = $this->post('uid');
 		if($this->model('teacher')->where('uid=?',[$uid])->delete())
 		{
+            $this->model("admin_log")->insertlog($admin, '删除轮值导师成功，导师id：' . $uid, 1);
 			return new json(json::OK);
 		}
+        $this->model("admin_log")->insertlog($admin, '删除轮值导师失败（请求参数错误）');
 		return new json(json::PARAMETER_ERROR);
 	}
 	
@@ -98,6 +107,7 @@ class teacher extends ajax
 	
 	function turn()
 	{
+        $admin=$this->session->id;
 		$uid = $this->post('uid');
 		if (!empty($uid))
 		{
@@ -112,18 +122,22 @@ class teacher extends ajax
 					{
 						if($this->model('teacher')->where('uid=?',[$uid])->limit(1)->update('turn',0))
 						{
+                            $this->model("admin_log")->insertlog($admin, '设置轮值导师成功，导师id：' . $uid, 1);
 							return new json(json::OK);
 						}
 					}
+                    $this->model("admin_log")->insertlog($admin, '设置轮值导师失败（必须拥有一个轮询导师）');
 					return new json(json::PARAMETER_ERROR,'必须拥有一个轮询导师');
 				}
 				else
 				{
 					if($this->model('teacher')->where('uid=?',[$uid])->limit(1)->update('turn',1))
 					{
+                        $this->model("admin_log")->insertlog($admin, '设置轮值导师成功，导师id：' . $uid, 1);
 						return new json(json::OK);
 					}
 				}
+                $this->model("admin_log")->insertlog($admin, '设置轮值导师失败（设置失败）');
 				return new json(json::PARAMETER_ERROR,'设置失败');
 			}
 		}
