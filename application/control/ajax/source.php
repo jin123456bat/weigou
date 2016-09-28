@@ -114,6 +114,8 @@ class source extends ajax
 
 
         }
+        $school=$this->model('source')->where('id=?',[$u_source])->find();
+        $school= $school['school'];
         $array = [
             'name' => $name1,
             'password' => md5($password),
@@ -124,7 +126,8 @@ class source extends ajax
             'createtime' => $_SERVER['REQUEST_TIME'],
             'uid' => $uid,
             'u_source' => $u_source,
-            'type' => $ctype
+            'type' => $ctype,
+            'school' => $school,
         ];
         if ($this->model('source')->insert($array)) {
             $array['id'] = $this->model('source')->lastInsertId();
