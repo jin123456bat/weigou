@@ -131,7 +131,7 @@ var EcommerceOrdersView = function () {
                 }, {
                     targets: 6,
                     render: function (data, type, full) {
-                        if (data != 0) {
+                        if (full.paytime != 0) {
                             var paytype = full.paytype == 'alipay' ? '支付宝' : '微信';
                             return '<font style="cursor:pointer;" class="popovers" data-container="body" data-html="true" data-trigger="click hover" data-placement="right" data-content="金额:' + full.payprice + '<br>时间:' + unixtotime(full.paytime, true, 8) + '<br>单号:' + full.paynumber + '" data-original-title="' + paytype + '">已支付</font>';
                         }
