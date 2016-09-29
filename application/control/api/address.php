@@ -94,7 +94,7 @@ class address extends common
 		
 		$zcode = $this->data('zcode','');
 		if (strlen($zcode) != 6 && strlen($zcode) != 0)
-			return new json(json::PARAMETER_ERROR,'邮编必须是6为数组');
+			return new json(json::PARAMETER_ERROR,'邮编必须是6位数字');
 		
 		if (!empty($identify))
 		{
