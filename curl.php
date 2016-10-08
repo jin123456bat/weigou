@@ -7,39 +7,17 @@
  */
 
 
-$url = 'http://www.twillg.com/index.php?m=api&c=product&a=detail';
+$url = 'http://twillg.com/index.php?m=api&c=user&a=login';
 $partner = 'ios';
 $key = "ios";
 $posts = array(
     "partner" => $partner
 );
 $fields = array(
-    "id"=>"747",
-    "telephone"=>'13067778316',
-    'password'=>'123456',
-    "orderno"=>'16090916193319463200',
-    "start"=>0,
-    "length" => 10,
-    "address" => 483,
-    "clear" => 0,
-    "prepay" => 1,
-    "product" => json_encode(array([
-        "id"=>68,
-        "num"=>10,
-        "content"=>'',
-        "bind"=>1
-    ],[
-        "id" => 1518,
-        "num" => 10,
-        "content" => '',
-        "bind" => 2
-    ]
-    , [
-            "id" => 1518,
-            "num" => 10,
-            "content" => '',
-            "bind" => 3
-        ]))
+
+    "telephone"=>'18768495315',
+    'password'=>'twg123456',
+
 
 
 );

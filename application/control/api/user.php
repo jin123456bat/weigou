@@ -1342,8 +1342,8 @@ class user extends common
      */
     function login()
     {
-        if (!empty($this->_response))
-            return $this->_response;
+      //  if (!empty($this->_response))
+      //      return $this->_response;
         $telephone = $this->data('telephone', NULL, 'telephone');
 
         $password = $this->data('password');
@@ -1480,6 +1480,9 @@ class user extends common
 
         $invit_user = $this->model('user')->where('invit=?', [$invit])->find();
         if (!empty($invit_user)) {
+            if($invit_user['id']==$uid){
+                return new json(json::PARAMETER_ERROR, '无法绑定本人邀请码');
+            }
             //if ($invit_user['vip'] == 0)
             //return new json(json::PARAMETER_ERROR, '邀请码错误');
             if ($invit_user['master'] == 1) {

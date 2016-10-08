@@ -1075,7 +1075,15 @@ class user extends ajax
             "cl" => $this->post("cl"),
         ])
         ) {
+            //获取用户信息
+            $user=$this->model("user")->where('id=?',$uid)->find();
 
+            if(empty($user['o_master'])){
+                $this->model("user")->where("id=?", [$uid])->update(["o_master" => '269']);
+            }
+            if (empty($user['oid'])) {
+                $this->model("user")->where("id=?", [$uid])->update(["oid" => '269']);
+            }
             //将用户的school改为1
             $this->model("user")->where("id=?", [$uid])->update(["school" => 1]);
             return new json(json::OK);

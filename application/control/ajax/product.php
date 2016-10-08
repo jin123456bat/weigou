@@ -322,7 +322,7 @@ class product extends ajax
         $id = $this->post('id');
         if (!empty($id)) {
             if ($this->model('product_top')->where('pid=?', [$id])->delete()) {
-                $this->model("admin_log")->insertlog($admin, '商品管理，将商品从首页下架,商品id：'.$id, 1);
+                $this->model("admin_log")->insertlog($admin, '商品管理，将商品从首页下架,商品id：' . $id, 1);
                 return new json(json::OK);
             }
             $this->model("admin_log")->insertlog($admin, '商品管理，将商品从首页下架（参数错误）');
@@ -351,7 +351,7 @@ class product extends ajax
                 ];
                 if ($this->model('product_top')->insert($data)) {
                     $data = $this->model('product_top')->table('product', 'left join', 'product.id=product_top.pid')->where('product.id=?', [$id])->find('product.name,product.id,product_top.sort');
-                    $this->model("admin_log")->insertlog($admin, '商品管理，将商品推送到首页，商品id:'.$id, 1);
+                    $this->model("admin_log")->insertlog($admin, '商品管理，将商品推送到首页，商品id:' . $id, 1);
                     return new json(json::OK, NULL, $data);
                 }
                 $this->model("admin_log")->insertlog($admin, '商品管理，将商品推送到首页(请求参数错误)');
@@ -825,7 +825,8 @@ class product extends ajax
                     //单位
                     $unit = trim((string)$product[28]);
                     $bind1 = array();
-                    if (count($bind) > 1) {
+
+                    if (count($bind) >= 1) {
                         for ($b = 0; $b < count($bind); $b++) {
 
                             if (!isset($bind[$b]['inprice']) || $bind[$b]['inprice'] == 0) {
@@ -919,9 +920,10 @@ class product extends ajax
                     //生成导入结果
                     $product['id'] = $product_id;
 
+                    $this->model("bind")->where("pid=?", [$product_id])->delete();
                     if (count($bind1) > 1) {
                         $j = 1;
-                        $this->model("bind")->where("pid=?", [$product_id])->delete();
+
                         $bind1 = array_reverse($bind1);
                         foreach ($bind1 as &$b) {
                             $b['pid'] = $product_id;
@@ -938,7 +940,8 @@ class product extends ajax
                             $j++;
                         }
                     }
-
+                    unset($bind);
+                    unset($bind1);
                     if (!$sql) {
                         $product['success'] = false;
                     } else {

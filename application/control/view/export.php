@@ -339,7 +339,7 @@ class export extends view
             $datan[$i]['sku'] = $d['sku'];
             $datan[$i]['barcode'] = $d['barcode'];//条形码
             //3个进价  3个数量 bind表
-            $bind = $this->model("bind")->where("pid=?", [$d['id']])->orderby("sort", "asc")->select();
+            $bind = $this->model("bind")->where("pid=?", [$d['id']])->orderby("sort", "desc")->select();
             if ($bind) {
                 for ($j = 0; $j < 3; $j++) {
                     if (isset($bind[$j])) {
