@@ -62,7 +62,11 @@ class orderModel extends model
             }
 
             if ($post['pay_status'] != '') {
-                $this->where('pay_status=?', [$post['pay_status']]);
+                if ($post['pay_status'] == 1) {
+                    $this->where('pay_status=1 or pay_status=4');
+                } else {
+                    $this->where('pay_status=?', [$post['pay_status']]);
+                }
             }
 
 
@@ -318,7 +322,7 @@ class orderModel extends model
             ///echo $oiduser;exit;
 
 
-            $this->where('user.oid in (select user.id from user where user.oid=?) or user.source=? or user.oid=? or user.id=?', [$session_uid,$session_id, $session_uid, $session_uid]);
+            $this->where('user.oid in (select user.id from user where user.oid=?) or user.source=? or user.oid=? or user.id=?', [$session_uid, $session_id, $session_uid, $session_uid]);
 
 
         } else {
@@ -327,7 +331,7 @@ class orderModel extends model
             $this->where('user.source=? or user.oid=? or user.id=?', [$session_id, $session_uid, $session_uid]);
         }
 
-       // $this->where('user.source=? or user.oid=?', [$session_id, $session_uid]);
+        // $this->where('user.source=? or user.oid=?', [$session_id, $session_uid]);
         return $this->select($parameter);
     }
 

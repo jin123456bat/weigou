@@ -1,12 +1,15 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: copy
  * Date: 16-8-8
  * Time: 下午2:01
  */
+$_SERVER['HTTP_USER_AGENT'] = '123';
+echo $_SERVER['HTTP_USER_AGENT'];
 
-
+exit;
 $url = 'http://twillg.com/index.php?m=api&c=user&a=login';
 $partner = 'ios';
 $key = "ios";
