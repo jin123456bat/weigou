@@ -82,8 +82,8 @@ class export extends view
                 '(select name from user where order.uid=user.id) as username',//用户名
                 'product.barcode',//条形码
                 'product.sku',//商品SKU
-                'product.name',//商品名称
-                'product.inprice',//商品进价
+                'order_product.name',//商品名称
+                'order_product.inprice',//商品进价
                 'if(order_product.num*order_product.bind=0,order_product.num,order_product.num*order_product.bind) as num',//数量
                 'order.orderamount',//订单金额
 
@@ -108,7 +108,7 @@ class export extends view
                 'if(product.outside=1 or product.outside=0,"无需报关",if(kouan=1,"已报关","未报关"))',//报关
                 'if(order.status=1,"有效","无效")',//状态
                 'replace(replace(order.need_kouan,1,"需要报关"),0,"无需报关")',//类别
-                'ifnull((select publish.name from publish where product.publish=publish.id),"") as publish',//供应商
+                'ifnull((order_product.publish),"") as publish',//供应商
                 'if((select task_user.orderno from task_user where task_user.orderno=order.orderno) is null,"否","是")',//是否团购
                 'replace(replace(replace(ifnull((select task_user.status from task_user where task_user.orderno=order.orderno),""),0,"正在进行"),1,"成功"),2,"失败")',//团购成功
                 'order_product.price',//商品单价

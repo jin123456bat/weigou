@@ -276,7 +276,7 @@ class product extends common
     {
         $product_filter = [
             'isdelete' => 0,
-            'sort' => [['product_top.sort', 'asc'], ['product.createtime', 'desc']],
+            'sort' => [ ['product.modifytime', 'desc']],
             'status' => 1,
             'start' => $this->data('start', 0),
             'length' => $this->data('length', 10),
@@ -294,7 +294,7 @@ class product extends common
             	'product.selled',
             ]
         ];
-        $product = $this->model('product_top')->fetchAll($product_filter);
+        $product = $this->model('product')->fetchAll($product_filter);
 
         $productHelper = new \application\helper\product();
         foreach ($product as &$p) {
@@ -328,11 +328,11 @@ class product extends common
         $product_filter['parameter'] = 'count(*)';
         unset($product_filter['start']);
         unset($product_filter['length']);
-        $total = $this->model('product_top')->fetchAll($product_filter);
+
 
         $productReturnModel = [
             'current' => count($product),
-            'total' => isset($total[0]['count(*)']) ? $total[0]['count(*)'] : 0,
+            'total' => 5,
             'start' => $this->data('start', 0),
             'length' => $this->data('length', 10),
             'data' => $product,

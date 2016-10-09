@@ -203,48 +203,75 @@ class index extends view
             ->table('`order`', 'left join', 'order_package.orderno=`order`.orderno')
             ->where("`order`.status=1 and `order`.pay_status=0 and  unix_timestamp(now())-`order`.createtime>=3600 and (select task_user.orderno from task_user where task_user.orderno=`order`.orderno) is null")
             //->where("`order`.status=1 and `order`.pay_status=0 and  unix_timestamp(now())-`order`.createtime>=3600 ")
-           // ->where("`order`.orderno=?", ['1606132140142742120'])
+            // ->where("`order`.orderno=?", ['1606132140142742120'])
             ->select(['order_package.id', 'order_package.orderno']);
-        if($orders){
-        foreach ($orders as $o) {
-            //取商品数据 判断是否有content  不存在直接加库存 存在加另一个库存
-            $order_pro1 = $this->model("order_product")->where("package_id=?", [$o['id']])->select();
+        if ($orders) {
+            foreach ($orders as $o) {
+                //取商品数据 判断是否有content  不存在直接加库存 存在加另一个库存
+                $order_pro1 = $this->model("order_product")->where("package_id=?", [$o['id']])->select();
 
-            foreach ($order_pro1 as $order_pro) {
-                $num = $order_pro['num'] * $order_pro['bind'];
-
-                if ($order_pro['content'] != '') {
-                    $stock = $this->model("collection")->where("pid=? and content=?", [$order_pro['pid'], $order_pro['content']])->find('stock');
-                    $stock = $stock['stock'] + $num;
-                    $this->model("collection")->where("pid=? and content=?", [$order_pro['pid'], $order_pro['content']])->update(['stock' => $stock]);
-                } else {
-                    $stock = $this->model("product")->where("id=?", [$order_pro['pid']])->find(['stock']);
-                    $stock = $stock['stock'] + $num;
-                    $this->model("product")->where("id=?", [$order_pro['pid']])->update(['stock' => $stock]);
-                }
-            }
-
-            if ($this->model("order")->where("orderno=?", [$o['orderno']])->update(["status" => 0, 'quittime' => time()])) {
-                echo $o['orderno'] . "关闭成功<br />";
-            } else {
-                echo $o['orderno'] . "关闭失败<br />";
                 foreach ($order_pro1 as $order_pro) {
                     $num = $order_pro['num'] * $order_pro['bind'];
 
                     if ($order_pro['content'] != '') {
                         $stock = $this->model("collection")->where("pid=? and content=?", [$order_pro['pid'], $order_pro['content']])->find('stock');
-                        $stock = $stock['stock'] - $num;
+                        $stock = $stock['stock'] + $num;
                         $this->model("collection")->where("pid=? and content=?", [$order_pro['pid'], $order_pro['content']])->update(['stock' => $stock]);
                     } else {
                         $stock = $this->model("product")->where("id=?", [$order_pro['pid']])->find(['stock']);
-                        $stock = $stock['stock'] - $num;
+                        $stock = $stock['stock'] + $num;
                         $this->model("product")->where("id=?", [$order_pro['pid']])->update(['stock' => $stock]);
                     }
                 }
+
+                if ($this->model("order")->where("orderno=?", [$o['orderno']])->update(["status" => 0, 'quittime' => time()])) {
+                    echo $o['orderno'] . "关闭成功<br />";
+                } else {
+                    echo $o['orderno'] . "关闭失败<br />";
+                    foreach ($order_pro1 as $order_pro) {
+                        $num = $order_pro['num'] * $order_pro['bind'];
+
+                        if ($order_pro['content'] != '') {
+                            $stock = $this->model("collection")->where("pid=? and content=?", [$order_pro['pid'], $order_pro['content']])->find('stock');
+                            $stock = $stock['stock'] - $num;
+                            $this->model("collection")->where("pid=? and content=?", [$order_pro['pid'], $order_pro['content']])->update(['stock' => $stock]);
+                        } else {
+                            $stock = $this->model("product")->where("id=?", [$order_pro['pid']])->find(['stock']);
+                            $stock = $stock['stock'] - $num;
+                            $this->model("product")->where("id=?", [$order_pro['pid']])->update(['stock' => $stock]);
+                        }
+                    }
+                }
             }
+        } else {
+            echo '无记录';
         }
-    }else{
-    echo '无记录';
     }
+
+    function uporder()
+    {
+
+        $order = $this->model("order_product")->select();
+        foreach ($order as $o) {
+            //获取商品的进价 商品名，店铺名，供应商名
+            $product = $this->model("product")
+                ->table("store", "left join", "store.id=product.store")
+                ->table("publish", "left join", "publish.id=product.publish")
+                ->where('product.id=?', [$o['pid']])
+                ->find(['product.name', 'store.name as storename', 'publish.name as publish',"product.inprice"]);
+            if($this->model("order_product")->where("id=?",[$o['id']])->update([
+                'name'=> $product['name'],
+                'store_name'=> $product['storename'],
+                'publish'=> $product['publish'],
+                'inprice'=> $product['inprice']
+
+            ])){
+                echo $o['pid']."成功<br />";
+            }else{
+                echo $o['pid'] . "失败<br />";
+            }
+
+        }
+
     }
 }

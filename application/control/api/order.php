@@ -139,6 +139,25 @@ class order extends common
                 $package_id = $this->model('order_package')->lastInsertId();
                 foreach ($p['product'] as $temp_product) {
                     $temp_product['package_id'] = $package_id;
+                    $name = $this->model("product")
+                        ->table("store", "left join", "store.id=product.store")
+                        ->table("publish", "left join", "publish.id=product.publish")
+                        ->where('product.id=?', [$temp_product['pid']])->find(['product.name', 'store.name as storename', 'publish.name as publish', 'product.selled', 'product.inprice']);
+                    $temp_product['name'] = $name['name'];
+                    //$temp_product['name'] = '123';
+                    $temp_product['store_name'] = $name['storename'];
+                    $temp_product['publish'] = $name['publish'];
+                    if ($name['selled'] == $temp_product['bind']) {
+                        $temp_product['inprice'] = $name['inprice'];
+                    } else {
+                        $bind = $this->model("bind")->where("pid=? and num=? and content=?", [$temp_product['pid'], $temp_product['bind'], $temp_product['content']])->find();
+                        if($bind){
+                            $temp_product['inprice'] = $bind['inprice'];
+                        }
+
+                    }
+
+                    //$temp_product['store_name'] = '123';
                     if (!$this->model('order_product')->insert($temp_product)) {
                         $this->model('order')->rollback();
                         return new json(json::PARAMETER_ERROR, '订单商品错误');
@@ -332,8 +351,8 @@ class order extends common
                         'order_product.price',
                         'product.id',
                         'product.oldprice',
-                        'product.name',
-                        'store.name as store',
+                        'order_product.name',
+                        'order_product.store_name as store',
                         'product.outside',
                         'order_product.refund',
                         'order_product.bind',
@@ -344,7 +363,7 @@ class order extends common
                     $p['image'] = $productHelper->getListImage($p['id']);
                     $p['tax'] = $productHelper->getTaxFields($p['id']);
                     $p['price'] = $p['price'] * $p['bind'];
-                    $p['price']=sprintf('%.2f', $p['price']);
+                    $p['price'] = sprintf('%.2f', $p['price']);
                     if ($p['content'] != '' || $p['bind'] > 1) {
 
                         $unit = $this->model("bind")->where("content=? and num=? and pid=?", [$p['content'], $p['bind'], $p['id']])->find(['unit']);
@@ -361,9 +380,11 @@ class order extends common
                     } elseif ($p['bind'] > 1) {
                         $p['name'] .= "(" . $p['bind'] . $unit . ")";
                     }
+                    $st['name'] = $p['store'];
                 }
 
                 $st['product'] = $product;
+
             }
             //物流参数
             $wuliu = array();
@@ -375,7 +396,7 @@ class order extends common
                     //获取当前订单是否已经发货
                     if ($order['receive'] == 1) {
                         $wuliu['wuliu_notice'] = '订单已完成';
-                        $wuliu['wuliu_time'] =  $order['receive_time'];
+                        $wuliu['wuliu_time'] = $order['receive_time'];
                     } else {
                         $iorder = $this->model("order_package")->where("orderno=?", [$orderno])->find();
                         if ($iorder['ship_status'] == 1) {
@@ -391,16 +412,16 @@ class order extends common
                             if ($response['resultcode'] == 200) {
 
                                 // die(json_encode($response['result']));
-                                $response['result']['list']= array_reverse($response['result']['list']);
+                                $response['result']['list'] = array_reverse($response['result']['list']);
                                 $wuliu['wuliu_notice'] = $response['result']['list'][0]['remark'];
                                 $wuliu['wuliu_time'] = strtotime($response['result']['list'][0]['datetime']);
                             } else {
                                 $wuliu['wuliu_notice'] = '等待物流最新信息';
-                                $wuliu['wuliu_time'] =$order['way_time'];
+                                $wuliu['wuliu_time'] = $order['way_time'];
                             }
                         } else {
                             $wuliu['wuliu_notice'] = '等待物流取货';
-                            $wuliu['wuliu_time'] =  $order['way_time'];
+                            $wuliu['wuliu_time'] = $order['way_time'];
                         }
                     }
 
@@ -413,7 +434,7 @@ class order extends common
                 }
             } else {
                 $wuliu['wuliu_notice'] = '订单提交成功';
-                $wuliu['wuliu_time'] =  $order['createtime'];
+                $wuliu['wuliu_time'] = $order['createtime'];
             }
 
 
@@ -436,7 +457,7 @@ class order extends common
     function mylists()
     {
         //if (!empty($this->_response))
-           //return $this->_response;
+        //return $this->_response;
 
         $userHelper = new user();
         $uid = $userHelper->isLogin();
@@ -508,7 +529,7 @@ class order extends common
                     'order_product.num',
                     'order_product.pid',
                     'product.id',
-                    'product.name',
+                    'order_product.name',
                     'order_product.content',
                     'order_product.bind',
                     'order_product.price',
@@ -517,7 +538,7 @@ class order extends common
                 ]);
             foreach ($t_order['product'] as &$product) {
                 $product['price'] = $product['price'] * $product['bind'];
-                $product['price']= sprintf("%.2f", $product['price']);
+                $product['price'] = sprintf("%.2f", $product['price']);
                 $total_product_num += $product['num'];
                 $product['image'] = $productHelper->getListImage($product['id']);
                 $product['tax'] = $productHelper->getTaxFields($product['id']);
@@ -538,10 +559,10 @@ class order extends common
                 }
             }
             $t_order['product_num'] = $total_product_num;
-                $task= $this->model('task_user')->where('orderno=?', [$t_order['orderno']])->find();
+            $task = $this->model('task_user')->where('orderno=?', [$t_order['orderno']])->find();
             $t_order['is_task'] = !empty($task);
-            if($t_order['is_task']){
-                $t_order['tast_status']=$task['status'];
+            if ($t_order['is_task']) {
+                $t_order['tast_status'] = $task['status'];
             }
         }
 
@@ -640,7 +661,7 @@ class order extends common
                             ->where('order_product.package_id=?', [$p['id']])
                             ->select([
                                 'product.id',
-                                'product.name',
+                                'order_product.name',
                                 'order_product.price',
                                 'order_product.content',
                                 'order_product.num',
@@ -649,7 +670,7 @@ class order extends common
                             ]);
                         foreach ($product_array as &$product) {
                             $product['image'] = $productHelper->getListImage($product['id']);
-                            $product['price']= $product['price']* $product['bind'];
+                            $product['price'] = $product['price'] * $product['bind'];
                         }
 
                         $p['ship_type'] = $this->model('ship')->get($p['ship_type']);

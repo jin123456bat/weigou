@@ -320,7 +320,8 @@ class mobile extends view
                         ->table('product', 'left join', 'product.id=order_product.pid')
                         ->where('package_id=?', [$st['package_id']])
                         ->select([
-                            'product.name',
+                            'order_product.name',
+                            'order_product.store_name',
                             'product.id',
                             'order_product.num',
                             'order_product.price * order_product.bind as price',
@@ -329,6 +330,7 @@ class mobile extends view
                         ]);
                     foreach ($product as &$p) {
                         $p['image'] = $productHelper->getListImage($p['id']);
+                        $st['name']=$p['store_name'] ;
                     }
                     $st['product'] = $product;
                 }
@@ -1525,7 +1527,7 @@ class mobile extends view
                         'order_product.num',
                         'order_product.pid',
                         'product.id',
-                        'product.name',
+                        'order_product.name',
                         'order_product.content',
                         'order_product.price*order_product.bind as price',
                         'product.oldprice',

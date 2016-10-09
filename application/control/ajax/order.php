@@ -170,6 +170,25 @@ class order extends ajax
                 $package_id = $this->model('order_package')->lastInsertId();
                 foreach ($p['product'] as $temp_product) {
                     $temp_product['package_id'] = $package_id;
+                    $name = $this->model("product")
+                        ->table("store", "left join", "store.id=product.store")
+                        ->table("publish", "left join", "publish.id=product.publish")
+                        ->where('product.id=?', [$temp_product['pid']])->find(['product.name', 'store.name as storename', 'publish.name as publish', 'product.selled', 'product.inprice']);
+                    $temp_product['name'] = $name['name'];
+                    //$temp_product['name'] = '123';
+                    $temp_product['store_name'] = $name['storename'];
+                    $temp_product['publish'] = $name['publish'];
+                    if ($name['selled'] == $temp_product['bind']) {
+                        $temp_product['inprice'] = $name['inprice'];
+                    } else {
+                        $bind = $this->model("bind")->where("pid=? and num=? and content=?", [$temp_product['pid'], $temp_product['bind'], $temp_product['content']])->find();
+                        if ($bind) {
+                            $temp_product['inprice'] = $bind['inprice'];
+                        }
+
+                    }
+
+
                     if (!$this->model('order_product')->insert($temp_product)) {
                         $this->model('order')->rollback();
                         return new json(json::PARAMETER_ERROR, '订单商品错误');
