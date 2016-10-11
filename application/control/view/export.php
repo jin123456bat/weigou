@@ -137,7 +137,7 @@ class export extends view
 
         //所有导出的订单
         $orderno_array = [];
-
+        $orderno_y = 0;
         foreach ($data as &$value) {
             switch ($value['refund']) {
                 case 1:
@@ -150,6 +150,23 @@ class export extends view
                     $value['refund'] = "未退款";
                     break;
             }
+
+
+            //去掉运费
+            if ($orderno_y == $value['orderno']) {
+                $value['feeamount'] = '0.00';
+                $value['product1']='0.00';
+                $value['product2'] = '0.00';
+                $value['product3'] = '0.00';
+            } else {
+                $orderno_y = $value['orderno'];
+            }
+            $price = $value['price'] * $value['num'];
+
+            $value['orderamount'] = ($price + $value['feeamount']);
+            $value['pay_money'] = ($price + $value['feeamount']);
+            $value['orderamount']= sprintf("%.2f", $value['orderamount']);
+            $value['pay_money'] = sprintf("%.2f", $value['pay_money']);
 
             //判断有没有bind
             $op = $this->model("order_product")
@@ -424,7 +441,7 @@ class export extends view
         }
         //die(json_encode($datan));
         $template = ROOT . '/extends/PHPExcel/product.xlsx';
-        $admin=$this->session->id;
+        $admin = $this->session->id;
         $this->model("admin_log")->insertlog($admin, '导出商品信息成功', 1);
         $this->response($datan, $template, '商品数据' . date('Y-m-d H:i:s'));
     }
