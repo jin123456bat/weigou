@@ -7,8 +7,13 @@
  * Time: 下午2:01
  */
 $_SERVER['HTTP_USER_AGENT'] = '123';
-echo $_SERVER['HTTP_USER_AGENT'];
+//echo $_SERVER['HTTP_USER_AGENT'];
 
+if (strstr('包邮包税 阿 承认全职奶粉', '奶粉')) {
+    echo 1;
+} else {
+    echo 2;
+}
 exit;
 $url = 'http://twillg.com/index.php?m=api&c=user&a=login';
 $partner = 'ios';
@@ -18,9 +23,8 @@ $posts = array(
 );
 $fields = array(
 
-    "telephone"=>'18768495315',
-    'password'=>'twg123456',
-
+    "telephone" => '18768495315',
+    'password' => 'twg123456',
 
 
 );

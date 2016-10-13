@@ -88,8 +88,22 @@ class order extends common
 
         $productHelper = new product();
         foreach ($product as $p) {
-            if (!$productHelper->canBuy($p['id'], $p['content']))
+            if (!$productHelper->canBuy($p['id'], $p['content'])) {
                 return new json(json::PARAMETER_ERROR, '存在不可购买的商品,请删除重新下单');
+            }
+            //判断商品是否是奶粉
+            $pro = $this->model("product")->where("id=? and isdelete=? ", [$p['id'], 0])->find(['name', 'selled']);
+            if (strstr($pro['name'], '奶粉')) {
+
+                if (isset($p['bind'])) {
+                    $num = $p['num'] * $p['bind'];
+                } else {
+                    $num = $p['num'] * $pro['selled'];
+                }
+                if ($num > 4) {
+                    return new json(json::PARAMETER_ERROR, '奶粉单笔购物数量不能超过4件。');
+                }
+            }
         }
 
         $order = $orderHelper->createOrderData($uid, $product, $coupon, $address, $money, $msg, $invoice);
@@ -115,6 +129,7 @@ class order extends common
                 return new json(json::PARAMETER_ERROR, '普通商品和进口商品不能和直邮商品同时支付，请选择部分商品支付');
             }
         }
+
 
         if ($orderHelper->hasProductOutside(2)) {
             if ($orderHelper->hasProductOutside(3)) {
@@ -151,7 +166,7 @@ class order extends common
                         $temp_product['inprice'] = $name['inprice'];
                     } else {
                         $bind = $this->model("bind")->where("pid=? and num=? and content=?", [$temp_product['pid'], $temp_product['bind'], $temp_product['content']])->find();
-                        if($bind){
+                        if ($bind) {
                             $temp_product['inprice'] = $bind['inprice'];
                         }
 

@@ -418,10 +418,10 @@ class product extends ajax
             return new json(json::PARAMETER_ERROR, '售卖数不能为空');
         }
 
-        if ($this->model('product')->where('id!=? and barcode=? and isdelete=?', [$product_id, $product['barcode'], 0])->find()) {
+       /* if ($this->model('product')->where('id!=? and barcode=? and isdelete=?', [$product_id, $product['barcode'], 0])->find()) {
             $this->model("admin_log")->insertlog($admin, '商品管理，商品编辑(存在相同条形码的商品)');
             return new json(json::PARAMETER_ERROR, '存在相同条形码的商品');
-        }
+        }*/
 
         if ($this->model('product')->where('id=?', [$product_id])->update($product, '', true)) {
             $this->model('category_product')->where('pid=?', [$product_id])->delete();

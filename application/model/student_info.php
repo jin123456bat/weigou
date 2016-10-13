@@ -35,6 +35,9 @@ class student_infoModel extends model
             if (!empty($post['card'])) {
                 $this->where('student_info.card like ?', ['%' . $post['card'] . "%"]);
             }
+            if (!empty($post['phone'])) {
+                $this->where('user.telephone like ?', ['%' . $post['phone'] . "%"]);
+            }
             if (!empty($post['createtime_from'])) {
                 $this->where('student_info.created >= ?', [$post['createtime_from']]);
             }
