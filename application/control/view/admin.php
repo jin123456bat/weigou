@@ -382,6 +382,7 @@ class admin extends view
             'sort' => ['sort', 'asc'],
             'parameter' => 'category.id,
 							category.name,
+							category.alias,
 							upload.path as logo,
 							category.description,
 							category.sort,
@@ -416,9 +417,10 @@ class admin extends view
         $filter = [
             'isdelete' => 0,
             'sort' => ['category.sort', 'asc'],
-            'parameter' => 'category.id,category.name,category.cid'
+            'parameter' => 'category.id,category.name,category.cid,category.alias'
         ];
         $category = $this->model('category')->fetchAll($filter);
+
         $this->assign('category', $category);
 
 
@@ -597,7 +599,7 @@ class admin extends view
             $filter = [
                 'isdelete' => 0,
                 'sort' => ['category.sort', 'asc'],
-                'parameter' => 'category.id,category.name,category.cid'
+                'parameter' => 'category.id,category.name,category.cid,category.alias'
             ];
             $category = $this->model('category')->fetchAll($filter);
             $this->assign('category', $category);

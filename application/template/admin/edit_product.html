@@ -258,27 +258,40 @@
                                                             </label>
                                                             <div class="col-md-10">
                                                                 <div class="form-control height-auto">
-                                                                    <div class="scroller">
+                                                                    <div class="scroller" style=" height:200px; overflow:auto">
                                                                         <ul class="list-unstyled">
                                                                         	{%section name=category loop=$category%}
                                                                             {%if empty($category[category].cid)%}
                                                                             <li>
                                                                                 <label>
-                                                                                    <input class="category" type="checkbox" name="category[]" value="{%$category[category].id%}" {%section name=product_category loop=$product_category%}{%if $product_category[product_category].id==$category[category].id%}checked=checked{%/if%}{%/section%}>{%$category[category].name%}</label>
+                                                                                    <input class="category" type="checkbox" name="category[]" value="{%$category[category].id%}" {%section name=product_category loop=$product_category%}{%if $product_category[product_category].id==$category[category].id%}checked=checked{%/if%}{%/section%}>{%$category[category].name%}--{%$category[category].alias%}</label>
                                                                                 <ul class="list-unstyled">
                                                                                     {%section name=subcate loop=$category%}
                                                                                     {%if $category[subcate].cid==$category[category].id%}
                                                                                     <li>
                                                                                         <label>
-                                                                                            <input class="category" type="checkbox" name="category[]" value="{%$category[subcate].id%}" {%section name=product_category loop=$product_category%}{%if $product_category[product_category].id==$category[subcate].id%}checked=checked{%/if%}{%/section%}>{%$category[subcate].name%}</label>
+                                                                                            <input class="category" type="checkbox" name="category[]" value="{%$category[subcate].id%}" {%section name=product_category loop=$product_category%}{%if $product_category[product_category].id==$category[subcate].id%}checked=checked{%/if%}{%/section%}>{%$category[subcate].name%}--{%$category[subcate].alias%}</label>
+                                                                                        <ul class="list-unstyled">
+                                                                                            {%section name=subcatee loop=$category%}
+                                                                                            {%if $category[subcatee].cid==$category[subcate].id%}
+                                                                                            <li>
+                                                                                                <label>
+                                                                                                    <input class="category"  type="checkbox"  name="category[]" value="{%$category[subcatee].id%}"  {%section name=product_category  loop=$product_category%}{%if  $product_category[product_category].id==$category[subcatee].id%}checked=checked{%/if%}{%/section%}>{%$category[subcatee].name%}--{%$category[subcatee].alias%}</label>
+
+                                                                                            </li>
+                                                                                            {%/if%}
+                                                                                            {%/section%}
+                                                                                        </ul>
                                                                                     </li>
                                                                                     {%/if%}
                                                                                     {%/section%}
                                                                                 </ul>
-                                                                            </li>
-                                                                            {%/if%}
-                                                                            {%/section%}
-                                                                        </ul>
+
+                                                                                    </li>
+                                                                                     {%/if%}
+                                                                                    {%/section%}
+                                                                                </ul>
+                                                                        
                                                                     </div>
                                                                 </div>
                                                                 <span class="help-block"> 选择一个或多个分类 </span>

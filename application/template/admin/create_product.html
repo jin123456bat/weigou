@@ -257,19 +257,32 @@
                                                             </label>
                                                             <div class="col-md-10">
                                                                 <div class="form-control height-auto">
-                                                                    <div class="scroller">
+                                                                    <div class="scroller" style=" height:200px; overflow:auto">
                                                                         <ul class="list-unstyled">
                                                                         	{%section name=category loop=$category%}
                                                                             {%if empty($category[category].cid)%}
                                                                             <li>
                                                                                 <label>
-                                                                                    <input class="category" type="checkbox" name="category[]" value="{%$category[category].id%}">{%$category[category].name%}</label>
+                                                                                    <input class="category" type="checkbox" name="category[]" value="{%$category[category].id%}">{%$category[category].name%}--{%$category[category].alias%}</label>
                                                                                 <ul class="list-unstyled">
                                                                                     {%section name=subcate loop=$category%}
                                                                                     {%if $category[subcate].cid==$category[category].id%}
                                                                                     <li>
                                                                                         <label>
-                                                                                            <input class="category" type="checkbox" name="category[]" value="{%$category[subcate].id%}">{%$category[subcate].name%}</label>
+                                                                                            <input class="category" type="checkbox" name="category[]" value="{%$category[subcate].id%}">{%$category[subcate].name%}--{%$category[subcate].alias%}</label>
+                                                                                        <ul class="list-unstyled">
+                                                                                            {%section name=subcatee loop=$category%}
+                                                                                            {%if $category[subcatee].cid==$category[subcate].id%}
+                                                                                            <li>
+                                                                                                <label>
+                                                                                                    <input class="category"  type="checkbox"     name="category[]"   value="{%$category[subcatee].id%}">{%$category[subcatee].name%}--{%$category[subcatee].alias%}</label>
+
+
+                                                                                            </li>
+                                                                                            {%/if%}
+                                                                                            {%/section%}
+                                                                                        </ul>
+
                                                                                     </li>
                                                                                     {%/if%}
                                                                                     {%/section%}
@@ -593,7 +606,7 @@
 																<input type="text" class="form-control" style="height:38px;" name="prototype_value" placeholder="属性值">
 																</div>
 																<div id="prototype_radio" style="display: none;">
-																	
+
 																	<input type="text" class="form-control" data-role="tagsinput" name="prototype_value" placeholder="属性值" style="display: block;">
 																</div>
 															</div>
@@ -632,14 +645,14 @@
                                                                 <th width="8%"> 排序 </th>
                                                                 <th width="10%"> 列表图 </th>
                                                                 <th width="10%"> 详情图 </th>
-                                                               
+
                                                                 <th width="10%"> </th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-														
-                                                            
-                                                           
+
+
+
                                                         </tbody>
                                                     </table>
                                                 </div>
@@ -664,7 +677,7 @@
         <!-- END FOOTER -->
         <!--[if lt IE 9]>
 <script src="{%$VIEW_ROOT%}/assets/global/plugins/respond.min.js"></script>
-<script src="{%$VIEW_ROOT%}/assets/global/plugins/excanvas.min.js"></script> 
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/excanvas.min.js"></script>
 <![endif]-->
         <!-- BEGIN CORE PLUGINS -->
         <script src="{%$VIEW_ROOT%}/assets/global/plugins/jquery.min.js" type="text/javascript"></script>
@@ -720,7 +733,7 @@
                 $(this).parents('tr').remove();
                 return false;
             });
-		
+
 			$('#prototype_radio').find('input[name=prototype_value]').on('itemAdded',function(event){
 				var exp = /[^0-9A-Za-z\u4E00-\u9FA5\uF900-\uFA2D]/;
 				if(exp.test(event.item))
@@ -729,9 +742,9 @@
 					$(this).tagsinput('remove',event.item);
 				}
 			});
-			
+
 			window.um = UM.getEditor('description');
-			
+
 			$.fn.select2.defaults.set("theme", "bootstrap");
 			$(".select2").select2({
 				placeholder: '请选择',
@@ -742,7 +755,7 @@
 				   }
 			   	},
 			});
-			
+
 			$('#selectAll').on('click',function(){
 				$('input[name=fee_province]').each(function(index, element) {
                     $(element).parent().addClass('checked');
@@ -750,7 +763,7 @@
                 });
 				return false;
 			});
-			
+
 			var in_array = function(data,array){
 				for(var i=0;i<array.length;i++)
 				{
@@ -761,7 +774,7 @@
 				}
 				return false;
 			}
-			
+
 			$('#selectPIAN').on('click',function(){
 				var province = [
 					5,21,26,28,29,30,31,32,33,34,35,
@@ -780,7 +793,7 @@
                 });
 				return false;
 			});
-			
+
 			$('#selectZJH').on('click',function(){
 				var province = [9,10,11];
 				$('input[name=fee_province]').each(function(index, element) {
@@ -797,7 +810,7 @@
                 });
 				return false;
 			});
-			
+
 			$('#selectElse').on('click',function(){
 				$('input[name=fee_province]').each(function(index, element) {
                     if($(element).parent().hasClass('checked'))
@@ -813,19 +826,19 @@
                 });
 				return false;
 			});
-			
+
 			$('button[name=prototype_add]').on('click',function(){
 				var name = $.trim($('input[name=prototype_name]').val());
 				if(name.length==0)
 				{
 					App.alert({
-						container: $('#alert_container').val(), // alerts parent container 
-						place: 'append', // append or prepent in container 
-						type: 'danger', // alert's type 
+						container: $('#alert_container').val(), // alerts parent container
+						place: 'append', // append or prepent in container
+						type: 'danger', // alert's type
 						message: '属性名或属性值不得为空',
                         close: true,
 						focus: true, // auto scroll to the alert after shown
-						closeInSeconds: 3, // auto close after defined seconds 
+						closeInSeconds: 3, // auto close after defined seconds
 						icon:'fa fa-remove' // put icon class before the message
 					});
 					return false;
@@ -841,34 +854,34 @@
 					break;
 					default:return false;
 				}
-				
+
 				collection.addPrototype(name,type,value);
 				collection.drawCollectionTables();
 				collection.drawPrototypeTables();
-				
+
 				return false;
 			});
-			
+
 			$('#prototype_container').on('click','.prototype_remove',function(e){
 				var name = $(this).parents('tr').find('td:first').html();
 				collection.removePrototype(name);
 				return false;
 			});
-			
+
 			$('#prototype_collection tbody').on('click','img',function(){
 				var input = $('<input type="file">');
 				var ths = $(this);
 				input.trigger('click');
-				
+
 				input.on('change',function(){
 					var url = '{%url m=api c=common a=upload%}';
 					var xhr = new XMLHttpRequest();
 					var formData = new FormData();
 					formData.append('file',this.files[0]);
 					xhr.open('POST',url,true);
-					xhr.onload = function(){  
-						if(xhr.status == 200 && xhr.readyState == 4)  
-						{  
+					xhr.onload = function(){
+						if(xhr.status == 200 && xhr.readyState == 4)
+						{
 							var response = $.parseJSON(xhr.response);
 							if(response.code == 1)
 							{
@@ -888,9 +901,9 @@
 					xhr.send(formData);
 					return false;
 				});
-				
+
 			});
-			
+
 			$('select[name=prototype_type]').on('change',function(){
 				switch($(this).val())
 				{
@@ -904,13 +917,13 @@
 						break;
 				}
 			});
-			
+
 			$('.maxlength-handler').maxlength({
 				limitReachedClass: "label label-danger",
 				alwaysShow: true,
 				threshold: 5
 			});
-			
+
 			$('#auto_status').on('click',function(){
 				if($(this).is(':checked'))
 				{
@@ -923,7 +936,7 @@
 					$('#time_to').attr('disabled','disabled');
 				}
 			});
-			
+
 			$('#auto_stock').on('click',function(){
 				if($(this).is(':checked'))
 				{
@@ -934,7 +947,7 @@
 					$('input[name=stock]').attr('disabled','disabled');
 				}
 			});
-			
+
 			$('#save').on('click',function(){
 				if($('select[name=store]').val() == '')
 				{
@@ -945,10 +958,10 @@
 					window.location = '{%url c=admin a=product%}';
 				},function(){
 				});
-				
+
 				return false;
 			});
-			
+
 			$('#saveedit').on('click',function(){
 				if($('select[name=store]').val() == '')
 				{
@@ -958,7 +971,7 @@
 				save();
 				return false;
 			});
-			
+
 			$('#remove').on('click',function(){
 				if($('#product_id').val()==0)
 				return false;
@@ -972,13 +985,13 @@
 					else
 					{
 						App.alert({
-							container: $('#alert_container').val(), // alerts parent container 
-							place: 'append', // append or prepent in container 
-							type: 'danger', // alert's type 
+							container: $('#alert_container').val(), // alerts parent container
+							place: 'append', // append or prepent in container
+							type: 'danger', // alert's type
 							message: response.result,
 							close: true,
 							focus: true, // auto scroll to the alert after shown
-							closeInSeconds: 3, // auto close after defined seconds 
+							closeInSeconds: 3, // auto close after defined seconds
 							icon:'fa fa-remove' // put icon class before the message
 						});
 					}
@@ -990,29 +1003,29 @@
 				}
 				return false;
 			});
-			
+
 			function save(success,failed)
 			{
 				App.blockUI();
-     			
+
 				var category = [];
 				$('.category:checked').each(function(index, element) {
 					category.push($(element).val());
 				});
 				try{
-					
+
 					var fee_province = [];
 					product_province = $('input[name=fee_province]:checked');
 					$.each(product_province,function(index,value){
 						fee_province.push($(value).val());
 					});
-					
+
 					var obj = {
 						prototype:collection.getPrototypeTables(),
 						collection:collection.getCollectionTables(),
 						image:EcommerceProductsEdit.getPhoto(),
                         bind:collection.getBind(),
-						
+
 						name:$('#tab_general input[name=name]').val(),
 						description:window.um.getContent(),
 						short_description:$('textarea[name=short_description]').val(),
@@ -1049,7 +1062,7 @@
 						fee_province:fee_province,
 						ztax:$('select[name=ztax]').val(),
 						barcode:$('input[name=barcode]').val(),
-						inprice:$('#tab_general input[name=inprice]').val(),		
+						inprice:$('#tab_general input[name=inprice]').val(),
 						selled:$('#tab_general input[name=selled]').val(),
 						down_reason:$('input[name=down_reason]').val(),
                         MeasurementUnit:$('select[name=MeasurementUnit]').val(),
@@ -1060,7 +1073,7 @@
                     console.log(e);
 					alert('系统异常');
 				}
-				
+
 				if($('#product_id').val() != 0)
 				{
 					var url = '{%url m=ajax c=product a=save%}';
@@ -1070,40 +1083,40 @@
 				{
 					var url = '{%url m=ajax c=product a=create%}';
 				}
-				
+
 				$.post(url,obj,function(response){
 					if(response.code==1)
 					{
 						App.alert({
-							container: $('#alert_container').val(), // alerts parent container 
-							place: 'append', // append or prepent in container 
-							type: 'success', // alert's type 
+							container: $('#alert_container').val(), // alerts parent container
+							place: 'append', // append or prepent in container
+							type: 'success', // alert's type
 							message: '保存成功',
 							close: true,
 							focus: true, // auto scroll to the alert after shown
-							closeInSeconds: 3, // auto close after defined seconds 
+							closeInSeconds: 3, // auto close after defined seconds
 							icon:'fa fa-check' // put icon class before the message
 						});
-						
+
 						$('#product_id').val(response.body);
-						
+
 						$('#remove').removeClass('display-hide');
 						if(success)
 						{
 							success(response);
 						}
-						
+
 					}
 					else
 					{
 						App.alert({
-							container: $('#alert_container').val(), // alerts parent container 
-							place: 'append', // append or prepent in container 
-							type: 'danger', // alert's type 
+							container: $('#alert_container').val(), // alerts parent container
+							place: 'append', // append or prepent in container
+							type: 'danger', // alert's type
 							message: response.result,
 							close: true,
 							focus: true, // auto scroll to the alert after shown
-							closeInSeconds: 3, // auto close after defined seconds 
+							closeInSeconds: 3, // auto close after defined seconds
 							icon:'fa fa-remove' // put icon class before the message
 						});
 						if(failed)
@@ -1114,7 +1127,7 @@
 					App.unblockUI();
 				});
 			}
-			
+
 			var selectMode = function(){
 				switch($('select[name=outside]').val())
 				{

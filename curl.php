@@ -9,12 +9,13 @@
 $_SERVER['HTTP_USER_AGENT'] = '123';
 //echo $_SERVER['HTTP_USER_AGENT'];
 
-if (strstr('包邮包税 阿 承认全职奶粉', '奶粉')) {
-    echo 1;
-} else {
-    echo 2;
+try {
+
+} catch (Exception $e) {
+
+} finally {
+
 }
-exit;
 $url = 'http://twillg.com/index.php?m=api&c=user&a=login';
 $partner = 'ios';
 $key = "ios";
