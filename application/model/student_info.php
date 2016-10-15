@@ -45,6 +45,9 @@ class student_infoModel extends model
                 $this->where('student_info.created <= ?', [$post['createtime_to']]);
             }
 
+            if (!empty($post['vip']) || $post['vip']==0) {
+                $this->where('user.vip =?', [$post['vip']]);
+            }
             if (!empty($post['pass'])) {
                 $this->where('user.school =?', [$post['pass']]);
             }
