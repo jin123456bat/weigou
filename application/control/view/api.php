@@ -46,18 +46,18 @@ class api extends view
 		$id = $this->post('id');
 		if (is_array($id) && !empty($id))
 		{
-			$product = $this->model('product')->where('store=? and isdelete=?',[27,0])->where('id in (?)',$id)->select('id,barcode,store');
+			$product = $this->model('product')->where('store=? and status=? and isdelete=?',[27,1,0])->where('id in (?)',$id)->select('id,barcode,store');
 		}
 		else
 		{
-			$product = $this->model('product')->where('store=? and isdelete=?',[27,0])->select('id,barcode,store');
+			$product = $this->model('product')->where('store=? and status=? and isdelete=?',[27,1,0])->select('id,barcode,store');
 		}
 		
 		$erpSender = new erpSender();
 		
 		//清空库存
-		$this->model('store_stock')->delete();
-		$this->model('product')->where('store=? and isdelete=?',[27,0])->update('stock',0);
+		//$this->model('store_stock')->delete();
+		//$this->model('product')->where('store=? and isdelete=?',[27,0])->update('stock',0);
 		
 		foreach ($product as $p)
 		{
@@ -69,7 +69,6 @@ class api extends view
 			}
 			
 			$stock = $erpSender->doAction(2, 'QueryGoodsInventory',[$p['barcode'],$p['store']]);
-			
 			if ($stock === false)
 			{
 				//查询失败
