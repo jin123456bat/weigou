@@ -56,8 +56,8 @@ class api extends view
 		$erpSender = new erpSender();
 		
 		//清空库存
-		$this->model('store_stock')->delete();
-		$this->model('product')->where('store=? and isdelete=?',[27,0])->update('stock',0);
+		//$this->model('store_stock')->delete();
+		//$this->model('product')->where('store=? and isdelete=?',[27,0])->update('stock',0);
 		
 		foreach ($product as $p)
 		{
