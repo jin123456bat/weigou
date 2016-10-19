@@ -487,7 +487,8 @@ class order extends ajax
     function changePackage()
     {
     	$adminHelper = new admin();
-    	if(empty($adminHelper->getAdminId()))
+    	$aid = $adminHelper->getAdminId();
+    	if(empty($aid))
     	{
     		return new json(json::NOT_LOGIN);
     	}
@@ -517,6 +518,7 @@ class order extends ajax
 		        		]))
 		        		{
 		        			$this->model('order')->rollback();
+		        			$this->model("admin_log")->insertlog($aid, '包裹发货失败(包裹id:'.$id.'，数据库order更新失败)');
 		        		}
 		        	}
 		        	else
@@ -528,14 +530,17 @@ class order extends ajax
 		        		]))
 		        		{
 		        			$this->model('order')->rollback();
+		        			$this->model("admin_log")->insertlog($aid, '包裹发货失败(包裹id:'.$id.'，数据库order更新失败)');
 		        		}
 		        	}
+		        	$this->model("admin_log")->insertlog($aid, '包裹发货成功(包裹id:'.$id.')');
 		        	$this->model('order')->commit();
 		        	return new json(json::OK);
 		        }
 		        else
 		        {
 		        	$this->model('order')->rollback();
+		        	$this->model("admin_log")->insertlog($aid, '包裹发货失败(包裹id:'.$id.'，数据库order_package更新失败)');
 		        	return new json(json::PARAMETER_ERROR,'包裹发货失败');
 		        }
         	}
@@ -544,7 +549,8 @@ class order extends ajax
 
     function confirmSend()
     {
-        $admin = $this->session->id;
+    	$adminHelper = new admin();
+        $admin = $adminHelper->getAdminId();
         $data = $this->post('data');
         $data = json_decode($data, true);
         $orderno = $this->post('orderno');
