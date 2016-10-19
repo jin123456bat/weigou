@@ -631,10 +631,7 @@ class product extends ajax
             }
             return $result;
         }
-
-        ;
-
-
+        
         $config = config('file');
         //文件类型
         $config->type = [
@@ -725,7 +722,6 @@ class product extends ajax
                     if (!empty($product[3])) {
                         $bind[0]['inprice'] = (string)$product[3];
                         $bind[0]['num'] = (string)$product[4];
-
                     }
 
                     if (!empty($product[5])) {
@@ -923,7 +919,7 @@ class product extends ajax
                     $this->model("bind")->where("pid=?", [$product_id])->delete();
                     if (count($bind1) > 1) {
                         $j = 1;
-
+                        
                         $bind1 = array_reverse($bind1);
                         foreach ($bind1 as &$b) {
                             $b['pid'] = $product_id;
@@ -940,8 +936,7 @@ class product extends ajax
                             $j++;
                         }
                     }
-                    unset($bind);
-                    unset($bind1);
+                    
                     if (!$sql) {
                         $product['success'] = false;
                     } else {

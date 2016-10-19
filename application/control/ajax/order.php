@@ -480,16 +480,66 @@ class order extends ajax
     }
 
 
+    /**
+     * 更改子订单的配送信息
+     * @return \application\message\json
+     */
     function changePackage()
     {
+    	$adminHelper = new admin();
+    	if(empty($adminHelper->getAdminId()))
+    	{
+    		return new json(json::NOT_LOGIN);
+    	}
+    	
         $id = $this->post('id');
         $ship_type = $this->post('ship_type');
         $ship_number = $this->post('ship_number');
-        $this->model('order_package')->where('id=?', [$id])->update([
-            'ship_type' => $ship_type,
-            'ship_number' => $ship_number,
-        ]);
-        return new json(json::OK);
+        if (!empty($id))
+        {
+        	$package = $this->model('order_package')->where('id=?',[$id])->find();
+        	if (!empty($package))
+        	{
+        		$this->model('order')->transaction();
+		        if($this->model('order_package')->where('id=?', [$id])->update([
+		            'ship_type' => $ship_type,
+		            'ship_number' => $ship_number,
+		        	'ship_status' => 1,
+		        	'ship_time' => $_SERVER['REQUEST_TIME'],
+		        ]))
+		        {
+		        	if(empty($this->model('order_package')->where('orderno=? and ship_status=?',[$package['orderno'],0])->find()))
+		        	{
+		        		if(!$this->model('order')->where('orderno=?',[$package['orderno']])->update([
+		        			'way_status' => 1,
+		        			'way_type' => 1,
+		        			'way_time' => $_SERVER['REQUEST_TIME']
+		        		]))
+		        		{
+		        			$this->model('order')->rollback();
+		        		}
+		        	}
+		        	else
+		        	{
+		        		if(!$this->model('order')->where('orderno=?',[$package['orderno']])->update([
+		        			'way_status' => 2,
+		        			'way_type' => 1,
+		        			'way_time' => $_SERVER['REQUEST_TIME']
+		        		]))
+		        		{
+		        			$this->model('order')->rollback();
+		        		}
+		        	}
+		        	$this->model('order')->commit();
+		        	return new json(json::OK);
+		        }
+		        else
+		        {
+		        	$this->model('order')->rollback();
+		        	return new json(json::PARAMETER_ERROR,'包裹发货失败');
+		        }
+        	}
+	    }
     }
 
     function confirmSend()
