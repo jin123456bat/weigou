@@ -265,7 +265,7 @@ class product extends common
         		'time' => $_SERVER['REQUEST_TIME'],
         		'uid' => $userHelper->isLogin(),
         		'total' => isset($total[0]['count(*)']) ? $total[0]['count(*)'] : 0,
-        		'user-agent' => \application\helper\api::getUser(),
+        		'userAgent' => \application\helper\api::getUser(),
         	]);
         }
 

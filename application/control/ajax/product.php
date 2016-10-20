@@ -281,7 +281,7 @@ class product extends ajax
         		'time' => $_SERVER['REQUEST_TIME'],
         		'uid' => $userHelper->isLogin(),
         		'total' => isset($total[0]['count(*)']) ? $total[0]['count(*)'] : 0,
-        		'user-agent' => isset($_SERVER['HTTP_USER_AGENT'])?$_SERVER['HTTP_USER_AGENT']:'',
+        		'userAgent' => isset($_SERVER['HTTP_USER_AGENT'])?$_SERVER['HTTP_USER_AGENT']:'',
         	]);
         }
         
