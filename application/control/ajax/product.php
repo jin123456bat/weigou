@@ -202,7 +202,9 @@ class product extends ajax
 
     function search()
     {
-        $keywords = $this->get('keywords', '', 'trim');
+        $keywords = htmlspecialchars($this->get('keywords', '', 'trim'));
+        $keywords = substr($keywords, 0, 32);
+        
         $product_filter = [
             'name' => '%' . $keywords . '%',
             'isdelete' => 0,
@@ -268,7 +270,21 @@ class product extends ajax
             'length' => $this->get('length', 10),
             'data' => $product,
         ];
-
+        
+    	if (!empty($keywords)) {
+        	$product_filter['name'] = '%' . $keywords . '%';
+        
+        	$userHelper = new user();
+        	$this->model('search_log')->insert([
+        		'ip' => ip(),
+        		'keywords' => $keywords,
+        		'time' => $_SERVER['REQUEST_TIME'],
+        		'uid' => $userHelper->isLogin(),
+        		'total' => isset($total[0]['count(*)']) ? $total[0]['count(*)'] : 0,
+        		'user-agent' => isset($_SERVER['HTTP_USER_AGENT'])?$_SERVER['HTTP_USER_AGENT']:'',
+        	]);
+        }
+        
         return new json(json::OK, NULL, $productReturnModel);
     }
 

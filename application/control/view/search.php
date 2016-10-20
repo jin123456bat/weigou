@@ -2,6 +2,7 @@
 namespace application\control\view;
 use system\core\http;
 use system\core\control;
+use application\message\json;
 
 class search extends control
 {
@@ -20,7 +21,7 @@ class search extends control
 			'respond' => 'json',
 			'charset' => 'utf8',
 			'ignore' => 'yes',
-			'multi' => '0x02',
+			'multi' => '2',
 			'traditional' => 'no',
 			'duality' => !$duality?'no':'yes',
 		]);
@@ -31,7 +32,7 @@ class search extends control
 			//去除idf为0的单词
 			foreach ($response['words'] as $word)
 			{
-				if ($word['idf']>0)
+				if ($word['idf']>6)
 				{
 					$temp[] = $word;
 				}
@@ -74,16 +75,35 @@ class search extends control
 	/**
 	 * 单独添加商品的索引或者更新商品索引
 	 */
-	function rebuild()
+	function rebuild($id)
 	{
-		
+		//删除原来的旧索引
+		$this->model('searchIndex')->where('pid=?',[$id])->delete();
+		if (is_array($id))
+		{
+			$product = $this->model('product')->where('id in (?)',$id)->select();
+		}
+		else
+		{
+			$product = $this->model('product')->where('id=?',[$id])->select();
+		}
+		//创建新索引
+		$this->build($product);
 	}
 	
 	/**
 	 * 创建搜索的索引
 	 */
-	function build()
+	function build($product = NULL)
 	{
+		if (file_exists('./search_build.lock'))
+		{
+			return new json(json::PARAMETER_ERROR,'loading');
+		}
+		file_put_contents('./search_build.lock', 1);
+		
+		ini_set('max_execution_time', 0);
+		
 		$percent = [
 			'title' => 50,//标题的权重
 			'category_name' => 20,//分类名称的权重
@@ -94,7 +114,12 @@ class search extends control
 		];
 		
 		$data = [];
-		$product = $this->model('product')->select();
+		
+		if (empty($product))
+		{
+			$product = $this->model('product')->select();
+		}
+		
 		foreach ($product as $p)
 		{
 			//标题
@@ -164,7 +189,7 @@ class search extends control
 		foreach($data as $searchIndex)
 		{
 			$array=[$searchIndex['keyword'],$searchIndex['pid']];
-			if (!in_array($array, $index))
+			if (!in_array($array, $index,true))
 			{
 				$index[] = $array;
 				$percent[$searchIndex['keyword'].$searchIndex['pid']] = $searchIndex['percent'];
@@ -175,6 +200,7 @@ class search extends control
 			}
 		}
 		
+		
 		foreach ($index as $i)
 		{
 			$this->model('searchIndex')->insert(array(
@@ -184,5 +210,8 @@ class search extends control
 				'percent' => $percent[$i[0].$i[1]]
 			));
 		}
+		
+		unlink('./search_build.lock');
+		return new json(json::OK);
 	}
 }

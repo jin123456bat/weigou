@@ -189,7 +189,7 @@ class product extends common
         if (!empty($this->_response))
             return $this->_response;
 
-        $keywords = $this->data('keywords', '');
+        $keywords = htmlspecialchars($this->data('keywords', '','trim'));
         $keywords = substr($keywords, 0, 32);
 
         $product_filter = [
@@ -211,18 +211,7 @@ class product extends common
             	'product.selled',
             ]
         ];
-        if (!empty($keywords)) {
-            $product_filter['name'] = '%' . $keywords . '%';
-
-            $userHelper = new user();
-            $this->model('search_log')->insert([
-                'ip' => ip(),
-                'keywords' => $keywords,
-                'time' => $_SERVER['REQUEST_TIME'],
-                'uid' => $userHelper->isLogin(),
-            ]);
-
-        }
+        
         $product = $this->model('product')->fetchAll($product_filter);
         $productHelper = new \application\helper\product();
         foreach ($product as &$p) {
@@ -265,6 +254,20 @@ class product extends common
             'length' => $this->data('length', 10),
             'data' => $product,
         ];
+        
+        if (!empty($keywords)) {
+        	$product_filter['name'] = '%' . $keywords . '%';
+        
+        	$userHelper = new user();
+        	$this->model('search_log')->insert([
+        		'ip' => ip(),
+        		'keywords' => $keywords,
+        		'time' => $_SERVER['REQUEST_TIME'],
+        		'uid' => $userHelper->isLogin(),
+        		'total' => isset($total[0]['count(*)']) ? $total[0]['count(*)'] : 0,
+        		'user-agent' => \application\helper\api::getUser(),
+        	]);
+        }
 
         return new json(json::OK, NULL, $productReturnModel);
     }
