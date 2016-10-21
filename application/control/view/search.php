@@ -117,6 +117,8 @@ class search extends control
 		
 		if (empty($product))
 		{
+			//假如是建立全部索引，要先删除所有索引
+			$this->model('searchIndex')->delete();
 			$product = $this->model('product')->select();
 		}
 		
@@ -188,6 +190,13 @@ class search extends control
 		$percent = [];
 		foreach($data as $searchIndex)
 		{
+			//假如是纯数字则过滤掉
+			$parttern = '$[^\d]+$';
+			if (!preg_match($parttern, $searchIndex['keyword']))
+			{
+				continue;
+			}
+			
 			$array=[$searchIndex['keyword'],$searchIndex['pid']];
 			if (!in_array($array, $index,true))
 			{
