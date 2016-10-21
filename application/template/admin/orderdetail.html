@@ -594,6 +594,8 @@
 				{
 					$('button.changeShip[data-id='+id+']').parents('tr').find('td:first').html(ship_type_name);
 					$('button.changeShip[data-id='+id+']').parents('tr').find('td:eq(1)').html(ship_number);
+					$('button.changeShip[data-id='+id+']').parents('tr').find('td:eq(2)').html('已发货');
+					
 					$('#changeShipModal').modal('hide');
 					$('#changeShipModal').modalmanager('loading');
 				}

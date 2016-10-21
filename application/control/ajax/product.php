@@ -202,7 +202,9 @@ class product extends ajax
 
     function search()
     {
-        $keywords = $this->get('keywords', '', 'trim');
+        $keywords = htmlspecialchars($this->get('keywords', '', 'trim'));
+        $keywords = substr($keywords, 0, 32);
+        
         $product_filter = [
             'name' => '%' . $keywords . '%',
             'isdelete' => 0,
@@ -268,7 +270,21 @@ class product extends ajax
             'length' => $this->get('length', 10),
             'data' => $product,
         ];
-
+        
+    	if (!empty($keywords)) {
+        	$product_filter['name'] = '%' . $keywords . '%';
+        
+        	$userHelper = new user();
+        	$this->model('search_log')->insert([
+        		'ip' => ip(),
+        		'keywords' => $keywords,
+        		'time' => $_SERVER['REQUEST_TIME'],
+        		'uid' => $userHelper->isLogin(),
+        		'total' => isset($total[0]['count(*)']) ? $total[0]['count(*)'] : 0,
+        		'userAgent' => isset($_SERVER['HTTP_USER_AGENT'])?$_SERVER['HTTP_USER_AGENT']:'',
+        	]);
+        }
+        
         return new json(json::OK, NULL, $productReturnModel);
     }
 
@@ -631,10 +647,7 @@ class product extends ajax
             }
             return $result;
         }
-
-        ;
-
-
+        
         $config = config('file');
         //文件类型
         $config->type = [
@@ -725,7 +738,6 @@ class product extends ajax
                     if (!empty($product[3])) {
                         $bind[0]['inprice'] = (string)$product[3];
                         $bind[0]['num'] = (string)$product[4];
-
                     }
 
                     if (!empty($product[5])) {
@@ -923,7 +935,7 @@ class product extends ajax
                     $this->model("bind")->where("pid=?", [$product_id])->delete();
                     if (count($bind1) > 1) {
                         $j = 1;
-
+                        
                         $bind1 = array_reverse($bind1);
                         foreach ($bind1 as &$b) {
                             $b['pid'] = $product_id;
@@ -940,8 +952,7 @@ class product extends ajax
                             $j++;
                         }
                     }
-                    unset($bind);
-                    unset($bind1);
+                    
                     if (!$sql) {
                         $product['success'] = false;
                     } else {
