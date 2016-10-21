@@ -752,6 +752,14 @@ class order extends base
         }
         return false;
     }
+    
+    /**
+     * 获取退款失败时候的错误原因
+     */
+    function getRefundError()
+    {
+    	return isset($this->_refund_msg)?$this->_refund_msg:'';
+    }
 
     /**
      * 订单退款
@@ -865,7 +873,9 @@ class order extends base
             $pay->setMoney($money);//设置退款金额
             $pay->setId($refundno);
             $response = $pay->createRefundParameter();
-
+			//记录退款的报文
+            $this->model('refund')->where('refundno=?',[$refundno])->update('reason',json_encode($response,JSON_UNESCAPED_UNICODE));
+			
             if ($order['pay_type'] == 'wechat') {
                 if ($response['return_code'] == 'SUCCESS') {
                     if ($response['result_code'] == 'SUCCESS') {
@@ -928,6 +938,8 @@ class order extends base
                             }
                         }
                     } else {
+                    	//记录错误原因
+                    	$this->_refund_msg = $response['err_code_des'];
                         return false;
                     }
                 } else {

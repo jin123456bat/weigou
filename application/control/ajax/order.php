@@ -472,8 +472,8 @@ class order extends ajax
                     return new json(json::OK, NULL, $order['pay_type'] == 'alipay' ? '正在退款' : '退款完成');
                 }
             }
-            $this->model("admin_log")->insertlog($admin, '订单商品退款失败（退款失败）');
-            return new json(json::PARAMETER_ERROR, '退款失败');
+            $this->model("admin_log")->insertlog($admin, '订单商品退款失败（退款失败）'.$orderHelper->getRefundError());
+            return new json(json::PARAMETER_ERROR, '退款失败:'.$orderHelper->getRefundError());
         }
         $this->model("admin_log")->insertlog($admin, '订单商品退款失败（参数错误）');
         return new json(json::PARAMETER_ERROR);

@@ -193,6 +193,7 @@ class product extends common
         $keywords = substr($keywords, 0, 32);
 
         $product_filter = [
+        	'name' => '%' . $keywords . '%',
             'isdelete' => 0,
             'status' => 1,
             'start' => $this->data('start', 0),
@@ -201,10 +202,10 @@ class product extends common
             'parameter' => [
                 'product.id',
                 'product.name',
-                'product.oldprice  as oldprice',
-                'product.price  as price',
-                'product.v1price  as v1price',
-                'product.v2price  as v2price',
+                'product.oldprice as oldprice',
+                'product.price as price',
+                'product.v1price as v1price',
+                'product.v2price as v2price',
                 'product.short_description',
                 'store.name as store',
                 'product.origin',

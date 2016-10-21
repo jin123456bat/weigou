@@ -208,6 +208,7 @@ class product extends ajax
         $product_filter = [
             'name' => '%' . $keywords . '%',
             'isdelete' => 0,
+        	'status' => 1,
             'start' => $this->get('start', 0),
             'length' => $this->get('length', 10),
             'sort' => ['product.sort', 'asc'],
@@ -222,6 +223,7 @@ class product extends ajax
                 'store.name as store',
                 'product.origin',
                 'product.stock',
+            	'product.selled',
             ]
         ];
         $product = $this->model('product')->fetchAll($product_filter);
