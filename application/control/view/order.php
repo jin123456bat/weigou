@@ -294,6 +294,7 @@ class order extends view
                             $this->model('refund')->where('refundno=?',[$refundno])->limit(1)->update([
                             	'completetime'=>$_SERVER['REQUEST_TIME'],
                             	'status'=>2,
+                            	'reason' => json_encode($_POST,JSON_UNESCAPED_UNICODE)
                             ]);
                             
                         }
@@ -338,6 +339,7 @@ class order extends view
                         	$this->model('refund')->where('refundno=?',[$refundno])->limit(1)->update([
                         		'completetime'=>$_SERVER['REQUEST_TIME'],
                         		'status'=>2,
+                        		'reason' => json_encode($_POST,JSON_UNESCAPED_UNICODE)
                         	]);
                         }
                     }

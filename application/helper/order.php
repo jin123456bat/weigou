@@ -874,7 +874,7 @@ class order extends base
             $pay->setId($refundno);
             $response = $pay->createRefundParameter();
 			//记录退款的报文
-            $this->model('refund')->where('refundno=?',[$refundno])->update('reason',json_encode($response,JSON_UNESCAPED_UNICODE));
+            $this->model('refund')->where('refundno=?',[$refundno])->limit(1)->update('reason',json_encode($response,JSON_UNESCAPED_UNICODE));
 			
             if ($order['pay_type'] == 'wechat') {
                 if ($response['return_code'] == 'SUCCESS') {
