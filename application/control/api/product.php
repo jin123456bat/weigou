@@ -221,21 +221,28 @@ class product extends common
         	{
         		$keyword = $keywords;
         	}
-        	else if (count($keyword)==1)
+        	else
         	{
-		        $product_filter = [
-		        	'name' => '%' . $keyword . '%',
-		            'isdelete' => 0,
-		            'status' => 1,
-		            'start' => $this->data('start', 0),
-		            'length' => $this->data('length', 10),
-		            'sort' => [['product.sort', 'asc'], ['product.createtime', 'desc']],
-		            'parameter' => $parameter
-		        ];
-	        	$product = $this->model('product')->fetchAll($product_filter);
-	        	
-	        	$this->model('searchIndex')->where('isdelete=?',[0])->where('product.status=?',[1])->table('product','left join','product.id=searchIndex.pid')->orderby('searchIndex','percent')->select($parameter);
-        	}
+        		//使用第一个idf最大的关键词
+        		$keyword = $keyword[0]['word'];
+        		
+        		$start = $this->data('start', 0);
+        		$length = $this->data('length', 10);
+        		
+        		$sql = 'select '.implode(',', $parameter).' from ((select * from product where name like ? and isdelete=? and ((auto_status = 0 and status = 1) or (auto_status = 1 and avaliabletime_from <= ? and avaliabletime_to >= ?)))
+	union
+(select * from product left join searchIndex on searchIndex.pid=product.id where searchIndex.keyword like ? and product.isdelete=? and ((auto_status = 0 and status = 1) or (auto_status = 1 and avaliabletime_from <= ? and avaliabletime_to >= ?)) order by percent desc)) as t order by product.sort asc,product.id desc limit '.$start.','.$length;
+		        $product = $this->model('product')->query($sql,[
+		        	'%' . $keyword . '%',
+		        	0,
+		        	$_SERVER['REQUEST_TIME'],
+		        	$_SERVER['REQUEST_TIME'],
+		        	'%' . $keyword . '%',
+		        	0,
+		        	$_SERVER['REQUEST_TIME'],
+		        	$_SERVER['REQUEST_TIME']
+		        ]);
+		   }
         }
         
         
@@ -267,10 +274,12 @@ class product extends common
                 }
             }
         }
-
-        $product_filter['parameter'] = 'count(*)';
-        unset($product_filter['start']);
-        unset($product_filter['length']);
+        
+        $product_filter = [
+        	'isdelete' => 0,
+        	'status' => 1,
+        	'parameter' => 'count(*)',
+        ];
         $total = $this->model('product')->fetchAll($product_filter);
 
         $productReturnModel = [
@@ -282,8 +291,6 @@ class product extends common
         ];
         
         if (!empty($keywords)) {
-        	$product_filter['name'] = '%' . $keywords . '%';
-        
         	$userHelper = new user();
         	$this->model('search_log')->insert([
         		'ip' => ip(),
