@@ -3,6 +3,7 @@ namespace application\control\api;
 
 use application\message\json;
 use application\helper\user;
+use application\control\view\search;
 
 class product extends common
 {
@@ -187,33 +188,57 @@ class product extends common
     function search()
     {
         if (!empty($this->_response))
-            return $this->_response;
+        {
+        	return $this->_response;
+        }
+        
+        $parameter = [
+            'product.id',
+            'product.name',
+            'product.oldprice as oldprice',
+            'product.price as price',
+            'product.v1price as v1price',
+            'product.v2price as v2price',
+            'product.short_description',
+            'store.name as store',
+            'product.origin',
+            'product.selled',
+        ];
 
         $keywords = htmlspecialchars($this->data('keywords', '','trim'));
         $keywords = substr($keywords, 0, 32);
-
-        $product_filter = [
-        	'name' => '%' . $keywords . '%',
-            'isdelete' => 0,
-            'status' => 1,
-            'start' => $this->data('start', 0),
-            'length' => $this->data('length', 10),
-            'sort' => [['product.sort', 'asc'], ['product.createtime', 'desc']],
-            'parameter' => [
-                'product.id',
-                'product.name',
-                'product.oldprice as oldprice',
-                'product.price as price',
-                'product.v1price as v1price',
-                'product.v2price as v2price',
-                'product.short_description',
-                'store.name as store',
-                'product.origin',
-            	'product.selled',
-            ]
-        ];
         
-        $product = $this->model('product')->fetchAll($product_filter);
+        $product = $this->model('product')->where('id=?',[$keywords])->find();
+        if (!empty($product))
+        {
+        	$product = [$product];
+        }
+        else
+        {
+        	$searchHelper = new search();
+        	$keyword = $searchHelper->depart($keywords);
+        	if (empty($keyword))
+        	{
+        		$keyword = $keywords;
+        	}
+        	else if (count($keyword)==1)
+        	{
+		        $product_filter = [
+		        	'name' => '%' . $keyword . '%',
+		            'isdelete' => 0,
+		            'status' => 1,
+		            'start' => $this->data('start', 0),
+		            'length' => $this->data('length', 10),
+		            'sort' => [['product.sort', 'asc'], ['product.createtime', 'desc']],
+		            'parameter' => $parameter
+		        ];
+	        	$product = $this->model('product')->fetchAll($product_filter);
+	        	
+	        	$this->model('searchIndex')->where('isdelete=?',[0])->where('product.status=?',[1])->table('product','left join','product.id=searchIndex.pid')->orderby('searchIndex','percent')->select($parameter);
+        	}
+        }
+        
+        
         $productHelper = new \application\helper\product();
         foreach ($product as &$p) {
             $p['origin'] = $this->model('country')->get($p['origin']);

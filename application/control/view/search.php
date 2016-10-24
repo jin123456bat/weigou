@@ -6,6 +6,14 @@ use application\message\json;
 
 class search extends control
 {
+	private $percent = [
+		'title' => 50,//标题的权重
+		'category_name' => 20,//分类名称的权重
+		'category_description' => 5,//分类描述
+		'short_description' => 40,//短描述的权重
+		'description' => 10,//描述的权重
+		'tags'=>80,//标签的权重
+	];
 	/**
 	 * 中文分词，返回分词后的数组
 	 */
@@ -73,58 +81,40 @@ class search extends control
 	}
 	
 	/**
-	 * 单独添加商品的索引或者更新商品索引
+	 * 删除相关索引数据
+	 * @param unknown $p
 	 */
-	function rebuild($id)
+	function remove($p)
 	{
-		//删除原来的旧索引
-		$this->model('searchIndex')->where('pid=?',[$id])->delete();
-		if (is_array($id))
+		if (is_array($p))
 		{
-			$product = $this->model('product')->where('id in (?)',$id)->select();
+			$id = $p['id'];
 		}
 		else
 		{
-			$product = $this->model('product')->where('id=?',[$id])->select();
+			$id = $p;
 		}
-		//创建新索引
-		$this->build($product);
+		//删除原来的旧索引
+		$this->model('searchIndex')->where('pid=?',[$id])->delete();
 	}
 	
 	/**
-	 * 创建搜索的索引
+	 * 单独添加商品的索引或者更新商品索引
 	 */
-	function build($product = NULL)
+	function rebuild($p)
 	{
-		if (file_exists('./search_build.lock'))
+		if (!is_array($p))
 		{
-			return new json(json::PARAMETER_ERROR,'loading');
+			$p = $this->model('product')->where('id=?',[$p])->find();
 		}
-		file_put_contents('./search_build.lock', 1);
-		
-		ini_set('max_execution_time', 0);
-		
-		$percent = [
-			'title' => 50,//标题的权重
-			'category_name' => 20,//分类名称的权重
-			'category_description' => 5,//分类描述
-			'short_description' => 40,//短描述的权重
-			'description' => 10,//描述的权重
-			'tags'=>80,//标签的权重
-		];
-		
-		$data = [];
-		
-		if (empty($product))
+		//创建新索引
+		if (is_array($p))
 		{
-			//假如是建立全部索引，要先删除所有索引
-			$this->model('searchIndex')->delete();
-			$product = $this->model('product')->select();
-		}
-		
-		foreach ($product as $p)
-		{
-			//标题
+			$data = array();
+			$percent = $this->percent;
+			
+			$this->remove($p);
+			
 			$title = $p['name'];
 			$title_departs = $this->depart($title);
 			if (!empty($title_departs))
@@ -184,6 +174,124 @@ class search extends control
 					$data = array_merge($data,$this->appendDepart($category_description_departs, $p['id'], $percent['category_description']));
 				}
 			}
+			
+			$index = [];
+			$percent = [];
+			foreach($data as $searchIndex)
+			{
+				//假如是纯数字则过滤掉
+				$parttern = '$[^\d]+$';
+				if (!preg_match($parttern, $searchIndex['keyword']))
+				{
+					continue;
+				}
+					
+				$array=[$searchIndex['keyword'],$searchIndex['pid']];
+				if (!in_array($array, $index,true))
+				{
+					$index[] = $array;
+					$percent[$searchIndex['keyword'].$searchIndex['pid']] = $searchIndex['percent'];
+				}
+				else
+				{
+					$percent[$searchIndex['keyword'].$searchIndex['pid']] += $searchIndex['percent'];
+				}
+			}
+			
+			
+			foreach ($index as $i)
+			{
+				$this->model('searchIndex')->insert(array(
+					'keyword'=>$i[0],
+					'pid'=>$i[1],
+					'createtime'=>time(),
+					'percent' => $percent[$i[0].$i[1]]
+				));
+			}
+		}
+	}
+	
+	/**
+	 * 创建搜索的索引
+	 */
+	function build()
+	{
+		if (file_exists('./search_build.lock'))
+		{
+			return new json(json::PARAMETER_ERROR,'loading');
+		}
+		file_put_contents('./search_build.lock', 1);
+		
+		ini_set('max_execution_time', 0);
+		
+		$data = [];
+		
+		$this->model('searchIndex')->delete();
+		$product = $this->model('product')->select();
+		
+		$percent = $this->percent;
+		
+		foreach ($product as $p)
+		{
+			$title = $p['name'];
+			$title_departs = $this->depart($title);
+			if (!empty($title_departs))
+			{
+				$data = array_merge($data,$this->appendDepart($title_departs, $p['id'], $percent['title']));
+			}
+				
+			//短描述的权重
+			if (!empty($p['short_description']))
+			{
+				$short_description = $this->depart($p['short_description']);
+				if (!empty($short_description))
+				{
+					$data = array_merge($data,$this->appendDepart($short_description, $p['id'], $percent['short_description']));
+				}
+			}
+				
+			//描述的权重
+			if (!empty($p['description']))
+			{
+				$description = $this->depart($p['description']);
+				if (!empty($description))
+				{
+					$data = array_merge($data,$this->appendDepart($description, $p['id'], $percent['description']));
+				}
+			}
+				
+			//标签的权重
+			if (!empty($p['tags']))
+			{
+				$tags = $this->depart($p['tags']);
+				if (!empty($tags))
+				{
+					$data = array_merge($data,$this->appendDepart($tags, $p['id'], $percent['tags']));
+				}
+			}
+				
+			//分类
+			$category = $this->model('category_product')
+			->table('category','left join','category.id=category_product.cid')
+			->where('category_product.pid=? and category.isdelete=?',array($p['id'],0))
+			->select(array(
+				'category.name',
+				'category.description'
+			));
+			foreach ($category as $c)
+			{
+				if (!empty($c['name']))
+				{
+					$category_name_departs = $this->depart($c['name']);
+					$data = array_merge($data,$this->appendDepart($category_name_departs, $p['id'], $percent['category_name']));
+				}
+			
+				if (!empty($c['description']))
+				{
+					$category_description_departs = $this->depart($c['description']);
+					$data = array_merge($data,$this->appendDepart($category_description_departs, $p['id'], $percent['category_description']));
+				}
+			}
 		}
 		
 		$index = [];
@@ -215,7 +323,7 @@ class search extends control
 			$this->model('searchIndex')->insert(array(
 				'keyword'=>$i[0],
 				'pid'=>$i[1],
-				'createtime'=>date('Y-m-d H:i:s'),
+				'createtime'=>time(),
 				'percent' => $percent[$i[0].$i[1]]
 			));
 		}
