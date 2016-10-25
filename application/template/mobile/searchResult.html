@@ -34,18 +34,71 @@
                 <img src="{%$product[product].image%}">
             </div>
             <div class="right">
-                {%if !empty($product[product].origin)%}<div class="sou-goods-line1"><img src="{%$product[product].origin.logo%}">{%/if%}
-                <p>{%if !empty($product[product].origin)%}{%$product[product].origin.name%}品牌{%/if%} {%if !empty($product[product].store)%}{%$product[product].store%}发货{%/if%}</p>
-                </div>
-                <div class="sou-goods-line2">{%$product[product].name%}</div>
-                <div class="sou-goods-line3">￥{%if isset($user) && $user.vip==1%}{%$product[product].v1price%}{%elseif isset($user) && $user.vip==2%}{%$product[product].v2price%}{%else%}{%$product[product].price%}{%/if%} <span> ￥{%$product[product].oldprice%}</span></div>
+	            <div class="sou-goods-line1">
+	                	{%if !empty($product[product].origin)%}<img src="{%$product[product].origin.logo%}">{%/if%}
+	                	<p>{%if !empty($product[product].origin)%}{%$product[product].origin.name%}品牌{%/if%} {%if !empty($product[product].store)%}{%$product[product].store%}发货{%/if%}</p>
+	           	</div>
+	            <div class="sou-goods-line2">{%$product[product].name%}</div>
+	            <div class="sou-goods-line3">
+	            	￥{%if isset($user) && $user.vip==1%}{%$product[product].v1price%}{%elseif isset($user) && $user.vip==2%}{%$product[product].v2price%}{%else%}{%$product[product].price%}{%/if%}
+	            	<span> ￥{%$product[product].oldprice%}</span>
+	            </div>
             </div>
         </div>
         {%/section%}
     </div>
 </body>
 <script type="text/javascript">
+function createProductTpl(product)
+{
+	var tpl = $('<div></div>').addClass('sou-goods-itme clearfix').on('click',function(){
+		window.location = 'index.php?c=mobile&a=product&id='+product.id;
+	});
+	var imgDiv = $('<div class="left"></div>').append('<img src="'+product.image+'">');
+	tpl.append(imgDiv);
+	var rightDiv = $('<div class="right"></div>');
+	var line1 = $('<div class="sou-goods-line1"></div>');
+	rightDiv.append(line1);
+	if(product.origin)
+	{
+		line1.append($('<img src="'+product.origin.logo+'">'));
+		line1.append($('<p>'+product.origin.name+'品牌 '+(product.store?(product.store+'发货'):'')+'</p>' ));
+	}
+	rightDiv.append('<div class="sou-goods-line2">'+product.name+'</div>');
+	
+	if ({%$user.vip%} == '1') {
+		var price = product.1price;
+	}
+	else if ({%$user.vip%} == '2') {
+		var price = product.v2price;
+	}
+	else
+	{
+		var price = product.price;
+	}
+	
+	rightDiv.append('<div class="sou-goods-line3">￥'+price+'<span> ￥'+product.oldprice+'</span></div>');
+	tpl.append(rightDiv);
+	return tpl;
+}
+function GetQueryString(name)
+{
+     var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+     var r = window.location.search.substr(1).match(reg);
+     if(r!=null)return  unescape(r[2]); return null;
+}
+var start = 0,
+	length = 10;
 
-
+$.get('{%url m=ajax c=product a=search%}',{keywords:GetQueryString('keywords'),start:start,length:length},function(response){
+	if(response.code==1)
+	{
+		for(var i=0;i<response.body.length;i++)
+		{
+			createProductTpl(response.body[i]);
+		}
+		
+	}
+});
 </script>
 </html>
