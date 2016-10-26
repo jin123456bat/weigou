@@ -383,11 +383,12 @@ body{
     height: 50px;
     line-height: 50px;
     text-align: center;
-    font-size: 20px;
+    font-size: 16px;
 }
 .search_keyword{
     padding: 0 10px 20px;
     border-bottom: 1px solid #eee;
+    margin-top: 50px;
 }
 .search_keyword .lately h3,.search_keyword .hot h3{
     font-size: 18px;
