@@ -348,10 +348,15 @@ class product extends ajax
 		$productReturnModel = [
 			'current' => count($product),
 			'total' => isset($total[0]['count(*)']) ? $total[0]['count(*)'] : 0,
-			'start' => $this->data('start', 0),
-			'length' => $this->data('length', 10),
+			'start' => $this->get('start', 0),
+			'length' => $this->get('length', 10),
 			'data' => $product
 		];
+		
+		if ($this->get('draw',NULL) !== NULL)
+		{
+			$productReturnModel['draw'] = $this->get('draw');
+		}
 		
 		if (! empty($keywords))
 		{
@@ -362,7 +367,7 @@ class product extends ajax
 				'time' => $_SERVER['REQUEST_TIME'],
 				'uid' => $userHelper->isLogin(),
 				'total' => isset($total[0]['count(*)']) ? $total[0]['count(*)'] : 0,
-				'userAgent' => \application\helper\api::getUser()
+				'userAgent' => $_SERVER['HTTP_USER_AGENT'],
 			]);
 		}
         

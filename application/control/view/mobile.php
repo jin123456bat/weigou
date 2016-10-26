@@ -36,7 +36,7 @@ class mobile extends view
 		
 		$userHelper = new user();
 		$uid = $userHelper->isLogin();
-		if (! empty($uid))
+		if (!empty($uid))
 		{
 			$user = $this->model('user')
 				->where('id=?', [
@@ -131,7 +131,6 @@ class mobile extends view
 			{
 				$this->assign('school', 0);
 			}
-		
 		}
 		else
 		{
@@ -485,143 +484,6 @@ class mobile extends view
 			}
 		}
 		return $this->__404();
-	}
-
-	function searchResult()
-	{
-		$keywords = $this->get('keywords');
-		$keywords = substr($keywords, 0, 32);
-		$parameter = [
-			'product.id',
-			'product.name',
-			'product.oldprice',
-			'product.price',
-			'product.v1price',
-			'product.v2price',
-			'product.short_description',
-			'store.name as store',
-			'product.origin',
-			'sum(product.percent) as percent'
-		];
-		
-		$product = $this->model('product')
-			->where('id=?', [
-			$keywords
-		])
-			->find();
-		if (! empty($product))
-		{
-			$product = [
-				$product
-			];
-		}
-		else
-		{
-			$searchHelper = new search();
-			$keyword = $searchHelper->depart($keywords);
-			if (empty($keyword))
-			{
-				// 分词失败，使用原来的关键词进行搜索
-				$keyword = $keywords;
-			}
-			else
-			{
-				$temp_key = [];
-				foreach ($keyword as $key)
-				{
-					$temp_key[] = $key['word'];
-				}
-				// 使用百分号通配符链接所有的关键词
-				$keyword = implode('%', $temp_key);
-			}
-			
-			// 对于商品标题，默认使用1000的关键度
-			$sql = 'select ' . implode(',', $parameter) . '
-        			from (
-        			(
-        				select product.*,1000 as percent
-        				from product
-        				where
-        					name like ? and
-        					isdelete=? and
-        					(
-        						(product.auto_status = 0 and product.status = 1) or
-        						(auto_status = 1 and avaliabletime_from <= ? and avaliabletime_to >= ?)
-        					)
-        				order by product.sort asc,product.id desc
-        			)
-					union
-					(
-        				select product.*,searchIndex.percent
-        				from product
-        				left join searchIndex
-        				on searchIndex.pid=product.id
-        				where
-        				searchIndex.keyword = ? and
-        				product.isdelete=? and
-        				(
-        					(product.auto_status = 0 and product.status = 1) or
-        					(product.auto_status = 1 and product.avaliabletime_from <= ? and product.avaliabletime_to >= ?)
-        				)
-        				order by percent desc
-        			)
-        		) as product
-        			left join store
-        			on store.id=product.store
-					group by product.id
-        			order by percent desc,product.sort asc,product.id desc';
-			
-			$product = $this->model('product')->query($sql, [
-				'%' . $keyword . '%',
-				0,
-				$_SERVER['REQUEST_TIME'],
-				$_SERVER['REQUEST_TIME'],
-				$keyword,
-				0,
-				$_SERVER['REQUEST_TIME'],
-				$_SERVER['REQUEST_TIME']
-			]);
-		}
-		
-		$productHelper = new \application\helper\product();
-		//$image = new image();
-		foreach ($product as &$p)
-		{
-			$p['origin'] = $this->model('country')->get($p['origin']);
-			$p['image'] = $productHelper->getListImage($p['id']);
-			
-			// 商品价格
-			$filter = [
-				'pid' => $p['id'],
-				'isdelete' => 0,
-				'available' => 1,
-				'parameter' => 'max(price),min(price),max(v1price),min(v1price),max(v2price),min(v2price),sum(stock)'
-			];
-			$price_collection = $this->model('collection')->fetch($filter);
-			if (! empty($price_collection))
-			{
-				if ($price_collection[0]['sum(stock)'] !== NULL)
-				{
-					$p['stock'] = $price_collection[0]['sum(stock)'];
-				}
-				if ($price_collection[0]['min(price)'] !== NULL && $price_collection[0]['max(price)'] !== NULL)
-				{
-					$p['price'] = $price_collection[0]['min(price)']; // '~'.$price_collection[0]['max(price)'];
-				}
-				if ($price_collection[0]['min(v1price)'] !== NULL && $price_collection[0]['max(v1price)'] !== NULL)
-				{
-					$p['v1price'] = $price_collection[0]['min(v1price)']; // '~'.$price_collection[0]['max(v1price)'];
-				}
-				if ($price_collection[0]['min(v2price)'] !== NULL && $price_collection[0]['max(v2price)'] !== NULL)
-				{
-					$p['v2price'] = $price_collection[0]['min(v2price)']; // '~'.$price_collection[0]['max(v2price)'];
-				}
-			}
-		}
-		
-		$this->assign('product', $product);
-		
-		return $this;
 	}
 
 	function create_bankcard()

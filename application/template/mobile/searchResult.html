@@ -28,27 +28,17 @@
         </header>
     </div>
     <div class="sou-goods">
-    	{%section name=product loop=$product%}
-        <div class="sou-goods-itme clearfix" onClick="window.location = '{%url c=mobile a=product id=$product[product].id%}';">
-            <div class="left">
-                <img src="{%$product[product].image%}">
-            </div>
-            <div class="right">
-	            <div class="sou-goods-line1">
-	                	{%if !empty($product[product].origin)%}<img src="{%$product[product].origin.logo%}">{%/if%}
-	                	<p>{%if !empty($product[product].origin)%}{%$product[product].origin.name%}品牌{%/if%} {%if !empty($product[product].store)%}{%$product[product].store%}发货{%/if%}</p>
-	           	</div>
-	            <div class="sou-goods-line2">{%$product[product].name%}</div>
-	            <div class="sou-goods-line3">
-	            	￥{%if isset($user) && $user.vip==1%}{%$product[product].v1price%}{%elseif isset($user) && $user.vip==2%}{%$product[product].v2price%}{%else%}{%$product[product].price%}{%/if%}
-	            	<span> ￥{%$product[product].oldprice%}</span>
-	            </div>
-            </div>
-        </div>
-        {%/section%}
+    	
     </div>
+    <div id="loading_text" style="font-size: small;padding: 10px;text-align: center;">已经到底了...</div>
 </body>
 <script type="text/javascript">
+$.ajaxSetup({
+	headers:{
+		'X-CSRF-TOKEN':'{%$x_csrf_token%}'
+	}
+});
+
 function createProductTpl(product)
 {
 	var tpl = $('<div></div>').addClass('sou-goods-itme clearfix').on('click',function(){
@@ -66,10 +56,10 @@ function createProductTpl(product)
 	}
 	rightDiv.append('<div class="sou-goods-line2">'+product.name+'</div>');
 	
-	if ({%$user.vip%} == '1') {
-		var price = product.1price;
+	if ('{%$user|default:0%}' == '1') {
+		var price = product.v1price;
 	}
-	else if ({%$user.vip%} == '2') {
+	else if ('{%$user.vip|default:0%}' == '2') {
 		var price = product.v2price;
 	}
 	else
@@ -81,23 +71,67 @@ function createProductTpl(product)
 	tpl.append(rightDiv);
 	return tpl;
 }
-function GetQueryString(name)
-{
-     var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
-     var r = window.location.search.substr(1).match(reg);
-     if(r!=null)return  unescape(r[2]); return null;
-}
-var start = 0,
-	length = 10;
+var $_GET = (function(){
+    var url = window.document.location.href.toString();
+    var u = url.split("?");
+    if(typeof(u[1]) == "string"){
+        u = u[1].split("&");
+        var get = {};
+        for(var i in u){
+            var j = u[i].split("=");
+            get[j[0]] = decodeURI(j[1]);
+        }
+        return get;
+    } else {
+        return {};
+    }
+})();
 
-$.get('{%url m=ajax c=product a=search%}',{keywords:GetQueryString('keywords'),start:start,length:length},function(response){
-	if(response.code==1)
+var draw = 1,
+	start = 0,
+	length = 10,
+	load_pos = 0.7,//从什么位置开始滚动载入
+	first_load_num = 20;//第一次载入数量
+var isLoading = false;
+
+$('#loading_text').on('click',function(){
+	
+	loadSearchData($_GET['keywords'],start,length,draw);
+});
+
+function loadSearchData(keywords,start_index,length,temp)
+{
+	if (!isLoading) {
+		$(this).html('正在载入...');
+		isLoading = true;
+		$.get('{%url m=ajax c=product a=search%}',{keywords:keywords,start:start_index,length:length,draw:temp},function(response){
+			if(response.code==1 && response.body.draw == draw)
+			{
+				if (parseInt(response.body.current) > 0) {
+					for(var i=0;i<parseInt(response.body.current);i++)
+					{
+						var tpl = createProductTpl(response.body.data[i]);
+						$('.sou-goods').append(tpl);
+					}
+					start += parseInt(response.body.current);
+					draw++;
+					isLoading = false;
+					$('#loading_text').html('载入完毕...');
+				}else{
+					$('#loading_text').html('已经到底了...');
+				}
+			}
+		});
+	}
+}
+
+loadSearchData($_GET['keywords'],start,first_load_num,draw);
+
+$(window).scroll( function() {
+	var per = $(this).scrollTop() / $('.sou-goods').height();
+	if(per > load_pos)
 	{
-		for(var i=0;i<response.body.length;i++)
-		{
-			createProductTpl(response.body[i]);
-		}
-		
+		loadSearchData($_GET['keywords'],start,length,draw);
 	}
 });
 </script>
