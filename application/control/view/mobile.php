@@ -500,7 +500,8 @@ class mobile extends view
 			'product.v2price',
 			'product.short_description',
 			'store.name as store',
-			'product.origin'
+			'product.origin',
+			'sum(product.percent) as percent'
 		];
 		
 		$product = $this->model('product')
@@ -567,7 +568,8 @@ class mobile extends view
         		) as product
         			left join store
         			on store.id=product.store
-        			order by product.percent desc,product.sort asc,product.id desc';
+					group by product.id
+        			order by percent desc,product.sort asc,product.id desc';
 			
 			$product = $this->model('product')->query($sql, [
 				'%' . $keyword . '%',

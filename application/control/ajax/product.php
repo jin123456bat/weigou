@@ -213,7 +213,9 @@ class product extends ajax
 			'product.short_description',
 			'store.name as store',
 			'product.origin',
-			'product.selled'
+			'product.selled',
+    		'product.stock',
+    		'sum(product.percent) as percent',
 		];
 		
 		$keywords = htmlspecialchars($this->get('keywords', '', 'trim'));
@@ -285,7 +287,8 @@ class product extends ajax
         		) as product
         			left join store
         			on store.id=product.store
-        			order by product.percent desc,product.sort asc,product.id desc
+					group by product.id
+        			order by percent desc,product.sort asc,product.id desc
         			limit ' . $start . ',' . $length;
 			
 			$product = $this->model('product')->query($sql, [
