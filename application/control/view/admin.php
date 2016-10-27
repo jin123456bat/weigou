@@ -9,7 +9,8 @@ class admin extends view
     private $_power = [
         'nocheck' => [    //不检查权限的页面
             'login',
-            'dashboard'
+            'dashboard',
+        	'changeMyPwd',
         ],
         'forward' => [
             'orderdetail' => 'order',//  orderdetail页面按照order页面的权限

@@ -4296,9 +4296,8 @@ a.line_btn{
     margin-left: 120px;
 }
 .sou-goods-line1{
-    font-size: 14px;
+    font-size: 12px;
     line-height: 2rem;
-
 }
 .sou-goods-line1 img{
     width: 20px;
@@ -4308,7 +4307,7 @@ a.line_btn{
 .sou-goods-line2{
     height: 4rem;
     line-height: 2rem;
-    font-size: 16px;
+    font-size: 13px;
     overflow: hidden;
     margin-top: 5px;
 }
