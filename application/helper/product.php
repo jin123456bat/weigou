@@ -56,6 +56,8 @@ class product extends base
 		$product['currencyType'] = empty(intval($product['currencyType']))?NULL:$product['currencyType'];
 		$product['firstUnit'] = empty(intval($product['firstUnit']))?NULL:$product['firstUnit'];
 		$product['ztax'] = empty(intval($product['ztax']))?NULL:$product['ztax'];
+		//UPDATE  `product` SET description = REPLACE( description,  "</p><p>",  "" )
+		$product['description'] = str_replace('</p><p>', '', $product['description']);
 
 		if ($product['auto_status'] == 1)
 		{
