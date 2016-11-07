@@ -22,18 +22,58 @@ class admin extends ajax
 		return new json(json::PARAMETER_ERROR,'用户名或密码错误');
 	}
 	
+	/**
+	 * 管理员修改自己的登录密码
+	 * @return \application\message\json
+	 */
+	function changeMyPwd()
+	{
+		$adminHelper = new \application\helper\admin();
+		$aid=$adminHelper->getAdminId();
+		if (empty($aid))
+		{
+			return new json(json::NOT_LOGIN);
+		}
+		
+		$old_password = $this->post('old_password');
+		$new_password = $this->post('new_password');
+		
+		$admin = $this->model('admin')->where('id=?',[$aid])->find();
+		if($admin['password'] == $adminHelper->encrypt($old_password,$admin['salt']))
+		{
+			$salt = random::word(6);
+			$new_password = $adminHelper->encrypt($new_password,$salt);
+			if ($this->model('admin')->where('id=?',[$aid])->limit(1)->update([
+				'password'=>$new_password,
+				'salt'=>$salt
+			]))
+			{
+				$this->model("admin_log")->insertlog($aid, '管理员修改自己的密码',1);
+				return new json(json::OK);
+			}
+		}
+		else
+		{
+			return new json(json::PARAMETER_ERROR,'旧密码错误');
+		}
+	}
+	
+	
 	function changePassword()
 	{
-        $admin=$this->session->id;
+		$adminHelper = new \application\helper\admin();
+        $aid=$adminHelper->getAdminId();
+        if (empty($aid))
+        {
+        	return new json(json::NOT_LOGIN);
+        }
 		$id = $this->post('id');
 		$password = $this->post('password');
 		if (!empty($password))
 		{
 			if(strlen($password) <= 6) {
-                $this->model("admin_log")->insertlog($admin, '管理员更改密码失败（密码长度太短）');
                 return new json(json::PARAMETER_ERROR, '密码长度太短');
             }
-			$adminHelper = new \application\helper\admin();
 			$salt = random::word(6);
 			$password = $adminHelper->encrypt($password,$salt);
 			if($this->model('admin')->where('id=?',[$id])->limit(1)->update([
@@ -41,29 +81,36 @@ class admin extends ajax
 				'salt' => $salt,
 			]))
 			{
-                $this->model("admin_log")->insertlog($admin, '管理员更改密码成功，用户id：'.$id,1);
+                $this->model("admin_log")->insertlog($aid, '管理员更改密码成功，用户id：'.$id,1);
 				return new json(json::OK);
 			}
-            $this->model("admin_log")->insertlog($admin, '管理员更改密码失败（参数错误）');
-			return new json(json::PARAMETER_ERROR);
+            return new json(json::PARAMETER_ERROR);
 		}
 		else
 		{
-            $this->model("admin_log")->insertlog($admin, '管理员更改密码成功，用户id：' . $id, 1);
-			return new json(json::OK);
+            return new json(json::OK);
 		}
 	}
 	
+	/**
+	 * 删除管理员用户
+	 * @return \application\message\json
+	 */
 	function remove()
 	{
-        $admin=$this->session->id;
+		$adminHelper = new \application\helper\admin();
+		$aid=$adminHelper->getAdminId();
+		if (empty($aid))
+		{
+			return new json(json::NOT_LOGIN);
+		}
+        
 		$id = $this->post('id');
 		if($this->model('admin')->where('id=?',[$id])->delete())
 		{
-            $this->model("admin_log")->insertlog($admin, '管理员删除失败，用户id：' . $id, 1);
+            $this->model("admin_log")->insertlog($aid, '管理员删除失败，用户id：' . $id, 1);
 			return new json(json::OK);
 		}
-        $this->model("admin_log")->insertlog($admin, '管理员删除失败（请求内容错误）');
 		return new json(json::PARAMETER_ERROR);
 	}
 	
@@ -76,7 +123,7 @@ class admin extends ajax
 		$id = $this->post('id');
 		$role = $this->post('role');
 		$this->model('admin')->where('id=?',[$id])->limit(1)->update('role',$role);
-        $this->model("admin_log")->insertlog($admin, '管理员更改用户组成功,用户id：' . $id, 1);
+        $this->model("admin_log")->insertlog($admin, '管理员更改用户组成功,用户id：' . $id.',role：'.$role, 1);
 
         return new json(json::OK);
 	}
