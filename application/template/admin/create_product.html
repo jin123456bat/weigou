@@ -151,7 +151,7 @@
                                             	<div class="tab-pane" id="tab_publish">
                                             		<div class="portlet">
                                             			<div class="portlet-title">
-                                            				<button class="btn blue" href="#publish" data-toggle="modal">添加供应商</button>
+                                            				<button class="btn blue" id="createPublishBtn">添加供应商</button>
                                             			</div>
                                             			<div class="portlet-body">
 		                                                    <div class="form-body">
@@ -161,7 +161,7 @@
 		                                                                    <th>供货商</th><th>SKU</th><th>进价</th><th>原价</th><th>V0价</th><th>V1价</th><th>V2价</th><th>库存</th><th>排序</th><th>状态</th><th>发货仓库</th><th>操作</th>
 		                                                                </thead>
 		                                                                <tbody>
-		                                                                    <td>供货商</td><td>SKU</td><td>进价</td><td>原价</td><td>V0价</td><td>V1价</td><td>V2价</td><td>库存</td><td>排序</td><td>状态</td><td>发货仓库</td><td>操作</td>
+		                                                                    <td>供货商</td><td>SKU</td><td>进价</td><td>原价</td><td>V0价</td><td>V1价</td><td>V2价</td><td>库存</td><td>排序</td><td>状态</td><td>发货仓库</td><td><button class="btn btn-xs btn-circle blue changePublishBtn">编辑</button><button class="btn btn-xs btn-circle red removePublishBtn">删除</button></td>
 		                                                                </tbody>
 		                                                            </table>
 		                                                        </div>
@@ -1078,6 +1078,21 @@
 			$('#publish').on('hidden.bs.modal',function(){
 				$(this).find('.form-group').removeClass('has-error');
 				$(this).find('.help-block.help-block-error').remove();
+				$(this).find('input').val('');
+				$(this).find('select').val('');
+			});
+
+			$('.changePublishBtn').on('click',function(){
+				$('#publish').modal('show');
+				$('#publish #publishModalMode').val('edit');
+
+				return false;
+			});
+
+			$('#createPublishBtn').on('click',function(){
+				$('#publish').modal('show');
+				$('#publish #publishModalMode').val('new');
+				return false;
 			});
 
 			$('#publishForm').validate({
@@ -1118,6 +1133,9 @@
 	                },
 	                store:{
 	                	required:"请选择发货仓库",
+	                },
+	                sort:{
+	                	digits:"排序必须使用数字控制",
 	                }
 	            },
 	            rules: {
@@ -1153,6 +1171,9 @@
 	                },
 	                store:{
 	                	required:true,
+	                },
+	                sort:{
+	                	digits:true,
 	                }
 	            },
 
@@ -1188,16 +1209,72 @@
 	            },
 
 	            submitHandler: function(form) {
-	                //$(form).find('.form-group').removeClass('has-error');
+	                $(form).find('.form-group').removeClass('has-error');
+					
+					var publish_id = $(form).find('select[name=publish_id]').val();
+					if($('#publish #publishModalMode').val() == 'new' && $('.existedPublish'+publish_id).length>0)
+					{
+						alert('该供应商已经存在');
+						return false;
+					}
+
+	                var data = {
+	                	publish_id:publish_id,
+	                	sku:$(form).find('input[name=sku]').val(),
+	                	inprice:$(form).find('input[name=inprice]').val(),
+	                	oldprice:$(form).find('input[name=oldprice]').val(),
+	                	price:$(form).find('input[name=price]').val(),
+	                	v1price:$(form).find('input[name=v1price]').val(),
+	                	v2price:$(form).find('input[name=v2price]').val(),
+	                	stock:$(form).find('input[name=stock]').val(),
+	                	status:$(form).find('input[name=status]:checked').length,
+	                	sort:$(form).find('input[name=sort]').val(),
+	                	store:$(form).find('select[name=store]').val()
+	                };
+
+	                var dataString = JSON.stringify(data);
+	                publish_name = $(form).find('select[name=publish_id] option:selected').text();
+	                status = $(form).find('input[name=status]:checked').length>0?'有效':'无效';
+	                store = $(form).find('select[name=store] option:selected').text();
+	                if ($('#publish #publishModalMode').val() == 'new')
+	                {
+	                	$('#PublishTable').append('<input class="existedPublish'+publish_id+'" type="hidden" name="publish[]" value="'+dataString+'">');
+
+		                $('#PublishTable tbody').append('<tr><td>'+publish_name+'</td><td>'+data.sku+'</td><td>'+data.inprice+'</td><td>'+data.oldprice+'</td><td>'+data.price+'</td><td>'+data.v1price+'</td><td>'+data.v2price+'</td><td>'+data.stock+'</td><td>'+(data.sort.length==0?0:data.sort)+'</td><td>'+status+'</td><td>'+store+'</td><td><button></button></td></tr>');
+	                }
+	                else
+	                {
+	                	$('.existedPublish'+publish_id).val(dataString);
+	                	$('#PublishTable tbody tr').each(function(index,value){
+	                		if($(value).find('td:first').text() == publish_name)
+	                		{
+	                			//修改publish
+	                			$(value).find('td:eq(1)').text(data.sku);
+	                			$(value).find('td:eq(2)').text(data.inprice);
+	                			$(value).find('td:eq(3)').text(data.oldprice);
+	                			$(value).find('td:eq(4)').text(data.price);
+	                			$(value).find('td:eq(5)').text(data.v1price);
+	                			$(value).find('td:eq(6)').text(data.v2price);
+	                			$(value).find('td:eq(7)').text(data.stock);
+	                			$(value).find('td:eq(8)').text(data.sort);
+	                			$(value).find('td:eq(9)').text(status);
+	                			$(value).find('td:eq(10)').text(store);
+	                			return false;
+	                		}
+	                	});
+	                }
+
+	                $('#publish').modal('hide');
+
 	                return false;
 	            }
 			});
-
 		});
 		</script>
         <!-- END THEME LAYOUT SCRIPTS -->
 
         <div id="publish" class="modal fade" tabindex="-1" data-width="760">
+        	<input type="hidden" id="publishModalMode" value="new">
         	<form class="form-horizontal" role="form" id="publishForm">
 	            <div class="modal-header">
 	                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
