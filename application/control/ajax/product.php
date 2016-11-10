@@ -1097,9 +1097,12 @@ class product extends ajax
 								{
 									foreach ($bind as $b)
 									{
-										$b['pid'] = $id;
-										$b['content'] = '';
-										$this->model('bind')->insert($b);
+										if (!empty($bind['num']) && !empty($bind['price']) && !empty($bind['v1price']) && !empty($bind['v2price']) && !empty($bind['inprice']))
+										{
+											$b['pid'] = $id;
+											$b['content'] = '';
+											$this->model('bind')->insert($b);
+										}
 									}
 								}
 								$this->model("admin_log")->insertlog($aid, '导入商品信息成功,data:'.json_encode($data), 1);
@@ -1136,9 +1139,12 @@ class product extends ajax
 								{
 									foreach ($bind as $b)
 									{
-										$b['pid'] = $id;
-										$b['content'] = '';
-										$this->model('bind')->insert($b);
+										if (!empty($bind['num']) && !empty($bind['price']) && !empty($bind['v1price']) && !empty($bind['v2price']) && !empty($bind['inprice']))
+										{
+											$b['pid'] = $id;
+											$b['content'] = '';
+											$this->model('bind')->insert($b);
+										}
 									}
 								}
 								
@@ -1162,7 +1168,7 @@ class product extends ajax
 							}
 						}
 					}
-					return new json(json::OK,'导入成功');
+					return new json(json::OK,'导入成功',$response_body);
 				}
 				else
 				{
