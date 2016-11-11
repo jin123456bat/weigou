@@ -52,7 +52,7 @@ class model
 
 	private function initlize()
 	{
-		$this->_desc = $this->_db->query('desc ' . $this->_table);
+		$this->_desc = $this->_db->query('desc `' . trim($this->_table,' `').'`');
 		foreach ($this->_desc as $r)
 		{
 			$this->_fields[$this->_table][] = $r['Field'];

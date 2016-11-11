@@ -50,23 +50,7 @@ class index extends view
 	{
 		return "404";
 	}
-
-	function test()
-	{
-		$this->model('user')->insert([
-			'id' => NULL,
-		]);
-	}
-
-	function import()
-	{
-		$file = $this->fil->receive($_FILES['file']);
-		if (is_file($file))
-		{
-		
-		}
-	}
-
+	
 	/*
 	 * function upgrade()
 	 * {
