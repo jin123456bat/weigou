@@ -22,9 +22,23 @@ class model
 
 	public $_temp;
 
+	/**
+	 * 上一个执行的sql语句
+	 * @var unknown
+	 */
 	private $_sql;
 
+	/**
+	 * 存储了表中对应的字段名
+	 * @var unknown
+	 */
 	private $_fields;
+	
+	/**
+	 * 存储了desc tableName后的结果
+	 * @var unknown
+	 */
+	private $_desc;
 
 	function __construct($table)
 	{
@@ -34,14 +48,15 @@ class model
 		$this->__loadRedis();
 		
 		$this->initlize();
-		
-		$this->getTableName($table);
 	}
 
 	private function initlize()
 	{
-		$result = $this->_db->query('desc ' . $this->_table);
-		var_dump($result);
+		$this->_desc = $this->_db->query('desc ' . $this->_table);
+		foreach ($this->_desc as $r)
+		{
+			$this->_fields[$this->_table][] = $r['Field'];
+		}
 	}
 
 	public function model($table)
@@ -69,26 +84,6 @@ class model
 		else
 		{
 			$this->_fields[$table] = $fields;
-		}
-	}
-
-	/**
-	 * 获取表的字段名
-	 */
-	private function getTableName($table)
-	{
-		if (! isset($this->_fields) || empty($this->_fields[$table]))
-		{
-			$result = $this->query('select COLUMN_NAME from information_schema.COLUMNS where table_name = ? and table_schema = ?', [
-				$table,
-				$this->_db->getDBName()
-			]);
-			$array = [];
-			foreach ($result as $field)
-			{
-				$array[] = $field['COLUMN_NAME'];
-			}
-			$this->_fields[$table] = $array;
 		}
 	}
 
@@ -302,27 +297,73 @@ class model
 	 * @param array $array        	
 	 * @return Ambigous <boolean, multitype:>
 	 */
-	public function insert(array $array, $defualt = NULL, $debug = false)
+	public function insert(array $array, $defualt = NULL,$debug = false)
 	{
-		$fields = empty($this->getFields($this->_table)) ? '' : '(`' . implode('`,`', $this->getFields($this->_table)) . '`)';
-		if (! array_key_exists(0, $array))
+		$fields = empty($this->getFields($this->getTable())) ? '' : ' (`' . implode('`,`', $this->getFields($this->getTable())) . '`)';
+		
+		//是否是数字下标
+		$source_keys = array_keys($array);
+		$des_keys = range(0, count($array)-1,1);
+		$diff = array_diff($source_keys,$des_keys);
+		$is_num_index = empty($diff);
+		
+		//对于非数字下标的一些初始化检查
+		if (!$is_num_index)
 		{
-			// 对于非数字下标的数组，重新组合数组，以满足表中的字段顺序
-			$temp = [];
-			foreach ($this->getFields($this->_table) as $field)
+			//去除多余的字段
+			foreach ($array as $index=>$value)
 			{
-				if (isset($array[$field]))
+				if (!in_array($index, $this->getFields($this->getTable())))
 				{
-					$temp[$field] = $array[$field];
-				}
-				else
-				{
-					// 默认用null填充
-					$temp[$field] = $defualt;
+					unset($array[$index]);
 				}
 			}
-			$array = $temp;
+			//填充默认的字段
+			foreach ($this->_desc as $index=>$value)
+			{
+				if (!isset($array[$value['Field']]))
+				{
+					if ($value['Default'] === NULL)
+					{
+						if ($value['Null'] == 'YES')
+						{
+							$array[$value['Field']] = NULL;
+						}
+						else
+						{
+							switch ($value['Type'])
+							{
+								case 'datetime':
+									$array[$value['Field']] = date('Y-m-d H:i:s');
+									break;
+								case 'timestamp':
+									$array[$value['Field']] = date('Y-m-d H:i:s');
+									break;
+								case 'date':
+									$array[$value['Field']] = date('Y-m-d');
+									break;
+								default:
+									$zero = '$int\(\d+\)$';
+									$empty_string = '$(char)?(text)?$';
+									if (preg_match($zero, $value['Type']))
+									{
+										$array[$value['Field']] = 0;
+									}
+									else if (preg_match($empty_string, $value['Type']))
+									{
+										$array[$value['Field']] = '';
+									}
+							}
+						}
+					}
+					else
+					{
+						$array[$value['Field']] = $value['Default'];
+					}
+				}
+			}
 		}
+		
 		$parameter = '';
 		foreach ($array as $key => $value)
 		{

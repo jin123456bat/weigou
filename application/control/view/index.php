@@ -53,7 +53,9 @@ class index extends view
 
 	function test()
 	{
-		$this->model('user');
+		$this->model('user')->insert([
+			'id' => NULL,
+		]);
 	}
 
 	function import()
