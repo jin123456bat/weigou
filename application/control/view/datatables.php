@@ -588,7 +588,7 @@ class datatables extends view
         if ($this->post('length') != -1) {
             $resultObj->data = array_slice($resultObj->data, $this->post('start'), $this->post('length'));
         }
-        $resultObj->recordsTotal = $this->model('refund')->count();
+        $resultObj->recordsTotal = $this->model('student_info')->count();
         return new json($resultObj);
     }
 }

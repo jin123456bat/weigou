@@ -69,10 +69,15 @@ class mysql
 		if ($statement) {
 			$result = $statement->execute($array);
 			if ($result) {
-				if (strtolower(substr($statement->queryString, 0, 6)) == 'select') {
+				$sql_type = strtolower(substr(trim($statement->queryString), 0, 6));
+				if (in_array($sql_type, ['select'],true)) {
 					return $statement->fetchAll(PDO::FETCH_ASSOC);
 				}
-				return $statement->rowCount();
+				else if (in_array($sql_type, ['insert','delete','update'],true))
+				{
+					return $statement->rowCount();
+				}
+				return $statement->fetchAll(PDO::FETCH_ASSOC);
 			}
 		}
 		return false;
@@ -86,7 +91,7 @@ class mysql
 	 */
 	public function exec($sql)
 	{
-		$this->pdo->query($sql);
+		return $this->pdo->exec($sql);
 	}
 
 	/**
