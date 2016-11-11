@@ -211,7 +211,7 @@
 													<th width="10%"> 价格 </th>
                                                     <th width="10%"> 配送 </th>
                                                     <th width="10%"> 支付 </th>
-                                                    <th width="10%"> 报关 </th>
+                                                    <th width="10%"> ERP推送 </th>
                                                     <th width="10%"> 状态 </th>
                                                     <th width="10%"> 团购 </th>
                                                     <th width="10%"> 备注 </th>
@@ -283,13 +283,12 @@
 														<input type="text" class="form-control form-filter input-sm" name="pay_number" placeholder="根据支付单筛选">
 													</td>
                                                     <td>
-														<select name="kouan" class="form-control form-filter input-sm">
+														<select name="erp" class="form-control form-filter input-sm">
 															<option value="">请选择...</option>
-															<option value="0">未通过</option>
-															<option value="1">已通过</option>
-															<option value="2">异常</option>
-                                                            <option value="3">无需报关</option>
-														</select>
+															<option value="0">尚未推送</option>
+															<option value="1">推送完毕</option>
+															<option value="2">部分推送</option>
+                                                    	</select>
                                                     </td>
                                                     <td>
                                                         <select name="status" class="form-control form-filter input-sm">

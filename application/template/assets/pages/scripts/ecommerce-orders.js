@@ -93,8 +93,8 @@ var EcommerceOrders = function () {
 					name:'order.pay_status',
 					orderable:true,
 				},{
-					data:'kouan',
-					name:'order.kouan',
+					data:'erp',
+					name:'order.erp',
 					orderable:true,
 				},{
 					data:'status',
@@ -288,15 +288,13 @@ var EcommerceOrders = function () {
 				},{
 					targets:7,
 					render:function(data,type,full){
-						if(full.need_kouan == 0)
-							return '无需报关';
 						switch(data)
 						{
-							case '0':return '未报关';
-							case '1':return '报关通过';
-							case '2':return '报关异常';
+							case '0':return '尚未推送';
+							case '1':return '推送完毕';
+							case '2':return '部分推送';
 						}
-						return '';
+						return 'Exception！';
 					}
 				},{
 					targets:8,
