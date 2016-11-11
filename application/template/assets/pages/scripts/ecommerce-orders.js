@@ -340,17 +340,20 @@ var EcommerceOrders = function () {
 							content += '<button data-orderno="'+data+'" class="btn btn-xs red btn-outline quit">取消订单</button>';
 						}
 						//推送erp按钮
-						//if(full.status=='1')
-						//{
-							if(full.is_erp=='0')
+						if(full.status=='1')
+						{
+							if(full.pay_status=='1')
 							{
-								content += '<button data-orderno="'+data+'" class="btn btn-xs yellow btn-outline erp" style="color: white; background-color: black;">审核订单</button>';
+								if (full.erp == '1')
+								{
+									content += '<button data-orderno="'+data+'" class="btn btn-xs yellow btn-outline erp">重推ERP</button>';
+								}
+								else
+								{
+									content += '<button data-orderno="'+data+'" class="btn btn-xs yellow btn-outline erp" style="color: white; background-color: black;">审核订单</button>';
+								}
 							}
-							/*else
-							{
-								content += '<button data-orderno="'+data+'" class="btn btn-xs yellow btn-outline erp">重推ERP</button>';
-							}*/
-						//}
+						}
 						//退款按钮
 						/*if(full.pay_status==1 || full.pay_status == 4)
 						{
