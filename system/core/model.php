@@ -299,13 +299,15 @@ class model
 	 */
 	public function insert(array $array, $defualt = NULL,$debug = false)
 	{
-		$fields = empty($this->getFields($this->getTable())) ? '' : ' (`' . implode('`,`', $this->getFields($this->getTable())) . '`)';
+		$fields = $this->getFields($this->getTable());
+		$temp_array = [];
 		
 		//是否是数字下标
 		$source_keys = array_keys($array);
 		$des_keys = range(0, count($array)-1,1);
 		$diff = array_diff($source_keys,$des_keys);
 		$is_num_index = empty($diff);
+		
 		
 		//对于非数字下标的一些初始化检查
 		if (!$is_num_index)
@@ -318,6 +320,7 @@ class model
 					unset($array[$index]);
 				}
 			}
+			
 			//填充默认的字段
 			foreach ($this->_desc as $index=>$value)
 			{
@@ -327,44 +330,64 @@ class model
 					{
 						if ($value['Null'] == 'YES')
 						{
-							$array[$value['Field']] = NULL;
+							$temp_array[$value['Field']] = NULL;
 						}
 						else
 						{
-							switch ($value['Type'])
+							if ($value['Key'] == 'PRI' && $value['Extra'] == 'auto_increment')
 							{
-								case 'datetime':
-									$array[$value['Field']] = date('Y-m-d H:i:s');
-									break;
-								case 'timestamp':
-									$array[$value['Field']] = date('Y-m-d H:i:s');
-									break;
-								case 'date':
-									$array[$value['Field']] = date('Y-m-d');
-									break;
-								default:
-									$zero = '$int\(\d+\)$';
-									$empty_string = '$(char)?(text)?$';
-									if (preg_match($zero, $value['Type']))
-									{
-										$array[$value['Field']] = 0;
-									}
-									else if (preg_match($empty_string, $value['Type']))
-									{
-										$array[$value['Field']] = '';
-									}
+								$temp_array[$value['Field']] = NULL;
+							}
+							else
+							{
+								switch ($value['Type'])
+								{
+									case 'datetime':
+										$temp_array[$value['Field']] = date('Y-m-d H:i:s');
+										break;
+									case 'timestamp':
+										$temp_array[$value['Field']] = date('Y-m-d H:i:s');
+										break;
+									case 'date':
+										$temp_array[$value['Field']] = date('Y-m-d');
+										break;
+									default:
+										$zero = '$int\(\d+\)$';
+										$empty_string = '$(char)?(text)?$';
+										$double = '$double$';
+										if (preg_match($zero, $value['Type']))
+										{
+											$temp_array[$value['Field']] = 0;
+										}
+										else if (preg_match($empty_string, $value['Type']))
+										{
+											$temp_array[$value['Field']] = '';
+										}
+										else if (preg_match($double,$value['Type']))
+										{
+											$temp_array[$value['Field']] = 0;
+										}
+								}
 							}
 						}
 					}
 					else
 					{
-						$array[$value['Field']] = $value['Default'];
+						$temp_array[$value['Field']] = $value['Default'];
 					}
 				}
+				else
+				{
+					$temp_array[$value['Field']] = $array[$value['Field']];
+				}
 			}
+			$array = $temp_array;
 		}
 		
+		
+		
 		$parameter = '';
+		$replace_key = false;
 		foreach ($array as $key => $value)
 		{
 			if (is_int($key))
@@ -373,14 +396,32 @@ class model
 			}
 			else
 			{
+				$replace_key = true;
 				$parameter .= ':' . $key . ',';
 			}
 		}
 		$parameter = rtrim($parameter, ',');
+		
+		$fields = empty($fields) ? '' : ' (`' . implode('`,`', $fields) . '`)';
+		
 		$sql = 'insert into ' . $this->getTable() . $fields . ' values (' . $parameter . ') ' . $this->getDuplicate();
 		if ($debug)
+		{
 			return $sql;
+		}
+		
+		if ($replace_key)
+		{
+			$keys = array_keys($array);
+			$values = array_values($array);
+			$keys = array_map(function($key){
+				return ':'.$key;
+			}, $keys);
+			$array = array_combine($keys, $values);
+		}
+		
 		$result = $this->query($sql, $array);
+		
 		unset($this->_temp);
 		return $result;
 	}

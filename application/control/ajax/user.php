@@ -399,7 +399,7 @@ class user extends ajax
 
 	/**
 	 * 修改登陆密码，已经登陆了的
-	 * 
+	 *
 	 * @return \application\message\json
 	 */
 	function setpassword()
@@ -439,7 +439,7 @@ class user extends ajax
 
 	/**
 	 * 使用手机号和密码注册，附加短信验证码
-	 * 
+	 *
 	 * @return \application\message\json
 	 */
 	function register()
@@ -484,7 +484,7 @@ class user extends ajax
 
 	/**
 	 * 发送短信验证码
-	 * 
+	 *
 	 * @return \application\message\json
 	 */
 	function code()
@@ -598,7 +598,7 @@ class user extends ajax
 
 	/**
 	 * 检查用户要注册的手机号码和验证码
-	 * 
+	 *
 	 * @return \application\message\json
 	 */
 	function checkTelephoneAndCode()
@@ -765,7 +765,7 @@ class user extends ajax
 
 	/**
 	 * 设置头像
-	 * 
+	 *
 	 * @return \application\message\json
 	 */
 	function setGravatar()
@@ -916,7 +916,7 @@ class user extends ajax
 
 	/**
 	 * 获取或者设置用户个人介绍
-	 * 
+	 *
 	 * @return \application\message\json
 	 */
 	function description()
@@ -946,7 +946,7 @@ class user extends ajax
 
 	/**
 	 * 管理员修改密码
-	 * 
+	 *
 	 * @return \application\message\json
 	 */
 	function password()
@@ -1021,7 +1021,7 @@ class user extends ajax
 
 	/**
 	 * 管理员修改金额
-	 * 
+	 *
 	 * @return \application\message\json
 	 */
 	function money()
@@ -1233,8 +1233,8 @@ class user extends ajax
 			'(select sum(swift.money) from swift where swift.uid=user.id and swift.source in (2,3,4,5) and swift.time < ' . $endtime7 . ' and swift.time > ' . $starttime7 . ') as total7', // 最近7天收益
 			'(select count(*) from user as user2 where user2.oid=user.id) as team', // 团队发展总人数
 			'(select count(*) from user as user2 where user2.oid=user.id and user2.invittime < ' . $endtime7 . ' and user2.invittime > ' . $starttime7 . ') as team7'
-		] // 团队发展最近7天人数
-);
+		]) // 团队发展最近7天人数
+;
 		
 		if ($whole)
 		{
@@ -1287,8 +1287,8 @@ class user extends ajax
 						'(select sum(swift.money) from swift where swift.uid=user.id and swift.source in (2,3,4,5) and swift.time < ' . $endtime7 . ' and swift.time > ' . $starttime7 . ') as total7', // 最近7天收益
 						'(select count(*) from user as user2 where user2.oid=user.id) as team', // 团队发展总人数
 						'(select count(*) from user as user2 where user2.oid=user.id and user2.invittime < ' . $endtime7 . ' and user2.invittime > ' . $starttime7 . ') as team7'
-					] // 团队发展最近7天人数
-);
+					]) // 团队发展最近7天人数
+;
 					$temp = array_merge($temp, $temp_user);
 					$container = array_merge($container, $temp_user);
 				}
@@ -1393,7 +1393,8 @@ class user extends ajax
 		$user = $this->model("user")
 			->where("id=?", [
 			$uid
-		])->find([
+		])
+			->find([
 			"school"
 		]);
 		if ($user['school'] == 1)
@@ -1405,9 +1406,13 @@ class user extends ajax
 			return new json(json::PARAMETER_ERROR, "您已被拒绝通过");
 		}
 		
-		if(!empty($this->model('student_info')->where('uid=?',[$uid])->find()))
+		if (! empty($this->model('student_info')
+			->where('uid=?', [
+			$uid
+		])
+			->find()))
 		{
-			return new json(json::PARAMETER_ERROR,'请不要重复提交');
+			return new json(json::PARAMETER_ERROR, '请不要重复提交');
 		}
 		
 		// 审核身份证号跟用户名是否匹配
@@ -1419,7 +1424,7 @@ class user extends ajax
 		// 判断年龄
 		if (strlen($identify) == 18)
 		{
-			//150203199010190332
+			// 150203199010190332
 			$year = intval(strtotime(substr($identify, 6, 4)));
 			$today = intval(date('Y'));
 			$diff = $today - $year;
