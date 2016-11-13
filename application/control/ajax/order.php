@@ -459,7 +459,7 @@ class order extends ajax
 			}
 			else
 			{
-				return new json(json::PARAMETER_ERROR, '订单推送失败');
+				return new json(json::PARAMETER_ERROR, '订单推送失败，没有需要推送的订单');
 			}
 		}
 	}
