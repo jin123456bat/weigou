@@ -339,6 +339,20 @@ class product extends common
 			$p['origin'] = $this->model('country')->get($p['origin']);
 			$p['image'] = $productHelper->getListImage($p['id']);
 			
+			$bind = $this->model('bind')->where('pid=?',[$p['id']])
+			->orderby('num','desc')
+			->find([
+				'price',
+				'v1price',
+				'v2price',
+			]);
+			if (!empty($bind))
+			{
+				$p['price'] = $bind['price'];
+				$p['v1price'] = $bind['v1price'];
+				$p['v2price'] = $bind['v2price'];
+			}
+			
 			// 商品价格
 			$filter = [
 				'pid' => $p['id'],
@@ -428,13 +442,27 @@ class product extends common
 				'product.selled'
 			]
 		];
-		$product = $this->model('product')->fetchAll($product_filter);
+		$product = $this->model('product_top')->fetchAll($product_filter);
 		
 		$productHelper = new \application\helper\product();
 		foreach ($product as &$p)
 		{
 			$p['origin'] = $this->model('country')->get($p['origin']);
 			$p['image'] = $productHelper->getListImage($p['id']);
+			
+			$bind = $this->model('bind')->where('pid=?',[$p['id']])
+			->orderby('num','desc')
+			->find([
+				'price',
+				'v1price',
+				'v2price',
+			]);
+			if (!empty($bind))
+			{
+				$p['price'] = $bind['price'];
+				$p['v1price'] = $bind['v1price'];
+				$p['v2price'] = $bind['v2price'];
+			}
 			
 			// 商品价格
 			$filter = [
@@ -468,8 +496,8 @@ class product extends common
 		$product_filter['parameter'] = 'count(*)';
 		unset($product_filter['start']);
 		unset($product_filter['length']);
-		$total = $this->model('product')->fetchAll($product_filter);
-		$total = isset($total[0]['count(*)'])?isset($total[0]['count(*)']):0;
+		$total = $this->model('product_top')->fetchAll($product_filter);
+		$total = isset($total[0]['count(*)'])?$total[0]['count(*)']:0;
 		
 		$productReturnModel = [
 			'current' => count($product),

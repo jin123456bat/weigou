@@ -350,6 +350,20 @@ class product extends ajax
 			$p['origin'] = $this->model('country')->get($p['origin']);
 			$p['image'] = $productHelper->getListImage($p['id']);
 			
+			$bind = $this->model('bind')->where('pid=?',[$p['id']])
+			->orderby('num','desc')
+			->find([
+				'price',
+				'v1price',
+				'v2price',
+			]);
+			if (!empty($bind))
+			{
+				$p['price'] = $bind['price'];
+				$p['v1price'] = $bind['v1price'];
+				$p['v2price'] = $bind['v2price'];
+			}
+			
 			// 商品价格
 			$filter = [
 				'pid' => $p['id'],

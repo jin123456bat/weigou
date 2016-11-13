@@ -27,7 +27,7 @@ class category extends common
 			'cid' => $id,
 			'start' => $this->data('start',0),
 			'length' => $this->data('length',10),
-			'sort' => [['product.sort','asc'],['product.createtime','desc']],
+			'sort' => [['product.sort','asc'],['product.modifytime','desc']],
 			'parameter' => [
 				'product.id',
 				'product.name',
@@ -46,8 +46,21 @@ class category extends common
 		foreach ($product as &$p)
 		{
 			$p['origin'] = $this->model('country')->get($p['origin']);
-			
 			$p['image']  = $productHelper->getListImage($p['id']);
+
+			$bind = $this->model('bind')->where('pid=?',[$p['id']])
+			->orderby('num','desc')
+			->find([
+				'price',
+				'v1price',
+				'v2price',
+			]);
+			if (!empty($bind))
+			{
+				$p['price'] = $bind['price'];
+				$p['v1price'] = $bind['v1price'];
+				$p['v2price'] = $bind['v2price'];
+			}
 			
 			//商品价格
 			$filter = [

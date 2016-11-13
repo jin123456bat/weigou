@@ -2363,14 +2363,22 @@ class mobile extends view
 			$productHelper = new product();
 			foreach ($product as &$p)
 			{
-				$p['oldprice'] = $p['oldprice'];
-				$p['price'] = $p['price'];
-				$p['v1price'] = $p['v1price'];
-				$p['v2price'] = $p['v2price'];
-				
 				$p['origin'] = $this->model('country')->get($p['origin']);
-				
 				$p['image'] = $productHelper->getListImage($p['id']);
+				
+				$bind = $this->model('bind')->where('pid=?',[$p['id']])
+				->orderby('num','desc')
+				->find([
+					'price',
+					'v1price',
+					'v2price',
+				]);
+				if (!empty($bind))
+				{
+					$p['price'] = $bind['price'];
+					$p['v1price'] = $bind['v1price'];
+					$p['v2price'] = $bind['v2price'];
+				}
 				
 				// 商品价格
 				$filter = [
@@ -2574,6 +2582,21 @@ class mobile extends view
 			}
 			$p['origin'] = $this->model('country')->get($p['origin']);
 			$p['image'] = $productHelper->getListImage($p['id']);
+			
+			//获取捆绑中单价最低的价格显示在列表页中
+			$bind = $this->model('bind')->where('pid=?',[$p['id']])
+			->orderby('num','desc')
+			->find([
+				'price',
+				'v1price',
+				'v2price',
+			]);
+			if (!empty($bind))
+			{
+				$p['price'] = $bind['price'];
+				$p['v1price'] = $bind['v1price'];
+				$p['v2price'] = $bind['v2price'];
+			}
 			
 			// 商品价格
 			$filter = [
