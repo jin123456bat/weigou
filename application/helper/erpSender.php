@@ -115,19 +115,25 @@ class erpSender extends base
     {
         $orderHelper = new \application\helper\order();
         $depart = $orderHelper->departByStore($orderno);
-
+        
+        
+        //保存ERP不为空的子订单数量
+        $Sending = 0;
         if ($depart == 1 || $depart == 2) {
             //已经拆单成功，发送拆单后的数据
             $suborder = $this->model('suborder_store')->where('main_orderno=?', [$orderno])->select();
 
-            foreach ($suborder as $order) {
+            foreach ($suborder as $order)
+            {
                 if ($order['erp'] == 1 && !$focus) {
                     continue;
                 }
                 $erp = $this->model('store')->table('erp', 'left join', 'store.erp=erp.id')
                     ->where('store.id=?', [$order['store']])
                     ->find('erp.*');
-                if (!empty($erp)) {
+                if (!empty($erp))
+                {
+                	$Sending++;
                     $classname = 'application\\helper\\erp\\' . $erp['name'];
                     if (class_exists($classname, true)) {
                         $class = new $classname();
@@ -176,6 +182,12 @@ class erpSender extends base
                         }
                     }
                 }
+            }
+            
+            //没有任何订单发送
+            if ($Sending == 0)
+            {
+            	return false;
             }
 
             //判断订单数据是否全部发送成功
