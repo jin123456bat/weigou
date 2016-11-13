@@ -59,7 +59,7 @@ class product extends base
 		//UPDATE  `product` SET description = REPLACE( description,  "</p><p>",  "" )
 		$product['description'] = isset($product['description'])?str_replace('</p><p>', '', $product['description']):'';
 
-		if ($product['auto_status'] == 1)
+		if (isset($product['auto_status']) && $product['auto_status'] == 1)
 		{
 			$product['avaliabletime_from'] = strtotime($product['avaliabletime_from']);
 			$product['avaliabletime_to'] = strtotime($product['avaliabletime_to']);
