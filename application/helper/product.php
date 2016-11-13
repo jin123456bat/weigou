@@ -49,15 +49,15 @@ class product extends base
 			'down_reason' => '',
 		];
 		
-		$product['origin'] = empty(intval($product['origin']))?NULL:$product['origin'];
-		$product['store'] = empty(intval($product['store']))?NULL:$product['store'];
-		$product['postTaxNo'] = empty(intval($product['postTaxNo']))?NULL:$product['postTaxNo'];
-		$product['package'] = empty(intval($product['package']))?NULL:$product['package'];
-		$product['currencyType'] = empty(intval($product['currencyType']))?NULL:$product['currencyType'];
-		$product['firstUnit'] = empty(intval($product['firstUnit']))?NULL:$product['firstUnit'];
-		$product['ztax'] = empty(intval($product['ztax']))?NULL:$product['ztax'];
+		$product['origin'] = !isset($product['origin']) || empty(intval($product['origin']))?NULL:$product['origin'];
+		$product['store'] = !isset($product['store']) || empty(intval($product['store']))?NULL:$product['store'];
+		$product['postTaxNo'] = !isset($product['postTaxNo']) || empty(intval($product['postTaxNo']))?NULL:$product['postTaxNo'];
+		$product['package'] = !isset($product['package']) || empty(intval($product['package']))?NULL:$product['package'];
+		$product['currencyType'] = !isset($product['currencyType']) || empty(intval($product['currencyType']))?NULL:$product['currencyType'];
+		$product['firstUnit'] = !isset($product['firstUnit']) || empty(intval($product['firstUnit']))?NULL:$product['firstUnit'];
+		$product['ztax'] = !isset($product['ztax']) || empty(intval($product['ztax']))?NULL:$product['ztax'];
 		//UPDATE  `product` SET description = REPLACE( description,  "</p><p>",  "" )
-		$product['description'] = str_replace('</p><p>', '', $product['description']);
+		$product['description'] = isset($product['description'])?str_replace('</p><p>', '', $product['description']):'';
 
 		if ($product['auto_status'] == 1)
 		{
