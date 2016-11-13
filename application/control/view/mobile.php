@@ -2524,8 +2524,9 @@ class mobile extends view
 		$product_filter = [
 			'isdelete' => 0,
 			'sort' => [
-				'product_top.sort',
-				'asc'
+				['product_top.sort','asc'],
+				['product.sort','asc'],
+				['product.modifytime','desc'],
 			],
 			'status' => 1,
 			'parameter' => [

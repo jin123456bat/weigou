@@ -407,10 +407,9 @@ class product extends common
 		$product_filter = [
 			'isdelete' => 0,
 			'sort' => [
-				[
-					'product.modifytime',
-					'desc'
-				]
+				['product_top.sort','asc'],
+				['product.sort','asc'],
+				['product.modifytime','desc'],
 			],
 			'status' => 1,
 			'start' => $this->data('start', 0),
@@ -469,10 +468,12 @@ class product extends common
 		$product_filter['parameter'] = 'count(*)';
 		unset($product_filter['start']);
 		unset($product_filter['length']);
+		$total = $this->model('product')->fetchAll($product_filter);
+		$total = isset($total[0]['count(*)'])?isset($total[0]['count(*)']):0;
 		
 		$productReturnModel = [
 			'current' => count($product),
-			'total' => 5,
+			'total' => $total,
 			'start' => $this->data('start', 0),
 			'length' => $this->data('length', 10),
 			'data' => $product
