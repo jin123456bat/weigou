@@ -977,10 +977,10 @@ class product extends ajax
 							$barcode,
 							$inprice,
 							$selled,
-							$bind0_num,
 							$bind0_inprice,
-							$bind1_num,
+							$bind0_num,
 							$bind1_inprice,
+							$bind1_num,
 							$down_reason,
 							$name,
 							$outside,
@@ -1003,6 +1003,7 @@ class product extends ajax
 							$unit
 						) = $product;
 						
+						$bind = ['num'=>$selled,'inprice'=>$inprice,'price'=>$price,'v1price'=>$v1price,'v2price'=>$v2price];
 						$bind1 = ['num'=>$bind0_num,'inprice'=>$bind0_inprice,'price'=>$bind0_price,'v1price'=>$bind0_v1price,'v2price'=>$bind0_v2price];
 						$bind2 = ['num'=>$bind1_num,'inprice'=>$bind1_inprice,'price'=>$bind1_price,'v1price'=>$bind1_v1price,'v2price'=>$bind1_v2price];
 					
@@ -1058,6 +1059,10 @@ class product extends ajax
 							$publish = NULL;
 						}
 						
+						if (!empty($bind))
+						{
+							$bind['unit'] = $unit;
+						}
 						if (!empty($bind1))
 						{
 							$bind1['unit'] = $unit;
@@ -1097,6 +1102,15 @@ class product extends ajax
 							if($this->model('product')->insert($data))
 							{
 								$id = $this->model("product")->lastInsertId();
+								if (!empty($bind))
+								{
+									if (!empty($bind['num']) && !empty($bind['price']) && !empty($bind['v1price']) && !empty($bind['v2price']) && !empty($bind['inprice']))
+									{
+										$bind['pid'] = $id;
+										$bind['content'] = '';
+										$this->model('bind')->insert($bind);
+									}
+								}
 								if (!empty($bind1))
 								{
 									if (!empty($bind1['num']) && !empty($bind1['price']) && !empty($bind1['v1price']) && !empty($bind1['v2price']) && !empty($bind1['inprice']))
@@ -1145,6 +1159,15 @@ class product extends ajax
 							->update($data))
 							{
 								$this->model('bind')->where('pid=?',[$id])->delete();
+								if (!empty($bind))
+								{
+									if (!empty($bind['num']) && !empty($bind['price']) && !empty($bind['v1price']) && !empty($bind['v2price']) && !empty($bind['inprice']))
+									{
+										$bind['pid'] = $id;
+										$bind['content'] = '';
+										$this->model('bind')->insert($bind);
+									}
+								}
 								if (!empty($bind1))
 								{
 									if (!empty($bind1['num']) && !empty($bind1['price']) && !empty($bind1['v1price']) && !empty($bind1['v2price']) && !empty($bind1['inprice']))
