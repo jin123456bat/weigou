@@ -26,109 +26,110 @@
     <div class="sou-goods">
     	
     </div>
-    <div id="loading_text" style="font-size: small;padding: 10px;text-align: center;">已经到底了...</div>
+    <div id="loading_text" style="font-size: small;padding: 10px;text-align: center;">正在载入中...</div>
 </body>
 <script type="text/javascript">
-$.ajaxSetup({
-	headers:{
-		'X-CSRF-TOKEN':'{%$x_csrf_token%}'
-	}
-});
-
-function createProductTpl(product)
-{
-	var tpl = $('<div></div>').addClass('sou-goods-itme clearfix').on('click',function(){
-		window.location = 'index.php?c=mobile&a=product&id='+product.id;
+$(document).ready(function(){
+	$.ajaxSetup({
+		headers:{
+			'X-CSRF-TOKEN':'{%$x_csrf_token%}'
+		}
 	});
-	var imgDiv = $('<div class="left"></div>').append('<img src="'+product.image+'">');
-	tpl.append(imgDiv);
-	var rightDiv = $('<div class="right"></div>');
-	var line1 = $('<div class="sou-goods-line1"></div>');
-	rightDiv.append(line1);
-	if(product.origin)
+
+	function createProductTpl(product)
 	{
-		line1.append($('<img src="'+product.origin.logo+'">'));
-		line1.append($('<p>'+product.origin.name+'品牌 '+(product.store?(product.store+'发货'):'')+'</p>' ));
-	}
-	rightDiv.append('<div class="sou-goods-line2">'+product.name+'</div>');
-	
-	if ('{%$user|default:0%}' == '1') {
-		var price = product.v1price;
-	}
-	else if ('{%$user.vip|default:0%}' == '2') {
-		var price = product.v2price;
-	}
-	else
-	{
-		var price = product.price;
-	}
-	
-	rightDiv.append('<div class="sou-goods-line3">￥'+price+'<span> ￥'+product.oldprice+'</span></div>');
-	tpl.append(rightDiv);
-	return tpl;
-}
-var $_GET = (function(){
-    var url = window.document.location.href.toString();
-    var u = url.split("?");
-    if(typeof(u[1]) == "string"){
-        u = u[1].split("&");
-        var get = {};
-        for(var i in u){
-            var j = u[i].split("=");
-            get[j[0]] = decodeURI(j[1]);
-        }
-        return get;
-    } else {
-        return {};
-    }
-})();
-
-var draw = 1,
-	start = 0,
-	length = 10,
-	load_pos = 0.7,//从什么位置开始滚动载入
-	first_load_num = 20;//第一次载入数量
-var isLoading = false;
-
-$('#loading_text').on('click',function(){
-	
-	loadSearchData($_GET['keywords'],start,length,draw);
-});
-
-function loadSearchData(keywords,start_index,length,temp)
-{
-	if (!isLoading) {
-		$(this).html('正在载入...');
-		isLoading = true;
-		$.get('{%url m=ajax c=product a=search%}',{keywords:keywords,start:start_index,length:length,draw:temp},function(response){
-			if(response.code==1 && response.body.draw == draw)
-			{
-				if (parseInt(response.body.current) > 0) {
-					for(var i=0;i<parseInt(response.body.current);i++)
-					{
-						var tpl = createProductTpl(response.body.data[i]);
-						$('.sou-goods').append(tpl);
-					}
-					start += parseInt(response.body.current);
-					draw++;
-					isLoading = false;
-					$('#loading_text').html('载入完毕...');
-				}else{
-					$('#loading_text').html('已经到底了...');
-				}
-			}
+		var tpl = $('<div></div>').addClass('sou-goods-itme clearfix').on('click',function(){
+			window.location = 'index.php?c=mobile&a=product&id='+product.id;
 		});
+		var imgDiv = $('<div class="left"></div>').append('<img src="'+product.image+'">');
+		tpl.append(imgDiv);
+		var rightDiv = $('<div class="right"></div>');
+		var line1 = $('<div class="sou-goods-line1"></div>');
+		rightDiv.append(line1);
+		if(product.origin)
+		{
+			line1.append($('<img src="'+product.origin.logo+'">'));
+			line1.append($('<p>'+product.origin.name+'品牌 '+(product.store?(product.store+'发货'):'')+'</p>' ));
+		}
+		rightDiv.append('<div class="sou-goods-line2">'+product.name+'</div>');
+		
+		if ('{%$user.vip|default:0%}' == '1') {
+			var price = product.v1price;
+		}
+		else if ('{%$user.vip|default:0%}' == '2') {
+			var price = product.v2price;
+		}
+		else
+		{
+			var price = product.price;
+		}
+		
+		rightDiv.append('<div class="sou-goods-line3">￥'+price+'<span> ￥'+product.oldprice+'</span></div>');
+		tpl.append(rightDiv);
+		return tpl;
 	}
-}
+	var $_GET = (function(){
+	    var url = window.document.location.href.toString();
+	    var u = url.split("?");
+	    if(typeof(u[1]) == "string"){
+	        u = u[1].split("&");
+	        var get = {};
+	        for(var i in u){
+	            var j = u[i].split("=");
+	            get[j[0]] = decodeURI(j[1]);
+	        }
+	        return get;
+	    } else {
+	        return {};
+	    }
+	})();
 
-loadSearchData($_GET['keywords'],start,first_load_num,draw);
+	var draw = 1,
+		start = 0,
+		length = 10,
+		load_pos = 0.7,//从什么位置开始滚动载入
+		first_load_num = 20;//第一次载入数量
+	var isLoading = false;
 
-$(window).scroll( function() {
-	var per = $(this).scrollTop() / $('.sou-goods').height();
-	if(per > load_pos)
-	{
+	$('#loading_text').on('click',function(){
 		loadSearchData($_GET['keywords'],start,length,draw);
+	});
+
+	function loadSearchData(keywords,start_index,length,temp)
+	{
+		if (!isLoading) {
+			$('#loading_text').html('正在载入中...');
+			isLoading = true;
+			$.get('{%url m=ajax c=product a=search%}',{keywords:keywords,start:start_index,length:length,draw:temp},function(response){
+				if(response.code==1 && response.body.draw == draw)
+				{
+					if (parseInt(response.body.current) > 0) {
+						for(var i=0;i<parseInt(response.body.current);i++)
+						{
+							var tpl = createProductTpl(response.body.data[i]);
+							$('.sou-goods').append(tpl);
+						}
+						start += parseInt(response.body.current);
+						draw++;
+						isLoading = false;
+						$('#loading_text').html('载入完毕...');
+					}else{
+						$('#loading_text').html('已经到底了...');
+					}
+				}
+			});
+		}
 	}
+
+	loadSearchData($_GET['keywords'],start,first_load_num,draw);
+
+	$(window).scroll( function() {
+		var per = $(this).scrollTop() / $('.sou-goods').height();
+		if(per > load_pos)
+		{
+			loadSearchData($_GET['keywords'],start,length,draw);
+		}
+	});
 });
 </script>
 </html>
