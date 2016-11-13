@@ -175,6 +175,21 @@ class model
 		$result = $this->limit(1)->select($parameter);
 		return isset($result[0]) ? $result[0] : NULL;
 	}
+	
+	/**
+	 * 获取第一行第一条数据
+	 * @param string $parameter
+	 * @return mixed
+	 */
+	function scalar($parameter = '*')
+	{
+		$result = $this->find($parameter);
+		if (!empty($result))
+		{
+			return array_shift($result);
+		}
+		return NULL;
+	}
 
 	/**
 	 * 载入redis
