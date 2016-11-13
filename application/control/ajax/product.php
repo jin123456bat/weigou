@@ -971,17 +971,16 @@ class product extends ajax
 						{
 							continue;
 						}
-						$bind = [];
 						list(
 							$id,
 							$sku,
 							$barcode,
 							$inprice,
 							$selled,
-							$bind[1]['num'],
-							$bind[1]['inprice'],
-							$bind[2]['num'],
-							$bind[2]['inprice'],
+							$bind0_num,
+							$bind0_inprice,
+							$bind1_num,
+							$bind1_inprice,
 							$down_reason,
 							$name,
 							$outside,
@@ -991,12 +990,12 @@ class product extends ajax
 							$price,
 							$v1price,
 							$v2price,
-							$bind[1]['price'],
-							$bind[1]['v1price'],
-							$bind[1]['v2price'],
-							$bind[2]['price'],
-							$bind[2]['v1price'],
-							$bind[2]['v2price'],
+							$bind0_price,
+							$bind0_v1price,
+							$bind0_v2price,
+							$bind1_price,
+							$bind1_v1price,
+							$bind1_v2price,
 							$stock,
 							$status,
 							$fee,
@@ -1004,7 +1003,9 @@ class product extends ajax
 							$unit
 						) = $product;
 						
-						
+						$bind1 = ['num'=>$bind0_num,'inprice'=>$bind0_inprice,'price'=>$bind0_price,'v1price'=>$bind0_v1price,'v2price'=>$bind0_v2price];
+						$bind2 = ['num'=>$bind1_num,'inprice'=>$bind1_inprice,'price'=>$bind1_price,'v1price'=>$bind1_v1price,'v2price'=>$bind1_v2price];
+					
 						switch (trim($outside))
 						{
 							case '普通商品':
@@ -1032,6 +1033,7 @@ class product extends ajax
 							$freetax = 0;
 						}
 						
+						
 						if (trim($status) == '上架')
 						{
 							$status = 1;
@@ -1056,12 +1058,13 @@ class product extends ajax
 							$publish = NULL;
 						}
 						
-						if (!empty($bind))
+						if (!empty($bind1))
 						{
-							foreach ($bind as &$b)
-							{
-								$b['unit'] = $unit;
-							}
+							$bind1['unit'] = $unit;
+						}
+						if (!empty($bind2))
+						{
+							$bind2['unit'] = $unit;
 						}
 						
 						$data = [
@@ -1082,6 +1085,7 @@ class product extends ajax
 							'status' => $status,
 							'fee' => $fee,
 							'publish' => $publish,
+							'auto_status' => 0,
 						];
 						
 						
@@ -1093,16 +1097,22 @@ class product extends ajax
 							if($this->model('product')->insert($data))
 							{
 								$id = $this->model("product")->lastInsertId();
-								if (!empty($bind))
+								if (!empty($bind1))
 								{
-									foreach ($bind as $b)
+									if (!empty($bind1['num']) && !empty($bind1['price']) && !empty($bind1['v1price']) && !empty($bind1['v2price']) && !empty($bind1['inprice']))
 									{
-										if (!empty($bind['num']) && !empty($bind['price']) && !empty($bind['v1price']) && !empty($bind['v2price']) && !empty($bind['inprice']))
-										{
-											$b['pid'] = $id;
-											$b['content'] = '';
-											$this->model('bind')->insert($b);
-										}
+										$bind1['pid'] = $id;
+										$bind1['content'] = '';
+										$this->model('bind')->insert($bind1);
+									}
+								}
+								if (!empty($bind2))
+								{
+									if (!empty($bind2['num']) && !empty($bind2['price']) && !empty($bind2['v1price']) && !empty($bind2['v2price']) && !empty($bind2['inprice']))
+									{
+										$bind2['pid'] = $id;
+										$bind2['content'] = '';
+										$this->model('bind')->insert($bind2);
 									}
 								}
 								$this->model("admin_log")->insertlog($aid, '导入商品信息成功,data:'.json_encode($data), 1);
@@ -1135,16 +1145,22 @@ class product extends ajax
 							->update($data))
 							{
 								$this->model('bind')->where('pid=?',[$id])->delete();
-								if (!empty($bind))
+								if (!empty($bind1))
 								{
-									foreach ($bind as $b)
+									if (!empty($bind1['num']) && !empty($bind1['price']) && !empty($bind1['v1price']) && !empty($bind1['v2price']) && !empty($bind1['inprice']))
 									{
-										if (!empty($bind['num']) && !empty($bind['price']) && !empty($bind['v1price']) && !empty($bind['v2price']) && !empty($bind['inprice']))
-										{
-											$b['pid'] = $id;
-											$b['content'] = '';
-											$this->model('bind')->insert($b);
-										}
+										$bind1['pid'] = $id;
+										$bind1['content'] = '';
+										$this->model('bind')->insert($bind1);
+									}
+								}
+								if (!empty($bind2))
+								{
+									if (!empty($bind2['num']) && !empty($bind2['price']) && !empty($bind2['v1price']) && !empty($bind2['v2price']) && !empty($bind2['inprice']))
+									{
+										$bind2['pid'] = $id;
+										$bind2['content'] = '';
+										$this->model('bind')->insert($bind2);
 									}
 								}
 								
