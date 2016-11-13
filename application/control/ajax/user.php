@@ -1395,8 +1395,17 @@ class user extends ajax
 			$uid
 		])
 			->find([
-			"school"
+			"school",
+			'vip',
 		]);
+		if (empty($user))
+		{
+			return new json(json::PARAMETER_ERROR,'尚未注册');
+		}
+		if ($user['vip']!=0)
+		{
+			return new json(json::PARAMETER_ERROR,'会员用户不能申请学生信息');
+		}
 		if ($user['school'] == 1)
 		{
 			return new json(json::PARAMETER_ERROR, "审核已经通过");
