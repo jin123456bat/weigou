@@ -300,11 +300,13 @@
                                                                                 <th> 商品名 </th>
                                                                                 <th>条形码</th>
                                                                                 <th> 仓库</th>
+                                                                                <th> 供货商 </th>
                                                                                 <th> 规格 </th>
                                                                                 <th> 状态 </th>
                                                                                 <th> erp状态</th>
                                                                                 <th> 商品现价 </th>
                                                                                 <th> 购买价 </th>
+                                                                                <th> 钻石价 </th>
                                                                                 <th> 数量 </th>
                                                                                 <th> 优惠 </th>
                                                                                 <th> 总计 </th>
@@ -323,6 +325,7 @@
                                                                                 <td>
                                                                                     {%$product[product].storename%}
                                                                                 </td>
+                                                                                <td> {%$product[product].order_product_publish%}</td>
                                                                                 <td>
                                                                                     {%$product[product].content%}
                                                                                 </td>
@@ -342,6 +345,7 @@
                                                                                      {%/if%}
                                                                                 </td>
                                                                                 <td> {%$product[product].order_price%} </td>
+                                                                                <td> {%$product[product].order_product_v2price%}</td>
                                                                                 <td> {%$product[product].truenum%} </td>
                                                                                 
                                                                                 <td>

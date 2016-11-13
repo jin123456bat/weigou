@@ -162,7 +162,15 @@ class admin extends view
                 ->table('suborder_store', 'left join', 'suborder_store.main_orderno=order_package.orderno')
                 ->where('order_package.orderno=?', [$orderno])
                 ->select([
-                    'product.*',
+                	'product.id',
+                    'product.name',
+                	'product.barcode',
+                	'product.auto_status',
+                	'product.status',
+                	'product.price',
+                	'product.v1price',
+                	'product.v2price',
+                	
                     'order_product.num',
                     'order_product.bind',
                     'order_product.content',
@@ -172,9 +180,10 @@ class admin extends view
                     'order_product.id as order_product_id',
                     'order_product.refund',
                     'order_product.refundmoney',
-                    'store.name as storename',
+                    'order_product.store_name as storename',
                     'if(suborder_store.erp=1,"已推送","未推送") as erp',
-
+					'order_product.v2price as order_product_v2price',
+                	'order_product.publish as order_product_publish',
                 ]);
 
 
@@ -189,8 +198,6 @@ class admin extends view
                         $p['v1price'] = $collection['v1price'];
                         $p['v2price'] = $collection['v2price'];
                     }
-
-
                 }
                 if($bind= $this->model("bind")->where("content=? and num=? and pid=?", [$p['content'], $p['bind'], $p['id']])->find()){
                     $p['price'] = $bind['price'];

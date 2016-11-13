@@ -561,8 +561,9 @@ class order extends base
 			$product = $this->model('product')
 				->where('id=?', [
 				$p['id']
-			])
-				->find();
+			])->find();
+			
+			$v2price = $product['v2price'];
 			
 			// 计算商品价格
 			switch ($user['vip'])
@@ -590,6 +591,7 @@ class order extends base
 					->find();
 				if (! empty($price_collection))
 				{
+					$v2price = $price_collection['v2price'];
 					switch ($user['vip'])
 					{
 						case '0':
@@ -611,6 +613,7 @@ class order extends base
 			$priceInBind = $productHelper->getPriceByBind($p);
 			if ($priceInBind)
 			{
+				$v2price = $priceInBind['v2price'];
 				switch ($user['vip'])
 				{
 					case '0':
@@ -673,7 +676,8 @@ class order extends base
 					'refundmoney' => 0,
 					'refundtime' => 0,
 					'tax' => $tax,
-					'fee' => isset($this->_feeamount_detail[$p['id']]) ? $this->_feeamount_detail[$p['id']] : 0
+					'fee' => isset($this->_feeamount_detail[$p['id']]) ? $this->_feeamount_detail[$p['id']] : 0,
+					'v2price' => $v2price,
 				];
 				$data[$index]['ship_money'] += isset($this->_feeamount_detail[$p['id']]) ? $this->_feeamount_detail[$p['id']] : 0;
 			}
@@ -698,7 +702,8 @@ class order extends base
 							'refundmoney' => 0,
 							'refundtime' => 0,
 							'tax' => $tax,
-							'fee' => isset($this->_feeamount_detail[$p['id']]) ? $this->_feeamount_detail[$p['id']] : 0
+							'fee' => isset($this->_feeamount_detail[$p['id']]) ? $this->_feeamount_detail[$p['id']] : 0,
+							'v2price' => $v2price,
 						]
 					]
 				];
