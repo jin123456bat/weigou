@@ -846,24 +846,21 @@ class order extends base
 			{
 				$this->model('order')->commit();
 				// 判断仓库是否是自动推送
-				$is_auto = $this->model("store")
-					->table("order_package", "left join", "order_package.store_id=store.id")
-					->where("order_package.orderno=?", [
-					$orderno
-				])
-					->select([
-					'is_auto'
-				]);
-				$bl = true;
-				foreach ($is_auto as $auto)
+				
+				$auto_erp = $this->model('order_package')
+				->table('store','left join','order_package.store_id=store.id')
+				->where('order_package.orderno=?',[$orderno])
+				->select('store.is_auto,store.erp');
+				$auto = false;
+				foreach ($auto_erp as $auto)
 				{
-					if ($auto['is_auto'] == 0)
+					if ($auto['is_auto'] ==1 && !empty($auto['erp']))
 					{
-						$bl = false;
-						break;
+						$auto = true;
 					}
 				}
-				if ($bl)
+				
+				if ($auto)
 				{
 					$erpSender = new erpSender();
 					$erpSender->doSendOrder($orderno);
