@@ -51,6 +51,27 @@ class index extends view
 		return "404";
 	}
 	
+	function test()
+	{
+		/* $orders = $this->model('order')->select();
+		foreach ($orders as $order)
+		{
+			//已发送
+			$has_sended = $this->model('suborder_store')
+			->where('main_orderno = ? and erp=?',[$order['orderno'],1])
+			->scalar('count(*)');
+			//未发送
+			$has_not_sended = $this->model('suborder_store')
+			->where('main_orderno = ? and erp=?',[$order['orderno'],0])
+			->scalar('count(*)');
+			
+			if ($has_sended>0 && $has_not_sended)
+			{
+				$this->model('')
+			}
+		} */
+	}
+	
 	/*
 	 * function upgrade()
 	 * {

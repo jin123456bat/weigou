@@ -386,6 +386,10 @@ class model
 							}
 						}
 					}
+					else if ($value['Default'] == 'CURRENT_TIMESTAMP')
+					{
+						$temp_array[$value['Field']] = date('Y-m-d H:i:s');
+					}
 					else
 					{
 						$temp_array[$value['Field']] = $value['Default'];
