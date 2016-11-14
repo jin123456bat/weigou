@@ -61,6 +61,21 @@ class product extends common
 			return new json(json::PARAMETER_ERROR, '商品不存在');
 		}
 		
+		//捆绑价格替换
+		$bind = $this->model('bind')->where('pid=?',[$id])
+		->orderby('num','desc')
+		->find([
+			'price',
+			'v1price',
+			'v2price',
+		]);
+		if (!empty($bind))
+		{
+			$product['price'] = $bind['price'];
+			$product['v1price'] = $bind['v1price'];
+			$product['v2price'] = $bind['v2price'];
+		}
+		
 		// 商品价格
 		$filter = [
 			'pid' => $product['id'],
@@ -135,11 +150,9 @@ class product extends common
 		$product['collection'] = $collections;
 		
 		$bind = $this->model('bind')
-			->where('pid=?', [
-			$id
-		])
-			->orderby('sort', 'asc')
-			->select();
+		->where('pid=?', [$id])
+		->orderby('num', 'desc')
+		->select();
 		foreach ($bind as &$b)
 		{
 			if ($b['content'] != '')
@@ -158,15 +171,6 @@ class product extends common
 			{
 				$b['stock'] = $product['stock'];
 			}
-			
-			$b['price'] = $b['price'] * $b['num'];
-			$b['v1price'] = $b['v1price'] * $b['num'];
-			$b['v2price'] = $b['v2price'] * $b['num'];
-			$b['inprice'] = $b['inprice'] * $b['num'];
-			$b['price'] = sprintf("%.2f", $b['price']);
-			$b['v1price'] = sprintf("%.2f", $b['v1price']);
-			$b['v2price'] = sprintf("%.2f", $b['v2price']);
-			$b['inprice'] = sprintf("%.2f", $b['inprice']);
 		}
 		$product['bind'] = $bind;
 		

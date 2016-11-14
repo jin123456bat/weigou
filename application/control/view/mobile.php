@@ -2110,15 +2110,11 @@ class mobile extends view
 	 */
 	function product()
 	{
-		
 		$id = $this->get('id', 0, 'intval');
 		$product = $this->model('product')
-			->table('store', 'left join', 'product.store=store.id')
-			->where('product.id=? and product.isdelete=?', [
-			$id,
-			0
-		])
-			->find([
+		->table('store', 'left join', 'product.store=store.id')
+		->where('product.id=? and product.isdelete=?', [$id,0])
+		->find([
 			'product.id', // id
 			'product.name',
 			'product.description',
@@ -2222,6 +2218,21 @@ class mobile extends view
 			];
 			$product['textPrototype'] = $this->model('prototype')->fetch($filter);
 			
+			//捆绑价格替换
+			$bind = $this->model('bind')->where('pid=?',[$id])
+			->orderby('num','desc')
+			->find([
+				'price',
+				'v1price',
+				'v2price',
+			]);
+			if (!empty($bind))
+			{
+				$product['price'] = $bind['price'];
+				$product['v1price'] = $bind['v1price'];
+				$product['v2price'] = $bind['v2price'];
+			}
+			
 			// 商品的可选属性集合
 			$filter = [
 				'pid' => $id,
@@ -2303,10 +2314,9 @@ class mobile extends view
 			$this->assign('num', $cartnum['cou'] > 0 ? $cartnum['cou'] : 0);
 			
 			$bind = $this->model('bind')
-				->where('pid=?', [
-				$id
-			])
-				->select();
+			->where('pid=?', [$id])
+			->orderby('num','desc')
+			->select();
 			$this->assign('bind', $bind);
 			
 			return $this;
