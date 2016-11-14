@@ -2317,6 +2317,13 @@ class mobile extends view
 			->where('pid=?', [$id])
 			->orderby('num','desc')
 			->select();
+			foreach ($bind as &$b)
+			{
+				$b['price'] = $b['price'] * $b['num'];
+				$b['v1price'] = $b['v1price'] * $b['num'];
+				$b['v2price'] = $b['v2price'] * $b['num'];
+				$b['inprice'] = $b['inprice'] * $b['num'];
+			}
 			$this->assign('bind', $bind);
 			
 			return $this;
