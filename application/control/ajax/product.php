@@ -4,12 +4,14 @@ namespace application\control\ajax;
 use system\core\ajax;
 use application\message\json;
 use application\helper as helper;
-use application\control\view\search;
 use application\helper\admin;
+use application\helper\productSearchEngine;
 
 class product extends ajax
 {
 
+	
+	
 	/**
 	 * 添加商品
 	 */
@@ -277,12 +279,12 @@ class product extends ajax
 		}
 		else
 		{
-			$searchHelper = new search();
+			$searchHelper = new productSearchEngine();		
 			$keyword = $searchHelper->depart($keywords);
 			if (empty($keyword))
 			{
 				// 分词失败，使用原来的关键词进行搜索
-				$keyword = $keywords;
+				$keyword = [$keywords];
 			}
 			else
 			{
@@ -291,11 +293,31 @@ class product extends ajax
 				{
 					$temp_key[] = $key['word'];
 				}
-				// 使用百分号通配符链接所有的关键词
-				$keyword = implode('%', $temp_key);
+				$keyword = $temp_key;
 			}
 			$start = $this->get('start', 0);
 			$length = $this->get('length', 10);
+			
+			$fkey = array_shift($keyword);
+			$name_param = ['%'.$fkey.'%'];
+			$keyword_param = [$fkey];
+			$name_where = 'name like ?';
+			$keyword_where = 'searchIndex.keyword = ?';
+			foreach ($keyword as $word)
+			{
+				$name_param[] = '%'.$word.'%';
+				$keyword_param[] = $word;
+				$name_where = $name_where.' and name like ?';
+				$keyword_where = $keyword_where.' or searchIndex.keyword=?';
+			}
+			$name_where = '('.$name_where.')';
+			$keyword_where = '('.$keyword_where.')';
+			$name_param[] = 0;
+			$name_param[] = $_SERVER['REQUEST_TIME'];
+			$name_param[] = $_SERVER['REQUEST_TIME'];
+			$keyword_param[] = 0;
+			$keyword_param[] = $_SERVER['REQUEST_TIME'];
+			$keyword_param[] = $_SERVER['REQUEST_TIME'];
 			
 			// 对于商品标题，默认使用1000的关键度
 			$sql = 'select ' . implode(',', $parameter) . ' 
@@ -304,7 +326,7 @@ class product extends ajax
         				select product.*,1000 as percent
         				from product 
         				where 
-        					name like ? and 
+        					'.$name_where.' and 
         					isdelete=? and 
         					(
         						(product.auto_status = 0 and product.status = 1) or
@@ -319,8 +341,8 @@ class product extends ajax
         				left join searchIndex 
         				on searchIndex.pid=product.id 
         				where 
-        				searchIndex.keyword = ? and 
-        				product.isdelete=? and 
+        				'.$keyword_where.'
+        				and product.isdelete=? and 
         				(
         					(product.auto_status = 0 and product.status = 1) or
         					(product.auto_status = 1 and product.avaliabletime_from <= ? and product.avaliabletime_to >= ?)
@@ -334,16 +356,8 @@ class product extends ajax
         			order by percent desc,product.sort asc,product.id desc
         			limit ' . $start . ',' . $length;
 			
-			$product = $this->model('product')->query($sql, [
-				'%' . $keyword . '%',
-				0,
-				$_SERVER['REQUEST_TIME'],
-				$_SERVER['REQUEST_TIME'],
-				$keyword,
-				0,
-				$_SERVER['REQUEST_TIME'],
-				$_SERVER['REQUEST_TIME']
-			]);
+			$param = array_merge($name_param,$keyword_param);
+			$product = $this->model('product')->query($sql, $param);
 		}
 		
 		$productHelper = new \application\helper\product();

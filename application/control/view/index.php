@@ -3,6 +3,7 @@ namespace application\control\view;
 
 use system\core\view;
 use system\core\image;
+use application\helper\productSearchEngine;
 
 class index extends view
 {
@@ -50,7 +51,7 @@ class index extends view
 	{
 		return "404";
 	}
-	
+		
 	/*
 	 * function upgrade()
 	 * {

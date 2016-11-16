@@ -18,7 +18,7 @@ class productSearchEngine extends base
 	/**
 	 * 中文分词，返回分词后的数组
 	 */
-	private function depart($string,$duality = false)
+	function depart($string,$duality = false)
 	{
 		//去除无用的字符
 		$string = str_replace("\u200d", '', str_replace("&nbsp;", '', strip_tags($string)));

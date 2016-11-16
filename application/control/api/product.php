@@ -3,7 +3,7 @@ namespace application\control\api;
 
 use application\message\json;
 use application\helper\user;
-use application\control\view\search;
+use application\helper\productSearchEngine;
 
 class product extends common
 {
@@ -272,12 +272,12 @@ class product extends common
 		}
 		else
 		{
-			$searchHelper = new search();
+			$searchHelper = new productSearchEngine();
 			$keyword = $searchHelper->depart($keywords);
 			if (empty($keyword))
 			{
 				// 分词失败，使用原来的关键词进行搜索
-				$keyword = $keywords;
+				$keyword = [$keywords];
 			}
 			else
 			{
@@ -286,11 +286,31 @@ class product extends common
 				{
 					$temp_key[] = $key['word'];
 				}
-				// 使用百分号通配符链接所有的关键词
-				$keyword = implode('%', $temp_key);
+				$keyword = $temp_key;
 			}
 			$start = $this->data('start', 0);
 			$length = $this->data('length', 10);
+			
+			$fkey = array_shift($keyword);
+			$name_param = ['%'.$fkey.'%'];
+			$keyword_param = [$fkey];
+			$name_where = 'name like ?';
+			$keyword_where = 'searchIndex.keyword = ?';
+			foreach ($keyword as $word)
+			{
+				$name_param[] = '%'.$word.'%';
+				$keyword_param[] = $word;
+				$name_where = $name_where.' and name like ?';
+				$keyword_where = $keyword_where.' or searchIndex.keyword=?';
+			}
+			$name_where = '('.$name_where.')';
+			$keyword_where = '('.$keyword_where.')';
+			$name_param[] = 0;
+			$name_param[] = $_SERVER['REQUEST_TIME'];
+			$name_param[] = $_SERVER['REQUEST_TIME'];
+			$keyword_param[] = 0;
+			$keyword_param[] = $_SERVER['REQUEST_TIME'];
+			$keyword_param[] = $_SERVER['REQUEST_TIME'];
 			
 			// 对于商品标题，默认使用1000的关键度
 			$sql = 'select ' . implode(',', $parameter) . ' 
@@ -299,7 +319,7 @@ class product extends common
         				select product.*,1000 as percent
         				from product 
         				where 
-        					name like ? and 
+        					'.$name_where.' and 
         					isdelete=? and 
         					(
         						(product.auto_status = 0 and product.status = 1) or
@@ -314,8 +334,8 @@ class product extends common
         				left join searchIndex 
         				on searchIndex.pid=product.id 
         				where 
-        				searchIndex.keyword = ? and 
-        				product.isdelete=? and 
+        				'.$keyword_where.'
+        				and product.isdelete=? and 
         				(
         					(product.auto_status = 0 and product.status = 1) or
         					(product.auto_status = 1 and product.avaliabletime_from <= ? and product.avaliabletime_to >= ?)
@@ -329,16 +349,8 @@ class product extends common
         			order by percent desc,product.sort asc,product.id desc
         			limit ' . $start . ',' . $length;
 			
-			$product = $this->model('product')->query($sql, [
-				'%' . $keyword . '%',
-				0,
-				$_SERVER['REQUEST_TIME'],
-				$_SERVER['REQUEST_TIME'],
-				$keyword,
-				0,
-				$_SERVER['REQUEST_TIME'],
-				$_SERVER['REQUEST_TIME']
-			]);
+			$param = array_merge($name_param,$keyword_param);
+			$product = $this->model('product')->query($sql, $param);
 		}
 		
 		$productHelper = new \application\helper\product();
