@@ -2,8 +2,9 @@
 namespace application\helper;
 
 use system\core\http;
+use system\core\base;
 
-class productSearchEngine
+class productSearchEngine extends base
 {
 	private $percent = [
 		'title' => 50,//标题的权重

@@ -5,12 +5,6 @@ use application\helper\productSearchEngine;
 
 class search extends control
 {
-	
-	
-	
-	
-	
-	
 	/**
 	 * 创建搜索的索引
 	 */
@@ -23,5 +17,17 @@ class search extends control
 			$SearchEngine->rebuild($p);
 		}
 		echo "OK";
+	}
+	
+	function rebuild()
+	{
+		$id = $this->get('id');
+		if(!empty($id))
+		{
+			$SearchEngine = new productSearchEngine();
+			$SearchEngine->rebuild($id);
+			file_put_contents('./searchEngine.log', $id.' index build success');
+			echo "OK";
+		}
 	}
 }
