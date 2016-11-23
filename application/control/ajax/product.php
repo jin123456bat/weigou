@@ -9,9 +9,6 @@ use application\helper\productSearchEngine;
 
 class product extends ajax
 {
-
-	
-	
 	/**
 	 * 添加商品
 	 */
