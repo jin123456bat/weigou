@@ -10,7 +10,7 @@ class admin extends view
         'nocheck' => [    //不检查权限的页面
             'login',
             'dashboard',
-        	'changeMyPwd',
+            'changeMyPwd',
         ],
         'forward' => [
             'orderdetail' => 'order',//  orderdetail页面按照order页面的权限
@@ -44,6 +44,7 @@ class admin extends view
             'create_college' => 'college',
             'edit_college' => 'college',
             'file' => 'system',
+            'sendsms' => 'system',
 
         ],
     ];
@@ -162,15 +163,15 @@ class admin extends view
                 ->table('suborder_store', 'left join', 'suborder_store.main_orderno=order_package.orderno')
                 ->where('order_package.orderno=?', [$orderno])
                 ->select([
-                	'product.id',
+                    'product.id',
                     'product.name',
-                	'product.barcode',
-                	'product.auto_status',
-                	'product.status',
-                	'product.price',
-                	'product.v1price',
-                	'product.v2price',
-                	
+                    'product.barcode',
+                    'product.auto_status',
+                    'product.status',
+                    'product.price',
+                    'product.v1price',
+                    'product.v2price',
+
                     'order_product.num',
                     'order_product.bind',
                     'order_product.content',
@@ -182,8 +183,8 @@ class admin extends view
                     'order_product.refundmoney',
                     'order_product.store_name as storename',
                     'if(suborder_store.erp=1,"已推送","未推送") as erp',
-					'order_product.v2price as order_product_v2price',
-                	'order_product.publish as order_product_publish',
+                    'order_product.v2price as order_product_v2price',
+                    'order_product.publish as order_product_publish',
                 ]);
 
 
@@ -199,7 +200,7 @@ class admin extends view
                         $p['v2price'] = $collection['v2price'];
                     }
                 }
-                if($bind= $this->model("bind")->where("content=? and num=? and pid=?", [$p['content'], $p['bind'], $p['id']])->find()){
+                if ($bind = $this->model("bind")->where("content=? and num=? and pid=?", [$p['content'], $p['bind'], $p['id']])->find()) {
                     $p['price'] = $bind['price'];
                     $p['v1price'] = $bind['v1price'];
                     $p['v2price'] = $bind['v2price'];
@@ -983,6 +984,14 @@ class admin extends view
 
     function team()
     {
+        return $this;
+    }
+
+    function sendsms()
+    {
+        $note = $this->model("sendsms")->select();
+
+        $this->assign('product', $note);
         return $this;
     }
 
