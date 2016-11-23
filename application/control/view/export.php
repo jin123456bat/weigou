@@ -155,7 +155,7 @@ class export extends view
             //去掉运费
             if ($orderno_y == $value['orderno']) {
                 $value['feeamount'] = '0.00';
-                $value['product1']='0.00';
+                $value['product1'] = '0.00';
                 $value['product2'] = '0.00';
                 $value['product3'] = '0.00';
             } else {
@@ -164,8 +164,8 @@ class export extends view
             $price = $value['price'] * $value['num'];
 
             $value['orderamount'] = ($price + $value['feeamount']);
-            $value['pay_money'] = ($price + $value['feeamount']);
-            $value['orderamount']= sprintf("%.2f", $value['orderamount']);
+            //$value['pay_money'] = ($price + $value['feeamount']);
+            $value['orderamount'] = sprintf("%.2f", $value['orderamount']);
             $value['pay_money'] = sprintf("%.2f", $value['pay_money']);
 
             //判断有没有bind
