@@ -44,7 +44,7 @@ class admin extends view
             'create_college' => 'college',
             'edit_college' => 'college',
             'file' => 'system',
-            'sendsms' => 'system',
+            'sendsms' => 'send',
 
         ],
     ];
