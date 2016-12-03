@@ -243,6 +243,7 @@ class product extends ajax
 			
 			$this->model('product')->commit();
 			$this->model("admin_log")->insertlog($admin, '商品管理，增加商品成功，商品id：' . $product_id, 1);
+			$productHelper->cutPublish($product_id);
 			$this->call('search', 'rebuild',['id'=>$product_id]);
 			return new json(json::OK, NULL, $product_id);
 		}
@@ -867,6 +868,7 @@ class product extends ajax
 			
 			$this->model('product')->commit();
 			$this->model("admin_log")->insertlog($admin, '商品保存成功:'.$product_id);
+			$productHelper->cutPublish($product_id);
 			$this->call('search', 'rebuild',['id'=>$product_id]);
 			return new json(json::OK, NULL, $product_id);
 		}
