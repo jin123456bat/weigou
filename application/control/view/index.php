@@ -4,6 +4,7 @@ namespace application\control\view;
 use system\core\view;
 use system\core\image;
 use application\helper\productSearchEngine;
+use application\helper\product;
 
 class index extends view
 {
@@ -50,6 +51,12 @@ class index extends view
 	function __404()
 	{
 		return "404";
+	}
+	
+	function test()
+	{
+		$productHelper = new product();
+		var_dump($productHelper->cutPublish(47));
 	}
 		
 	/*

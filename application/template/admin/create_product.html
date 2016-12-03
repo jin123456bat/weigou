@@ -158,10 +158,9 @@
 		                                                        <div class="form-group">
 		                                                            <table class="table" id="PublishTable">
 		                                                                <thead>
-		                                                                    <th>供货商</th><th>SKU</th><th>进价</th><th>原价</th><th>V0价</th><th>V1价</th><th>V2价</th><th>库存</th><th>排序</th><th>状态</th><th>发货仓库</th><th>操作</th>
+		                                                                    <th>供货商</th><th>发货仓库</th><th>SKU</th><th>进价</th><th>原价</th><th>V0价</th><th>V1价</th><th>V2价</th><th>库存</th><th>操作</th>
 		                                                                </thead>
 		                                                                <tbody>
-		                                                                    <td>供货商</td><td>SKU</td><td>进价</td><td>原价</td><td>V0价</td><td>V1价</td><td>V2价</td><td>库存</td><td>排序</td><td>状态</td><td>发货仓库</td><td><button class="btn btn-xs btn-circle blue changePublishBtn">编辑</button><button class="btn btn-xs btn-circle red removePublishBtn">删除</button></td>
 		                                                                </tbody>
 		                                                            </table>
 		                                                        </div>
@@ -331,7 +330,17 @@
                                                             <div class="col-md-10">
                                                                 <input type="text" class="form-control" name="barcode" placeholder=""> </div>
                                                         </div>
-                                                        
+                                                        <div class="form-group">
+                                                            <label class="col-md-2 control-label">计量单位:<span class="required"> * </span></label>
+                                                            <div class="col-md-10">
+                                                                <select name="MeasurementUnit" class="form-control select2">
+                                                                    <option>请选择...</option>
+                                                                        {%section name=MeasurementUnit loop=$MeasurementUnit%}
+                                                                        <option value="{%$MeasurementUnit[MeasurementUnit].id%}">{%$MeasurementUnit[MeasurementUnit].name%}</option>
+                                                                        {%/section%}
+                                                                </select>
+                                                            </div>
+                                                        </div>
                                                         <div class="form-group">
                                                             <label class="col-md-2 control-label">售卖数:
                                                                 <span class="required"> * </span>
@@ -459,17 +468,7 @@
 																</select>
                                                             </div>
                                                         </div>
-														<div class="form-group">
-                                                            <label class="col-md-2 control-label">计量单位:</label>
-                                                            <div class="col-md-10">
-                                                                <select name="MeasurementUnit" class="form-control select2">
-                                                                    <option>请选择...</option>
-                                                                        {%section name=MeasurementUnit loop=$MeasurementUnit%}
-                                                                        <option value="{%$MeasurementUnit[MeasurementUnit].id%}">{%$MeasurementUnit[MeasurementUnit].name%}</option>
-                                                                        {%/section%}
-                                                                </select>
-                                                            </div>
-                                                        </div>
+														
 														<div class="form-group">
                                                             <label class="col-md-2 control-label">类目编码:</label>
                                                             <div class="col-md-10">
@@ -944,6 +943,11 @@
 				});
 				try{
 
+					var publish = [];
+					$('#PublishTable input').each(function(index,value){
+						publish.push($(value).val());
+					});
+
 					var fee_province = [];
 					product_province = $('input[name=fee_province]:checked');
 					$.each(product_province,function(index,value){
@@ -951,10 +955,11 @@
 					});
 
 					var obj = {
-						prototype:collection.getPrototypeTables(),
-						collection:collection.getCollectionTables(),
+						//prototype:collection.getPrototypeTables(),
+						//collection:collection.getCollectionTables(),
 						image:EcommerceProductsEdit.getPhoto(),
-                        bind:collection.getBind(),
+                        //bind:collection.getBind(),
+                        product_publish:publish,
 
 						name:$('#tab_general input[name=name]').val(),
 						description:window.um.getContent(),
@@ -983,7 +988,7 @@
 						fee_province:fee_province,
 						ztax:$('select[name=ztax]').val(),
 						barcode:$('input[name=barcode]').val(),
-						selled:$('#tab_general input[name=selled]').val(),
+						//selled:$('#tab_general input[name=selled]').val(),
 						down_reason:$('input[name=down_reason]').val(),
                         MeasurementUnit:$('select[name=MeasurementUnit]').val(),
 					};
@@ -1075,141 +1080,216 @@
 				return false;
 			});
 
-			$('#publish').on('hidden.bs.modal',function(){
-				$(this).find('.form-group').removeClass('has-error');
-				$(this).find('.help-block.help-block-error').remove();
-				$(this).find('input').val('');
-				$(this).find('select').val('');
+			$('#PublishTable').on('click','.removePublishBtn',function(){
+				if (window.confirm('确认删除这个供应商?')) {
+					publish_id = $(this).parents('tr').data('publish_id');
+					$('.existedPublish'+publish_id).remove();
+					$(this).parents('tr').remove();
+				}
+				return false;
 			});
 
-			$('.changePublishBtn').on('click',function(){
+			$('#PublishTable').on('click','.changePublishBtn',function(){
 				$('#publish').modal('show');
 				$('#publish #publishModalMode').val('edit');
-
+				$('#publish #oldPublish_id').val($(this).parents('tr').data('publish_id'));
+				
+				var data = $('.existedPublish'+$(this).parents('tr').data('publish_id')).val();
+				data = $.parseJSON(decodeURIComponent(data));
+				
+				$('#publishForm').find('input[name=oldprice]').val(data.oldprice);
+				$('#publishForm').find('input[name=sku]').val(data.sku);
+				$('#publishForm').find('input[name=stock]').val(data.stock);
+				$('#publishForm').find('select[name=store]').val(data.store);
+				$('#publishForm').find('select[name=publish_id]').val(data.publish_id);
+				for(var i=0;i<data.price.length;i++)
+				{
+					if ($('#publishForm .priceTable:eq('+i+')').length==0)
+					{
+						$('#createPriceBtn').trigger('click');
+					}
+					$('#publishForm .priceTable:eq('+i+')').find('input[name=selled]').val(data.price[i].selled);
+					$('#publishForm .priceTable:eq('+i+')').find('input[name=inprice]').val(data.price[i].inprice);
+					$('#publishForm .priceTable:eq('+i+')').find('input[name=price]').val(data.price[i].price);
+					$('#publishForm .priceTable:eq('+i+')').find('input[name=v1price]').val(data.price[i].v1price);
+					$('#publishForm .priceTable:eq('+i+')').find('input[name=v2price]').val(data.price[i].v2price);
+				}
 				return false;
 			});
 
 			$('#createPublishBtn').on('click',function(){
+				$('#publish').find('.form-group').removeClass('has-error');
+				$('#publish').find('.help-block.help-block-error').remove();
+				$('#publish').find('input').val('');
+				$('#publish').find('select').each(function(index,value){
+					$(value).find('option:first').attr('selected','selected');
+				});
+				$('#publish').find('.priceTable:not(":first")').remove();
+				$('#deletePriceBtn').addClass('display-none');
+				$('#createPriceBtn').removeClass('display-none');
+
 				$('#publish').modal('show');
 				$('#publish #publishModalMode').val('new');
 				return false;
 			});
 
+			$('#createPriceBtn').on('click',function(){
+				if ($('.priceTable').length<3)
+				{
+					var priceTable = $('.priceTable:first').clone();
+					priceTable.find('input').val('');
+					priceTable.find('.form-group').removeClass('has-error');
+					priceTable.find('span.help-block').remove();
+					priceTable.insertAfter($('.priceTable:last'));
+				}
+				if ($('.priceTable').length == 3)
+				{
+					$(this).addClass('display-none');
+				}
+				else
+				{
+					$(this).removeClass('display-none');
+				}
+				$('#deletePriceBtn').removeClass('display-none');
+				return false;
+			});
+
+			$('#deletePriceBtn').on('click',function(){
+				if ($('.priceTable').length>1)
+				{
+					$('.priceTable:last').remove();
+					$('#createPriceBtn').removeClass('display-none');
+				}
+				if($('.priceTable').length == 1)
+				{
+					$(this).addClass('display-none');
+				}
+				return false;
+			});
+
 			$('#publishForm').validate({
 				errorElement: 'span', //default input error message container
-	            errorClass: 'help-block help-block-error', // default input error message class
-	            focusInvalid: true, // do not focus the last invalid input
-	            ignore: "", // validate all fields including form hidden input
-	            messages: {
-	                publish_id:{
-	                	required:"请选择供应商",
-	                },
-	                sku:{
-	                	required:"请填写SKU",
-	                },
-	                inprice:{
-	                	required:"请填写进价",
-	                	number: "进价必须是一个数字"
-	                },
-	                oldprice:{
-	                	required:"请填写原价",
-	                	number: "价格应该是一个数字"
-	                },
-	                price:{
-	                	required:"请填写销售价",
-	                	number: "价格应该是一个数字"
-	                },
-	                v1price:{
-	                	required:"请填写V1价",
-	                	number: "价格应该是一个数字"
-	                },
-	                v2price:{
-	                	required:"请填写V2价",
+				errorClass: 'help-block help-block-error', // default input error message class
+				focusInvalid: true, // do not focus the last invalid input
+				ignore: "", // validate all fields including form hidden input
+				messages: {
+					publish_id:{
+						required:"请选择供应商",
+					},
+					sku:{
+						required:"请填写SKU",
+					},
+					inprice:{
+						required:"请填写进价",
+						number: "进价必须是一个数字"
+					},
+					oldprice:{
+						required:"请填写原价",
+						number:'原价必须是一个数字',
+					},
+					price:{
+						required:"请填写销售价",
 						number: "价格应该是一个数字"
-	                },
-	                stock:{
-	                	required:"请填写库存",
-	                	digits: "库存应该是一个整数"
-	                },
-	                store:{
-	                	required:"请选择发货仓库",
-	                },
-	                sort:{
-	                	digits:"排序必须使用数字控制",
-	                }
-	            },
-	            rules: {
-	                publish_id:{
-	                	required:true,
-	                },
-	                sku:{
-	                	required:true,
-	                },
-	                inprice:{
-	                	required:true,
-	                	number: true
-	                },
-	                oldprice:{
-	                	required:true,
-	                	number: true
-	                },
-	                price:{
-	                	required:true,
-	                	number: true
-	                },
-	                v1price:{
-	                	required:true,
-	                	number: true
-	                },
-	                v2price:{
-	                	required:true,
+					},
+					v1price:{
+						required:"请填写V1价",
+						number: "价格应该是一个数字"
+					},
+					v2price:{
+						required:"请填写V2价",
+						number: "价格应该是一个数字"
+					},
+					stock:{
+						required:"请填写库存",
+						digits: "库存应该是一个整数"
+					},
+					store:{
+						required:"请选择发货仓库",
+					},
+					sort:{
+						digits:"排序必须使用数字控制",
+					},
+					selled:{
+						digits:"销售数量必须是一个数字",
+						required:'请填写销售数量',
+					}
+				},
+				rules: {
+					publish_id:{
+						required:true,
+					},
+					sku:{
+						required:true,
+					},
+					inprice:{
+						required:true,
 						number: true
-	                },
-	                stock:{
-	                	required:true,
-	                	digits: true
-	                },
-	                store:{
-	                	required:true,
-	                },
-	                sort:{
-	                	digits:true,
-	                }
-	            },
+					},
+					oldprice:{
+						required:true,
+						number:true,
+					},
+					price:{
+						required:true,
+						number: true
+					},
+					v1price:{
+						required:true,
+						number: true
+					},
+					v2price:{
+						required:true,
+						number: true
+					},
+					stock:{
+						required:true,
+						digits: true
+					},
+					store:{
+						required:true,
+					},
+					sort:{
+						digits:true,
+					},
+					selled:{
+						digits:true,
+						required:true,
+					}
+				},
 
-	            invalidHandler: function(event, validator) { //display error alert on form submit              
-	                
-	            },
+				invalidHandler: function(event, validator) { //display error alert on form submit              
+					
+				},
 
-	            errorPlacement: function(error, element) {
-	                if (element.is(':checkbox')) {
-	                    error.insertAfter(element.closest(".md-checkbox-list, .md-checkbox-inline, .checkbox-list, .checkbox-inline"));
-	                } else if (element.is(':radio')) {
-	                    error.insertAfter(element.closest(".md-radio-list, .md-radio-inline, .radio-list,.radio-inline"));
-	                } else if (element.is('select')){
-	                	element.closest('.form-group .col-md-10').append(error);
-	                }else{
-	                    error.insertAfter(element); // for other inputs, just perform default behavior
-	                }
-	            },
+				errorPlacement: function(error, element) {
+					if (element.is(':checkbox')) {
+						error.insertAfter(element.closest(".md-checkbox-list, .md-checkbox-inline, .checkbox-list, .checkbox-inline"));
+					} else if (element.is(':radio')) {
+						error.insertAfter(element.closest(".md-radio-list, .md-radio-inline, .radio-list,.radio-inline"));
+					} else if (element.is('select')){
+						element.closest('.form-group .col-md-10').append(error);
+					}else{
+						error.insertAfter(element); // for other inputs, just perform default behavior
+					}
+				},
 
-	            highlight: function(element) { // hightlight error inputs
-	            	$(element)
-	                    .closest('.form-group').addClass('has-error'); // set error class to the control group
-	            },
+				highlight: function(element) { // hightlight error inputs
+					$(element)
+						.closest('.form-group').addClass('has-error'); // set error class to the control group
+				},
 
-	            unhighlight: function(element) { // revert the change done by hightlight
-	                $(element)
-	                    .closest('.form-group').removeClass('has-error'); // set error class to the control group
-	            },
+				unhighlight: function(element) { // revert the change done by hightlight
+					$(element)
+						.closest('.form-group').removeClass('has-error'); // set error class to the control group
+				},
 
-	            success: function(label) {
-	                label
-	                    .closest('.form-group').removeClass('has-error'); // set success class to the control group
-	            },
+				success: function(label) {
+					label
+						.closest('.form-group').removeClass('has-error'); // set success class to the control group
+				},
 
-	            submitHandler: function(form) {
-	                $(form).find('.form-group').removeClass('has-error');
+				submitHandler: function(form) {
+					$(form).find('.form-group').removeClass('has-error');
 					
 					var publish_id = $(form).find('select[name=publish_id]').val();
 					if($('#publish #publishModalMode').val() == 'new' && $('.existedPublish'+publish_id).length>0)
@@ -1218,165 +1298,246 @@
 						return false;
 					}
 
-	                var data = {
-	                	publish_id:publish_id,
-	                	sku:$(form).find('input[name=sku]').val(),
-	                	inprice:$(form).find('input[name=inprice]').val(),
-	                	oldprice:$(form).find('input[name=oldprice]').val(),
-	                	price:$(form).find('input[name=price]').val(),
-	                	v1price:$(form).find('input[name=v1price]').val(),
-	                	v2price:$(form).find('input[name=v2price]').val(),
-	                	stock:$(form).find('input[name=stock]').val(),
-	                	status:$(form).find('input[name=status]:checked').length,
-	                	sort:$(form).find('input[name=sort]').val(),
-	                	store:$(form).find('select[name=store]').val()
-	                };
+					priceTable = [];
+					if ($(form).find('.priceTable').length==1) {
+						inprice = 0;
+						selled = 0;
+						price = 0;
+						v1price = 0;
+						v2price = 0;
+						priceTableNum = 1;
+					}
+					else
+					{
+						inprice_max = 0;
+						selled_max = 0;
+						price_max = 0;
+						v1price_max = 0;
+						v2price_max = 0;
+						inprice_min = 999999999;
+						selled_min = 9999999999;
+						price_min = 99999999999;
+						v1price_min = 999999999;
+						v2price_min = 9999999999999;
+						priceTableNum = $(form).find('.priceTable').length;
+					}
+					$(form).find('.priceTable').each(function(index,value){
+						if (priceTableNum==1) {
+							inprice = $(value).find('input[name=inprice]').val();
+							selled = $(value).find('input[name=selled]').val();
+							price = $(value).find('input[name=price]').val();
+							v1price = $(value).find('input[name=v1price]').val();
+							v2price = $(value).find('input[name=v2price]').val();
+						}
+						else
+						{
+							if (inprice_max < parseFloat($(value).find('input[name=inprice]').val()))
+							{
+								inprice_max = parseFloat($(value).find('input[name=inprice]').val()).toFixed(2);
+							}
+							if (selled_max < parseFloat($(value).find('input[name=selled]').val()))
+							{
+								selled_max = parseFloat($(value).find('input[name=selled]').val()).toFixed(2);
+							}
+							if (price_max < parseFloat($(value).find('input[name=price]').val()))
+							{
+								price_max = parseFloat($(value).find('input[name=price]').val()).toFixed(2);
+							}
+							if (v1price_max < parseFloat($(value).find('input[name=v1price]').val()))
+							{
+								v1price_max = parseFloat($(value).find('input[name=v1price]').val()).toFixed(2);
+							}
+							if (v2price_max < parseFloat($(value).find('input[name=v2price]').val()))
+							{
+								v2price_max = parseFloat($(value).find('input[name=v2price]').val()).toFixed(2);
+							}
+							if (inprice_min > parseFloat($(value).find('input[name=inprice]').val()))
+							{
+								inprice_min = parseFloat($(value).find('input[name=inprice]').val()).toFixed(2);
+							}
+							if (selled_min > parseFloat($(value).find('input[name=selled]').val()))
+							{
+								selled_min = parseFloat($(value).find('input[name=selled]').val()).toFixed(2);
+							}
+							if (price_min > parseFloat($(value).find('input[name=price]').val()))
+							{
+								price_min = parseFloat($(value).find('input[name=price]').val()).toFixed(2);
+							}
+							if (v1price_min > parseFloat($(value).find('input[name=v1price]').val()))
+							{
+								v1price_min = parseFloat($(value).find('input[name=v1price]').val()).toFixed(2);
+							}
+							if (v2price_min > parseFloat($(value).find('input[name=v2price]').val()))
+							{
+								v2price_min = parseFloat($(value).find('input[name=v2price]').val()).toFixed(2);
+							}
+						}
+						priceTable.push({
+							selled:$(value).find('input[name=selled]').val(),
+							inprice:$(value).find('input[name=inprice]').val(),
+							price:$(value).find('input[name=price]').val(),
+							v1price:$(value).find('input[name=v1price]').val(),
+							v2price:$(value).find('input[name=v2price]').val(),
+						});
+					});
 
-	                var dataString = JSON.stringify(data);
-	                publish_name = $(form).find('select[name=publish_id] option:selected').text();
-	                status = $(form).find('input[name=status]:checked').length>0?'有效':'无效';
-	                store = $(form).find('select[name=store] option:selected').text();
-	                if ($('#publish #publishModalMode').val() == 'new')
-	                {
-	                	$('#PublishTable').append('<input class="existedPublish'+publish_id+'" type="hidden" name="publish[]" value="'+dataString+'">');
+					var data = {
+						publish_id:publish_id,
+						sku:$(form).find('input[name=sku]').val(),
+						stock:$(form).find('input[name=stock]').val(),
+						store:$(form).find('select[name=store]').val(),
+						oldprice:$(form).find('input[name=oldprice]').val(),
+						price:priceTable
+					};
 
-		                $('#PublishTable tbody').append('<tr><td>'+publish_name+'</td><td>'+data.sku+'</td><td>'+data.inprice+'</td><td>'+data.oldprice+'</td><td>'+data.price+'</td><td>'+data.v1price+'</td><td>'+data.v2price+'</td><td>'+data.stock+'</td><td>'+(data.sort.length==0?0:data.sort)+'</td><td>'+status+'</td><td>'+store+'</td><td><button></button></td></tr>');
-	                }
-	                else
-	                {
-	                	$('.existedPublish'+publish_id).val(dataString);
-	                	$('#PublishTable tbody tr').each(function(index,value){
-	                		if($(value).find('td:first').text() == publish_name)
-	                		{
-	                			//修改publish
-	                			$(value).find('td:eq(1)').text(data.sku);
-	                			$(value).find('td:eq(2)').text(data.inprice);
-	                			$(value).find('td:eq(3)').text(data.oldprice);
-	                			$(value).find('td:eq(4)').text(data.price);
-	                			$(value).find('td:eq(5)').text(data.v1price);
-	                			$(value).find('td:eq(6)').text(data.v2price);
-	                			$(value).find('td:eq(7)').text(data.stock);
-	                			$(value).find('td:eq(8)').text(data.sort);
-	                			$(value).find('td:eq(9)').text(status);
-	                			$(value).find('td:eq(10)').text(store);
-	                			return false;
-	                		}
-	                	});
-	                }
+					var dataString = encodeURIComponent(JSON.stringify(data));
+					publish_name = $(form).find('select[name=publish_id] option:selected').text();
+					store = $(form).find('select[name=store] option:selected').text();
+					//<td>供货商</td><td>发货仓库</td><td>SKU</td><td>进价</td><td>原价</td><td>V0价</td><td>V1价</td><td>V2价</td><td>库存</td><td><button class="btn btn-xs btn-circle blue changePublishBtn">编辑</button><button class="btn btn-xs btn-circle red removePublishBtn">删除</button></td>
+					var tpl = '<tr data-publish_id="'+publish_id+'" data-store_id="'+data.store+'"><td>'+publish_name+'</td><td>'+store+'</td><td>'+data.sku+'</td><td>'+(priceTableNum==1?inprice:inprice_min+'~'+inprice_max)+'</td><td>'+data.oldprice+'</td><td>'+(priceTableNum==1?price:price_min+'~'+price_max)+'</td><td>'+(priceTableNum==1?v1price:v1price_min+'~'+v1price_max)+'</td><td>'+(priceTableNum==1?v2price:v2price_min+'~'+v2price_max)+'</td><td>'+data.stock+'</td><td><button class="btn btn-xs btn-circle blue changePublishBtn">编辑</button><button class="btn btn-xs btn-circle red removePublishBtn">删除</button></td></tr>';
+					if ($('#publish #publishModalMode').val() == 'new')
+					{
+						$('#PublishTable').append('<input class="existedPublish'+publish_id+'" type="hidden" name="publish[]" value="'+dataString+'">');
 
-	                $('#publish').modal('hide');
+						$('#PublishTable tbody').append(tpl);
+					}
+					else
+					{
+						var oldPublish_id = $('#publish #oldPublish_id').val();
+						//把原来存储的数据删除掉
+						$('.existedPublish'+oldPublish_id).remove();
+						//添加新的数据
+						$('#PublishTable').append('<input class="existedPublish'+publish_id+'" type="hidden" name="publish[]" value="'+dataString+'">');
 
-	                return false;
-	            }
+						//把原来的数据行删除掉
+						$('#PublishTable tbody tr').each(function(index,value){
+							if ($(value).data('publish_id') == $('#publish #oldPublish_id').val())
+							{
+								$(tpl).insertAfter($(value));
+								$(value).remove();
+								return false;
+							}
+						});
+					}
+
+					$('#publish').modal('hide');
+
+					return false;
+				}
 			});
 		});
 		</script>
         <!-- END THEME LAYOUT SCRIPTS -->
 
-        <div id="publish" class="modal fade" tabindex="-1" data-width="760">
-        	<input type="hidden" id="publishModalMode" value="new">
-        	<form class="form-horizontal" role="form" id="publishForm">
-	            <div class="modal-header">
-	                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-	                <h4 class="modal-title">供应商编辑</h4>
-	            </div>
-	            <div class="modal-body">
-	            	<div class="form-body">
-		                <div class="form-group">
-		                    <label class="col-md-2 control-label">供应商<span class="required"> * </span></label>
-		                    <div class="col-md-10">
-		                    	<select name="publish_id" class="form-control select2">
-		                    		<option value="">请选择...</option>
-		                    		{%section name=publish loop=$publish%}
-		                    		<option value="{%$publish[publish].id%}">{%$publish[publish].name%}</option>
-		                    		{%/section%}
-		                    	</select>
-		                        <span class="help-block"> 选择一个供应商. </span>
-		                    </div>
-		                </div>
-		                <div class="form-group">
-		                    <label class="col-md-2 control-label">SKU<span class="required"> * </span></label>
-		                    <div class="col-md-10">
-		                    	<input type="text" class="form-control maxlength-handler" placeholder="最长32个字符" maxlength="32" name="sku">
-		                        <span class="help-block"> 每一个供应商都应该有不同的SKU. </span>
-		                    </div>
-		                </div>
-		                <div class="form-group">
-		                    <label class="col-md-2 control-label">进价<span class="required"> * </span></label>
-		                    <div class="col-md-10">
-		                    	<input type="text" class="form-control maxlength-handler" placeholder="商品进价" maxlength="32" name="inprice">
-		                        <span class="help-block"> 商品从改供货商的进价. </span>
-		                    </div>
-		                </div>
-		                <div class="form-group">
-		                    <label class="col-md-2 control-label">原价<span class="required"> * </span></label>
-		                    <div class="col-md-10">
-		                    	<input type="text" class="form-control maxlength-handler" placeholder="商品原价" maxlength="32" name="oldprice">
-		                        <span class="help-block"> 商品从改供货商的原销售价. </span>
-		                    </div>
-		                </div>
-		                <div class="form-group">
-		                    <label class="col-md-2 control-label">V0价<span class="required"> * </span></label>
-		                    <div class="col-md-10">
-		                    	<input type="text" class="form-control maxlength-handler" placeholder="V0价" maxlength="32" name="price">
-		                        <span class="help-block"> 商品对非VIP的销售价格. </span>
-		                    </div>
-		                </div>
-		                <div class="form-group">
-		                    <label class="col-md-2 control-label">V1价<span class="required"> * </span></label>
-		                    <div class="col-md-10">
-		                    	<input type="text" class="form-control maxlength-handler" placeholder="V1价" maxlength="32" name="v1price">
-		                        <span class="help-block"> 商品对白金会员的销售价格. </span>
-		                    </div>
-		                </div>
-		                <div class="form-group">
-		                    <label class="col-md-2 control-label">V2价<span class="required"> * </span></label>
-		                    <div class="col-md-10">
-		                    	<input type="text" class="form-control maxlength-handler" placeholder="V2价" maxlength="32" name="v2price">
-		                        <span class="help-block"> 商品对钻石会员的销售价格. </span>
-		                    </div>
-		                </div>
-		                <div class="form-group">
-		                    <label class="col-md-2 control-label">库存<span class="required"> * </span></label>
-		                    <div class="col-md-10">
-		                    	<input type="text" class="form-control maxlength-handler" placeholder="库存" maxlength="32" name="stock">
-		                        <span class="help-block"> 供货商提供的库存. </span>
-		                    </div>
-		                </div>
-		                <div class="form-group">
-		                    <label class="col-md-2 control-label">发货仓库<span class="required"> * </span></label>
-		                    <div class="col-md-10">
-		                    	<select name="store" class="form-control select2">
-		                    		<option value="">请选择...</option>
-		                    		{%section name=store loop=$store%}
-		                    		<option value="{%$store[store].id%}">{%$store[store].name%}</option>
-		                    		{%/section%}
-		                    	</select>
-		                        <span class="help-block"> 供货商提供的库存. </span>
-		                    </div>
-		                </div>
-		                <div class="form-group">
-		                    <label class="col-md-2 control-label">状态</label>
-		                    <div class="col-md-10">
-		                    	<input type="checkbox" class="form-control" name="status" checked="checked">
-		                        <span class="help-block"> 勾选有效. </span>
-		                    </div>
-		                </div>
-		                <div class="form-group">
-		                    <label class="col-md-2 control-label">排序</label>
-		                    <div class="col-md-10">
-		                    	<input type="text" class="form-control maxlength-handler" placeholder="从小到大" maxlength="32" name="sort">
-		                        <span class="help-block"> 默认以进价低的优先级高，相同进价以排序数字小的高. </span>
-		                    </div>
-		                </div>
-		            </div>
-	            </div>
-	            <div class="modal-footer">
-	                <button type="button" data-dismiss="modal" class="btn btn-outline dark">关闭</button>
-	                <button type="submit" class="btn green">保存</button>
-	            </div>
-	        </form>
-        </div>
+        <div id="publish" class="modal container fade" tabindex="-1">
+			<input type="hidden" id="publishModalMode" value="new">
+			<input type="hidden" id="oldPublish_id" value="">
+			<form class="form-horizontal" role="form" id="publishForm">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+					<h4 class="modal-title">供应商编辑</h4>
+				</div>
+				<div class="modal-body">
+					<div class="form-body">
+						<div class="row">
+							<div class="form-group col-md-6">
+								<label class="col-md-2 control-label">供应商<span class="required"> * </span></label>
+								<div class="col-md-10">
+									<select name="publish_id" class="form-control select2">
+										<option value="">请选择...</option>
+										{%section name=publish loop=$publish%}
+										<option value="{%$publish[publish].id%}">{%$publish[publish].name%}</option>
+										{%/section%}
+									</select>
+									<span class="help-block"> 选择一个供应商. </span>
+								</div>
+							</div>
+							<div class="form-group col-md-6">
+								<label class="col-md-2 control-label">发货仓库<span class="required"> * </span></label>
+								<div class="col-md-10">
+									<select name="store" class="form-control select2">
+										<option value="">请选择...</option>
+										{%section name=store loop=$store%}
+										<option value="{%$store[store].id%}">{%$store[store].name%}</option>
+										{%/section%}
+									</select>
+									<span class="help-block"> 供货商提供的库存. </span>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="form-group col-md-6">
+								<label class="col-md-2 control-label">SKU<span class="required"> * </span></label>
+								<div class="col-md-10">
+									<input type="text" class="form-control maxlength-handler" autocomplete="off" placeholder="最长32个字符" maxlength="32" name="sku">
+									<span class="help-block"> 每一个供应商都应该有不同的SKU. </span>
+								</div>
+							</div>
+							<div class="form-group col-md-6">
+								<label class="col-md-2 control-label">库存<span class="required"> * </span></label>
+								<div class="col-md-10">
+									<input type="text" class="form-control maxlength-handler" autocomplete="off" placeholder="库存" maxlength="32" name="stock">
+									<span class="help-block"> 供货商提供的库存. </span>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="form-group col-md-6">
+								<label class="col-md-2 control-label">原价<span class="required"> * </span></label>
+								<div class="col-md-10">
+									<input type="text" class="form-control maxlength-handler" autocomplete="off" placeholder="原价" maxlength="32" name="oldprice">
+									<span class="help-block"> 商品原价. </span>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-3 priceTable">
+								<div class="form-group col-md-12">
+									<label class="col-md-4 control-label">数量<span class="required"> * </span></label>
+									<div class="col-md-8">
+										<input type="text" class="form-control maxlength-handler" autocomplete="off" placeholder="数量" maxlength="32" name="selled">
+									</div>
+								</div>
+								<div class="form-group col-md-12">
+									<label class="col-md-4 control-label">成本<span class="required"> * </span></label>
+									<div class="col-md-8">
+										<input type="text" class="form-control maxlength-handler" autocomplete="off" placeholder="成本" maxlength="32" name="inprice">
+									</div>
+								</div>
+								<div class="form-group col-md-12">
+									<label class="col-md-4 control-label">普通<span class="required"> * </span></label>
+									<div class="col-md-8">
+										<input type="text" class="form-control maxlength-handler" autocomplete="off" placeholder="V0价" maxlength="32" name="price">
+									</div>
+								</div>
+								<div class="form-group col-md-12">
+									<label class="col-md-4 control-label">白金<span class="required"> * </span></label>
+									<div class="col-md-8">
+										<input type="text" class="form-control maxlength-handler" autocomplete="off" placeholder="V1价" maxlength="32" name="v1price">
+									</div>
+								</div>
+								<div class="form-group col-md-12">
+									<label class="col-md-4 control-label">钻石<span class="required"> * </span></label>
+									<div class="col-md-8">
+										<input type="text" class="form-control maxlength-handler" autocomplete="off" placeholder="V2价" maxlength="32" name="v2price">
+									</div>
+								</div>
+							</div>
+							<div class="col-md-1">
+								<div class="form-group col-md-12">&nbsp;</div>
+								<button id="createPriceBtn" class="btn btn-circle green">+</button>
+								<button id="deletePriceBtn" class="btn btn-circle red display-none">x</button>
+								<div class="form-group col-md-12">&nbsp;</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" data-dismiss="modal" class="btn btn-outline dark">关闭</button>
+					<button type="submit" class="btn green">保存</button>
+				</div>
+			</form>
+		</div>
     </body>
 
 </html>

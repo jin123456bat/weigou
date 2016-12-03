@@ -234,6 +234,17 @@ class order extends common
             $this->model('order_log')->add($order['orderno'], '订单创建成功，等待支付');
 
             $this->model('order')->commit();
+            
+            foreach ($product as $p)
+            {
+            	$stock_limit = 10;
+            	$stock = $this->model('product')->where('id=?',[$p['id']])->scalar('stock');
+            	if ($stock<=$stock_limit)
+            	{
+            		$productHelper->cutPublish($p['id']);
+            	}
+            }
+            
             return new json(json::OK, NULL, $order);
         }
         $this->model('order')->rollback();

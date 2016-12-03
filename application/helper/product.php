@@ -91,14 +91,15 @@ class product extends base
 				{
 					if ($collection['stock'] + $stock >= 0)
 					{
-						$result = $this->model('collection')->where('pid=? and content=? and isdelete=?',[$id,$content,0])->increase('stock',$stock);
-						return $result;
+						$this->model('product_publish')->where('product_id=? and publish_id=?',[$id,$product['publish']])->increase('stock',$stock);
+						return $this->model('collection')->where('pid=? and content=? and isdelete=?',[$id,$content,0])->increase('stock',$stock);
 					}
 				}
 				else
 				{
 					if ($product['stock'] + $stock >= 0)
 					{
+						$this->model('product_publish')->where('product_id=? and publish_id=?',[$id,$product['publish']])->increase('stock',$stock);
 						return $this->model('product')->where('id=? and isdelete=?',[$id,0])->increase('stock',$stock);
 					}
 				}
@@ -281,6 +282,77 @@ class product extends base
 	function hasBind($id)
 	{
 		return !empty($this->model('bind')->where('pid=?',[$id])->find());
+	}
+	
+	/**
+	 * 切换商品的供应商
+	 */
+	function cutPublish($id)
+	{
+		$stock_limit = 10;
+		
+		$product_publish_price = $this->model('product_publish_price')
+		->where('product_id=?',[$id])
+		->orderby('inprice','asc')
+		->select();
+		foreach ($product_publish_price as $price)
+		{
+			$product_publish = $this->model('product_publish')->where('product_id =? and publish_id=?',[
+				$price['product_id'],
+				$price['publish_id']
+			])
+			->find();
+			if ($product_publish['stock']>$stock_limit)
+			{
+				$bind_price = $this->model('product_publish_price')->where('product_id=? and publish_id=?',[
+					$price['product_id'],
+					$price['publish_id']
+				])
+				->orderby('num','asc')
+				->select();
+				//把捆绑价格加入到bind
+				$this->model('bind')->where('pid=?',[$id])->delete();
+				if (count($bind_price)>1)
+				{
+					$unit = $this->model('product')->where('id=?',[$id])->scalar('MeasurementUnit');
+					$unit = $this->model('dictionary')->get($unit,'name');
+					foreach ($bind_price as $bind)
+					{
+						$this->model('bind')->insert([
+							'pid' => $bind['product_id'],
+							'content' => '',
+							'num' => $bind['num'],
+							'inprice' => $bind['inprice'],
+							'price' => $bind['price'],
+							'v1price' => $bind['v1price'],
+							'v2price' => $bind['v2price'],
+							'unit' => $unit,
+							'sort' => 0,
+						]);
+					}
+				}
+				//更改商品当前属性内存储的价格
+				$this->model('product')
+				->where('id=?',[$id])
+				->limit(1)
+				->update([
+					'inprice' => $price['inprice'],
+					'price' => $price['price'],
+					'v1price' => $price['v1price'],
+					'v2price' => $price['v2price'],
+					'selled' => $price['num'],
+					'stock' => $product_publish['stock'],
+					'store' => $product_publish['store'],
+					'sku' => $product_publish['sku'],
+					'oldprice' => $product_publish['oldprice'],
+					'publish' => $product_publish['publish_id'],
+				]);
+				
+				//结束
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	/**

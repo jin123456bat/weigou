@@ -20,16 +20,15 @@ class product extends ajax
 		
 		$product = $productHelper->createProductData($this->post());
 		
-		if (empty($product['store']))
+		/* if (empty($product['store']))
 		{
 			$this->model("admin_log")->insertlog($admin, '商品管理，增加商品失败（请选择发货仓库）');
 			return new json(json::PARAMETER_ERROR, '请选择发货仓库');
-		}
+		} */
 		if ($product['outside'] == 2)
 		{
 			if (empty($product['ztax']))
 			{
-				$this->model("admin_log")->insertlog($admin, '商品管理，增加商品失败（请填写综合税种）');
 				return new json(json::PARAMETER_ERROR, '请填写综合税种');
 			}
 		}
@@ -37,28 +36,30 @@ class product extends ajax
 		{
 			if (empty($product['postTaxNo']))
 			{
-				$this->model("admin_log")->insertlog($admin, '商品管理，增加商品失败（请选择行邮税号）');
 				return new json(json::PARAMETER_ERROR, '请选择行邮税号');
 			}
 		}
-		if ($product['status'] == 1)
+		/* if ($product['status'] == 1)
 		{
 			if (floatval($product['inprice']) == 0)
 			{
-				$this->model("admin_log")->insertlog($admin, '商品管理，增加商品失败（进价不能为0）');
 				return new json(json::PARAMETER_ERROR, '进价不能为0');
 			}
-		}
+		} */
+		
 		if (empty($product['barcode']))
 		{
-			$this->model("admin_log")->insertlog($admin, '商品管理，增加商品失败（条形码不能为空）');
 			return new json(json::PARAMETER_ERROR, '条形码不能为空');
 		}
-		if (intval($product['selled']) <= 0)
+		if (empty(intval($product['MeasurementUnit'])))
+		{
+			return new json(json::PARAMETER_ERROR,'请填写计量单位');
+		}
+		/* if (intval($product['selled']) <= 0)
 		{
 			$this->model("admin_log")->insertlog($admin, '商品管理，增加商品失败（售卖数不能为空）');
 			return new json(json::PARAMETER_ERROR, '售卖数不能为空');
-		}
+		} */
 		
 		if ($this->model('product')
 			->where('barcode=? and isdelete=?', [
@@ -67,7 +68,6 @@ class product extends ajax
 		])
 			->find())
 		{
-			$this->model("admin_log")->insertlog($admin, '商品管理，增加商品失败（存在相同条形码的商品）');
 			return new json(json::PARAMETER_ERROR, '存在相同条形码的商品');
 		}
 		
@@ -87,7 +87,6 @@ class product extends ajax
 					]))
 					{
 						$this->model('product')->rollback();
-						$this->model("admin_log")->insertlog($admin, '商品管理，增加商品失败（分配分类错误）');
 						return new json(json::PARAMETER_ERROR, '分配分类错误');
 					}
 				}
@@ -114,7 +113,6 @@ class product extends ajax
 					]))
 					{
 						$this->model('product')->rollback();
-						$this->model("admin_log")->insertlog($admin, '商品管理，增加商品失败（图片添加失败）');
 						return new json(json::PARAMETER_ERROR, '图片添加失败');
 					}
 				}
@@ -123,7 +121,6 @@ class product extends ajax
 			if (! $hasListImage)
 			{
 				$this->model('product')->rollback();
-				$this->model("admin_log")->insertlog($admin, '商品管理，增加商品失败（必须设置列表图）');
 				return new json(json::PARAMETER_ERROR, '必须设置列表图');
 			}
 			
@@ -142,7 +139,6 @@ class product extends ajax
 					]))
 					{
 						$this->model('product')->rollback();
-						$this->model("admin_log")->insertlog($admin, '商品管理，增加商品失败（属性添加失败）');
 						return new json(json::PARAMETER_ERROR, '属性添加失败');
 					}
 				}
@@ -168,7 +164,6 @@ class product extends ajax
 					]))
 					{
 						$this->model('product')->rollback();
-						$this->model("admin_log")->insertlog($admin, '商品管理，增加商品失败（多属性添加失败）');
 						return new json(json::PARAMETER_ERROR, '多属性添加失败');
 					}
 				}
@@ -184,7 +179,6 @@ class product extends ajax
 					]))
 					{
 						$this->model('province')->rollback();
-						$this->model("admin_log")->insertlog($admin, '商品管理，增加商品失败（添加配送城市失败）');
 						return new json(json::PARAMETER_ERROR, '添加配送城市失败');
 					}
 				}
@@ -207,7 +201,6 @@ class product extends ajax
 						->find()))
 					{
 						$this->model('product')->rollback();
-						$this->model("admin_log")->insertlog($admin, '商品管理，增加商品失败（无法捆绑相同数量的商品）');
 						return new json(json::PARAMETER_ERROR, '无法捆绑相同数量的商品');
 					}
 					if (! $this->model('bind')->insert([
@@ -223,22 +216,39 @@ class product extends ajax
 					]))
 					{
 						$this->model('product')->rollback();
-						$this->model("admin_log")->insertlog($admin, '商品管理，增加商品失败（商品捆绑添加失败）');
 						return new json(json::PARAMETER_ERROR, '商品捆绑添加失败');
 					}
 				}
 			}
 			
+			
+			if (is_array($this->post('product_publish')) && !empty($this->post('product_publish')))
+			{
+				foreach ($this->post('product_publish') as $publish)
+				{
+					$publish = json_decode(urldecode($publish),true);
+					$publish['product_id'] = $product_id;
+					if($this->model('product_publish')->insert($publish))
+					{
+						foreach ($publish['price'] as $price)
+						{
+							$price['product_id'] = $product_id;
+							$price['publish_id'] = $publish['publish_id'];
+							$this->model('product_publish_price')->insert($price);
+						}
+					}
+				}
+			}
+			
+			
 			$this->model('product')->commit();
 			$this->model("admin_log")->insertlog($admin, '商品管理，增加商品成功，商品id：' . $product_id, 1);
-			
 			$this->call('search', 'rebuild',['id'=>$product_id]);
 			return new json(json::OK, NULL, $product_id);
 		}
 		else
 		{
 			$this->model('product')->rollback();
-			$this->model("admin_log")->insertlog($admin, '商品管理，增加商品失败');
 			return new json(json::PARAMETER_ERROR, '添加失败');
 		}
 	}
@@ -578,7 +588,6 @@ class product extends ajax
 		$product = $productHelper->createProductData($this->post());
 		if (! isset($product['id']))
 		{
-			$this->model("admin_log")->insertlog($admin, '商品管理，商品编辑(商品id错误)');
 			return new json(json::PARAMETER_ERROR, '商品id错误');
 		}
 		
@@ -590,11 +599,10 @@ class product extends ajax
 		// 商品修改时间
 		$product['modifytime'] = $_SERVER['REQUEST_TIME'];
 		
-		if (empty($product['store']))
+		/* if (empty($product['store']))
 		{
-			$this->model("admin_log")->insertlog($admin, '商品管理，商品编辑(请选择发货仓库)');
 			return new json(json::PARAMETER_ERROR, '请选择发货仓库');
-		}
+		} */
 		if ($product['outside'] == 2)
 		{
 			if (empty($product['ztax']))
@@ -607,28 +615,28 @@ class product extends ajax
 		{
 			if (empty($product['postTaxNo']))
 			{
-				$this->model("admin_log")->insertlog($admin, '商品管理，商品编辑(请选择行邮税号)');
 				return new json(json::PARAMETER_ERROR, '请选择行邮税号');
 			}
 		}
-		if ($product['status'] == 1)
+		if (empty(intval($product['MeasurementUnit'])))
+		{
+			return new json(json::PARAMETER_ERROR,'请填写计量单位');
+		}
+		/* if ($product['status'] == 1)
 		{
 			if (floatval($product['inprice']) == 0)
 			{
-				$this->model("admin_log")->insertlog($admin, '商品管理，商品编辑(进价不能为0)');
 				return new json(json::PARAMETER_ERROR, '进价不能为0');
 			}
-		}
+		} */
 		if (empty($product['barcode']))
 		{
-			$this->model("admin_log")->insertlog($admin, '商品管理，商品编辑(条形码不能为空)');
 			return new json(json::PARAMETER_ERROR, '条形码不能为空');
 		}
-		if (intval($product['selled']) <= 0)
+		/* if (intval($product['selled']) <= 0)
 		{
-			$this->model("admin_log")->insertlog($admin, '商品管理，商品编辑(售卖数不能为空)');
 			return new json(json::PARAMETER_ERROR, '售卖数不能为空');
-		}
+		} */
 		
 		/*
 		 * if ($this->model('product')->where('id!=? and barcode=? and isdelete=?', [$product_id, $product['barcode'], 0])->find()) {
@@ -661,7 +669,6 @@ class product extends ajax
 					]))
 					{
 						$this->model('product')->rollback();
-						$this->model("admin_log")->insertlog($admin, '商品管理，商品编辑(分配分类错误)');
 						return new json(json::PARAMETER_ERROR, '分配分类错误');
 					}
 				}
@@ -692,7 +699,6 @@ class product extends ajax
 					]))
 					{
 						$this->model('product')->rollback();
-						$this->model("admin_log")->insertlog($admin, '商品管理，商品编辑(图片添加失败)');
 						return new json(json::PARAMETER_ERROR, '图片添加失败');
 					}
 				}
@@ -700,7 +706,6 @@ class product extends ajax
 			if (! $hasListImage)
 			{
 				$this->model('product')->rollback();
-				$this->model("admin_log")->insertlog($admin, '商品管理，商品编辑(必须设置列表图)');
 				return new json(json::PARAMETER_ERROR, '必须设置列表图');
 			}
 			
@@ -724,7 +729,6 @@ class product extends ajax
 					]))
 					{
 						$this->model('product')->rollback();
-						$this->model("admin_log")->insertlog($admin, '商品管理，商品编辑(属性添加失败)');
 						return new json(json::PARAMETER_ERROR, '属性添加失败');
 					}
 				}
@@ -744,7 +748,6 @@ class product extends ajax
 				])
 					->delete())
 				{
-					$this->model("admin_log")->insertlog($admin, '商品管理，商品编辑(collection更新中断)');
 					return new json(json::PARAMETER_ERROR, 'collection更新中断');
 				}
 			}
@@ -769,7 +772,6 @@ class product extends ajax
 					]))
 					{
 						$this->model('product')->rollback();
-						$this->model("admin_log")->insertlog($admin, '商品管理，商品编辑(多属性添加失败)');
 						return new json(json::PARAMETER_ERROR, '多属性添加失败');
 					}
 				}
@@ -790,7 +792,6 @@ class product extends ajax
 					]))
 					{
 						$this->model('province')->rollback();
-						$this->model("admin_log")->insertlog($admin, '商品管理，商品编辑(添加配送城市失败)');
 						return new json(json::PARAMETER_ERROR, '添加配送城市失败');
 					}
 				}
@@ -819,7 +820,6 @@ class product extends ajax
 						->find()))
 					{
 						$this->model('product')->rollback();
-						$this->model("admin_log")->insertlog($admin, '商品管理，商品编辑(无法捆绑相同数量的商品)');
 						return new json(json::PARAMETER_ERROR, '无法捆绑相同数量的商品');
 					}
 					
@@ -836,8 +836,28 @@ class product extends ajax
 					]))
 					{
 						$this->model('product')->rollback();
-						$this->model("admin_log")->insertlog($admin, '商品管理，商品编辑(商品捆绑添加失败)');
 						return new json(json::PARAMETER_ERROR, '商品捆绑添加失败');
+					}
+				}
+			}
+			
+			
+			$this->model('product_publish')->where('product_id=?',[$product_id])->delete();
+			$this->model('product_publish_price')->where('product_id=?',[$product_id])->delete();
+			if (is_array($this->post('product_publish')) && !empty($this->post('product_publish')))
+			{
+				foreach ($this->post('product_publish') as $publish)
+				{
+					$publish = json_decode(urldecode($publish),true);
+					$publish['product_id'] = $product_id;
+					if($this->model('product_publish')->insert($publish))
+					{
+						foreach ($publish['price'] as $price)
+						{
+							$price['product_id'] = $product_id;
+							$price['publish_id'] = $publish['publish_id'];
+							$this->model('product_publish_price')->insert($price);
+						}
 					}
 				}
 			}
@@ -846,14 +866,13 @@ class product extends ajax
 			// $this->model('cart')->where('pid=?',[$product_id])->delete();
 			
 			$this->model('product')->commit();
-			$this->model("admin_log")->insertlog($admin, '商品管理，商品编辑成功，商品id：' . $product_id, 1);
+			$this->model("admin_log")->insertlog($admin, '商品保存成功:'.$product_id);
 			$this->call('search', 'rebuild',['id'=>$product_id]);
 			return new json(json::OK, NULL, $product_id);
 		}
 		else
 		{
 			$this->model('product')->rollback();
-			$this->model("admin_log")->insertlog($admin, '商品管理，商品编辑(更新失败)');
 			return new json(json::PARAMETER_ERROR, '更新失败');
 		}
 	}
