@@ -878,7 +878,15 @@ class admin extends view
 			{
 				$publish['publish_name'] = $this->model('publish')->where('id=?',[$publish['publish_id']])->scalar('name');
 				$publish['store_name'] = $this->model('store')->where('id=?',[$publish['store']])->scalar('name');
-				$publish['price'] = $this->model('product_publish_price')->where('product_id=? and publish_id=?',[$publish['product_id'],$publish['publish_id']])->select();
+				$publish['price'] = $this->model('product_publish_price')->where('product_id=? and publish_id=?',[$publish['product_id'],$publish['publish_id']])->select([
+					'num as selled',
+					'product_id',
+					'publish_id',
+					'inprice',
+					'price',
+					'v1price',
+					'v2price',
+				]);
 				$product_publish_json[] = [
 					'publish_id' => $publish['publish_id'],
 					'value' => urlencode(json_encode($publish)),

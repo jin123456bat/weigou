@@ -6,6 +6,7 @@ use application\message\json;
 use application\helper as helper;
 use application\helper\admin;
 use application\helper\productSearchEngine;
+use application\model\roleModel;
 
 class product extends ajax
 {
@@ -234,6 +235,7 @@ class product extends ajax
 						{
 							$price['product_id'] = $product_id;
 							$price['publish_id'] = $publish['publish_id'];
+							$price['num'] = $price['selled'];
 							$this->model('product_publish_price')->insert($price);
 						}
 					}
@@ -857,6 +859,7 @@ class product extends ajax
 						{
 							$price['product_id'] = $product_id;
 							$price['publish_id'] = $publish['publish_id'];
+							$price['num'] = $price['selled'];
 							$this->model('product_publish_price')->insert($price);
 						}
 					}
@@ -919,6 +922,166 @@ class product extends ajax
 		}
 		$this->model("admin_log")->insertlog($admin, '商品管理，回收站商品恢复失败（参数错误）');
 		return new json(json::PARAMETER_ERROR);
+	}
+	
+	function import1()
+	{
+		$isPublishLine = function($product_line){
+			$i = 0;
+			while (empty($product_line[$i]))
+			{
+				$i++;
+			}
+			if ($i == 9)
+			{
+				return true;
+			}
+			return false;
+		};
+		
+		$isPriceLine = function($product_line){
+			$i = 0;
+			while(empty($product_line[$i]))
+			{
+				$i++;
+			}
+			if ($i == 14)
+			{
+				return true;
+			}
+			return false;
+		};
+		
+		$adminHelper = new admin();
+		$aid = $adminHelper->getAdminId();
+		if (empty($aid))
+		{
+			return new json(json::NOT_LOGIN);
+		}
+		
+		$roleModel = $this->model('role');
+		if ($roleModel->checkPower($adminHelper->getGroupId(),'product',roleModel::POWER_UPDATE))
+		{
+			$config = config('file');
+			$config->type = [
+				'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+				'application/vnd.ms-excel',
+				'application/vnd.ms-office',
+				'application/zip'
+			];
+			$config->size = 1024 * 1024 * 10;
+			
+			$Ein = array(
+				"A",
+				"B",
+				"C",
+				"D",
+				"E",
+				"F",
+				"G",
+				"H",
+				"I",
+				"J",
+				"K",
+				"L",
+				"M",
+				"N",
+				"O",
+				"P",
+				"Q",
+				"R",
+				"S",
+				"T",
+			);
+			
+			// 接受文件
+			if (isset($_FILES['file']))
+			{
+				$file = $this->file->receive($_FILES['file'], $config);
+				if (is_file($file))
+				{
+					$phpexcel_root = ROOT . '/extends/PHPExcel';
+					include $phpexcel_root . '/PHPExcel/IOFactory.php';
+					$objReader = \PHPExcel_IOFactory::createReader('Excel2007');
+					if ($objReader->canRead($file))
+					{
+						try
+						{
+							$objPHPExcel = $objReader->load($file);
+							$sheet = $objPHPExcel->getSheet(0);
+							$rowNum = $sheet->getHighestRow();//文件行
+						}
+						catch (\Exception $e)
+						{
+							return new json(json::PARAMETER_ERROR, '文件解析失败');
+						}
+						for ($row = 2; $row <= $rowNum; $row ++)
+						{
+							// 行数是以第2行开始
+							$dataset = [];
+							for ($column = 0; $column < count($Ein); $column ++)
+							{
+								$dataset[] = $sheet->getCell($Ein[$column] . $row)->getCalculatedValue();
+							}
+							$products[] = $dataset;
+						}
+						
+						$j = 0;
+						$z = 0;
+						for($i = 0;$i<count($products);$i = $i+$j+$z)
+						{
+							$id = $products[$i][0];
+							$spu = $products[$i][1];
+							$name = $products[$i][2];
+							$brand = $products[$i][3];
+							$oldprice = $products[$i][4];
+							$fee = $products[$i][5];
+							$tax = $products[$i][6];
+							$freetax = $products[$i][7];
+							$MeasurementUnit = $products[$i][8];
+							$status = $products[$i][9];
+							
+							$publish = [];
+							$j = 0;
+							while($isPublishLine($products[$i+$j]))
+							{
+								$publish[] = [
+									'publish_id' => $products[$i+$j][10],
+									'sku' => $products[$i+$j][11],
+									'store'=>$products[$i+$j][12],
+									'stock' => $products[$i+$j][14],
+								];
+								$j++;
+								
+								$price = [];
+								
+								$z = 0;
+								while($isPriceLine($products[$i+$j+$z]))
+								{
+									$price[] = [
+										'num' => $products[$i+$j+$z][15],
+										'inprice' => $products[$i+$j+$z][16],
+										'price' => $products[$i+$j+$z][17],
+										'v1price' => $products[$i+$j+$z][18],
+										'v2price' => $products[$i+$j+$z][19],
+									];
+									$z++;
+								}
+							}
+							
+							$product = [
+								'name' => $name,
+							];
+							
+						}
+					}
+					return new json(json::PARAMETER_ERROR,'文件不是一个可读excel文档');
+				}
+				return new json(json::PARAMETER_ERROR,'文件上传失败');
+			}
+			return new json(json::PARAMETER_ERROR,'请选择文件');
+		}
+		return new json(json::NO_POWER);
 	}
 
 	function import()
