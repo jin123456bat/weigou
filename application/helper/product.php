@@ -293,7 +293,9 @@ class product extends base
 		
 		$product_publish_price = $this->model('product_publish_price')
 		->where('product_id=?',[$id])
+		->groupby('publish_id')
 		->orderby('inprice','asc')
+		->orderby('avg(inprice)','asc')
 		->select();
 		foreach ($product_publish_price as $price)
 		{
