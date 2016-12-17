@@ -283,24 +283,32 @@ class oms extends erp
 		
 		$data = $this->model('suborder_store')
 		->table('`order`','left join','order.orderno=suborder_store.main_orderno')
-		->table('address','left join','address.id=suborder_store.address')
-		->table('province','left join','address.province=province.id')
-		->table('city','left join','address.city=city.id')
-		->table('county','left join','address.county=county.id')
+		//->table('address','left join','address.id=suborder_store.address')
+		//->table('province','left join','address.province=province.id')
+		//->table('city','left join','address.city=city.id')
+		//->table('county','left join','address.county=county.id')
 		->table('user','left join','user.id=suborder_store.uid')
 		->where('suborder_store.id=?',[$suborder_id])
 		->find([
 			$this->getParameter('platform').' as OrderFrom',//所属平台ID
 			'"YES" as OrderDeliver',//订单发货
-			'address.name as ReciverName',
-			'address.address as ReciverAddress',
-			'address.telephone as ReciverPhone',
-			'address.zcode as ReciverZipcode',
-			'county.name as ReciverDistrict',
-			'city.name as ReciverCity',
-			'province.name as ReciverState',
+			'suborder_store.address_province as ReciverState',
+			'suborder_store.address_city as ReciverCity',
+			'suborder_store.address_county as ReciverDistrict',
+			'suborder_store.address_identify as ReciverIdentity',
+			'suborder_store.address_zcode as ReciverZipcode',
+			'suborder_store.address_telephone as ReciverPhone',
+			'suborder_store.address_address as ReciverAddress',
+			'suborder_store.address_name as ReciverName',
+			//'address.name as ReciverName',
+			//'address.address as ReciverAddress',
+			//'address.telephone as ReciverPhone',
+			//'address.zcode as ReciverZipcode',
+			//'county.name as ReciverDistrict',
+			//'city.name as ReciverCity',
+			//'province.name as ReciverState',
 			'"中国" as ReciverCountryname',
-			'address.identify as ReciverIdentity',
+			//'address.identify as ReciverIdentity',
 			'concat(order.note,",",order.msg) as OrderMessage',
 			$store_id.' as HouseId',
 			!$erp_mode?($way.' as ShippingExpressId'):'58 as ShippingExpressId',//这个是物流方式
@@ -317,10 +325,14 @@ class oms extends erp
 			'0 as SplitOrder',//直接免税拆单
 			//以下信息需要额外组成
 			'from_unixtime(order.pay_time) as PayTime',
-			'address.identify as PayIdentity',
-			'address.telephone as PurchaserPhone',
-			'address.address as PurchaserAddr',
-			'address.name as PurchaserName',
+			'suborder_store.address_identify as PayIdentity',
+			'suborder_store.address_telephone as PurchaserPhone',
+			'suborder_store.address_address as PurchaserAddr',
+			'suborder_store.address_name as PurchaserName',
+			//'address.identify as PayIdentity',
+			//'address.telephone as PurchaserPhone',
+			//'address.address as PurchaserAddr',
+			//'address.name as PurchaserName',
 			'user.id as PurchaserId',//这边需要用户id？而不是用户名？
 			'order.pay_number as PayCode',
 			'order.pay_type as PayType',

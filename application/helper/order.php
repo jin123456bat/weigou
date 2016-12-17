@@ -134,7 +134,16 @@ class order extends base
 					'erp' => 0,
 					'erptime' => 0,
 					'sub_createtime' => $_SERVER['REQUEST_TIME'],
-					'store' => $st
+					'store' => $st,
+					'address_province' => $order['address_province'],
+					'address_city' => $order['address_city'],
+					'address_county' => $order['address_county'],
+					'address_address' => $order['address_address'],
+					'address_name' => $order['address_name'],
+					'address_telephone' => $order['address_telephone'],
+					'address_zcode' => $order['address_zcode'],
+					'address_identify' => $order['address_identify'],
+					'address_ishost' => $order['address_ishost'],
 				];
 				
 				$this->model('suborder_store')->transaction();
@@ -230,11 +239,7 @@ class order extends base
 			// 计算运费
 			if (! empty($this->_address))
 			{
-				$address = $this->model('address')
-					->where('id=?', [
-					$this->_address
-				])
-					->find();
+				$address = $this->_address;
 				if (! empty($address))
 				{
 					if (empty($this->model('product_province')
@@ -468,12 +473,16 @@ class order extends base
 		$this->_uid = $uid;
 		$this->_product = $product;
 		$this->_coupon = $coupon;
-		$this->_address = $address;
+		$this->_address = $this->model('address')->where('id=?',[$address])->find();
+		$this->_address['province'] = $this->model('province')->where('id=?',[$this->_address['province']])->scalar('name');
+		$this->_address['city'] = $this->model('city')->where('id=?',[$this->_address['city']])->scalar('name');
+		$this->_address['county'] = $this->model('county')->where('id=?',[$this->_address['county']])->scalar('name');
 		$this->_money = $money;
 		$this->_msg = $msg;
 		$this->_invoice = $invoice;
 		
 		$amount = $this->totalamount();
+		
 		
 		return [
 			'uid' => $uid,
@@ -518,7 +527,16 @@ class order extends base
 			'device' => '',
 			'need_kouan' => $this->_need_kouan,
 			'isdelete' => 0,
-			'deletetime' => 0
+			'deletetime' => 0,
+			'address_province' => $this->_address['province'],
+			'address_city' => $this->_address['city'],
+			'address_county' => $this->_address['county'],
+			'address_address' => $this->_address['address'],
+			'address_name' => $this->_address['name'],
+			'address_telephone' => $this->_address['telephone'],
+			'address_identify' => $this->_address['identify'],
+			'address_zcode' => $this->_address['zcode'],
+			'address_ishost' => $this->_address['host'],
 		];
 	}
 

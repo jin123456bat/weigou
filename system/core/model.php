@@ -661,6 +661,11 @@ class model
 	{
 		return $this->_db->query($sql, $array);
 	}
+	
+	public function exec($sql)
+	{
+		return $this->_db->exec($sql);
+	}
 
 	public function transaction()
 	{

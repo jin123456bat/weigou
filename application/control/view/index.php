@@ -53,6 +53,108 @@ class index extends view
 		return "404";
 	}
 	
+	/**
+	 * 升级脚本
+	 */
+	function upgrade()
+	{
+		$sql = '
+			ALTER TABLE  `order` DROP  `address_province` ,
+			DROP  `address_city` ,
+			DROP  `address_county` ,
+			DROP  `address_address` ,
+			DROP  `address_name` ,
+			DROP  `address_telephone` ,
+			DROP  `address_zcode` ,
+			DROP  `address_identify` ,
+			DROP  `address_ishost` ;
+		';
+		$this->model('order')->exec($sql);
+		
+		$sql = 
+		'
+			ALTER TABLE  `order` ADD  `address_province` varchar(32) NOT NULL,
+			add `address_city` varchar(32) not null,
+			add `address_county` varchar(32) not null,
+			add `address_address` varchar(256) not null,
+			add `address_name` varchar(32) not null,
+			add `address_telephone` char(11) not null,
+			add `address_zcode` char(6) not null,
+			add `address_identify` char(18) not null,
+			add `address_ishost` tinyint(1) not null;
+		';
+		$this->model('order')->exec($sql);
+		
+		
+		$sql = '
+			ALTER TABLE  `suborder_store` DROP  `address_province` ,
+			DROP  `address_city` ,
+			DROP  `address_county` ,
+			DROP  `address_address` ,
+			DROP  `address_name` ,
+			DROP  `address_telephone` ,
+			DROP  `address_zcode` ,
+			DROP  `address_identify` ,
+			DROP  `address_ishost` ;
+		';
+		$this->model('order')->exec($sql);
+		
+		$sql =
+		'
+			ALTER TABLE  `suborder_store` ADD  `address_province` varchar(32) NOT NULL,
+			add `address_city` varchar(32) not null,
+			add `address_county` varchar(32) not null,
+			add `address_address` varchar(256) not null,
+			add `address_name` varchar(32) not null,
+			add `address_telephone` char(11) not null,
+			add `address_zcode` char(6) not null,
+			add `address_identify` char(18) not null,
+			add `address_ishost` tinyint(1) not null;
+		';
+		$this->model('order')->exec($sql);
+		
+		//更新订单中的地址信息
+		$orders = $this->model('order')->select();
+		foreach ($orders as $order)
+		{
+			$address = $this->model('address')->where('id=?',[$order['address']])->find();
+			$this->model('order')->where('orderno=?',[$order['orderno']])
+			->limit(1)->update([
+				'address_province'=>$this->model('province')->where('id=?',[$address['province']])->scalar('name'),
+				'address_city' => $this->model('city')->where('id=?',[$address['city']])->scalar('name'),
+				'address_county' => $this->model('county')->where('id=?',[$address['county']])->scalar('name'),
+				'address_address' => $address['address'],
+				'address_name' => $address['name'],
+				'address_telephone' => $address['telephone'],
+				'address_zcode' => $address['zcode'],
+				'address_identify' => $address['identify'],
+				'address_ishost' => $address['host'],
+			]);
+		}
+		
+		
+		//更新子订单中的地址信息
+		$orders = $this->model('suborder_store')->select();
+		foreach ($orders as $order)
+		{
+			$address = $this->model('address')->where('id=?',[$order['address']])->find();
+			$this->model('suborder_store')->where('id=?',[$order['id']])
+			->limit(1)->update([
+				'address_province'=>$this->model('province')->where('id=?',[$address['province']])->scalar('name'),
+				'address_city' => $this->model('city')->where('id=?',[$address['city']])->scalar('name'),
+				'address_county' => $this->model('county')->where('id=?',[$address['county']])->scalar('name'),
+				'address_address' => $address['address'],
+				'address_name' => $address['name'],
+				'address_telephone' => $address['telephone'],
+				'address_zcode' => $address['zcode'],
+				'address_identify' => $address['identify'],
+				'address_ishost' => $address['host'],
+			]);
+		}
+		
+		
+	}
+	
 	function test()
 	{
 		$productHelper = new product();
