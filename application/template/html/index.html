@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>标题</title>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta content="width=device-width, initial-scale=1" name="viewport" />
+        <!-- 新 Bootstrap 核心 CSS 文件 -->
+		<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
+		<!-- 可选的Bootstrap主题文件（一般不用引入） -->
+		<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap-theme.min.css">
+		<link rel="stylesheet" href="./css/global.css">
+
+		<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+		<script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+		<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+		<script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+		<script type="text/javascript">
+			function lpad(num, n) {  
+				return Array(n>num?(n-(''+num).length+1):0).join(0)+num;  
+			}
+		</script>
+	</head>
+	<body>
+		<header>
+			<div class="nav">
+				<div class="left">
+					<div class="logo">LOGO</div>
+					<div class="version">V2.0</div>
+				</div>
+				<div class="center">
+					<div class="navigator active"><a href="">平台</a></div>
+					<div class="navigator"><a href="">平台</a></div>
+					<div class="navigator"><a href="">平台</a></div>
+					<div class="navigator"><a href="">平台</a></div>
+					<div class="logout">
+						<a href="">
+							<span class="glyphicon glyphicon-off"></span>
+							退出
+						</a>
+					</div>
+					<div class="message">
+						<a href="">
+							<span class="glyphicon glyphicon-envelope"></span>
+							消息
+						</a>
+					</div>
+					<div class="admin">
+						<a href="">
+							<img src="./images/u88.png">
+							i'm coming
+						</a>
+					</div>	
+				</div>
+			</div>
+		</header>
+		<div class="body">
+			<div class="sidebar">
+				<div class="datetime">
+					<div class="week">星期<script type="text/javascript">document.write(['日','一','二','三','四','五','六'][new Date().getDay()]);</script></div>
+					<div class="time"><script type="text/javascript">document.write(lpad(new Date().getHours(),2)+':'+lpad(new Date().getMinutes(),2));</script></div>
+					<div class="date"><script type="text/javascript">document.write(new Date().getFullYear()+'-'+lpad(new Date().getMonth()+1,2)+'-'+lpad(new Date().getDate(),2));</script></div>
+				</div>
+				<div class="menu">
+					<div class="menu1">
+						<div class="menu1-item active">
+							<a href="">
+								<img src="images/u11.png">
+								用户管理
+							</a>
+						</div>
+						<div class="menu1-item">
+							<a href="">
+								<img src="images/u11.png">
+								内容管理
+							</a>
+						</div>
+						<div class="menu1-item">
+							<a href="">
+								<img src="images/u11.png">
+								页面管理
+							</a>
+						</div>
+					</div>
+					<div class="menu2">
+						<div class="menu2-item">
+							<a href="">
+								•&nbsp;会员列表
+							</a>
+						</div>
+						<div class="menu2-item">
+							<a href="">
+								•&nbsp;学生管理
+							</a>
+						</div>
+						<div class="menu2-item">
+							<a href="">
+								•&nbsp;会员订单
+							</a>
+						</div>
+						<div class="menu2-item">
+							<a href="">
+								•&nbsp;会员团队
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript">
+			
+			setInterval(function(){
+				var datetimeController = new Date();
+				var date = datetimeController.getFullYear()+'-'+lpad(datetimeController.getMonth()+1,2)+'-'+lpad(datetimeController.getDate(),2);
+				$('.date').text(date);
+				
+				var time = lpad(datetimeController.getHours(),2)+':'+lpad(datetimeController.getMinutes(),2);
+				$('.time').text(time);
+			
+				var week = datetimeController.getDay();
+				var weekArray = ['日','一','二','三','四','五','六'];
+				var week = '星期'+weekArray[week];
+				$('.week').text(week);
+			},1000);
+			
+		</script>
+	</body>
+</html>
