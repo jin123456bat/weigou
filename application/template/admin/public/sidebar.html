@@ -58,11 +58,11 @@
                 <h3 class="uppercase">基础</h3>
             </li>
 
-            <li class="nav-item {%if $smarty.get.a==recycle || $smarty.get.a==product || $smarty.get.a==product_up || $smarty.get.a==create_product || $smarty.get.a==category || $smarty.get.a==store || $smarty.get.a==edit_product || $smarty.get.a==product_top%}active open{%/if%}">
+            <li class="nav-item {%if $smarty.get.a==recycle || $smarty.get.a==product || $smarty.get.a==product_up || $smarty.get.a==create_product || $smarty.get.a==category || $smarty.get.a==bcategory || $smarty.get.a==store || $smarty.get.a==edit_product || $smarty.get.a==product_top%}active open{%/if%}">
                 <a href="javascript:;" class="nav-link nav-toggle">
                     <i class="icon-graph"></i>
                     <span class="title">商品管理</span>
-                    <span class="arrow {%if $smarty.get.a==recycle || $smarty.get.a==product || $smarty.get.a==create_product || $smarty.get.a==category || $smarty.get.a==store || $smarty.get.a==edit_product || $smarty.get.a==product_top%}open{%/if%}"></span>
+                    <span class="arrow {%if $smarty.get.a==recycle || $smarty.get.a==product || $smarty.get.a==create_product || $smarty.get.a==category || $smarty.get.a==bcategory || $smarty.get.a==store || $smarty.get.a==edit_product || $smarty.get.a==product_top%}open{%/if%}"></span>
                 </a>
                 <ul class="sub-menu">
                     <li class="nav-item {%if $smarty.get.a==create_product%}active{%/if%}">
@@ -77,11 +77,20 @@
                             <span class="title">商品管理</span>
                         </a>
                     </li>
-                    <li class="nav-item  {%if $smarty.get.a==category%}active{%/if%}">
-                        <a href="{%url c=admin a=category%}" class="nav-link ">
-                            <i class="icon-list"></i>
+                    <li class="nav-item {%if $smarty.get.a==category || $smarty.get.a==bcategory%}open{%/if%}">
+                        <a href="javascript:;" class="nav-link nav-toggle">
+                        	<i class="icon-list"></i>
                             <span class="title">分类管理</span>
+                            <span class="arrow"></span>
                         </a>
+                        <ul class="sub-menu" style="{%if $smarty.get.a==category || $smarty.get.a==bcategory%}display: block;{%else%}display: none;{%/if%}">
+                            <li class="nav-item {%if $smarty.get.a==category%}active{%/if%}">
+                                <a href="{%url c=admin a=category%}" class="nav-link "> 前台分类 </a>
+                            </li>
+                            <li class="nav-item {%if $smarty.get.a==bcategory%}active{%/if%}">
+                                <a href="{%url c=admin a=bcategory%}" class="nav-link "> 后台分类 </a>
+                            </li>
+                        </ul>
                     </li>
                     <li class="nav-item  {%if $smarty.get.a==store%}active{%/if%}">
                         <a href="{%url c=admin a=store%}" class="nav-link ">

@@ -133,26 +133,37 @@ class base
 		{
 			if (is_callable($callback))
 			{
-				return isset($_GET) ? $callback($_GET) : $default;
+				return call_user_func($callback,$_GET);
 			}
 			else
 			{
-				return isset($_GET) ? $_GET : $default;
+				return $_GET;
 			}
 		}
 		if (isset($_GET[$name]))
 		{
-			$result = $_GET[$name];
+			if (is_callable($callback))
+			{
+				$result = call_user_func($callback,$_GET[$name]);
+			}
+			else
+			{
+				$result = $_GET[$name];
+				$callbacks = explode('|', $callback);
+				foreach ($callbacks as $callback)
+				{
+					if (is_callable($callback))
+					{
+						$result = call_user_func($callback,$result);
+					}
+				}
+			}
+			return $result;
 		}
 		else
 		{
-			$result = $default;
+			return $default;
 		}
-		if (is_callable($callback))
-		{
-			return $callback($result);
-		}
-		return $result;
 	}
 
 	/**
@@ -169,26 +180,37 @@ class base
 		{
 			if (is_callable($callback))
 			{
-				return isset($_POST) ? $callback($_POST) : $default;
+				return call_user_func($callback,$_POST);
 			}
 			else
 			{
-				return isset($_POST) ? $_POST : $default;
+				return $_POST;
 			}
 		}
 		if (isset($_POST[$name]))
 		{
-			$result = $_POST[$name];
+			if (is_callable($callback))
+			{
+				$result = call_user_func($callback,$_POST[$name]);
+			}
+			else
+			{
+				$result = $_POST[$name];
+				$callbacks = explode('|', $callback);
+				foreach ($callbacks as $callback)
+				{
+					if (is_callable($callback))
+					{
+						$result = call_user_func($callback,$result);
+					}
+				}
+			}
+			return $result;
 		}
 		else
 		{
-			$result = $default;
+			return $default;
 		}
-		if (is_callable($callback))
-		{
-			return $callback($result);
-		}
-		return $result;
 	}
 
 	/**
