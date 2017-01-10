@@ -221,7 +221,7 @@
                                                 <tr role="row" class="heading">
                                                     <th width="1%">
                                                         <input type="checkbox" class="group-checkable"> </th>
-                                                    <th width="10%"> SKU </th>
+                                                    <th width="3%"> SPU </th>
                                                     <th width="15%"> 名称 </th>
                                                     <th width="10%"> 类别 </th>
                                                     <th width="10%"> 分类 </th>
@@ -410,7 +410,7 @@
 					}
 					else if(response.code==1)
 					{
-                        if (response.body.success_base)
+                        if (response.body.success_base && response.body.success_base.length>0)
                         {
                             success_base = response.body.success_base;
     						$('#importProductModal').find('.success_base').removeClass('display-none').find('tbody').empty();
@@ -420,7 +420,7 @@
     						}
                         }
 
-                        if (response.body.failed_base)
+                        if (response.body.failed_base && response.body.failed_base.length>0)
                         {
                             failed_base = response.body.failed_base;
                             $('#importProductModal').find('.failed_base').removeClass('display-none').find('tbody').empty();
@@ -430,37 +430,37 @@
                             }
                         }
 
-                        if (response.body.success_stock)
+                        if (response.body.success_stock && response.body.success_stock.length>0)
                         {
                             success_stock = response.body.success_stock;
                             $('#importProductModal').find('.success_stock').removeClass('display-none').find('tbody').empty();
                             for(var i=0;i<success_stock.length;i++)
                             {
-                                $('#importProductModal').find('.success_stock').find('tbody').append('<tr><td>'+success_stock[i].id+'</td><td>'+success_stock[i].sku+'</td><td>'+success_stock[i].name+'</td><td>'+success_stock[i].stock+'</td><td>成功</td></tr>');
+                                $('#importProductModal').find('.success_stock').find('tbody').append('<tr><td>'+success_stock[i].id+'</td><td>'+success_stock[i].sku+'</td><td>'+success_stock[i].name+'</td><td>'+success_stock[i].next_stock+'</td><td>成功</td></tr>');
                             }
                         }
 
-                        if(response.body.failed_stock)
+                        if(response.body.failed_stock && response.body.failed_stock.length>0)
                         {
                             failed_stock = response.body.failed_stock;
                             $('#importProductModal').find('.failed_stock').removeClass('display-none').find('tbody').empty();
                             for(var i=0;i<failed_stock.length;i++)
                             {
-                                $('#importProductModal').find('.failed_stock').find('tbody').append('<tr><td>'+failed_stock[i].id+'</td><td>'+failed_stock[i].sku+'</td><td>'+failed_stock[i].name+'</td><td>'+failed_stock[i].stock+'</td><td>失败</td></tr>');
+                                $('#importProductModal').find('.failed_stock').find('tbody').append('<tr><td>'+failed_stock[i].id+'</td><td>'+failed_stock[i].sku+'</td><td>'+failed_stock[i].name+'</td><td>'+failed_stock[i].next_stock+'</td><td>失败</td></tr>');
                             }
                         }
 
-                        if (response.body.success_price)
+                        if (response.body.success_price && response.body.success_price.length>0)
                         {
                             success_price = response.body.success_price;
                             $('#importProductModal').find('.success_price').removeClass('display-none').find('tbody').empty();
                             for(var i=0;i<success_price.length;i++)
                             {
-                                $('#importProductModal').find('.success_price').find('tbody').append('<tr><td>'+success_price[i].id+'</td><td>'+success_price[i].sku+'</td><td>'+success_price[i].name+'</td><td>'+success_price[i].price+'</td><td>'+success_price[i].v1price+'</td><td>'+success_price[i].v2price+'</td><td>失败</td></tr>');
+                                $('#importProductModal').find('.success_price').find('tbody').append('<tr><td>'+success_price[i].id+'</td><td>'+success_price[i].sku+'</td><td>'+success_price[i].name+'</td><td>'+success_price[i].price+'</td><td>'+success_price[i].v1price+'</td><td>'+success_price[i].v2price+'</td><td>成功</td></tr>');
                             }
                         }
 
-                        if(response.body.failed_price)
+                        if(response.body.failed_price && response.body.failed_price.length>0)
                         {
                             failed_price = response.body.failed_price;
                             $('#importProductModal').find('.failed_price').removeClass('display-none').find('tbody').empty();

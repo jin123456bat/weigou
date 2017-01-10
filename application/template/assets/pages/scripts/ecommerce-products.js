@@ -48,8 +48,8 @@ var EcommerceProducts = function () {
 					name:'product.id',
 					orderable:false
 				},{
-					data:'sku',
-					name:'product.sku',
+					data:'id',
+					name:'product.id',
 					orderable:true,
 				},{
 					data:'name',

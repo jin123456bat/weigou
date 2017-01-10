@@ -149,27 +149,27 @@ var EcommerceOrders = function () {
 					visible:false,
 				},{
 					data:'province',
-					name:'province.name',
+					name:'order.address_province',
 					visible:false,
 				},{
 					data:'county',
-					name:'county.name',
+					name:'order.address_county',
 					visible:false,
 				},{
 					data:'city',
-					name:'city.name',
+					name:'order.address_city',
 					visible:false,
 				},{
 					data:'zcode',
-					name:'address.zcode',
+					name:'order.address_zcode',
 					visible:false,
 				},{
 					data:'address_name',
-					name:'address.name',
+					name:'order.address_name',
 					visible:false,
 				},{
 					data:'address_telephone',
-					name:'address.telephone',
+					name:'order.address_telephone',
 					visible:false,
 				},{
 					data:'feeamount',
@@ -209,7 +209,7 @@ var EcommerceOrders = function () {
 					visible:false,
 				},{
 					data:'address',
-					name:'address.address',
+					name:'order.address_address',
 					visible:false
 				},{
 					data:'suborder_orderno',

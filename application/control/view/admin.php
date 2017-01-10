@@ -237,7 +237,6 @@ class admin extends view
 				'order_product.refund',
 				'order_product.refundmoney',
 				'order_product.store_name as storename',
-				'if(suborder_store.erp=1,"已推送","未推送") as erp',
 				'order_product.v2price as order_product_v2price',
 				'order_product.publish as order_product_publish'
 			]);
@@ -246,6 +245,9 @@ class admin extends view
 			
 			foreach ($product as &$p)
 			{
+				$suborder_id = $this->model('suborder_store_product')->where('order_product_id=?',[$p['order_product_id']])->scalar('suborder_id');
+				$erp = $this->model('suborder_store')->where('id=?',[$suborder_id])->scalar('erp');
+				$p['erp'] = $erp==1?'已推送':'未推送';
 				
 				if (! empty($p['content']))
 				{

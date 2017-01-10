@@ -15,9 +15,9 @@ class orderModel extends model
 	{
 		$this->table('user', 'left join', 'user.id=order.uid');
 		$this->table('address', 'left join', 'address.id=order.address');
-		$this->table('province', 'left join', 'province.id=address.province');
-		$this->table('city', 'left join', 'city.id=address.city');
-		$this->table('county', 'left join', 'county.id=address.county');
+		//$this->table('province', 'left join', 'province.id=address.province');
+		//$this->table('city', 'left join', 'city.id=address.city');
+		//$this->table('county', 'left join', 'county.id=address.county');
 		$this->table('task_user', 'left join', 'task_user.orderno=order.orderno');
 		
 		$parameter = [];
@@ -124,9 +124,16 @@ class orderModel extends model
 			}
 			if ($post['way_status'] != '')
 			{
-				$this->where('order.way_status=?', [
-					$post['way_status']
-				]);
+				if ($post['way_status'] == 0)
+				{
+					$this->where('order.way_status in (?)',[0,2]);
+				}
+				else
+				{
+					$this->where('order.way_status=?', [
+						$post['way_status']
+					]);
+				}
 			}
 			
 			// //////////////////////////////mychange///////根据地址号码来搜索

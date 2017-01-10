@@ -1148,7 +1148,7 @@ class product extends ajax
 			
 			$need_conflict_product_id = [];
 			
-			$data = $this->importer('file_stock', 'A', 'H');
+			$data = $this->importer('file_stock', 'A', 'I');
 			if (!empty($data))
 			{
 				$checked_product_id = [];
@@ -1163,7 +1163,7 @@ class product extends ajax
 						$product_id = $id*1;
 						$publish_id = $this->model('publish')->where('name=?',array($publish))->scalar('id');
 						$store_id = $this->model('store')->where('name=?',array($store))->scalar('id');
-						$stock = $next_stock;
+						$stock = intval($next_stock);
 						
 						$MeasurementUnit_id = $this->model('dictionary')->where('name=? and type=?',[$MeasurementUnit,'MeasurementUnit'])->scalar('id');
 						
@@ -1253,6 +1253,11 @@ class product extends ajax
 							'publish_id' => $publish_id,
 						], $checked_product_publish))
 						{
+							$checked_product_publish[] = [
+								'product_id' => $product_id,
+								'publish_id' => $publish_id,
+							];
+							
 							if (!in_array($product_id, $need_conflict_product_id))
 							{
 								$need_conflict_product_id[] = $product_id;
