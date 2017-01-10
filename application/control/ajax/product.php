@@ -3,7 +3,6 @@ namespace application\control\ajax;
 
 use system\core\ajax;
 use application\message\json;
-use application\helper as helper;
 use application\helper\admin;
 use application\helper\productSearchEngine;
 use application\model\roleModel;
@@ -17,7 +16,7 @@ class product extends ajax
 	{
 		$admin = $this->session->id;
 		$this->model('product')->transaction();
-		$productHelper = new helper\product();
+		$productHelper = new \application\helper\product();
 		
 		$product = $productHelper->createProductData($this->post());
 		
@@ -52,7 +51,7 @@ class product extends ajax
 		{
 			return new json(json::PARAMETER_ERROR, '条形码不能为空');
 		}
-		if (empty(intval($product['MeasurementUnit'])))
+		if (empty($product['MeasurementUnit']*1))
 		{
 			return new json(json::PARAMETER_ERROR,'请填写计量单位');
 		}
@@ -586,7 +585,7 @@ class product extends ajax
 	{
 		$admin = $this->session->id;
 		$this->model('product')->transaction();
-		$productHelper = new helper\product();
+		$productHelper = new \application\helper\product();
 		
 		$product = $productHelper->createProductData($this->post());
 		if (! isset($product['id']))
@@ -621,7 +620,7 @@ class product extends ajax
 				return new json(json::PARAMETER_ERROR, '请选择行邮税号');
 			}
 		}
-		if (empty(intval($product['MeasurementUnit'])))
+		if (empty($product['MeasurementUnit']*1))
 		{
 			return new json(json::PARAMETER_ERROR,'请填写计量单位');
 		}
@@ -924,166 +923,418 @@ class product extends ajax
 		return new json(json::PARAMETER_ERROR);
 	}
 	
-	function import1()
+	/**
+	 * 读取导入文件的信息
+	 */
+	private function importer($file_name,$start,$to)
 	{
-		$isPublishLine = function($product_line){
-			$i = 0;
-			while (empty($product_line[$i]))
+		$Ein_t = array(
+			"A",
+			"B",
+			"C",
+			"D",
+			"E",
+			"F",
+			"G",
+			"H",
+			"I",
+			"J",
+			"K",
+			"L",
+			"M",
+			"N",
+			"O",
+			"P",
+			"Q",
+			"R",
+			"S",
+			"T",
+			"U",
+			"V",
+			"W",
+			"X",
+			"Y",
+			"Z",
+			"AA",
+			"AB",
+			"AC"
+		);
+		$Ein = [];
+		$start_flag = false;
+		foreach ($Ein_t as $v)
+		{
+			if ($v == $start)
 			{
-				$i++;
+				$start_flag = true;
 			}
-			if ($i == 9)
+			
+			if ($start_flag)
 			{
-				return true;
+				$Ein[] = $v;
 			}
-			return false;
-		};
-		
-		$isPriceLine = function($product_line){
-			$i = 0;
-			while(empty($product_line[$i]))
+			
+			if ($v == $to)
 			{
-				$i++;
+				break;
 			}
-			if ($i == 14)
+		}
+		$products = [];
+		$config = config('file');
+		$config->type = [
+			'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+			'application/vnd.ms-excel',
+			'application/vnd.ms-office',
+			'application/zip'
+		];
+		$config->size = 1024 * 1024 * 10;
+		// 接受文件
+		if (isset($_FILES[$file_name]))
+		{
+			$file = $this->file->receive($_FILES[$file_name], $config);
+			if (is_file($file))
 			{
-				return true;
+				$phpexcel_root = ROOT . '/extends/PHPExcel';
+				include_once $phpexcel_root . '/PHPExcel/IOFactory.php';
+				$objReader = \PHPExcel_IOFactory::createReader('Excel2007');
+				if ($objReader->canRead($file))
+				{
+					try
+					{
+						$objPHPExcel = $objReader->load($file);
+						$sheet = $objPHPExcel->getSheet(0);
+						$rowNum = $sheet->getHighestRow();//文件行
+					}
+					catch (\Exception $e)
+					{
+						return new json(json::PARAMETER_ERROR, '文件解析失败');
+					}
+					for ($row = 2; $row <= $rowNum; $row ++)
+					{
+						// 行数是以第2行开始
+						$dataset = [];
+						for ($column = 0; $column < count($Ein); $column ++)
+						{
+							$dataset[] = $sheet->getCell($Ein[$column] . $row)->getCalculatedValue();
+						}
+						$products[] = $dataset;
+					}
+					return $products;
+				}
 			}
-			return false;
-		};
-		
+		}
+		return false;
+	}
+	
+	/**
+	 * 商品导入基本信息
+	 */
+	function import_base()
+	{
 		$adminHelper = new admin();
 		$aid = $adminHelper->getAdminId();
 		if (empty($aid))
 		{
 			return new json(json::NOT_LOGIN);
 		}
-		
 		$roleModel = $this->model('role');
 		if ($roleModel->checkPower($adminHelper->getGroupId(),'product',roleModel::POWER_UPDATE))
 		{
-			$config = config('file');
-			$config->type = [
-				'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-				'application/vnd.ms-excel',
-				'application/vnd.ms-office',
-				'application/zip'
-			];
-			$config->size = 1024 * 1024 * 10;
-			
-			$Ein = array(
-				"A",
-				"B",
-				"C",
-				"D",
-				"E",
-				"F",
-				"G",
-				"H",
-				"I",
-				"J",
-				"K",
-				"L",
-				"M",
-				"N",
-				"O",
-				"P",
-				"Q",
-				"R",
-				"S",
-				"T",
-			);
-			
-			// 接受文件
-			if (isset($_FILES['file']))
+			$data = $this->importer('file_base','A','J');
+			if (!empty($data))
 			{
-				$file = $this->file->receive($_FILES['file'], $config);
-				if (is_file($file))
+				$success_base = [];
+				$failed_base = [];
+				foreach ($data as $d)
 				{
-					$phpexcel_root = ROOT . '/extends/PHPExcel';
-					include $phpexcel_root . '/PHPExcel/IOFactory.php';
-					$objReader = \PHPExcel_IOFactory::createReader('Excel2007');
-					if ($objReader->canRead($file))
+					if(!$this->emptyArray($d))
 					{
-						try
+						list($a,$id,$category,$outside_ch,$name,$brand,$fee,$freeFee,$short_description) = $d;
+						
+						$id = $id*1;
+						if ($freeFee)
 						{
-							$objPHPExcel = $objReader->load($file);
-							$sheet = $objPHPExcel->getSheet(0);
-							$rowNum = $sheet->getHighestRow();//文件行
+							$fee = 0;
 						}
-						catch (\Exception $e)
+						switch ($outside_ch)
 						{
-							return new json(json::PARAMETER_ERROR, '文件解析失败');
-						}
-						for ($row = 2; $row <= $rowNum; $row ++)
-						{
-							// 行数是以第2行开始
-							$dataset = [];
-							for ($column = 0; $column < count($Ein); $column ++)
-							{
-								$dataset[] = $sheet->getCell($Ein[$column] . $row)->getCalculatedValue();
-							}
-							$products[] = $dataset;
+							case '普通商品':$outside = 0;break;
+							case '进口商品':$outside = 1;break;
+							case '直供商品':$outside = 2;break;
+							case '直邮商品':$outside = 3;break;
+							default:$outside = 0;
 						}
 						
-						$j = 0;
-						$z = 0;
-						for($i = 0;$i<count($products);$i = $i+$j+$z)
+						
+						$productHelper = new \application\helper\product();
+						$product = $productHelper->createProductData(array(
+							//'id' => $id,
+							'name' => $name,
+							'outside' => $outside,
+							'fee' => $fee,
+							'short_description' => $short_description,
+						));
+						
+						if (empty($id))
 						{
-							$id = $products[$i][0];
-							$spu = $products[$i][1];
-							$name = $products[$i][2];
-							$brand = $products[$i][3];
-							$oldprice = $products[$i][4];
-							$fee = $products[$i][5];
-							$tax = $products[$i][6];
-							$freetax = $products[$i][7];
-							$MeasurementUnit = $products[$i][8];
-							$status = $products[$i][9];
-							
-							$publish = [];
-							$j = 0;
-							while($isPublishLine($products[$i+$j]))
+							if ($this->model('product')->insert($product))
 							{
-								$publish[] = [
-									'publish_id' => $products[$i+$j][10],
-									'sku' => $products[$i+$j][11],
-									'store'=>$products[$i+$j][12],
-									'stock' => $products[$i+$j][14],
+								$success_base[] = [
+									'a'=>$a,
+									'id' => $id,
+									'category'=>$category,
+									'outside' => $outside_ch,
+									'name' => $name,
+									'brand' => $brand,
+									'fee'=>$fee,
+									'freeFee'=>$freeFee,
+									'short_description' => $short_description,
 								];
-								$j++;
-								
-								$price = [];
-								
-								$z = 0;
-								while($isPriceLine($products[$i+$j+$z]))
-								{
-									$price[] = [
-										'num' => $products[$i+$j+$z][15],
-										'inprice' => $products[$i+$j+$z][16],
-										'price' => $products[$i+$j+$z][17],
-										'v1price' => $products[$i+$j+$z][18],
-										'v2price' => $products[$i+$j+$z][19],
-									];
-									$z++;
-								}
 							}
-							
-							$product = [
+							else
+							{
+								$failed_base[] = [
+									'a'=>$a,
+									'id' => $id,
+									'category'=>$category,
+									'outside' => $outside_ch,
+									'name' => $name,
+									'brand' => $brand,
+									'fee'=>$fee,
+									'freeFee'=>$freeFee,
+									'short_description' => $short_description,
+								];
+							}
+						}
+						else
+						{
+							if($this->model('product')->where('id=?',[$id])->limit(1)->update(array(
 								'name' => $name,
-							];
-							
+								'outside' => $outside,
+								'fee' => $fee,
+								'short_description' => $short_description,
+								'modifytime' => $_SERVER['REQUEST_TIME']
+							)))
+							{
+								$success_base[] = [
+									'a'=>$a,
+									'id' => $id,
+									'category'=>$category,
+									'outside' => $outside_ch,
+									'name' => $name,
+									'brand' => $brand,
+									'fee'=>$fee,
+									'freeFee'=>$freeFee,
+									'short_description' => $short_description,
+								];
+							}
+							else
+							{
+								$failed_base[] = [
+									'a'=>$a,
+									'id' => $id,
+									'category'=>$category,
+									'outside' => $outside_ch,
+									'name' => $name,
+									'brand' => $brand,
+									'fee'=>$fee,
+									'freeFee'=>$freeFee,
+									'short_description' => $short_description,
+								];
+							}
 						}
 					}
-					return new json(json::PARAMETER_ERROR,'文件不是一个可读excel文档');
 				}
-				return new json(json::PARAMETER_ERROR,'文件上传失败');
 			}
-			return new json(json::PARAMETER_ERROR,'请选择文件');
+			
+			$need_conflict_product_id = [];
+			
+			$data = $this->importer('file_stock', 'A', 'H');
+			if (!empty($data))
+			{
+				$checked_product_id = [];
+				$success_stock = [];
+				$failed_stock = [];
+				foreach ($data as $d)
+				{
+					if (!$this->emptyArray($d))
+					{
+						list($id,$sku,$name,$publish,$store,$barcode,$MeasurementUnit,$current_stock,$next_stock) = $d;
+						
+						$product_id = $id*1;
+						$publish_id = $this->model('publish')->where('name=?',array($publish))->scalar('id');
+						$store_id = $this->model('store')->where('name=?',array($store))->scalar('id');
+						$stock = $next_stock;
+						
+						$MeasurementUnit_id = $this->model('dictionary')->where('name=? and type=?',[$MeasurementUnit,'MeasurementUnit'])->scalar('id');
+						
+						//只执行一次的代码
+						if (!in_array($id, $checked_product_id))
+						{
+							if (!in_array($product_id, $need_conflict_product_id))
+							{
+								$need_conflict_product_id[] = $product_id;
+							}
+							$checked_product_id[] = $id;
+							//删除原来的信息
+							$this->model('product_publish')->where('product_id=? and publish_id=?',[$product_id,$publish_id])->delete();
+							
+							$this->model('product')->where('id=?',[$product_id])->limit(1)->update(array(
+								'modifytime' => $_SERVER['REQUEST_TIME'],
+								'barcode' => $barcode,
+								'MeasurementUnit' => $MeasurementUnit_id,
+							));
+						}
+						
+						//执行多次的代码
+						if($this->model('product_publish')
+						->insert(array(
+							'product_id' => $product_id,
+							'publish_id' => $publish_id,
+							'oldprice' => 0,
+							'stock' => $stock,
+							'sku' => $sku,
+							'store' => $store_id,
+						)))
+						{
+							$success_stock[] = array(
+								'id'=>$id,
+								'sku'=>$sku,
+								'name'=>$name,
+								'publish'=>$publish,
+								'store' => $store,
+								'barcode' => $barcode,
+								'MeasurementUnit' => $MeasurementUnit,
+								'current_stock' => $current_stock,
+								'next_stock' => $next_stock,
+							);
+						}
+						else
+						{
+							$failed_stock[] = array(
+								'id'=>$id,
+								'sku'=>$sku,
+								'name'=>$name,
+								'publish'=>$publish,
+								'store' => $store,
+								'barcode' => $barcode,
+								'MeasurementUnit' => $MeasurementUnit,
+								'current_stock' => $current_stock,
+								'next_stock' => $next_stock,
+							);
+						}
+					}
+				}
+			}
+			
+			$data = $this->importer('file_price', 'A', 'L');
+			if (!empty($data))
+			{
+				$success_price = [];
+				$failed_price = [];
+				$checked_product_publish = [];
+				foreach ($data as $d)
+				{
+					if (!$this->emptyArray($d))
+					{
+						list($id,$sku,$name,$publish,$store,$barcode,$selled,$inprice,$oldprice,$price,$v1price,$v2price) = $d;
+						$inprice *= 1;
+						$oldprice *= 1;
+						$price *= 1;
+						$v1price *= 1;
+						$v2price *= 1;
+						
+						$product_id = $id*1;
+						$publish_id = $this->model('publish')->where('name=?',[$publish])->scalar('id');
+						$store_id = $store;
+						
+						
+						if (!in_array([
+							'product_id' => $product_id,
+							'publish_id' => $publish_id,
+						], $checked_product_publish))
+						{
+							if (!in_array($product_id, $need_conflict_product_id))
+							{
+								$need_conflict_product_id[] = $product_id;
+							}
+							
+							//调整市场价
+							$this->model('product_publish')->where('product_id=? and publish_id=?',[$product_id,$publish_id])->limit(1)->update([
+								'oldprice' => $oldprice,
+							]);
+							
+							$this->model('product_publish_price')->where('product_id=? and publish_id=?',[$product_id,$publish_id])->delete();
+						}
+						
+						
+						if($this->model('product_publish_price')->insert(array(
+							'product_id' => $product_id,
+							'publish_id' => $publish_id,
+							'num' => $selled,
+							'inprice' => $inprice,
+							'price' => $price,
+							'v1price' => $v1price,
+							'v2price' => $v2price,
+						)))
+						{
+							$success_price[] = [
+								'id' => $id,
+								'sku' => $sku,
+								'name' => $name,
+								'publish'=>$publish,
+								'store' => $store,
+								'barcode' => $barcode,
+								'selled' => $selled,
+								'inprice' => $inprice,
+								'oldprice' => $oldprice,
+								'price' => $price,
+								'v1price' => $v1price,
+								'v2price' => $v2price,
+							];
+						}
+						else
+						{
+							$failed_price[] = [
+								'id' => $id,
+								'sku' => $sku,
+								'name' => $name,
+								'publish'=>$publish,
+								'store' => $store,
+								'barcode' => $barcode,
+								'selled' => $selled,
+								'inprice' => $inprice,
+								'oldprice' => $oldprice,
+								'price' => $price,
+								'v1price' => $v1price,
+								'v2price' => $v2price,
+							];
+						}
+					}
+				}
+			}
+			
+			//调整商品价格
+			$productHelper = new \application\helper\product();
+			foreach ($need_conflict_product_id as $product_id)
+			{
+				$productHelper->cutPublish($product_id);
+			}
+			
+			return new json(json::OK,NULL,[
+				'success_base' => $success_base,
+				'failed_base' => $failed_base,
+				'success_stock' => $success_stock,
+				'failed_stock' => $failed_stock,
+				'success_price' => $success_price,
+				'failed_price' => $failed_price,
+			]);
 		}
-		return new json(json::NO_POWER);
+		else
+		{
+			return new json(json::NO_POWER);
+		}
 	}
-
+	
 	function import()
 	{
 		$emptyProduct = function($product)
@@ -1435,5 +1686,16 @@ class product extends ajax
 		{
 			return new json(json::PARAMETER_ERROR, '文件下标错误');
 		}
+    }
+    
+    private function emptyArray($array)
+    {
+    	foreach ($array as $a)
+    	{
+    		if (!empty(trim($a))) {
+    			return false;
+    		}
+    	}
+    	return true;
     }
 }

@@ -99,21 +99,69 @@
                             </div>
                             <div class="modal-body">
                                 <div class="form-group">
-                                    <label class="col-md-3 control-label">上传商品信息表</label>
+                                    <label class="col-md-2 control-label">上传商品信息表</label>
                                     <div class="col-md-9">
-                                        <input type="file" name="file" class="form-control">
+                                        <input type="file" name="file_base" class="form-control">
                                     </div>
+                                    <a class="col-md-1 btn" href="{%$VIEW_ROOT%}/商品数据（导入）.xlsx" target="_blank">下载模板</a>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-md-3 control-label">下载商品导入模板</label>
+                                    <label class="col-md-2 control-label">上传库存盘点</label>
                                     <div class="col-md-9">
-                                        <button class="btn btn-sm btn-default" id="downloadProductTemplate">点击下载</button>
+                                        <input type="file" name="file_stock" class="form-control">
                                     </div>
+                                    <a class="col-md-1 btn" href="{%$VIEW_ROOT%}/库存盘点.xlsx" target="_blank">下载模板</a>
                                 </div>
-
-                                <table class="table display-none">
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">上传价格盘点</label>
+                                    <div class="col-md-9">
+                                        <input type="file" name="file_price" class="form-control">
+                                    </div>
+                                    <a class="col-md-1 btn" href="{%$VIEW_ROOT%}/价格盘点.xlsx" target="_blank">下载模板</a>
+                                </div>
+                                <table class="table success_base display-none">
                                 	<thead>
-                                		<tr><td>商品id</td><td>sku</td><td>商品名称</td><td>执行方式</td><td>执行结果</td></tr>
+                                		<tr><td>序号</td><td>商品id</td><td>商品名称</td><td>执行方式</td><td>执行结果</td></tr>
+                                    </thead>
+                                    <tbody>
+                                    
+                                    </tbody>
+                                </table>
+                                <table class="table red failed_base display-none">
+                                    <thead>
+                                        <tr><td>序号</td><td>商品id</td><td>商品名称</td><td>执行方式</td><td>执行结果</td></tr>
+                                    </thead>
+                                    <tbody>
+                                    
+                                    </tbody>
+                                </table>
+                                <table class="table success_stock display-none">
+                                    <thead>
+                                        <tr><td>商品id</td><td>sku</td><td>商品名称</td><td>库存</td><td>执行结果</td></tr>
+                                    </thead>
+                                    <tbody>
+                                    
+                                    </tbody>
+                                </table>
+                                <table class="table red failed_stock display-none">
+                                    <thead>
+                                        <tr><td>商品id</td><td>sku</td><td>商品名称</td><td>库存</td><td>执行结果</td></tr>
+                                    </thead>
+                                    <tbody>
+                                    
+                                    </tbody>
+                                </table>
+                                <table class="table success_price display-none">
+                                    <thead>
+                                        <tr><td>商品id</td><td>sku</td><td>商品名称</td><td>v0价格</td><td>v1价格</td><td>v2价格</td><td>执行结果</td></tr>
+                                    </thead>
+                                    <tbody>
+                                    
+                                    </tbody>
+                                </table>
+                                <table class="table red failed_price display-none">
+                                    <thead>
+                                        <tr><td>商品id</td><td>sku</td><td>商品名称</td><td>v0价格</td><td>v1价格</td><td>v2价格</td><td>执行结果</td></tr>
                                     </thead>
                                     <tbody>
                                     
@@ -326,15 +374,21 @@
 		
 		$('#importProductForm').on('submit',function(){
 			$('#importProductModal').modalmanager('loading');
-			var input = $(this).find('input[name=file]');
-			var file = input[0].files[0];
+			var input_base = $(this).find('input[name=file_base]');
+            var input_price = $(this).find('input[name=file_price]');
+            var input_stock = $(this).find('input[name=file_stock]');
+			var file_base = input_base[0].files[0];
+            var file_price = input_price[0].files[0];
+            var file_stock = input_stock[0].files[0];
 			var formData = new FormData();
-			formData.append('file',file);
+			formData.append('file_base',file_base);
+            formData.append('file_price',file_price);
+            formData.append('file_stock',file_stock);
 			var xhr = new XMLHttpRequest();
-			xhr.open('POST','{%url m=ajax c=product a=import%}',true);
+			xhr.open('POST','{%url m=ajax c=product a=import_base%}',true);
 			xhr.setRequestHeader('X-CSRF-TOKEN','{%$x_csrf_token%}');
 			xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
-			xhr.onload = function(){ 
+			xhr.onload = function(){
 				$('#importProductModal').modalmanager('loading');
 				if(xhr.status == 200 && xhr.readyState == 4)  
 				{
@@ -356,19 +410,71 @@
 					}
 					else if(response.code==1)
 					{
-						response = response.body;
-						$('#importProductModal').find('table').removeClass('display-none').find('tbody').empty();
-						for(var i=0;i<response.length;i++)
-						{
-							$('#importProductModal').find('tbody').append('<tr><td>'+response[i].id+'</td><td>'+response[i].sku+'</td><td>'+response[i].name+'</td><td>'+(response[i].id==null?'添加':'修改')+'</td><td>'+(response[i].success?'成功':'失败')+'</td></tr>');
-						}
+                        if (response.body.success_base)
+                        {
+                            success_base = response.body.success_base;
+    						$('#importProductModal').find('.success_base').removeClass('display-none').find('tbody').empty();
+    						for(var i=0;i<success_base.length;i++)
+    						{
+    							$('#importProductModal').find('.success_base').find('tbody').append('<tr><td>'+success_base[i].a+'</td><td>'+success_base[i].id+'</td><td>'+success_base[i].name+'</td><td>'+(success_base[i].id==null?'添加':'修改')+'</td><td>成功</td></tr>');
+    						}
+                        }
+
+                        if (response.body.failed_base)
+                        {
+                            failed_base = response.body.failed_base;
+                            $('#importProductModal').find('.failed_base').removeClass('display-none').find('tbody').empty();
+                            for(var i=0;i<failed_base.length;i++)
+                            {
+                                $('#importProductModal').find('.failed_base').find('tbody').append('<tr><td>'+failed_base[i].a+'</td><td>'+failed_base[i].id+'</td><td>'+failed_base[i].name+'</td><td>'+(failed_base[i].id==null?'添加':'修改')+'</td><td>失败</td></tr>');
+                            }
+                        }
+
+                        if (response.body.success_stock)
+                        {
+                            success_stock = response.body.success_stock;
+                            $('#importProductModal').find('.success_stock').removeClass('display-none').find('tbody').empty();
+                            for(var i=0;i<success_stock.length;i++)
+                            {
+                                $('#importProductModal').find('.success_stock').find('tbody').append('<tr><td>'+success_stock[i].id+'</td><td>'+success_stock[i].sku+'</td><td>'+success_stock[i].name+'</td><td>'+success_stock[i].stock+'</td><td>成功</td></tr>');
+                            }
+                        }
+
+                        if(response.body.failed_stock)
+                        {
+                            failed_stock = response.body.failed_stock;
+                            $('#importProductModal').find('.failed_stock').removeClass('display-none').find('tbody').empty();
+                            for(var i=0;i<failed_stock.length;i++)
+                            {
+                                $('#importProductModal').find('.failed_stock').find('tbody').append('<tr><td>'+failed_stock[i].id+'</td><td>'+failed_stock[i].sku+'</td><td>'+failed_stock[i].name+'</td><td>'+failed_stock[i].stock+'</td><td>失败</td></tr>');
+                            }
+                        }
+
+                        if (response.body.success_price)
+                        {
+                            success_price = response.body.success_price;
+                            $('#importProductModal').find('.success_price').removeClass('display-none').find('tbody').empty();
+                            for(var i=0;i<success_price.length;i++)
+                            {
+                                $('#importProductModal').find('.success_price').find('tbody').append('<tr><td>'+success_price[i].id+'</td><td>'+success_price[i].sku+'</td><td>'+success_price[i].name+'</td><td>'+success_price[i].price+'</td><td>'+success_price[i].v1price+'</td><td>'+success_price[i].v2price+'</td><td>失败</td></tr>');
+                            }
+                        }
+
+                        if(response.body.failed_price)
+                        {
+                            failed_price = response.body.failed_price;
+                            $('#importProductModal').find('.failed_price').removeClass('display-none').find('tbody').empty();
+                            for(var i=0;i<failed_price.length;i++)
+                            {
+                                $('#importProductModal').find('.failed_price').find('tbody').append('<tr><td>'+failed_price[i].id+'</td><td>'+failed_price[i].sku+'</td><td>'+failed_price[i].name+'</td><td>'+failed_price[i].price+'</td><td>'+failed_price[i].v1price+'</td><td>'+failed_price[i].v2price+'</td><td>失败</td></tr>');
+                            }
+                        }
 					}
 				}
 			};
 			xhr.onprogress = function(XMLHttpRequestProgressEvent){
 				var loaded = XMLHttpRequestProgressEvent.loaded;
 				var total = XMLHttpRequestProgressEvent.total;
-				
 				$('#importWayForm').find('button[type=submit]').html(Math.floor(100*loaded/total) + '%').attr('disabled','disabled');
 			}
 			xhr.send(formData);

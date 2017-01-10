@@ -118,33 +118,32 @@ class openapi extends erp
 	{
 		$data = $this->model('suborder_store')
 		->table('`order`','left join','order.orderno=suborder_store.main_orderno')
-		->table('address','left join','address.id=suborder_store.address')
-		->table('province','left join','address.province=province.id')
-		->table('city','left join','address.city=city.id')
-		->table('county','left join','address.county=county.id')
+		//->table('address','left join','address.id=suborder_store.address')
+		//->table('province','left join','address.province=province.id')
+		//->table('city','left join','address.city=city.id')
+		//->table('county','left join','address.county=county.id')
 		->table('user','left join','user.id=suborder_store.uid')
 		->where('suborder_store.id=?',[$suborder_id])
 		->find([
 			$this->getSourcePlatform().' as SourcePlatform',
 			'concat(replace(suborder_store.date,"-",""),suborder_store.id) as ExternalOrder',
-			'province.name as ConsigneeProvince',
-			'city.name as ConsigneeCity',
-			'county.name as ConsigneeDistrict',
-			'address.address as ConsigneeAddress',
-			'address.telephone as ConsigneeMobile',
-			'address.name as ConigneeName',
+			'suborder_store.address_province as ConsigneeProvince',
+			'suborder_store.address_city as ConsigneeCity',
+			'suborder_store.address_county as ConsigneeDistrict',
+			'suborder_store.address_address as ConsigneeAddress',
+			'suborder_store.address_telephone as ConsigneeMobile',
+			'suborder_store.address_name as ConigneeName',
+			'suborder_store.address_identify as PayerIdCardNumber',
+			'if(suborder_store.address_zcode="",111111,suborder_store.address_zcode) as ConsigneePostCode',
 			'user.name as PayerName',
 			'user.telephone as PayerMobile',
 			'1 as PayerIdCardType',
-			'address.identify as PayerIdCardNumber',
 			'suborder_store.orderamount as TotalAmount',
 			'suborder_store.discount as Discount',
 			'suborder_store.feeamount as ShippingFee',
 			'suborder_store.taxamount as Tax',
 			'(select order_package.ship_type from order_package where order_package.orderno=suborder_store.main_orderno limit 1) as ShippingType',//配送方式
-			//'(select order_package.ship_number from order_package where order_package.orderno=suborder_store.main_orderno limit 1) as ship_number',//配送编号
 			'if(order.pay_type="alipay",112,if(order.pay_type="wechat",114,"")) as PayType',
-			'if(address.zcode="",111111,address.zcode) as ConsigneePostCode',
 			'order.pay_number as BatchNumber',
 			'concat(order.note,",",order.msg) as Remark',
 		]);

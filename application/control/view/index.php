@@ -5,6 +5,7 @@ use system\core\view;
 use system\core\image;
 use application\helper\productSearchEngine;
 use application\helper\product;
+use application\helper\erpSender;
 
 class index extends view
 {
@@ -58,240 +59,145 @@ class index extends view
 	 */
 	function upgrade()
 	{
-		$sql = '
-			ALTER TABLE  `order` DROP  `address_province` ,
-			DROP  `address_city` ,
-			DROP  `address_county` ,
-			DROP  `address_address` ,
-			DROP  `address_name` ,
-			DROP  `address_telephone` ,
-			DROP  `address_zcode` ,
-			DROP  `address_identify` ,
-			DROP  `address_ishost` ;
-		';
-		$this->model('order')->exec($sql);
+		$recover = $this->get('recover',false,'intval');
 		
-		$sql = 
-		'
-			ALTER TABLE  `order` ADD  `address_province` varchar(32) NOT NULL,
-			add `address_city` varchar(32) not null,
-			add `address_county` varchar(32) not null,
-			add `address_address` varchar(256) not null,
-			add `address_name` varchar(32) not null,
-			add `address_telephone` char(11) not null,
-			add `address_zcode` char(6) not null,
-			add `address_identify` char(18) not null,
-			add `address_ishost` tinyint(1) not null;
-		';
-		$this->model('order')->exec($sql);
-		
-		
-		$sql = '
-			ALTER TABLE  `suborder_store` DROP  `address_province` ,
-			DROP  `address_city` ,
-			DROP  `address_county` ,
-			DROP  `address_address` ,
-			DROP  `address_name` ,
-			DROP  `address_telephone` ,
-			DROP  `address_zcode` ,
-			DROP  `address_identify` ,
-			DROP  `address_ishost` ;
-		';
-		$this->model('order')->exec($sql);
-		
-		$sql =
-		'
-			ALTER TABLE  `suborder_store` ADD  `address_province` varchar(32) NOT NULL,
-			add `address_city` varchar(32) not null,
-			add `address_county` varchar(32) not null,
-			add `address_address` varchar(256) not null,
-			add `address_name` varchar(32) not null,
-			add `address_telephone` char(11) not null,
-			add `address_zcode` char(6) not null,
-			add `address_identify` char(18) not null,
-			add `address_ishost` tinyint(1) not null;
-		';
-		$this->model('order')->exec($sql);
-		
-		//更新订单中的地址信息
-		$orders = $this->model('order')->select();
-		foreach ($orders as $order)
-		{
-			$address = $this->model('address')->where('id=?',[$order['address']])->find();
-			$this->model('order')->where('orderno=?',[$order['orderno']])
-			->limit(1)->update([
-				'address_province'=>$this->model('province')->where('id=?',[$address['province']])->scalar('name'),
-				'address_city' => $this->model('city')->where('id=?',[$address['city']])->scalar('name'),
-				'address_county' => $this->model('county')->where('id=?',[$address['county']])->scalar('name'),
-				'address_address' => $address['address'],
-				'address_name' => $address['name'],
-				'address_telephone' => $address['telephone'],
-				'address_zcode' => $address['zcode'],
-				'address_identify' => $address['identify'],
-				'address_ishost' => $address['host'],
-			]);
+		$this->model('order')->transaction();
+		try {
+			if ($recover)
+			{
+				$sql = '
+					ALTER TABLE  `order` DROP  `address_province` ,
+					DROP  `address_city` ,
+					DROP  `address_county` ,
+					DROP  `address_address` ,
+					DROP  `address_name` ,
+					DROP  `address_telephone` ,
+					DROP  `address_zcode` ,
+					DROP  `address_identify` ,
+					DROP  `address_ishost` ;
+				';
+				$this->model('order')->exec($sql);
+			}
+			
+			$sql = 
+			'
+				ALTER TABLE  `order` ADD  `address_province` varchar(32) NOT NULL,
+				add `address_city` varchar(32) not null,
+				add `address_county` varchar(32) not null,
+				add `address_address` varchar(256) not null,
+				add `address_name` varchar(32) not null,
+				add `address_telephone` char(11) not null,
+				add `address_zcode` char(6) not null,
+				add `address_identify` char(18) not null,
+				add `address_ishost` tinyint(1) not null;
+			';
+			$this->model('order')->exec($sql);
+			
+			if ($recover)
+			{
+				$sql = '
+					ALTER TABLE  `suborder_store` DROP  `address_province` ,
+					DROP  `address_city` ,
+					DROP  `address_county` ,
+					DROP  `address_address` ,
+					DROP  `address_name` ,
+					DROP  `address_telephone` ,
+					DROP  `address_zcode` ,
+					DROP  `address_identify` ,
+					DROP  `address_ishost` ;
+				';
+				$this->model('order')->exec($sql);
+			}
+			
+			$sql =
+			'
+				ALTER TABLE  `suborder_store` ADD  `address_province` varchar(32) NOT NULL,
+				add `address_city` varchar(32) not null,
+				add `address_county` varchar(32) not null,
+				add `address_address` varchar(256) not null,
+				add `address_name` varchar(32) not null,
+				add `address_telephone` char(11) not null,
+				add `address_zcode` char(6) not null,
+				add `address_identify` char(18) not null,
+				add `address_ishost` tinyint(1) not null;
+			';
+			$this->model('order')->exec($sql);
+			
+			//更新订单中的地址信息
+			$orders = $this->model('order')->select();
+			foreach ($orders as $order)
+			{
+				$address = $this->model('address')->where('id=?',[$order['address']])->find();
+				$this->model('order')->where('orderno=?',[$order['orderno']])
+				->limit(1)->update([
+					'address_province'=>$this->model('province')->where('id=?',[$address['province']])->scalar('name'),
+					'address_city' => $this->model('city')->where('id=?',[$address['city']])->scalar('name'),
+					'address_county' => $this->model('county')->where('id=?',[$address['county']])->scalar('name'),
+					'address_address' => $address['address'],
+					'address_name' => $address['name'],
+					'address_telephone' => $address['telephone'],
+					'address_zcode' => $address['zcode'],
+					'address_identify' => $address['identify'],
+					'address_ishost' => $address['host'],
+				]);
+			}
+			
+			
+			//更新子订单中的地址信息
+			$orders = $this->model('suborder_store')->select();
+			foreach ($orders as $order)
+			{
+				$address = $this->model('address')->where('id=?',[$order['address']])->find();
+				$this->model('suborder_store')->where('id=?',[$order['id']])
+				->limit(1)->update([
+					'address_province'=>$this->model('province')->where('id=?',[$address['province']])->scalar('name'),
+					'address_city' => $this->model('city')->where('id=?',[$address['city']])->scalar('name'),
+					'address_county' => $this->model('county')->where('id=?',[$address['county']])->scalar('name'),
+					'address_address' => $address['address'],
+					'address_name' => $address['name'],
+					'address_telephone' => $address['telephone'],
+					'address_zcode' => $address['zcode'],
+					'address_identify' => $address['identify'],
+					'address_ishost' => $address['host'],
+				]);
+			}
+			
+			if ($recover)
+			{
+				$sql = 
+				'
+					ALTER TABLE `order_product`
+					  DROP `sku`,
+					  DROP `barcode`;
+				';
+				$this->model('order_product')->exec($sql);
+			}
+			
+			//商品信息中添加sku和barcode
+			$sql = 
+			'
+				ALTER TABLE  `order_product` ADD  `sku` VARCHAR( 32 ) NOT NULL ,
+				ADD  `barcode` VARCHAR( 32 ) NOT NULL ;
+			';
+			$this->model('order_product')->exec($sql);
+			$product = $this->model('order_product')->select();
+			foreach ($product as $p)
+			{
+				$sku_barcode = $this->model('product')->where('id=?',[$p['pid']])->find('sku,barcode');
+				$this->model('order_product')->where('id=?',[$p['id']])->update(array(
+					'sku' => $sku_barcode['sku'],
+					'barcode' => $sku_barcode['barcode'],
+				));
+			}
 		}
-		
-		
-		//更新子订单中的地址信息
-		$orders = $this->model('suborder_store')->select();
-		foreach ($orders as $order)
+		catch (\Exception $e)
 		{
-			$address = $this->model('address')->where('id=?',[$order['address']])->find();
-			$this->model('suborder_store')->where('id=?',[$order['id']])
-			->limit(1)->update([
-				'address_province'=>$this->model('province')->where('id=?',[$address['province']])->scalar('name'),
-				'address_city' => $this->model('city')->where('id=?',[$address['city']])->scalar('name'),
-				'address_county' => $this->model('county')->where('id=?',[$address['county']])->scalar('name'),
-				'address_address' => $address['address'],
-				'address_name' => $address['name'],
-				'address_telephone' => $address['telephone'],
-				'address_zcode' => $address['zcode'],
-				'address_identify' => $address['identify'],
-				'address_ishost' => $address['host'],
-			]);
+			$this->model('order')->rollback();
+			var_dump($e);
+			exit('升级失败');
 		}
-		
-		
+		$this->model('order')->commit();
 	}
-	
-	function test()
-	{
-		$productHelper = new product();
-		var_dump($productHelper->cutPublish(47));
-	}
-		
-	/*
-	 * function upgrade()
-	 * {
-	 * if (file_exists('./upgrade') && file_get_contents('./upgrade')=='1')
-	 * {
-	 * exit('已经升级过了');
-	 * }
-	 * file_put_contents('./upgrade', '1');
-	 * $this->model('product')->transaction();
-	 * $products = $this->model('product')->where('selled>?',[1])->select();
-	 * foreach ($products as $product)
-	 * {
-	 * if ($product['selled']!=1 && $product['oldprice']!=0 || $product['inprice']!=0 || $product['price']!=0 || $product['v1price']!=0 || $product['v2price']!=0)
-	 * {
-	 * if(!$this->model('product')->where('id=?',[$product['id']])->limit(1)->update([
-	 * 'oldprice' => $product['oldprice']/$product['selled'],//更改oldprice
-	 * 'price' => $product['price']/$product['selled'],//更改v0价格
-	 * 'v1price' => $product['v1price']/$product['selled'],//v1价格
-	 * 'v2price' => $product['v2price']/$product['selled'],//v2价格
-	 * 'inprice' => $product['inprice']/$product['selled'],//进价
-	 * ]))
-	 * {
-	 * $this->model('product')->rollback();
-	 * unlink('./upgrade');
-	 * var_dump($product);
-	 * exit('错误1');
-	 * }
-	 * }
-	 *
-	 * //更改colleciton
-	 * $collections = $this->model('collection')->where('pid=?',[$product['id']])->select();
-	 * foreach ($collections as $collection)
-	 * {
-	 * if ($product['selled']!=1 && $collection['price']!=0 || $collection['v1price']!=0 || $collection['v2price']!=0)
-	 * {
-	 * if(!$this->model('collection')->where('pid=? and content=?',[$collection['pid'],$collection['content']])->limit(1)->update([
-	 * 'price' => $collection['price']/$product['selled'],//更改v0价格
-	 * 'v1price' => $collection['v1price']/$product['selled'],//v1价格
-	 * 'v2price' => $collection['v2price']/$product['selled'],//v2价格
-	 * ]))
-	 * {
-	 * $this->model('product')->rollback();
-	 * unlink('./upgrade');
-	 * exit('错误2');
-	 * }
-	 * }
-	 * }
-	 * }
-	 * $this->model('product')->commit();
-	 * unlink('./upgrade');
-	 * echo "升级完成";
-	 * }
-	 */
-	/*
-	 * function cartdown(){
-	 * $product=$this->model("order_product")->where("bind>1")->select();
-	 * $this->model('product')->transaction();
-	 * foreach($product as $p){
-	 * $price=$p['price']/$p['bind'];
-	 * if(!$this->model("order_product")->where("id=?",[$p['id']])->update(["price"=>$price])){
-	 * $this->model('product')->rollback();
-	 *
-	 * exit('错误2');
-	 * }
-	 * }
-	 * $this->model('product')->commit();
-	 * exit('ok');
-	 *
-	 * }
-	 */
-	/*
-	 * function sendupdate()
-	 * {
-	 *
-	 *
-	 * $uid = $this->model('system')->get('uid', 'sms');
-	 * $key = $this->model('system')->get('key', 'sms');
-	 * $sign = $this->model('system')->get('sign', 'sms');
-	 * $template = '淘微购1.0.9正式上线，本次调整涉及购物方式变更，为不影响您的购物体验，还请及时进行版本更新。退订回复TD';
-	 *
-	 * $sms = new sms($uid, $key, $sign);
-	 * $ucount = $this->model("user")->where("send=0")->find(['count(1)']);
-	 * $ucount=$ucount['count(1)'];
-	 *
-	 * $j= ceil($ucount/100);
-	 * for($i=0;$i<$j;$i++) {
-	 * $user = $this->model("user")->where("send=0")->limit($i*100, 100)->select();
-	 * $uw = '';
-	 * foreach ($user as $u) {
-	 * $uw[] = $u['telephone'];
-	 * }
-	 * $uw = implode(',', $uw);
-	 * echo $uw . "<br />";
-	 *
-	 *
-	 * //循环发送
-	 *
-	 * $num = $sms->send($uw, $template);
-	 * if ($num > 0) {
-	 * foreach ($user as $u) {
-	 * $this->model("user")->where("telephone=?", [$u['telephone']])->update(["send" => '1']);
-	 * echo $u['telephone'] . "发送成功<br />";
-	 * }
-	 * continue;
-	 *
-	 * } else {
-	 * switch ($num) {
-	 * case '-1':
-	 * return new json(json::PARAMETER_ERROR, '没有该用户账户');
-	 * case '-2':
-	 * return new json(json::PARAMETER_ERROR, '接口密钥不正确');
-	 * case '-21':
-	 * return new json(json::PARAMETER_ERROR, 'MD5接口密钥加密不正确');
-	 * case '-11':
-	 * return new json(json::PARAMETER_ERROR, '该用户被禁用');
-	 * case '-14':
-	 * return new json(json::PARAMETER_ERROR, '短信内容出现非法字符');
-	 * case '-41':
-	 * return new json(json::PARAMETER_ERROR, '手机号码为空');
-	 * case '-42':
-	 * return new json(json::PARAMETER_ERROR, '短信内容为空');
-	 * case '-51':
-	 * return new json(json::PARAMETER_ERROR, '短信签名格式不正确');
-	 * case '-6':
-	 * return new json(json::PARAMETER_ERROR, 'IP限制');
-	 * }
-	 * }
-	 *
-	 * }
-	 * }
-	 */
 	
 	function orderoff()
 	{

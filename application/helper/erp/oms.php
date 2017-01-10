@@ -283,10 +283,6 @@ class oms extends erp
 		
 		$data = $this->model('suborder_store')
 		->table('`order`','left join','order.orderno=suborder_store.main_orderno')
-		//->table('address','left join','address.id=suborder_store.address')
-		//->table('province','left join','address.province=province.id')
-		//->table('city','left join','address.city=city.id')
-		//->table('county','left join','address.county=county.id')
 		->table('user','left join','user.id=suborder_store.uid')
 		->where('suborder_store.id=?',[$suborder_id])
 		->find([
@@ -300,22 +296,13 @@ class oms extends erp
 			'suborder_store.address_telephone as ReciverPhone',
 			'suborder_store.address_address as ReciverAddress',
 			'suborder_store.address_name as ReciverName',
-			//'address.name as ReciverName',
-			//'address.address as ReciverAddress',
-			//'address.telephone as ReciverPhone',
-			//'address.zcode as ReciverZipcode',
-			//'county.name as ReciverDistrict',
-			//'city.name as ReciverCity',
-			//'province.name as ReciverState',
 			'"中国" as ReciverCountryname',
-			//'address.identify as ReciverIdentity',
 			'concat(order.note,",",order.msg) as OrderMessage',
 			$store_id.' as HouseId',
 			!$erp_mode?($way.' as ShippingExpressId'):'58 as ShippingExpressId',//这个是物流方式
 			'"" as SendOrderSn',//发货单号
 			'"YES" as OrderDeliver',//订单同步直接发货
 			'suborder_store.feeamount as ShippingFee',
-			//'(suborder_store.goodsamount*0.8 + suborder_store.feeamount - suborder_store.discount) as OrderAmount',  //订单金额需要重新计算
 			'suborder_store.taxamount as TaxAmount',
 			'suborder_store.discount as DiscountAmount',
 			'concat(replace(suborder_store.date,"-",""),suborder_store.id) as CustomerCode',//这边是订单号
@@ -329,10 +316,6 @@ class oms extends erp
 			'suborder_store.address_telephone as PurchaserPhone',
 			'suborder_store.address_address as PurchaserAddr',
 			'suborder_store.address_name as PurchaserName',
-			//'address.identify as PayIdentity',
-			//'address.telephone as PurchaserPhone',
-			//'address.address as PurchaserAddr',
-			//'address.name as PurchaserName',
 			'user.id as PurchaserId',//这边需要用户id？而不是用户名？
 			'order.pay_number as PayCode',
 			'order.pay_type as PayType',
@@ -346,9 +329,7 @@ class oms extends erp
 		->table('product','left join','product.id=order_product.pid')
 		->where('suborder_store_product.suborder_id=? and order_product.refund=?',[$suborder_id,0])
 		->select([
-		//	'product.id as GoodsCommonid',
 			'product.barcode as GoodsSerial',
-			//'order_product.price as GoodsPayPrice',
 			'(order_product.num * order_product.bind * product.inprice * 0.8) as GoodsPayPrice',//商品总支付价格
 			'(order_product.num * order_product.bind) as GoodsNum',//商品数量
 		]);

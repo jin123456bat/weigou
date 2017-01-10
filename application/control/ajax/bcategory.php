@@ -64,13 +64,19 @@ class bcategory extends ajax
 		
 		$bc_id = empty($bc_id)?NULL:$bc_id;
 		
-		$this->model('bcategory')->where('id=?',[$id])->update([
+		if($this->model('bcategory')->where('id=?',[$id])->update([
 			'name' => $name,
 			'sort' => $sort,
 			'bc_id' => $bc_id,
 			'stock_limit' => $stock_limit,
-		]);
-		return new json(json::OK);
+		]))
+		{
+			return new json(json::OK);
+		}
+		else
+		{
+			return new json(json::PARAMETER_ERROR,'更新失败');
+		}
 	}
 	
 	/**

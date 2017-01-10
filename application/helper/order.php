@@ -696,6 +696,8 @@ class order extends base
 					'tax' => $tax,
 					'fee' => isset($this->_feeamount_detail[$p['id']]) ? $this->_feeamount_detail[$p['id']] : 0,
 					'v2price' => $v2price,
+					'sku' => $product['sku'],
+					'barcode' => $product['barcode'],
 				];
 				$data[$index]['ship_money'] += isset($this->_feeamount_detail[$p['id']]) ? $this->_feeamount_detail[$p['id']] : 0;
 			}
@@ -722,6 +724,8 @@ class order extends base
 							'tax' => $tax,
 							'fee' => isset($this->_feeamount_detail[$p['id']]) ? $this->_feeamount_detail[$p['id']] : 0,
 							'v2price' => $v2price,
+							'sku' => $product['sku'],
+							'barcode' => $product['barcode'],
 						]
 					]
 				];

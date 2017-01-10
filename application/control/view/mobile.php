@@ -288,8 +288,7 @@ class mobile extends view
 			$order = $this->model('order')
 				->where('orderno=?', [
 				$orderno
-			])
-				->find();
+			])->find();
 			if (! empty($order))
 			{
 				$order['is_task'] = ! empty($this->model('task_user')
@@ -300,28 +299,16 @@ class mobile extends view
 				
 				$this->assign('order', $order);
 				
-				$address = $this->model('address')
-					->table('province', 'left join', 'province.id=address.province')
-					->table('city', 'left join', 'city.id=address.city')
-					->table('county', 'left join', 'county.id=address.county')
-					->where('address.id=?', [
-					$order['address']
-				])
-					->find([
-					'address.id,
-					address.name,
-					address.telephone,
-					address.zcode,
-					address.identify,
-					address.host,
-					address.address,
-					province.id as province_id,
-					city.id as city_id,
-					county.id as county_id,
-					province.name as province,
-					city.name as city,
-					county.name as county'
-				]);
+				$address = [
+					'name' => $order['address_name'],
+					'telephone' => $order['address_telephone'],
+					'zcode' => $order['address_zcode'],
+					'identify' => $order['address_identify'],
+					'address' => $order['address_address'],
+					'province' => $order['address_province'],
+					'city' => $order['address_city'],
+					'county' => $order['address_county'],
+				];
 				$this->assign('address', $address);
 				
 				if ($order['way_status'] == 1)
@@ -390,28 +377,16 @@ class mobile extends view
 				
 				$this->assign('order', $order);
 				
-				$address = $this->model('address')
-					->table('province', 'left join', 'province.id=address.province')
-					->table('city', 'left join', 'city.id=address.city')
-					->table('county', 'left join', 'county.id=address.county')
-					->where('address.id=?', [
-					$order['address']
-				])
-					->find([
-					'address.id,
-						address.name,
-						address.telephone,
-						address.zcode,
-						address.identify,
-						address.host,
-						address.address,
-						province.id as province_id,
-						city.id as city_id,
-						county.id as county_id,
-						province.name as province,
-						city.name as city,
-						county.name as county'
-				]);
+				$address = [
+					'name' => $order['address_name'],
+					'telephone' => $order['address_telephone'],
+					'zcode' => $order['address_zcode'],
+					'identify' => $order['address_identify'],
+					'address' => $order['address_address'],
+					'province' => $order['address_province'],
+					'city' => $order['address_city'],
+					'county' => $order['address_county'],
+				];
 				$this->assign('address', $address);
 				
 				$store = $this->model('order_package')

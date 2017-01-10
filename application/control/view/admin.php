@@ -159,6 +159,15 @@ class admin extends view
 			->find();
 		if (! empty($order))
 		{
+			$suborderno_store = [];
+			$subordernos = $this->model('suborder_store')
+			->where('main_orderno=?',array($orderno))
+			->select('concat(replace(date,"-",""),id) as orderno');
+			foreach ($subordernos as $suborderno)
+			{
+				$suborderno_store[] = $suborderno['orderno'];
+			}
+			$order['suborderno'] = implode(',', $suborderno_store);
 			$this->assign('order', $order);
 			
 			$user = $this->model('user')
@@ -188,28 +197,16 @@ class admin extends view
 				$this->assign('o_master', $o_master);
 			}
 			
-			$address = $this->model('address')
-				->table('province', 'left join', 'province.id=address.province')
-				->table('city', 'left join', 'city.id=address.city')
-				->table('county', 'left join', 'county.id=address.county')
-				->where('address.id=?', [
-				$order['address']
-			])
-				->find([
-				'address.id,
-				address.name,
-				address.telephone,
-				address.zcode,
-				address.identify,
-				address.host,
-				address.address,
-				province.id as province_id,
-				city.id as city_id,
-				county.id as county_id,
-				province.name as province,
-				city.name as city,
-				county.name as county'
-			]);
+			$address = [
+				'name' => $order['address_name'],
+				'telephone' => $order['address_telephone'],
+				'zcode' => $order['address_zcode'],
+				'identify' => $order['address_identify'],
+				'address' => $order['address_address'],
+				'province' => $order['address_province'],
+				'city' => $order['address_city'],
+				'county' => $order['address_county'],
+			];
 			$this->assign('address', $address);
 			
 			$product = $this->model('order_package')
@@ -871,7 +868,7 @@ class admin extends view
 			$this->assign('ztax', $this->model('tax')
 				->select());
 			
-			$product_publish_json = [];
+			/* $product_publish_json = [];
 			$product_publish = $this->model('product_publish')
 				->where('product_id=?', [
 				$id
@@ -895,7 +892,7 @@ class admin extends view
 				];
 			}
 			$this->assign('product_publish_json', $product_publish_json);
-			$this->assign('product_publish', $product_publish);
+			$this->assign('product_publish', $product_publish); */
 			
 			return $this;
 		}
