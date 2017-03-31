@@ -39,6 +39,7 @@ class category extends common
 				'store.name as store',
 				'product.origin',
                 'product.selled',
+				'product.outside',
 			]
 		];
 		$product = $this->model('category_product')->fetchAll($product_filter);

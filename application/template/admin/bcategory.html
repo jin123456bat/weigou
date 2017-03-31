@@ -206,12 +206,6 @@
                             <input type="text" class="form-control" name="sort">
                         </div>
                     </div>
-                    <div class="form-group" id="stock_limit">
-                        <label class="col-md-2 control-label">库存阈值</label>
-                        <div class="col-md-9">
-                            <input type="text" class="form-control" name="stock_limit">
-                        </div>
-                    </div>
                 </div>
                 <div class="modal-footer" style="padding: 0px;">
                     <div class="modal-button-group">
@@ -305,17 +299,16 @@
                 var name = $.trim($('#createCategoryModal input[name=name]').val());
                 var sort = parseInt($('#createCategoryModal input[name=sort]').val());
                 var bc_id = parseInt($('#createCategoryModal select[name=bc_id]').val());
-                var stock_limit = parseInt($('#createCategoryModal input[name=stock_limit]').val());
                 var id = $('#createCategoryModal input[name=id]').val();
                 var level = $('#createCategoryModal input[name=level]').val();
                 if (id.length!=0) {
                     url = '{%url m=ajax c=bcategory a=save%}';
-                    data = {id:id,name:name,sort:sort,bc_id:bc_id,stock_limit:stock_limit,level:level};
+                    data = {id:id,name:name,sort:sort,bc_id:bc_id,level:level};
                 }
                 else
                 {
                     url = '{%url m=ajax c=bcategory a=create%}';
-                    data = {name:name,sort:sort,bc_id:bc_id,stock_limit:stock_limit,level:level};
+                    data = {name:name,sort:sort,bc_id:bc_id,level:level};
                 }
                 $.post(url,data,function(response){
                     if(response.code==1)
@@ -412,13 +405,11 @@
             $('.select-multiple-create').on('click',function(){
                 if ($(this).data('level') == 0)
                 {
-                    $('#stock_limit').hide();
                     $('#up_category').hide();
                     $('#createCategoryModal input[name=level]').val(0);
                 }
                 if ($(this).data('level') == 1)
                 {
-                    $('#stock_limit').show();
                     $('#up_category').show();
                     $('#up_category select').empty();
                     if ($('.col-md-4:eq(0) .select-multiple .option').length==0) {
@@ -433,7 +424,6 @@
                 }
                 if ($(this).data('level') == 2)
                 {
-                    $('#stock_limit').hide();
                     $('#up_category').show();
                     $('#up_category select').empty();
                     if ($('.col-md-4:eq(1) .select-multiple .option').length==0) {
@@ -488,13 +478,11 @@
                 var level = $(this).parents('.option').data('level');
                 if (level == 0)
                 {
-                    $('#stock_limit').hide();
                     $('#up_category').hide();
                     $('#createCategoryModal input[name=level]').val(0);
                 }
                 if (level == 1)
                 {
-                    $('#stock_limit').show();
                     $('#up_category').show();
                     $('#up_category select').empty();
                     if ($('.col-md-4:eq(0) .select-multiple .option').length==0) {
@@ -509,7 +497,6 @@
                 }
                 if (level == 2)
                 {
-                    $('#stock_limit').hide();
                     $('#up_category').show();
                     $('#up_category select').empty();
                     if ($('.col-md-4:eq(1) .select-multiple .option').length==0) {
@@ -528,7 +515,6 @@
                         $('#createCategoryModal input[name=sort]').val(response.body.sort);
                         $('#createCategoryModal input[name=id]').val(response.body.id);
                         $('#createCategoryModal select[name=bc_id]').val(response.body.bc_id);
-                        $('#createCategoryModal input[name=stock_limit]').val(response.body.stock_limit);
                         $('#createCategoryModal').modal('show');
                     }
                 });

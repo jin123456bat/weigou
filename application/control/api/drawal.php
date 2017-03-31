@@ -2,6 +2,7 @@
 namespace application\control\api;
 use application\helper\user;
 use application\message\json;
+use application\helper\sms;
 class drawal extends common
 {
 	private $_response;
@@ -68,6 +69,19 @@ class drawal extends common
 					$this->model('drawal')->rollback();
 					return new json(json::PARAMETER_ERROR,'系统繁忙');
 				}
+				
+				$username = $this->model('user')->where('id=?',[$uid])->scalar('name');
+				
+				$uid = $this->model('system')->get('uid', 'sms');
+				$key = $this->model('system')->get('key', 'sms');
+				$sign = $this->model('system')->get('sign', 'sms');
+				$template = $this->model('system')->get('template', 'drawal_admin_notice');
+				$telephone = $this->model('system')->get('telephone','drawal_admin_notice');
+				
+				$content = str_replace(['{money}','{username}'], [$money,$username], $template);
+				
+				$sms = new sms($uid, $key, $sign);
+				$sms->send($telephone, $content);
 				
 				$this->model('drawal')->commit();
 				return new json(json::OK);

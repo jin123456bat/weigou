@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="utf-8" />
+		<title>{%$page_title%}</title>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+       	<meta name="renderer" content="webkit">
+        <meta content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport" />
+        <!-- reset -->
+        <link rel="stylesheet" href="//cdn.bootcss.com/normalize/5.0.0/normalize.min.css">
+		<!-- 新 Bootstrap 核心 CSS 文件 -->
+        <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<!-- 可选的Bootstrap主题文件（一般不用引入） -->
+		<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
+		<!--icon-->
+		<link rel="stylesheet" href="{%$VIEW_ROOT%}/html/css/plugins/font-awesome/css/font-awesome.min.css">
+		<!--自定义css-->
+		<link rel="stylesheet" href="{%resource path='/html/css/global.css'%}">
+		<script type="text/javascript">
+			function lpad(num, n) {  
+				return Array(n>(''+num).length?(n-(''+num).length+1):0).join(0)+num;  
+			}
+		</script>
+	</head>
+	<style>
+	.table-bordered>tbody>tr>td{
+		border: none;
+	}
+	.table-bordered>thead>tr>td{
+		border-left: none;
+		border-right: none;
+		border-bottom-width: 1px;
+	}
+	.table-bordered>thead>tr>td:last-child{
+		border-right: 1px solid #ddd;
+	}
+	.table-bordered>tbody>tr>td:last-child{
+		border-right: 1px solid #ddd;
+	}
+	</style>
+	<body>
+		{%include file='html/public/header.html'%}
+		<div class="body container-fluid">
+			<div class="row">
+				{%include file='html/public/sidebar.html'%}
+				<div class="content">
+			  		<div class="content-body">
+			  			<div class="white-block">
+			  				<div class="wall-block">
+								<p>商品管理 - 到货通知</p>
+							</div>
+			  			</div>
+			  			<div class="divider"></div>
+			  			<div class="white-block">
+			  				
+			  				<div class="tab">
+			  					<div class="tab-header">
+			  						<a class="tab-title active" href="#notice">商品到货通知</a>
+			  						<a class="tab-title" href="#template">短信模板</a>
+			  					</div>
+			  					<div class="tab-body">
+			  						<div class="tab-page active" id="notice">
+			  							<div class="space"></div>
+										<div class="top-tips">
+											<div class="top-tips-title">
+												操作提示
+											</div>
+											<div class="top-tips-body">
+												<p>前台会员可在商品详情页进行选择到货通知。</p>
+												<p>可进行发送状态筛选、用户名、手机号搜索。</p>
+											</div>
+										</div>
+										<div class="line" style="height: 50px;">
+											<form class="form-inline pull-right" id="dt_search">
+												<div class="form-group">
+													<input type="text" name="search" class="form-control input-sm" placeholder="用户名/联系手机">
+												</div>
+												<button class="btn btn-small btn-orange pull-right" style="height: 30px; margin-left: 10px;">搜索</button>
+											</form>
+										</div>
+										<div class="">
+											<table class="table table-hover table-bordered table-responsive">
+												<thead>
+													<tr>
+			  											<td width="2%" style="padding-left: 20px;padding-right: 20px;">
+			  												<input type="checkbox" class="select-all">
+			  											</td>
+			  											<td width="5%">
+			  												编号
+			  											</td>
+			  											<td width="25%" style="min-width: 305px;">
+			  												商品名称
+			  											</td>
+			  											<td width="10%" style="min-width: 80px;">
+			  												用户名
+			  											</td>
+			  											<td width="10%" style="min-width: 65px;">
+			  												联系手机
+			  											</td>
+			  											<td width="10%" style="min-width: 115px;">
+			  												申请时间
+			  											</td>
+			  											<td width="10%" style="min-width: 80px;text-align:center;">
+			  												发送状态
+			  											</td>
+			  											<td style="text-align: center;">
+			  												操作
+			  											</td>
+			  										</tr>
+												</thead>
+												<tbody>
+													
+												</tbody>
+												<tfoot>
+													<tr>
+														<td id="split_page" colspan="9" style="text-align: right;">
+			  											
+			  											</td>
+													</tr>
+												</tfoot>
+											</table>
+										</div>
+									</div>
+			  						<div class="tab-page" id="template">
+			  							<div class="space"></div>
+										<div class="top-tips">
+											<div class="top-tips-title">
+												操作提示
+											</div>
+											<div class="top-tips-body">
+												<p>根据商品类目设定库存的临界值。</p>
+												<p>当商品的库存值低于临界值，起库存值将被归零。</p>
+											</div>
+										</div>
+										
+										<div class="line center-block" style="width: 70%;padding:10px 20px;">
+											<a href="./index.php?c=html&a=create_product_notice_template" class="btn red btn-outline btn-small">添加短信模板</a>
+											<form class="form-inline pull-right" id="template_search">
+												<div class="form-group">
+													<input type="text" name="search" class="form-control input-sm" placeholder="请输入模板标题、内容">
+												</div>
+												<button class="btn btn-small btn-orange pull-right" style="height: 30px; margin-left: 10px;">搜索</button>
+											</form>
+										</div>
+										<div class="white-block center-block" style="width: 70%;padding-top: 0px;">
+											<table class="table table-hover table-bordered table-responsive">
+												<thead>
+													<tr>
+			  											<td width="2%" style="padding-left: 20px;padding-right: 20px;">
+			  												<input type="checkbox" class="select-all">
+			  											</td>
+			  											<td width="5%">
+			  												编号
+			  											</td>
+			  											<td width="30%">
+			  												标题
+			  											</td>
+			  											<td width="20%">
+			  												编辑人
+			  											</td>
+			  											<td width="20%" style="text-align: center;">
+			  												最后修改时间
+			  											</td>
+			  											<td style="text-align: center;">
+			  												操作
+			  											</td>
+			  										</tr>
+												</thead>
+												<tbody>
+													
+												</tbody>
+												<tfoot>
+													<tr>
+														<td id="split_page" colspan="9" style="text-align: right;">
+			  											
+			  											</td>
+													</tr>
+												</tfoot>
+											</table>
+										</div>
+										
+										
+			  						</div>
+								</div>
+							</div>
+							
+			  			</div>
+			  		</div>				  
+				</div>
+			</div>
+		</div>
+		<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+		<script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+		<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+		<script src="http://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		<!--alert-->
+		<script src="//cdn.bootcss.com/bootbox.js/4.4.0/bootbox.min.js"></script>
+		<!--datatables-->
+		<script src="{%resource path='/html/js/datatables.js'%}"></script>
+		<script src="{%resource path='/html/js/tab.js'%}"></script>
+		<script src="{%resource path='/html/js/global.js'%}"></script>
+		<script type="text/javascript">
+			$.ajaxSetup({
+				headers:{
+					'X-CSRF-TOKEN':'{%$x_csrf_token%}'
+				}
+			});
+			
+			$('table').on('change','input[type=checkbox].select-all',function(){
+				if($(this).is(':checked'))
+				{
+					$(this).closest('table').find('input[type=checkbox]:not(.select-all)').each(function(index,value){
+						$(value).prop('checked',true);
+					});
+				}
+				else
+				{
+					$(this).closest('table').find('input[type=checkbox]:not(.select-all)').each(function(index,value){
+						$(value).prop('checked',false);
+					});
+				}
+				return false;
+			});
+			
+			var dt = datatables({
+				table:$('#notice table'),
+				ajax:{
+					url:'{%url c=datatables a=product_notice%}',
+				},
+				empty:function(){
+					return '<tr><td colspan="10" style="text-align:center;">尚无数据</td></tr>';
+				},
+				columns:[{
+					data:'id',
+					name:'product_notice.id',
+				},{
+					data:'id',
+					name:'product_notice.id',
+				},{
+					data:'name',
+					name:'product.name',
+				},{
+					data:'username',
+					name:'(select user.name from user where uid=user.id limit 1)',
+				},{
+					data:'telephone',
+					name:'(select user.telephone from user where uid=user.id limit 1)',
+				},{
+					data:'createtime',
+					name:'product_notice.createtime',
+				},{
+					data:'send',
+					name:'product_notice.send',
+				},{
+					data:'id',
+					name:'product_notice.id',
+				},
+				
+				{
+					data:'pic',
+					name:'(select upload.path from product_img left join upload on upload.id=product_img.fid where product_img.pid=product.id order by product_img.position asc limit 1)',
+					visible:false,
+				},{
+					data:'brand',
+					name:'(select brand.name_cn from brand where brand.id=product.brand limit 1)',
+					visible:false,
+				}],
+				columnDefs:[{
+					targets:0,
+					render:function(data,full){
+						return '<input type="checkbox" name="id[]" value="'+data+'">';
+					}
+				},{
+					targets:2,
+					render:function(data,full){
+						return '<div style="display: inline-block;width: 70px;height: 60px;vertical-align:middle;"><img onerror="this.src=\'https://placeholdit.imgix.net/~text?txtsize=18&txt=%E6%AD%A4%E5%A4%84%E6%97%A0%E5%9B%BE&w=60&h=60\';" src="'+full.pic+'" width="60px" height="60px"></div><div style="display: inline-block;width: 70%;height: 60px;vertical-align:middle;"><div style="display: block;width: 100%;word-break: break-all;overflow: hidden;height: 40px;line-height: 20px;">'+data+'</div><div style="height:20px;line-height: 20px;width:100%;overflow: hidden;">品牌：'+(full.brand==null?'':full.brand)+'</div></div>';
+					}
+				},{
+					targets:5,
+					render:function(data,full){
+						return unixtotime(data,true,8);
+					}
+				},{
+					targets:6,
+					render:function(data,full){
+						if(data == 1)
+						{
+							return '<font color="#00CC00">已发送</font>';
+						}
+						else
+						{
+							return '<font color="#FF6600">未发送</font>';
+						}
+					}
+				},{
+					targets:7,
+					render:function(data,full){
+						content = '<button class="btn btn-outline btn-xs sendsmsBtn '+(full.send==1?'disabled':'')+'" data-id="'+data+'">发送</button>';
+						return content;
+					}
+				}],
+				pagesize:10,
+				onRowLoaded:function(row){
+					row.find('td:last').css('text-align','center');
+					row.find('td:last').prev('td').css('text-align','center');
+					row.find('td:first').css({'padding-left':'20px','padding-right':'20px'});
+				}
+			});
+			
+			$('#notice table').on('click','.sendsmsBtn',function(){
+				if($(this).hasClass('disabled'))
+					return false;
+				var id = $(this).data('id');
+				var btn = $(this);
+				$.post('./index.php?m=ajax&c=product_notice&a=send',{id:id},function(response){
+					if(response.code==1)
+					{
+						btn.addClass('disabled');
+					}
+					else
+					{
+						bootbox.alert(response.result);
+					}
+				});
+				return false;
+			});
+			
+			
+			$('#dt_search').on('submit',function(){
+				dt.search($(this).find('input').val());
+				return false;
+			});
+			
+			
+			var template = datatables({
+				table:$('#template table'),
+				ajax:{
+					url:'{%url c=datatables a=product_notice_template%}',
+				},
+				empty:function(){
+					return '<tr><td colspan="10" style="text-align:center;">尚无数据</td></tr>';
+				},
+				columns:[{
+					data:'id',
+					name:'product_notice_template.id',
+				},{
+					data:'id',
+					name:'product_notice_template.id',
+				},{
+					data:'title',
+					name:'product_notice_template.title',
+				},{
+					data:'username',
+					name:'(select admin.username from admin where aid=admin.id limit 1)',
+				},{
+					data:'modifytime',
+					name:'product_notice_template.modifytime',
+				},{
+					data:'id',
+					name:'product_notice_template.id',
+				},
+						
+				{
+					data:'host',
+					name:'product_notice_template.host',
+					visible:false,
+				}],
+				columnDefs:[{
+					targets:0,
+					render:function(data,full){
+						return '<input type="checkbox" name="id[]" value="'+data+'">';
+					}
+				},{
+					targets:2,
+					render:function(data,full){
+						return data+(full.host==1?'<font class="host" color="#FF3300" style="font-weight: 700;">(默认)</font>':'');
+					}
+				},{
+					targets:4,
+					render:function(data,full){
+						return unixtotime(data,true,8);
+					}
+				},{
+					targets:5,
+					render:function(data,full){
+						content = '<div class="btn-group"><button class="btn btn-outline btn-xs editBtn" data-id="'+data+'">查看 / 编辑 </button><button class="btn btn-outline btn-xs dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button><ul class="dropdown-menu"><li><a data-id="'+data+'" class="setHostBtn">设为默认</a><a data-id="'+data+'" class="removeBtn '+(full.host==1?'display-none':'')+'">删除</a></li></div>';
+						return content;
+					}
+				}],
+				pagesize:10,
+				onRowLoaded:function(row){
+					row.find('td:last').css('text-align','center');
+					row.find('td:last').prev('td').css('text-align','center');
+					row.find('td:first').css({'padding-left':'20px','padding-right':'20px'});
+				}
+			});
+			
+			$('#template_search').on('submit',function(){
+				template.search($(this).find('input').val());
+				return false;
+			});
+			
+			$('#template table').on('click','.setHostBtn',function(){
+				var id = $(this).data('id');
+				var btn = $(this);
+				$.post('./index.php?m=ajax&c=product_notice_template&a=host',{id:id},function(response){
+					if(response.code==1)
+					{
+						$('.removeBtn.display-none').removeClass('display-none');
+						btn.parents('ul').find('.removeBtn').addClass('display-none');
+						
+						$('#template table .host').remove();
+						btn.parents('tr').find('td:eq(2)').append('<font class="host" color="#FF3300" style="font-weight: 700;">(默认)</font>');
+					}
+					else
+					{
+						bootbox.alert(response.result);
+					}
+				});
+			});
+			
+			$('#template table').on('click','.editBtn',function(){
+				window.location = './index.php?c=html&a=edit_product_notice_template&id='+$(this).data('id');
+			});
+			
+			$('#template table').on('click','.removeBtn',function(){
+				var id = $(this).data('id');
+				bootbox.confirm({
+					message:'确认删除?',
+					buttons:{
+						cancel:{
+							label: '<i class="fa fa-times"></i> 取消',
+						},
+						confirm:{
+							label:'<i class="fa fa-check"></i> 确定',
+						}
+					},
+					callback: function(result,a) {
+						if(result) {
+							$.post('./index.php?m=ajax&c=product_notice_template&a=remove',{id:id},function(response){
+								if(response.code==1)
+								{
+									template.reload();
+								}
+								else
+								{
+									bootbox.alert(response.result);
+								}
+							});
+						}
+					},
+				});
+			});
+		</script>
+	</body>
+</html>

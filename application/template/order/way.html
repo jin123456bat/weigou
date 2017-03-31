@@ -1,23 +1,15 @@
-<div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-    <h4 class="modal-title">物流轨迹</h4>
+{%if isset($way)%}
+{%section name=way loop=$way%}
+<div class="{%if $smarty.section.way.first%}current{%elseif $smarty.section.way.last%}start{%else%}common{%/if%} logistics-line">
+	<div class="logisticsDatetime">
+		<div class="logisticsDate">{%$way[way].datetime.date%}</div>
+		<div class="logisticsTime">{%$way[way].datetime.time%}</div>
+		<div class="logisticsWeek">{%$way[way].datetime.week%}</div>
+	</div>
+	<div class="icon"></div>
+	<div class="note"><p>{%$way[way].remark%}</p><i></i></div>
 </div>
-<div class="modal-body">
-    <div class="row">
-        <div class="col-md-12">
-            <table class="table table-hover" id="sendTable">
-            	<tr><th>地点</th><th>时间</th><th>描述</th></tr>
-                {%if isset($way)%}
-            	{%section name=way loop=$way%}
-                <tr><td>{%$way[way].zone|default:''%}</td><td>{%$way[way].datetime%}</td><td>{%$way[way].remark%}</td></tr>
-                {%/section%}
-                {%else%}
-                <tr><td colspan="3">没有找到物流轨迹</td></tr>
-                {%/if%}
-            </table>
-        </div>
-    </div>
-</div>
-<div class="modal-footer">
-    <button type="button" class="btn default" data-dismiss="modal">关闭</button>
-</div>
+{%/section%}
+{%else%}
+<h3>Sorry!没有找到物流轨迹</h3>
+{%/if%}

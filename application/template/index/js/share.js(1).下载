@@ -1,0 +1,48 @@
+/**
+ * 分享功能实现类
+ * @param txt
+ * @param desc
+ * @param url
+ * @param pic
+ * @returns {ShareClass}
+ */
+function ShareClass(txt, desc, url, pic)
+{
+	this.txt = txt || '';
+	this.desc = desc || '';
+	this.url = url || '';
+	this.pic = pic || '';
+	
+	ShareClass.prototype.initFlg = false;
+	
+	ShareClass.prototype.setWeiboTxtByNameAndPrice = function(name, price){
+		this.txt = "我在@钻石小鸟 找到了一款心爱的钻饰："+name+"，小鸟价：￥"+price+"。 感觉世界都美好了，分享一下哦！";
+		window._bd_share_config = {
+			common : {
+				bdText : this.txt,	
+				bdDesc : this.desc,	
+				bdUrl : this.url,
+				bdPic : this.pic
+			},
+			share : [{
+				"bdSize" : 16
+			}],
+			slide : [{	   
+				bdImg : 0,
+				bdPos : "left",
+				bdTop : -300
+			}]/*,
+			selectShare : [{
+				"bdselectMiniList" : ['tqq','douban','tsina','kaixin001']
+			}]*/
+		}
+		if(!ShareClass.prototype.initFlg){
+			ShareClass.prototype.initFlg = true;
+			ShareClass.prototype.init();
+		}
+    };
+    
+    ShareClass.prototype.init = function(){
+        with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];	
+    };
+};

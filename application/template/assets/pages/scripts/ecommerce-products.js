@@ -172,7 +172,9 @@ var EcommerceProducts = function () {
 				},{
 					targets:11,
 					render:function(data,type,full){
-						return '<a target="_blank" class="btn btn-xs green-stripe default" href="index.php?c=admin&a=edit_product&id='+data+'">编辑</a>'
+						var content = '<a target="_blank" class="btn btn-xs green-stripe default" href="index.php?c=admin&a=edit_product&id='+data+'">编辑</a>';
+						content += '<a target="_blank" class="btn btn-xs red-stripe default" href="index.php?c=index&a=product&id='+data+'">查看</a>'
+						return content;
 					}
 				}],
                 "lengthMenu": [

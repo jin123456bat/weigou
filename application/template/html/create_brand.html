@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="utf-8" />
+		<title>标题</title>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+       	<meta name="renderer" content="webkit">
+        <meta content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport" />
+        <!-- reset -->
+        <link rel="stylesheet" href="//cdn.bootcss.com/normalize/5.0.0/normalize.min.css">
+		<!-- 新 Bootstrap 核心 CSS 文件 -->
+        <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<!-- 可选的Bootstrap主题文件（一般不用引入） -->
+		<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
+		
+		<!-- select2 -->
+		<link rel="stylesheet" href="//cdn.bootcss.com/select2/4.0.3/css/select2.min.css">
+		<link rel="stylesheet" href="//cdn.bootcss.com/select2-bootstrap-theme/0.1.0-beta.9/select2-bootstrap.min.css">
+		
+		<!--自定义css-->
+		<link rel="stylesheet" href="{%resource path='/html/css/global.css'%}">
+		<script type="text/javascript">
+			function lpad(num, n) {  
+				return Array(n>(''+num).length?(n-(''+num).length+1):0).join(0)+num;  
+			}
+		</script>
+	</head>
+	<body>
+		{%include file='html/public/header.html'%}
+		<div class="body container-fluid">
+			<div class="row">
+				{%include file='html/public/sidebar.html'%}
+				<div class="content">
+			  		<div class="content-body">
+			  			<div class="white-block">
+			  				<div class="wall-block">
+								<p>商品配置 - 商品品牌 - {%if $smarty.get.a==edit_brand%}编辑品牌{%else%}添加品牌{%/if%}</p>
+							</div>
+			  			</div>
+			  			<div class="divider"></div>
+			  			<div class="white-block">
+			  				<div class="top-tips">
+			  					<div class="top-tips-title">
+			  						操作提示
+			  					</div>
+			  					<div class="top-tips-body">
+			  						<p>标识“*”的选项为必填项，其余为选填项。</p>
+			  						<p>请按提示文案填写信息，以免出错。</p>
+			  					</div>
+			  				</div>
+			  			</div>
+			  			<div class="divider"></div>
+			  			<div class="white-block">
+			  				<form class="form-horizontal" role="form" id="brandForm">
+			  					<div class="form-body">
+			  						<div class="form-group">
+										<label class="col-md-offset-3 col-md-1 control-label">
+											品牌中文名 <span class="required">*</span>
+										</label>
+										<div class="col-md-5">
+											<input type="text" class="form-control" value="{%$brand.name_cn|default:''%}" name="ch_name" autocomplete="off">
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-md-offset-3 col-md-1 control-label">
+											品牌英文名 <span class="required">*</span>
+										</label>
+										<div class="col-md-5">
+											<input type="text" class="form-control" value="{%$brand.name_en|default:''%}" name="en_name" autocomplete="off">
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-md-offset-3 col-md-1 control-label">
+											品牌LOGO <span class="required">*</span>
+										</label>
+										<div class="col-md-5">
+											<button id="uploadBtn" class="btn-grey">上传LOGO</button>&nbsp;(建议120*120的图片)
+											<input type="file" name="uploadInput" class="hide">
+											<input type="hidden" name="uploadValue" value="{%$brand.logo|default:''%}">
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-md-offset-3 col-md-1 control-label">
+											国籍  <span class="required">*</span>
+										</label>
+										<div class="col-md-5">
+											<select class="form-control" name="origin">
+												{%section name=country loop=$country%}
+												<option value="{%$country[country].id%}" {%if isset($brand.origin) && $brand.origin==$country[country].id%}selected="selected"{%/if%}>{%$country[country].name%}</option>
+												{%/section%}
+											</select>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-md-offset-3 col-md-1 control-label">描述</label>
+										<div class="col-md-5">
+											<textarea class="form-control" rows="6" name="description">{%$brand.description|default:''%}</textarea>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-md-offset-4 col-md-5">
+											<button type="submit" class="btn red col-md-2">确认</button>
+											<button type="reset" class="col-md-offset-1 btn red col-md-2 btn-outline">重置</button>
+										</div>
+									</div>
+			  					</div>
+			  				</form>
+			  			</div>
+			  		</div>				  
+				</div>
+			</div>
+		</div>
+		<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+		<script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+		<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+		<script src="http://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		<!-- select2 -->
+		<script src="//cdn.bootcss.com/select2/4.0.3/js/select2.min.js"></script>
+		<script src="//cdn.bootcss.com/select2/4.0.3/js/i18n/zh-CN.js"></script>
+		<!-- jquery validate -->
+		<script src="//cdn.bootcss.com/jquery-validate/1.16.0/jquery.validate.min.js"></script>
+		<!--alert-->
+		<script src="//cdn.bootcss.com/bootbox.js/4.4.0/bootbox.min.js"></script>
+		<script src="{%resource path='/html/js/global.js'%}"></script>
+		<script type="text/javascript">
+			setInterval(function(){
+				var datetimeController = new Date();
+				var date = datetimeController.getFullYear()+'-'+lpad(datetimeController.getMonth()+1,2)+'-'+lpad(datetimeController.getDate(),2);
+				$('.date').text(date);
+				
+				var time = lpad(datetimeController.getHours(),2)+':'+lpad(datetimeController.getMinutes(),2);
+				$('.time').text(time);
+			
+				var week = datetimeController.getDay();
+				var weekArray = ['日','一','二','三','四','五','六'];
+				var week = '星期'+weekArray[week];
+				$('.week').text(week);
+			},1000);
+			 
+			
+			$.fn.select2.defaults.set("theme", "bootstrap");
+			$('select').select2();
+			
+			
+			//点击上传按钮弹窗
+			$('#uploadBtn').on('click',function(){
+				$('input[name=uploadInput]').trigger('click');
+				return false;
+			});
+			
+			$('input[name=uploadInput]').on('change',function(){
+				console.log($(this));
+				if($.trim($(this).val()).length==0)
+				{
+					$('#uploadBtn').text('上传LOGO');
+					$('input[name=uploadValue]').val('');
+				}
+				else
+				{
+					var file = $(this)[0].files[0];
+					var formData = new FormData();
+					formData.append('file',file);
+					var xhr = new XMLHttpRequest();
+					xhr.open('POST','./index.php?m=api&c=common&a=upload',true);
+					xhr.onload = function(){  
+						if(xhr.status == 200 && xhr.readyState == 4)  
+						{
+							var response = xhr.response;
+							response = $.parseJSON(response);
+							if(response.code==1)
+							{
+								$('#uploadBtn').html(file.name).removeClass('disabled');
+								$('input[name=uploadValue]').val(response.body.id);
+								$('#uploadBtn').closest('.form-group').removeClass('has-error');
+								$('#uploadBtn').closest('.form-group').find('.help-block').remove();
+							}
+							else
+							{
+								$('#uploadBtn').html(response.result || "上传失败");
+							}
+						}
+					};
+					xhr.upload.addEventListener('progress', function(event){
+						if(event.lengthComputable) {
+							var howmuch = (event.loaded / event.total) * 100;
+							$('#uploadBtn').html('正在上传:'+Math.ceil(howmuch)+'%').addClass('disabled');
+						} else {
+							$('#uploadBtn').html('无法计算上传进度').addClass('disabled');
+						}
+					}, false);
+					xhr.send(formData);
+				}
+			});
+			
+			$('#brandForm').validate({
+				errorElement: 'span', //default input error message container
+				errorClass: 'help-block', // default input error message class
+				focusInvalid: false, // do not focus the last invalid input
+				ignore: "",
+				rules: {
+					ch_name: {
+						required: true
+					},
+					en_name: {
+						required: true
+					},
+					uploadValue: {
+						required: true
+					},
+					origin:{
+						required:true,
+					}
+				},
+				messages:{
+					ch_name: {
+						required: "请填写中文名"
+					},
+					en_name: {
+						required:  "请填写英文名"
+					},
+					uploadValue: {
+						required: "请上传品牌LOGO"
+					},
+					origin:{
+						required:"请选择国家",
+					}
+				},
+				highlight: function(element) { // hightlight error inputs
+					console.log(element);
+					$(element).closest('.form-group').addClass('has-error'); // set error class to the control group
+				},
+				success: function(label) {
+					label.closest('.form-group').removeClass('has-error');
+					label.remove();
+				},
+				submitHandler:function(form){
+					var data = {
+						{%if $smarty.get.a==edit_brand%}
+						id:'{%$smarty.get.id|default:null%}',
+						{%/if%}
+						name_cn:$(form).find('[name=ch_name]').val(),
+						name_en:$(form).find('[name=en_name]').val(),
+						logo:$(form).find('[name=uploadValue]').val(),
+						origin:$(form).find('[name=origin]').val(),
+						description:$(form).find('[name=description]').val(),
+					};
+					$.post('{%if $smarty.get.a==edit_brand%}./index.php?m=ajax&c=brand&a=save{%else%}./index.php?m=ajax&c=brand&a=create{%/if%}',data,function(response){
+						if(response.code!=1)
+						{
+							bootbox.alert(response.result);
+						}
+						else
+						{
+							window.location = './index.php?c=html&a=brand';
+						}
+					});
+				}
+			});
+		</script>
+	</body>
+</html>

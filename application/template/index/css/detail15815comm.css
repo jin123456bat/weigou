@@ -1,0 +1,94 @@
+
+em,i{font-style: normal;}
+
+/*评论详情*/
+.u_lnkmore_comm{background:#ff8a81;color:#fff!important;width:140px;height: 32px; line-height:32px; text-align:center;
+            font-family:Arial,"宋体";font-size:12px;display:inline-block;margin:20px 0;}
+ .u_lnkmore_comm:hover{opacity: 0.85;filter:alpha(opacity=85);}
+
+
+.f_sys_comm_tlt{border-bottom:1px solid #e8e6e6;overflow: hidden;text-align: left;padding:20px 25px;}
+
+.f_sys_comm_tlt_num{float:right;}
+
+#borderDianping{background:#f9f9f9;}
+#borderDianping a.page_boder_a,.page_more_lnk{
+    display:inline-block;
+    margin-right:0;
+    width:48px;
+    height:14px;
+    border-left: 1px solid #ccc;
+    vertical-align: middle;
+   line-height:14px;
+   color:#666;
+   font-size:12px;
+   text-align: right;
+}
+
+.f_sys_comm_lst{padding:0 25px; background:#f9f9f9;}
+/*.f_sys_comm_lst dl:last-child{border-bottom:none;}*/
+.f_sys_comm_lst dl{border-bottom: 1px solid #fff;padding:27px 0 23px;overflow: hidden;}
+.f_sys_comm_lst dl:after{clear:both;visibility:hidden;font-size: 0;height: 0;display: block;}
+.f_sys_comm_lst dd{float:left;margin-right: 17px;}
+.f_sys_comm_lst dd img{vertical-align: middle;}
+.f_sys_comm_lst dt{padding-left:63px;position: relative;z-index: 1;text-align: left;}
+.f_sys_comm_star{position: absolute;right:0; top: 0px;}
+.f_sys_comm_time{display:block;margin-bottom: 7px;}
+.f_sys_comm_time,.f_sys_comm_txt span,.f_sys_comm_show span{color:#999;}
+.f_sys_comm_txt span,.f_sys_comm_show span{padding-right: 15px;}
+.f_sys_comm_show {line-height: 20px;}
+.f_sys_comm_show span{float:left;}
+.f_sys_comm_txt{color:#666;line-height: 20px;text-indent:-69px;padding-left:70px;}
+/*wedding.css 复制过来*/
+
+/*评论增加图片选择*/
+.comm_title_pic{
+    width:auto;
+    height:18px;
+    line-height:18px;
+    color:#666;
+    display:inline-block;
+    vertical-align: middle;padding-right: 19px;
+    
+}
+.comm_title_pic i{color:#f6827a;font-family:Arial,"宋体";font-weight:bold;display: inline-block;padding:0 3px;font-size: 14px;}
+.comm_title_pic .select_pic{
+    width: 16px;
+    height: 18px;
+    margin-top: 2px;
+    margin-right: 6px;
+    display: inline-block;
+    vertical-align: middle;
+    background: url("http://img.zbird.cn/ww3/weddings/select_pic.png") no-repeat left top;
+}
+.comm_title_pic .select_pic_hover{
+    background: url("http://img.zbird.cn/ww3/weddings/select_pic.png") no-repeat right top;
+}
+.comm_title_pic em{
+   
+    font-style: normal;
+    height:18px;
+    display:inline-block;
+    line-height:18px;
+}
+.comm_title_pic span{
+    width:auto;
+    height:18px;
+    display:inline-block;
+    line-height:18px;
+    font-size:14px;
+    margin-left:6px;
+    font-weight:bold;
+    color:#f35041; vertical-align: middle;
+}
+.f_sys_comm_star label {
+    margin-right: 0px;
+   
+    display: inline-block;
+    width: 14px;
+    height: 15px;
+    vertical-align: middle;
+    background-color: red;
+    background: url('http://img.zbird.cn//rate/star_show_gray.png') no-repeat left top;
+}
+/*end*/

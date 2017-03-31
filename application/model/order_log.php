@@ -8,8 +8,8 @@ class order_logModel extends model
 		parent::__construct($table);
 	}
 	
-	function add($orderno,$content)
+	function add($orderno,$content,$aid,$status,$note = '')
 	{
-		return $this->insert([$orderno,$_SERVER['REQUEST_TIME'],$content]);
+		return $this->insert([$orderno,$_SERVER['REQUEST_TIME'],$content,$aid,$note,$status]);
 	}
 }

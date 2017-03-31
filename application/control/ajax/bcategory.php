@@ -11,13 +11,6 @@ class bcategory extends ajax
 	 */
 	function create()
 	{
-		$adminHelper = new admin();
-		$aid = $adminHelper->getAdminId();
-		if (empty($aid))
-		{
-			return new json(json::NOT_LOGIN);
-		}
-		
 		$name = $this->post('name','','trim|htmlspecialchars');
 		$sort = $this->post('sort',0);
 		$bc_id = $this->post('bc_id',NULL,'intval');
@@ -47,15 +40,22 @@ class bcategory extends ajax
 		return new json(json::OK,NULL,$this->model('bcategory')->where('id=?',[$this->post('id',0,'intval')])->find());
 	}
 	
+	function setStockLimit()
+	{
+		$id = $this->post('id',0,'intval');
+		$stock_limit = $this->post('stock_limit',0,'intval');
+		if ($stock_limit>100 || $stock_limit<0)
+		{
+			return new json(json::PARAMETER_ERROR,'必须在0到100之间');
+		}
+		$this->model('bcategory')->where('id=?',[$id])->limit(1)->update([
+			'stock_limit'=>$stock_limit,
+		]);
+		return new json(json::OK);
+	}
+	
 	function save()
 	{
-		$adminHelper = new admin();
-		$aid = $adminHelper->getAdminId();
-		if (empty($aid))
-		{
-			return new json(json::NOT_LOGIN);
-		}
-		
 		$id = $this->post('id',0,'intval');
 		$name = $this->post('name','','trim|htmlspecialchars');
 		$sort = $this->post('sort',0,'intval');
@@ -96,17 +96,27 @@ class bcategory extends ajax
 		return new json(json::OK,NULL,$result);
 	}
 	
+	function source()
+	{
+		$A = $this->model('bcategory')->where('bc_id is null')->orderby('sort','asc')->select('id,name');
+		foreach ($A as &$category)
+		{
+			$child = $this->model('bcategory')->where('bc_id=?',[$category['id']])->select('id,name');
+			foreach ($child as &$cate)
+			{
+				$c = $this->model('bcategory')->where('bc_id=?',[$cate['id']])->select('id,name');
+				$cate['child'] = $c;
+			}
+			$category['child'] = $child;
+		}
+		return new json($A);
+	}
+	
 	/**
 	 * 移除分类
 	 */
 	function remove()
 	{
-		$adminHelper = new admin();
-		$aid = $adminHelper->getAdminId();
-		if (empty($aid))
-		{
-			return new json(json::NOT_LOGIN);
-		}
 		$id = $this->post('id',0,'intval');
 		if (empty($id))
 		{
@@ -122,5 +132,19 @@ class bcategory extends ajax
 			return new json(json::OK);
 		}
 		return new json(json::PARAMETER_ERROR,'删除失败');
+	}
+	
+	function __access()
+	{
+		$adminHelper = new admin();
+		return array(
+			array(
+				'deny',
+				'actions' => ['create','setStockLimit','save','remove'],
+				'message' => new json(json::NOT_LOGIN),
+				'express' => empty($adminHelper->getAdminId()),
+				'redict' => './index.php?c=admin&a=login',
+			),
+		);
 	}
 }

@@ -29,7 +29,8 @@
                 <img src="{%$product[product].image%}">
             </div>
             <div class="des">
-                <div class="flag" {%if !empty($product[product].origin)%}style="background-image:url({%$product[product].origin.logo%});"{%/if%}>{%$product[product].origin.name%}进口&nbsp;{%$product[product].store%}发货</div>
+                <div class="flag" {%if !empty($product[product].origin)%}style="background-image:url({%$product[product].origin.logo%});"{%/if%}>
+                {%if $product[product].origin.id==42%}国产{%else%}{%$product[product].origin.name%}进口{%/if%}&nbsp;{%$product[product].store%}发货</div>
                 <div class="name">{%$product[product].name%}</div>
                 <div class="price">
 					{%if isset($user) && $user.vip==1%}

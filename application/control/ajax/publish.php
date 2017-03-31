@@ -6,18 +6,23 @@ use application\message\json;
 
 class publish extends ajax
 {
+	private $_aid;
+	
+	function lists()
+	{
+		$result = $this->model('publish')->where('isdelete=?',[0])->select();
+		return new json(json::OK,NULL,$result);
+	}
+	
     function create()
     {
-        $admin = $this->session->id;
-        $name = $this->post('name');
-        $password = $this->post('password');
+        $name = $this->post('name','','trim');
+        $password = $this->post('password','','trim');
         if (empty($name) || empty($password)){
-            $this->model("admin_log")->insertlog($admin, '商户管理，增加供应商供应商失败（信息不完整），商户名：' . $name);
             return new json(json::PARAMETER_ERROR, '请填写完整信息');
         }
 
         if (!empty($this->model('publish')->where('name=?', [$name])->find())) {
-            $this->model("admin_log")->insertlog($admin, '商户管理，增加供应商供应商失败（用户名已经存在），商户名：' . $name);
             return new json(json::PARAMETER_ERROR, '用户名已经存在');
         }
 
@@ -28,10 +33,9 @@ class publish extends ajax
             'deletetime' => $_SERVER['REQUEST_TIME']
         ])
         ) {
-            $this->model("admin_log")->insertlog($admin, '商户管理，增加供应商供应商成功，商户名：' . $name,1);
+            $this->model("admin_log")->insertlog($this->_aid, '商户管理，增加供应商供应商成功，商户名：' . $name,1);
             return new json(json::OK);
         }
-        $this->model("admin_log")->insertlog($admin, '商户管理，增加供应商供应商失败，商户名：' . $name);
         return new json(json::PARAMETER_ERROR);
     }
 
@@ -51,5 +55,24 @@ class publish extends ajax
         }
         $this->model("admin_log")->insertlog($admin, '商户管理，供应商删除失败，商户id：' . $id);
         return new json(json::PARAMETER_ERROR);
+    }
+    
+    function __access()
+    {
+    	$adminHelper = new admin();
+    	$this->_aid = $adminHelper->getAdminId();
+    	return array(
+    		array(
+    			'deny',
+    			'actions' => [
+    				'lists',
+    				'create',
+    				'remove'
+    			],
+    			'message' => new json(json::NOT_LOGIN),
+    			'express' => empty($this->_aid),
+    			'redict' => './index.php?c=admin&a=login',
+    		),
+    	);
     }
 }

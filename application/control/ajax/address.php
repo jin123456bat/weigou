@@ -221,8 +221,13 @@ class address extends ajax
 	function mylists()
 	{
 		$userHelper = new \application\helper\user();
+		$uid = $userHelper->isLogin();
+		if (empty($uid))
+		{
+			return new json(json::NOT_LOGIN);
+		}
 		$filter = [
-			'uid' => $userHelper->isLogin(),
+			'uid' => $uid,
 			'isdelete' => 0,
 			'parameter' => 'address.id,
 							address.name,

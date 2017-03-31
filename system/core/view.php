@@ -168,17 +168,25 @@ class view extends control
      */
     function resource($parameter)
     {
-        $fileid = $parameter['file'];
-        $uploadModel = $this->model('upload');
-        $path = $uploadModel->get($fileid, 'path');
-        if (isset($parameter['full']) && $parameter['full'] == 1) {
-            $path = ($this->http->isHttps() ? 'https://' : 'http://') . $this->http->host() . $this->http->path() . trim($path, '.');
-        }
-        if (isset($parameter['urlencode']) && $parameter['urlencode'] == 1) {
-            $path = urlencode($path);
-        }
-        return $path;
-
+    	if (isset($parameter['file']))
+    	{
+	        $fileid = $parameter['file'];
+	        
+	        $uploadModel = $this->model('upload');
+	        $path = $uploadModel->get($fileid, 'path');
+	        if (isset($parameter['full']) && $parameter['full'] == 1) {
+	            $path = ($this->http->isHttps() ? 'https://' : 'http://') . $this->http->host() . $this->http->path() . trim($path, '.');
+	        }
+	        if (isset($parameter['urlencode']) && $parameter['urlencode'] == 1) {
+	            $path = urlencode($path);
+	        }
+	        return $path;
+    	}
+    	else if (isset($parameter['path']))
+    	{
+    		$filepath = './application/template'.$parameter['path'];
+    		return $filepath.'?'.filemtime($filepath);
+    	}
     }
 
     /**

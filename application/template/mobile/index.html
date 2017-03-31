@@ -119,9 +119,8 @@
                     <img src="{%$product[product].image%}">
                 </div>
                 <div class="des">
-                    <div class="flag"
-                         style="background:url({%$product[product].origin.logo%}) no-repeat scroll left center/1.5rem 1.5rem;">
-                        {%$product[product].origin.name%}进口&nbsp;{%$product[product].store%}发货
+                    <div class="flag" style="background:url({%$product[product].origin.logo%}) no-repeat scroll left center/1.5rem 1.5rem;">
+                        {%if $product[product].origin.id==43%}国产{%else%}{%$product[product].origin.name%}进口{%/if%}&nbsp;{%$product[product].store%}发货
                     </div>
                     <div class="name">{%$product[product].name%}</div>
                     <div class="price">

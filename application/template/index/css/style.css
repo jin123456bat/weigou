@@ -1,0 +1,854 @@
+ 
+html, body { margin: 0 auto; padding: 0; text-align: center; font:12px Arial, "宋体"; } 
+html { overflow-y: scroll; }
+form, dd, dl, dt, ul, li, ul, ol, div, p { margin:0; padding:0; } 
+img { padding:0; margin:0; border:0; }
+li { list-style:none; }
+body, table, td, th, input, select, textarea, li, dl, dd, dt { color: #333; font-size: 12px; font-family:Arial, "宋体"; }
+h1, h2, h3, h4, h5, h6, p { margin:0; padding:0; font-size:12px; }
+input, select, textarea { background-color: #fff; color: #7f7f7f; border: 1px solid #ccc; text-align: left; margin: 2px 0 2px 0; }
+textarea { overflow: auto; }
+input.checkbox, input.radio { background: transparent; border: 0; vertical-align: middle; margin: 0; padding: 0; }
+input.button { text-align: center; border: 2px outset #ccc; }
+input.text { height: 14px; width: 100px; margin-bottom: 3px; +margin-bottom: 4px; /*only IE*/ }
+input.image { background: transparent; border: 0; vertical-align: middle; margin: 0; padding: 0; }
+label.validator_error { padding-left: 14px; margin: 0 2px 0 0px; display: block; color: #A41F24; background: url("http://img.zbird.cn/unchecked-1.gif") no-repeat left center; }
+label.validator_success { padding-left: 14px; margin: 0 2px 0 2px; color: #E35075; display: inline; background:url("http://img.zbird.cn/checked-1.gif") no-repeat left center; }
+
+.nowrap { white-space: nowrap; }
+.wrap { white-space: normal; }
+.ascroll { overflow: auto; }
+.scroll { overflow: scroll; }
+.floatL { float: left;margin: auto;}
+.floatR { float: right; margin: auto; }
+.center { text-align: center; }
+.bold { font-weight: bold; }
+.normal { font-weight: normal; }
+.deline { text-decoration: line-through; }
+.underline { text-decoration: underline; }
+.clear { clear: both; }
+.resetClear { clear: both; height: 0px; line-height: 0px; font-size:0px; margin: 0; padding: 0; }
+.pointer { cursor: pointer; }
+.hide { display: none; }
+.boderNone { border:0; }
+.allShadow { position:relative; width:100%; z-index:990;}
+.allShadow .shadows { position:absolute; width:100%; background:url('http://img.zbird.cn/ww3/shadow.png') repeat-x; height:8px; top:0; left:0;}
+
+.red{ color: #F3776E;text-decoration: none;}
+a.red:link,a.red:visited{ color: #F3776E;text-decoration: none;}
+a.red:hover{ text-decoration: underline; color: #F3776E;}
+a.red:active {color:#F3776E; text-decoration:underline;}
+
+.white{color: #FFF;}
+a.white:link,a.white:visited{ color: #FFF;text-decoration: none;}
+a.white:hover{ text-decoration: underline; color: #FFF;}
+a.white:active {color:#FFF; text-decoration:underline;}
+
+.orange{color: #B19793;}
+a.orange:link,a.orange:visited{ color: #B19793;text-decoration: none;}
+a.orange:hover{ text-decoration: underline; color: #B19793;}
+a.orange:active {color:#B19793; text-decoration:underline;}
+
+.gray_333{ color: #333;}
+a.gray_333:link,a.gray_333:visited{ color: #333;text-decoration: none;}
+a.gray_333:hover{ text-decoration: underline; color: #333;}
+a.gray_333:active {color:#333; text-decoration:underline;}
+
+.gray_666{color: #666;}
+a.gray_666:link,a.gray_666:visited{ color: #666;text-decoration: none;}
+a.gray_666:hover{ text-decoration: underline; color: #666;}
+a.gray_666:active {color:#666; text-decoration:underline;}
+
+.gray_999{ color: #999;}
+a.gray_999:link,a.gray_999:visited{ color: #999;text-decoration: none;}
+a.gray_999:hover{ text-decoration: underline; color: #999;}
+a.gray_999:active {color:#999; text-decoration:underline;}
+
+a.collect:link,a.collect:visited{ color:#999; text-decoration:underline;}
+a.collect:hover{ color:#666;text-decoration:underline;}
+
+.blue{color: #136DC1;}
+a.blue:link,a.blue:visited{ color: #136DC1;text-decoration: none;}
+a.blue:hover{ text-decoration: underline; color: #136DC1;}
+a.blue:active {color:#136DC1; text-decoration:underline;}
+
+.font12 { font-size:12px; }
+.font14{ font-size:14px; }
+.font16 { font-size:16px; }
+.color_666 { color:#666; }
+
+.loadingShow { position:absolute; display:none; width:180px; height:70px; z-index:9001; }
+
+.head_top { height:28px; border-bottom:1px solid #D9D9D9; background-color:#F2F2F2; overflow:hidden; }
+.head_top dt { width:980px; height:27px; margin:0 auto; }
+.head_top li { float:left; }
+.head_top dt ol li { height:26px; line-height:26px; color:#666; }
+.head_top dt ol a { color:#666; text-decoration:none; }
+.head_top dt ol span { padding:0 7px; }
+.head_top dt ul { float:right; }
+.head_top dt ul li { color:#666; }
+.head_top dt ul p { padding:0 8px; height:27px; line-height:27px; float:left; }
+.head_top dt ul a { color:#666; text-decoration:none; height:20px; line-height:27px; float:left; }
+.head_top dt ul a:hover { color:#F2776C; text-decoration:underline;  }
+.head_top .line { height:0; line-height:0; font-size:0; border-bottom:1px solid #FFF; }
+
+#headTopMemberInfoBar a:hover{cursor:pointer;text-decoration:underline;color:#F2776C;}
+#headerCart { width:110px; height:17px; margin:5px 12px 0 0; padding:0; border:1px solid #D9D9D9; color:#666; cursor:pointer; float:left; background:#FFF; overflow:hidden;z-index:999; }
+#headerCartFloat{background: none repeat scroll 0 0 #FFFFFF;border: 1px solid #F2776C;border-bottom:none;border-top:none;color: #666666;cursor: pointer;height: 3px;overflow: hidden;width: 110px;position:absolute;top:22px;margin-left:-26px;margin-left:-26px \9;+margin-left:-94px;z-index:1200;display:none;}	
+#headerCart span { float:left; overflow:hidden; cursor:pointer; margin:0; padding:0; border:0; }
+#headerCart label { height:14px; float:left; overflow:hidden; cursor:pointer; margin:0; padding:0; }
+#headerCart .ico { width:16px; height:14px; margin:1px 5px 1px 4px; border:0; float:left; cursor:pointer;  background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -709px 0; }
+#headerCart .arrow { width:11px; height:14px; margin:1px 3px 1px 3px; border:0; float:right; cursor:pointer; background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -615px 3px; }
+#headerCart .arrow_un { width:11px; height:14px; margin:1px 3px 1px 3px; border:0; float:right; cursor:pointer; background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -630px 3px; }
+#headerCart .cont { height:14px; line-height:14px; padding-top:1px; padding-top:2px\9; border-bottom:1px solid #FFF; }
+
+
+#headerCart .hover{ border-bottom:1px solid #666; }
+#headerCart	.cont:hover { text-decoration: underline;color:#F2776C; }
+#headerCart .cont .count { width:20px; height:14px; line-height:14px; text-align:center; color:#F2776C; font-weight:bold}
+
+#headerCartContent { width:300px; border:1px solid #F2776C; z-index:1010; position:absolute; display:none; text-align:left; background-color:#fff; float:left; overflow:hidden; }
+#headerCartContent dd.item { width:280px; height:60px; padding:0 10px; overflow:hidden; }
+#headerCartContent dd.item:hover { background:#FDF3EB; }
+#headerCartContent dd.item ul { width:280px; height:48px; padding-top:4px; float:left; }
+#headerCartContent dd.item li { float:left; }
+#headerCartContent dd.item a { color:#666; text-decoration:none; }
+#headerCartContent dd.item a:hover{ text-decoration: underline; }
+#headerCartContent dd.item .img { width:50px; height:50px; border:1px solid #CCCCCC; }
+#headerCartContent dd.item .info { width:166px; height:52px; padding:6px 0 0 10px; }
+#headerCartContent dd.item .info .name { width:166px; font-weight:normal; float:left; }
+#headerCartContent dd.item .info .price { width:166px; font-weight:normal; padding-top:6px; color:#F2776C; float:left; }
+#headerCartContent dd.item .del { width:42px; height:46px; padding:6px 0 0 10px; }
+#headerCartContent dd.item .del span { width:30px; padding-left:12px;  cursor:pointer; background:url("http://img.zbird.cn/ww3/ico/del.gif") no-repeat 0 4px; }
+#headerCartContent dd.item .del span:hover {text-decoration: underline;}
+#headerCartContent dd.oper { width:280px; height:55px; padding:0 10px; overflow:hidden; }
+#headerCartContent dd.oper ul.oper { width:280px; margin-top:10px; padding-top:10px; border-top:1px solid #CCCCCC; }
+#headerCartContent dd.oper ul.oper li { float:left; }
+#headerCartContent dd.oper ul.oper .total { padding:4px 0 0 0;font-weight:bold}
+#headerCartContent dd.oper ul.oper .price { padding:4px 0 0 0; color:#F2776D; }
+#headerCartContent dd.oper ul.oper .cart { height:24px; float:right; }
+#headerCartContent dd.norecord { width:280px; height:50px; line-height:50px; text-align:center; }
+
+.head_top .weiboAdd{position:absolute;z-index:999;float:left;}
+.head_top .weiboAddTop{position:absolute;border: 1px solid #F3776E;border-bottom:none;width:79px;+width:84px;margin:3px -9px;margin:2px -9px\9;+margin:3px -108px;height:24px;height:24px\9;line-height:20px;text-align:center;z-index:1200;background:#FFF;}
+.head_top .weiboAddCont{position:absolute;z-index:999;top:24px;border: 1px solid #F3776E;width:153px;margin:3px -9px;margin:2px -9px\9;+margin:3px -108px;background:#FFF;}
+.head_top .weiboAddCont li{margin-bottom:5px;}
+.head_top .weiboAddCont li:hover{background:#FDF3EB;}
+.head_top .weiboAddCont li h5{margin-bottom:10px;text-align:left;padding:0 10px;font-weight:normal;}
+.head_top .weiboAddCont li h5 a{color:#3C98C7;}
+.head_top .weiboAddCont li h5 a:hover{color:#3C98C7;}
+.head_top .weiboAddCont li h5 img{vertical-align:top;}
+.head_top .weiboAddLine{border-bottom:solid 1px #CCC;padding-bottom:10px;}
+.head_top .weiboAddNoLine{padding-bottom:10px;}
+
+.head_top .tyzxAdd{position:absolute;height:280px;z-index:999;width:79px;+width:81px;margin:3px -9px;margin:2px -9px\9;+margin:3px -84px;line-height:20px;background:#FFF;;border: 1px solid #F3776E;}
+.head_top .tyzxAdd .tyzxAddTop{border-bottom:none;text-align:center}
+.head_top .tyzxAdd .tyzxAddTop span:hover{color:#F2776C; text-decoration: underline; cursor:pointer;}
+.head_top .tyzxAdd .tyzxAddCont{border-top:none;}
+.head_top .tyzxAdd .tyzxAddCont ul li h5{font-weight:normal;width:71px;+width:75px;cursor:pointer;text-align:left;padding-left:8px}
+.head_top .tyzxAdd .tyzxAddCont ul a{line-height:20px;}
+.head_top .tyzxAdd .tyzxAddCont ul li h5:hover{background:#FDF3EB;text-decoration: none;color:#F2776C;line-height:20px;}
+
+.head_top .arrow { width:11px; height:14px; margin:6px 1px ; border:0; float:left; cursor:pointer; background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -615px 3px; }
+.head_top .arrow_un { width:11px; height:14px; margin:2px 2px;+margin:-18px -1px;  border:0; float:right; cursor:pointer; background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -630px 3px; }
+
+
+
+
+.head_logo { width:980px; height:97px; margin:0 auto; overflow:hidden; }
+.head_logo dt { height:97px; float:left; overflow:hidden; }
+.head_logo dt li { height:97px; float:left; overflow:hidden; }
+.head_logo dd { width:234px; height:44px; margin:26px 0 0 0; float:right; background:url("http://img.zbird.cn/ww3/header/400.jpg"); }
+.head_logo dd h1{display:none;}
+.head_nav { height:40px; margin:0 auto; overflow:hidden; background:url("http://img.zbird.cn/ww3/header/bg_nav.jpg") repeat-x; }
+.head_nav dd { width:980px; height:40px; margin:0 auto; }
+.head_nav dd ol { float:right; }
+.head_nav dd ol li { padding:11px 0 0 18px; float:left; }
+.head_nav dd ol li a { padding-left:6px; float:left; color:#CCC; text-decoration:none; background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -722px -80px;}
+.head_nav dd ol li a:hover { color:#CE9386; }
+.head_nav dd ul { float:left; }
+.head_nav dd ul li { overflow:hidden; }
+.head_nav dd ul .sub { width:400px; margin:40px 0 0 0; display:none; position:absolute; z-index:1002; cursor:none; filter: Alpha(opacity=80); }
+.head_nav dd ul .sub ul { padding:0; padding:11px 13px 13px 20px; float:left; opacity:0.8; background:#3C3C3C; cursor:pointer;}
+.head_nav dd ul .sub ol { padding:0; padding:11px 30px 13px 0; float:left; opacity:0.8; background:#3C3C3C; cursor:pointer;filter: }
+.head_nav dd ul .sub li { line-height:24px; margin:0; padding:0; text-align:left; float:none; }
+.head_nav dd ul .sub a { padding:0; margin:0; color:#FFF; text-decoration:none; background-image:none; float:none; }
+.head_nav dd ul .sub a:hover { color:#CD9285; }
+.head_nav dd ul .sub span { padding-right:7px; }
+.head_nav dd ul .sub label { padding-left:20px; }
+.head_nav dd ul .nav_index_a { width:55px; height:40px; float:left; }
+.head_nav dd ul .nav_bg { width:110px; height:40px; float:left; }
+.head_nav dd ul .new { width:21px; height:11px; margin:3px 0 0 0; padding:0; cursor:pointer; float:right; background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -644px 0; overflow:hidden; }
+.head_nav dd ul .new2 { padding-left:6px; margin:0; height:22px; line-height:22px; font-weight:bold; font-family:Arial, Helvetica, sans-serif; color:#CD9285; }
+.head_nav .nav_index { width:55px; height:40px; cursor:pointer; float:left; background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat 0 -225px; overflow:hidden; }
+.head_nav .nav_luozuan { width:90px; height:40px; cursor:pointer; float:left; background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -55px -225px; overflow:hidden; }
+.head_nav .nav_jiezhi { width:90px; height:40px; cursor:pointer; float:left; background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -145px -225px; overflow:hidden; }
+.head_nav .nav_duijie { width:90px; height:40px; cursor:pointer; float:left; background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -235px -225px; overflow:hidden; }
+.head_nav .nav_accessory { width:105px; height:40px; cursor:pointer; float:left; background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -325px -225px; overflow:hidden; }
+/*.head_nav .nav_diaozhui { width:90px; height:40px; cursor:pointer; float:left; background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -325px -225px; overflow:hidden; }
+.head_nav .nav_ershi { width:90px; height:40px; cursor:pointer; float:left; background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -415px -225px; overflow:hidden; }
+.head_nav .nav_bracelet { width:90px; height:40px; cursor:pointer; float:left; background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -505px -225px; overflow:hidden; }
+.head_nav .nav_zhubao { width:110px; height:40px; cursor:pointer; float:left; background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -505px -225px; overflow:hidden; }*/
+.head_nav .nav_teshe { width:110px; height:40px; cursor:pointer; float:left; background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -431px -225px; overflow:hidden; }
+.head_nav .nav_on_index { width:55px; height:40px; cursor:pointer; float:left; background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat 0 -265px; overflow:hidden; }
+.head_nav .nav_on_luozuan { width:90px; height:40px; cursor:pointer; float:left; background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -55px -265px; overflow:hidden; }
+.head_nav .nav_on_jiezhi { width:90px; height:40px; cursor:pointer; float:left; background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -145px -265px; overflow:hidden; }
+.head_nav .nav_on_duijie { width:90px; height:40px; cursor:pointer; float:left; background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -235px -265px; overflow:hidden; }
+.head_nav .nav_on_accessory { width:105px; height:40px; cursor:pointer; float:left; background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -325px -265px; overflow:hidden; }
+/*.head_nav .nav_on_diaozhui { width:90px; height:40px; cursor:pointer; float:left; background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -325px -265px; overflow:hidden; }
+.head_nav .nav_on_ershi { width:90px; height:40px; cursor:pointer; float:left; background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -415px -265px; overflow:hidden; }
+.head_nav .nav_on_bracelet { width:90px; height:40px; cursor:pointer; float:left; background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -505px -265px; overflow:hidden; }
+.head_nav .nav_on_zhubao { width:110px; height:40px; cursor:pointer; float:left; background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -505px -265px; overflow:hidden; }*/
+.head_nav .nav_on_teshe { width:110px; height:40px; cursor:pointer; float:left; background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -431px -265px; overflow:hidden; }
+.head_hot { height:33px; overflow:hidden; background-color:#EFEFEF; overflow:hidden; }
+.head_hot form { height:30px; margin-top:1px; border:1px solid #FFF; overflow:hidden; }
+.head_hot dd { width:980px; height:30px; margin:0 auto; overflow:hidden; }
+.head_hot p { float:left; }
+.head_hot p span { height:28px; line-height:28px; padding:0 6px 0 8px; float:left; color:#666; font-weight:bold; }
+.head_hot p label { height:28px; line-height:28px; padding:0 20px; float:left; }
+.head_hot p a { height:28px; line-height:28px; float:left; color:#666; text-decoration:none; }
+.head_hot p a:hover { text-decoration:underline; }
+.head_hot ul { float:right; }
+.head_hot ul li { float:left; }
+.head_hot ul input { width:136px; height:22px; line-height:22px; padding-left:8px; margin:1px 4px 0 0; border-color:#CCC; color:#999; float:left; }
+.head_hot ul img { margin:1px 0 0 0; }
+.head_hot .searchBtn{ background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -471px 0px; width:50px; height:26px;}
+
+.foot_delivery { width:928px; height:50px; margin:10px auto 10px auto; padding:3px 25px 0 25px; border:1px solid #D3D9DC; }
+.foot_delivery img { margin:0; padding:0; border:0; }
+.foot_delivery dd a {float:left;}
+.foot_delivery .img01{ background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -179px -83px; width:152px; height:44px;}
+.foot_delivery .img02{ background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -331px -83px; width:162px; height:44px;}
+.foot_delivery .img03{ background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -179px -128px; width:168px; height:44px;}
+.foot_delivery .img04{ background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -347px -128px; width:169px; height:44px;}
+.foot_delivery .img05{ background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -179px -173px; width:150px; height:44px;}
+.foot_delivery .img06{ background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -329px -173px; width:127px; height:44px;}
+
+.foot_service { height:100px; padding:13px 0 13px 0; border-top:5px solid #FBC9BF; background-color:#F2F2F2; text-align:left; }
+.foot_service dd { width:980px; margin:0 auto; overflow:hidden; }
+.foot_service p { width:164px; padding:0 0 0 38px; float:left; }
+.foot_service ul { margin-top:8px; padding:2px 37px 0 38px; border-left:1px dashed #C8C8C8; float:left; }
+.foot_service ul span { font-weight:bold; color:#8A8A8A; }
+.foot_service ul a { color:#8A8A8A; text-decoration:none; }
+.foot_service ul a:hover { text-decoration:underline; }
+.foot_service ul li { padding-bottom:6px; }
+.foot_service .logoWrapper{ width:164px; padding:0 0 0 38px; float:left;}
+.foot_service .logoWrapper .logo{ background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -582px -126px; width:143px; height:98px;}
+
+.foot_other { background-color:#F2F2F2; }
+.foot_other dt { width:980px; height:33px; margin:0 auto; padding-left:34px; text-align:left; color:#999; overflow:hidden; }
+.foot_other dt p { line-height:33px; margin:0 15px 0 0; padding:0 0 0 18px; float:left;   }
+.foot_other dt p span { padding:0 4px 0 4px; float:left; }
+.foot_other dt p a { float:left; }
+.foot_other dt .friend { width:249px; height:33px; margin:0; padding:0 0 0 0; float:left; overflow:hidden; }
+.foot_other dt .friend label { padding:0 4px 0 4px; float:left; }
+.foot_other dt .friend li { float:left; }
+.foot_other dt .friend .last { width:17px; height:33px; float:left; margin:0 0 0 0; cursor:pointer;  background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -669px 0; }
+.foot_other dt .friend .next { width:17px; height:33px; float:left; margin:0 0 0 0; cursor:pointer; background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -686px 0;}
+.foot_other dt .friend .tit { width:50px; line-height:33px; color:#999; }
+.foot_other dt .friend .scroller { width:165px; height:30px; padding-top:2px; float:left; OVERFLOW: hidden; }
+.foot_other dt .friend .viewer { width:1530px; float:left; }
+.foot_other dt .friend .viewer ul { width:765px; float:left; }
+.foot_other dt .friend .viewer li { width:85px; height:30px; float:left; OVERFLOW: hidden; }        
+.foot_other dt ol { height:33px; margin:0; padding:0 15px 0 0; float:left;  }
+.foot_other dt ol li { margin:0; padding:0 0 0 0; float:left; color:#999; }
+.foot_other dt ol span { line-height:33px; padding:0 10px 0 12px; float:left; }
+.foot_other dt ol input { width:148px; height:24px; line-height:24px; margin:0; margin-top:3px; padding:0 0 0 3px; }
+.foot_other dt ol img { margin:3px 0 0 4px; _margin-top:4px; }
+.foot_other dt label { margin:0; padding:9px 4px 0 10px; float:left; }
+.foot_other dt a { line-height:33px; margin:0; padding:0; float:left; color:#999; text-decoration:none; }
+.foot_other dt a:hover { text-decoration:underline; }
+.foot_other .subscribe{ background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -525px 0; width:57px; height:26px; margin:3px 0 0 3px;}
+.foot_other .assure { width:980px; margin:0 auto; line-height:20px; padding-bottom:8px; color:#9FB1BA; }
+.foot_other .assure span { padding:0 7px; }
+.foot_other .assure a { color:#9FB1BA; text-decoration:none; }
+.foot_other .assure a:hover { text-decoration:underline; }
+.foot_other .copyright { width:980px; margin:0 auto; padding-bottom:10px; color:#9FB1BA; }
+.foot_other .copyright a { color:#9FB1BA; text-decoration:none; }
+.foot_other .copyright a:hover { text-decoration:underline; }
+.foot_other .img { width:980px; height:60px; margin:0 auto; padding-bottom:10px; color:#9FB1BA; }
+.foot_other .weibo_sina{ background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -708px -36px; width:22px; height:18px; }
+.foot_other .weibo_tecent{ background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -707px -18px; width:17px; height:17px; }
+
+
+#serviceOnlineDiv { z-index:1002; position:absolute; background:url('http://img.zbird.cn/ww3/pubheaderfooter/pc_consult.jpg') left center no-repeat; width:55px;
+			 height:92px;cursor:pointer;right:-51px;}
+#serviceOnlineDiv .max { width:94px; height:300px;margin-top:55px;}
+#serviceOnlineDiv .max .expanding{display:block;}
+#serviceOnlineDiv .max .thumbnail{display:none;}
+.s_logo{width:72px;height:74px;background:url('http://img.zbird.cn/ww3/header/s_logo.png');margin-left:11px;}
+.s_ico_min_out{float:right;width:15px;height:15px;background:url('http://img.zbird.cn/ww3/header/s_ico_min.jpg');background-position:0px -15px;margin-top:58px;margin-right:-2px;cursor:pointer;}
+.s_ico_min_hover{float:right;width:15px;height:15px;background:url('http://img.zbird.cn/ww3/header/s_ico_min.jpg');background-position:15px -15px;margin-top:58px;margin-right:-2px;cursor:pointer;}
+.s_consult_out{width:77px;height:77px;background:url('http://img.zbird.cn/ww3/header/s_consult_out.gif');margin-left:8px;cursor:pointer;}
+.s_consult_hover{width:77px;height:77px;background:url('http://img.zbird.cn/ww3/header/s_consult_hover.jpg');margin-left:8px;cursor:pointer;}
+.s_book_1_out{width:77px;height:37px;background:url('http://img.zbird.cn/ww3/header/s_book_1.jpg');background-position:0px -37px;margin-left:8px;margin-top:1px;cursor:pointer;}
+.s_book_1_hover{width:77px;height:37px;background:url('http://img.zbird.cn/ww3/header/s_book_1.jpg');background-position:77px -37px;margin-left:8px;margin-top:1px;cursor:pointer;}
+.s_logo_t{width:88px;height:74px;}
+.s_ico_max_out{clear:both;float:right;width:15px;height:15px;background:url('http://img.zbird.cn/ww3/header/s_ico_max.jpg');background-position:0px -15px;margin-top:58px;margin-right:-2px;cursor:pointer;}
+.s_ico_max_hover{clear:both;float:right;width:15px;height:15px;background:url('http://img.zbird.cn/ww3/header/s_ico_max.jpg');background-position:15px -15px;margin-top:59px;margin-right:-2px;cursor:pointer;}
+.s_consult2_out{clear:both;float:right;width:29px;height:57px;background:url('http://img.zbird.cn/ww3/header/s_consult.jpg');background-position:0px -57px;margin-right:4px;cursor:pointer;}
+.s_consult2_hover{clear:both;float:right;width:29px;height:57px;background:url('http://img.zbird.cn/ww3/header/s_consult.jpg');background-position:29px -57px;margin-right:4px;cursor:pointer;}
+.s_book_2_out{clear:both;float:right;width:29px;height:57px;background:url('http://img.zbird.cn/ww3/header/s_book_2.jpg');background-position:0px -57px;margin-right:4px;margin-top:1px;cursor:pointer;}
+.s_book_2_hover{clear:both;float:right;width:29px;height:57px;background:url('http://img.zbird.cn/ww3/header/s_book_2.jpg');background-position:29px -57px;margin-right:4px;margin-top:1px;cursor:pointer;}
+.s_totop_out{right:15px;bottom:15px;overflow: hidden;position: fixed;width: 40px;height:40px;z-index:1002;background:url('http://img.zbird.cn/ww3/header/s_totop.jpg');background-position:0px -40px;display:none;cursor:pointer;}
+.s_totop_hover{right:15px;bottom: 15px;overflow: hidden;position: fixed;width: 40px;height:40px;z-index:1002;background:url('http://img.zbird.cn/ww3/header/s_totop.jpg');background-position:40px -40px;display:none;cursor:pointer;}
+
+ .service_online_cert { width:240px; padding:0 0 0 20px; text-align:center; }
+.service_online_cert li { width:120px; padding:3px 0 0 0; float:left; text-align:center; }
+.service_online_cert .tit { width:230px; padding:0 0 0 10px; text-align:left; }
+
+
+.bgcolor_f4f4f4 { background-color:#F4F4F4; }
+
+.crumb_nav { background: transparent url('http://img.zbird.cn/ww2/content_nav_prefix.gif') no-repeat 0 15px; padding-left:15px; height:35px; line-height:35px; text-align:left; color:#999; }
+.crumb_nav a { color:#333; text-decoration:none; float:left; }
+.crumb_nav a:hover { color:#333; text-decoration:underline; float:left; }
+.crumb_nav span { padding:0 8px 0 8px; float:left; }
+.crumb_nav h1 { margin:0; padding:0; float:left; font-weight:normal; }
+
+.block { width:980px; margin:0 auto 0 auto; overflow:hidden; }
+.block_border { width:978px; margin:0 auto 0 auto; border:1px solid #D3D9DC; overflow:hidden; }
+.block_border .left { width:198px; float:left; overflow:hidden; }
+.block_border .right { width:779px; float:left; border-left:1px solid #D3D9DC; overflow:hidden; }
+.block_border .left .line { width:199px; height:0; line-height:0; margin:0; padding:0; font-size:0; overflow:hidden; border-bottom:1px solid #D3D9DC; }
+.block_border .left .line2 { width:199px; height:1px; line-height:1px; margin:0; padding:0; font-size:1px; overflow:hidden; background:url("http://img.zbird.cn/ww3/zbird_list01_01.gif") repeat-y; }
+
+.page_nav_area { height:20px; line-height:20px; overflow:hidden; float:right; }
+.page_nav { height:20px; margin:0; padding:0; float:right; }
+.page_nav li.pagenav { height:20px; line-height:20px; margin:0; padding:0 3px 0 2px; float:left; }
+.page_nav input.text { width:38px; height:18px; line-height:18px; margin:0; padding:0; color:#999999; text-align: center; border:1px solid #CCCCCC; }
+.page_nav input.submit { width:41px; height:20px; margin:0; padding:0; border:0; cursor:pointer; background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -425px 0px; }
+.page_nav span.pagenav { background-color:#F3776E; color:#FFF; height:18px; line-height:18px; padding:0 6px 0 7px ; border:1px solid #D3D9DC; float:left; }
+.page_nav a.pagenav { background-color:#FFF; color:#000; height:18px; line-height:18px; padding:0 6px 0 7px; border:1px solid #D3D9DC; text-decoration:none; float:left; }
+.page_nav a.pagenav:hover { background-color:#F3776E; color:#FFF; }
+
+.left_category { width:198px; padding-bottom:15px; text-align:left; overflow:hidden; background-color:#fff; }
+.left_category ol li { height:61px; padding:18px 0 0 15px; background:url("http://img.zbird.cn/ww3/zbird_list01_01.gif") no-repeat center bottom; }
+.left_category h2 { height:34px; line-height:34px; margin:10px 15px 8px 15px; font-size:14px; border-top:1px solid #D3D9DC; border-bottom:1px solid #D3D9DC; }
+.left_category .top { height:34px; line-height:34px; margin-top:0; border-top:0; }
+.left_category p { height:21px; line-heigth:21px; padding-left:36px; }
+.left_category h2 a { padding-left:21px; color:#333; text-decoration:none; background:url("http://img.zbird.cn/ww3/zbird_list01_r11_c4.gif") no-repeat left; }
+.left_category h2 a:hover { text-decoration:underline; }
+.left_category h2 a.checked { padding-left:21px; color:#F3776E; text-decoration:none; background:url("http://img.zbird.cn/ww3/zbird_list01_r9_c4.gif") no-repeat left; }
+.left_category h2 a.checked:hover { padding-left:21px; color:#F3776E; text-decoration:underline; background:url("http://img.zbird.cn/ww3/zbird_list01_r9_c4.gif") no-repeat left; }
+.left_category p a.checked { color:#F3776E; text-decoration:none; }
+.left_category p a { color:#333; text-decoration:none; }
+.left_category p a:hover { text-decoration:underline; }
+.left_category p a.checked:hover { color:#F3776E; text-decoration:underline; }
+
+.left_diamond { width:198px; height:176px; _height:175px; text-align:left; overflow:hidden; }
+.left_diamond .count { height:64px; padding-left:70px; border:1px solid #FFFFFF; background: url("http://img.zbird.cn/ww3/zbird_list01_r18_c4.gif") no-repeat scroll 18px 0 #D6E0E2; }
+.left_diamond h2 { font-size:14px; line-height:23px; padding-top:10px;}
+.left_diamond h2 span { color: #B19793; font-weight: normal; font-size:16px; font-weight:bold; }
+.left_diamond p { line-height:23px; margin:0; color:#999; }
+.left_diamond .search { height:89px; padding:10px; border:1px solid #FFFFFF; border-top:0; background-color:#D6E0E2; }
+.left_diamond .search p { width:160px; height:30px; line-height:30px; margin:10px auto; text-align:center; background:url("http://img.zbird.cn/ww3/zbird_list01_r20_c5.gif") no-repeat;  }
+.left_diamond .search p a { color:#666666; text-decoration:none; }
+.left_diamond .search p a:hover { text-decoration:underline; }
+
+.left_description{ width:198px; text-align:left; overflow:hidden; background:#FFF;}
+.left_description li{ width:198px;}
+.left_description li b{ line-height:40px;  padding-left:15px; font-family:"黑体"; font-size:18px; float:left;}
+.left_description .words{ line-height:22px; background:#FDEDED; padding:15px; color:#666; width:168px;}
+.left_description .ring{ background: url("http://img.zbird.cn/ww3/proexstyle/channel/desc_ring.jpg") no-repeat 10px 10px; width:68px; height:31px; float:left;}
+.left_description .necklace{ background: url("http://img.zbird.cn/ww3/proexstyle/channel/desc_necklace.jpg") no-repeat 10px 9px; width:123px; height:31px; float:left;}
+.left_description .fashion{ background: url("http://img.zbird.cn/ww3/proexstyle/channel/desc_fashion.jpg") no-repeat 10px 8px; width:102px; height:31px; float:left;}
+.left_description .earring{ background: url("http://img.zbird.cn/ww3/proexstyle/channel/desc_earring.jpg") no-repeat 10px 8px; width:68px; height:31px; float:left;}
+.left_description .bracelet{ background: url("http://img.zbird.cn/ww3/proexstyle/channel/desc_bracelet.jpg") no-repeat 10px 8px; width:123px; height:31px; float:left;}
+.left_description .clear{ clear:both;}
+
+.active_new { width:198px; overflow:hidden; margin:0; padding:0; overflow:hidden; }
+.active_new .tit { height:36px; padding:0; margin:0; overflow:hidden; background: url("http://img.zbird.cn/ww3/zbird_list01_r22_c2.gif") no-repeat; }
+.active_new .img { height:240px; _height:239px; padding:1px; margin:0; overflow:hidden; }
+
+.style_list { width:779px; background-color:#FFF; text-align:left; }
+
+.style_list .banner { width:779px; height:120px; background-color:#FFF; font-size:0; float:left; }
+.style_list .title { width:759px; height:30px; padding:0 0 0 34px; background:#FBC9C0; text-align:left; border-bottom:1px solid #D3D9DC; float:left; }
+.style_list .search { padding:12px 10px 0 20px; }
+.style_list .search a { color:#333; text-decoration:none; }
+.style_list .search a:hover { text-decoration:underline; }
+.style_list .search li { height:27px; line-height:27px; text-align:left; }
+.style_list .search li span { padding-right:18px; text-align:left; cursor:pointer; }
+.style_list .search li span.on { font-weight:normal; cursor:default; color:#F3776E;}
+.style_list .search .button { height:24px; padding:0 0 5px 0; float:right; }
+.style_list .search .open { width:76px; height:24px; cursor: pointer; float:right; background:url("http://img.zbird.cn/ww3/button/search_open.gif") no-repeat; }
+.style_list .search .close { width:76px; height:24px; cursor: pointer; float:right; background:url("http://img.zbird.cn/ww3/button/search_close.gif") no-repeat; }
+.style_list .list_head { height:34px; background-color:#E6ECEE; overflow:hidden; }
+.style_list .list_head a { color:#333; text-decoration:none; }
+.style_list .list_head a:hover { text-decoration:underline; }
+.style_list .list_head .tab { width:178px; height:34px; float:left; overflow:hidden; }
+.style_list .list_head .tab_empty { width:178px; height:32px; background:#E6ECEE; border-top:solid 1px #D3D9DC; border-bottom:1px solid #D3D9DC; float:left; overflow:hidden; }
+.style_list .list_head .tab .on { width:88px; height:32px; line-height:32px; border-top:solid 1px #D3D9DC; border-bottom:1px solid #FFF; text-align:center; background:#FFF; float:left; }
+.style_list .list_head .tab .off { width:88px; height:32px; line-height:32px; border-top:solid 1px #D3D9DC; border-bottom:1px solid #D3D9DC; text-align:center; background:#FFF; float:left; }
+.style_list .list_head .tab .off2 { width:89px; height:32px; line-height:32px; border-top:solid 1px #D3D9DC; border-bottom:1px solid #D3D9DC; background:#E6ECEE; float:left; }
+.style_list .list_head .tab .line { width:0; height:34px; border-left:1px solid #D3D9DC; font-size:0; float:left; }
+.style_list .list_head .tab a { width:88px; height:32px; background:#E6ECEE; float:left; }
+.style_list .list_head .order { width:420px; height:32px; border-top:solid 1px #D3D9DC; border-bottom:1px solid #D3D9DC; float:left; }
+.style_list .list_head .order li { height:32px; line-height:32px; float:left; }
+.style_list .list_head .order .tit { padding:0 9px 0 20px; text-align:left; color:#8A8A8A; }
+.style_list .list_head .order img { margin:6px 1px 0 0; }
+.style_list .list_head .num { width:181px; height:32px; border-top:solid 1px #D3D9DC; border-bottom:1px solid #D3D9DC; float:right; }
+.style_list .list_head .num li { height:32px; line-height:32px; text-align:center; float:left; }
+.style_list .list_head .num li.txt { padding:0 5px 0 15px; }
+.style_list .list_head .num li.txt label { font-weight:bold; font-family:Arial, Helvetica, sans-serif; }
+.style_list .list_head .num span.on { width:26px; height:18px; line-height:18px; margin:6px 5px 0 0; border:1px solid #D3D9DC; text-align:center; background-color:#F3776E; color:#FFF; float:left; }
+.style_list .list_head .num span.off { width:26px; height:18px; line-height:18px; margin:6px 5px 0 0; cursor: pointer; border:1px solid #D3D9DC; text-align:center; background-color:#FFF; color:#666; float:left; }
+.style_list .list_shop { width:780px; height:40px; line-height:40px; border-bottom:1px solid #D3D9DC; float:left; overflow:hidden; display:none; }
+.style_list .list_shop li { float:left; }.style_list .list_shop li.tit { padding-left:20px; }
+.style_list .list_shop span { padding:0 12px 0 12px; cursor:pointer; float:left; }
+.style_list .list_shop .on { font-weight:bold; cursor:default; }
+.style_list .list { width:780px; float:left; text-align:center; overflow:hidden; }
+.style_list .list a { color:#666; text-decoration:none; }
+.style_list .list a:hover { text-decoration:underline; }
+.style_list .list ol { width:259px; height:320px; float:left; border-right:solid 1px #FFF; border-bottom:solid 1px #D3D9DC; overflow:hidden; }
+.style_list .list ul { width:259px; height:320px; float:left; border-right:solid 1px #D3D9DC; border-bottom:solid 1px #D3D9DC; overflow:hidden; }
+.style_list .list ul li { float:left; text-align:left; }
+.style_list .list .img { width:255px; height:238px; padding:2px 2px 0 2px; }
+.style_list .list .img span { width:230px; height:238px; padding:0 12px; float:left; background:#fff; }
+.style_list .list .checked { background:#d6e0e2; }
+.style_list .list .checked li { background:#d6e0e2; }
+.style_list .list .checked p { background:#fff; }
+.style_list .list .name { padding-left:20px; font-weight:normal; }
+.style_list .list .name a { color:#666; }
+.style_list .list .name label { padding:12px 0 0 0; margin:0; float:left; }
+.style_list .list .name span { padding:10px 0 0 3px; _padding:9px 0 0 3px; margin:0; float:left; }
+.style_list .list .name img { margin:0; }
+.style_list .list .price { width:228px; padding:9px 0 0 20px; font-weight:bold; font-size:14px; color:#F3776E; }
+.style_list .list .price .unit { font:12px Arial, Helvetica, sans-serif; }
+.style_list .list .price .btn { color:#666; }
+.style_list .list_foot { width:780px; height:24px; line-height:24px; padding:6px 0 0 0; background: #E6ECEE; }
+.style_list .list_foot_bottom { border-bottom:1px solid #D3D9DC; }
+.style_list .list_foot .content { height:24px; line-height:24px; float:right; }
+.style_list .pop_diamond { 
+	width:980px; margin-bottom:0; margin-left:-490px !important; left:50%; bottom:0; font-weight:bold; overflow: hidden; 
+	z-index:1002; position:fixed !important; display:block;
+	_position:absolute;
+	_left:expression(eval(document.documentElement.clientWidth/2+document.documentElement.scrollLeft));
+}
+.style_list .pop_diamond .oper { width:980px; height:10px; padding-left:466px; float:left; }
+.style_list .pop_diamond .bar { width:980px; height:68px; float:left; background:url('http://img.zbird.cn/ww2/product/diamond_info.gif'); }
+.style_list .pop_diamond .open_height { height:68px; }
+.style_list .pop_diamond .close_height { height:4px; }
+.style_list .pop_diamond .cont { height:60px; padding:8px 0 0 15px; float:left; }
+.style_list .pop_diamond .item { height:30px; line-height:30px; float:left; }
+.style_list .pop_diamond .line { height:30px; line-height:30px; padding:0 5px; float:left; }
+.style_list .pop_diamond .tit { padding:6px 0 0 448px; float:left; }
+.style_list .pop_diamond .open { width:47px; height:10px; float:left; cursor: pointer; display:none; background: url('http://img.zbird.cn/ww2/img/button.gif') -148px -166px; }
+.style_list .pop_diamond .close { width:47px; height:10px; float:left; cursor: pointer; background: url('http://img.zbird.cn/ww2/img/button.gif') -148px -155px; }
+.style_list .pop_diamond .font { color: #CC3366; }
+
+.product_pop { padding:2px; background:url('http://img.zbird.cn/ww3/bojin/layer_bg.png');z-index:1002; position: absolute; }
+.product_pop dl {  margin:0; padding:0; }
+.product_pop .top { width:400px; height:35px; line-height:35px; color:#FFF; background: url('http://img.zbird.cn/ww2/common/pop/ing.gif') repeat-x; }
+.product_pop .topL { width:15px; height:35px; float:left; background:#FFF url('http://img.zbird.cn/ww2/common/pop/l.gif') no-repeat; }
+.product_pop .topR { width:15px; height:35px; float:right; background:#FFF url('http://img.zbird.cn/ww2/common/pop/r.gif') no-repeat; }
+.product_pop .middle { width:378px; padding:10px 10px 5px 10px; line-height:200%; border-left:1px solid #F8A0A5; border-right:1px solid #F8A0A5; }
+.product_pop .middle .button { padding:5px 0 0 0; line-height:0; }
+.product_pop .middle img { margin:0 10px 0 10px; }
+.product_pop .footer { width:400px; height:15px; line-height:15px; background: url('http://img.zbird.cn/ww2/common/pop/foot.gif') repeat-x; }
+.product_pop .footerL { width:15px; height:15px; float:left; background:#FFF url('http://img.zbird.cn/ww2/common/pop/l_01.gif') no-repeat; }
+.product_pop .footerR { width:15px; height:15px; float:right; background:#FFF url('http://img.zbird.cn/ww2/common/pop/r_01.gif') no-repeat; }
+
+.product_pop .suptWapper{ background:url('http://img.zbird.cn/ww3/bojin/supt_02.jpg') repeat-x top #FFF; text-align:left;}
+.product_pop .suptWapper .banner01{ background:url('http://img.zbird.cn/ww3/bojin/supt_04.jpg') no-repeat center; height:272px;}
+.product_pop .suptWapper .banner02,.suptWapper .banner03{ width:980px; margin:auto;}
+.product_pop .suptWapper .suptCont{ width:980px; margin:auto;}
+.product_pop .suptWapper .suptCont .list_tit_supt{ background:url('http://img.zbird.cn/ww3/bojin/supt_08.jpg') repeat-x; height:34px; border:solid 1px #7c716b; width:958px; margin:0 auto; padding-left:20px;}
+.product_pop .suptWapper .suptCont .list_tit_supt img{ vertical-align:top;}
+.product_pop .suptPopWapper{ background:url('http://img.zbird.cn/ww3/bojin/supt_pop_02.gif') repeat-y; width:782px;}
+.product_pop .suptPopWapperTop{ background:url('http://img.zbird.cn/ww3/bojin/supt_pop_01.gif') no-repeat bottom; width:782px; height:6px;}
+.product_pop .suptPopWapperBottom{ background:url('http://img.zbird.cn/ww3/bojin/supt_pop_04.gif') no-repeat top; width:782px; height:10px;}
+.product_pop .suptPopCont{ padding:0 7px;}
+.product_pop .suptPopCont td{ font-size:12px; padding:7px 8px; font-family:Arial;}
+.product_pop .suptPopCont .tdTit{ border-bottom:solid 1px #CCC; text-align:center; color:#999; font-weight:bold;}
+.product_pop .suptPopCont .trbgc{ background:#e8f1f6;}
+.product_pop .suptPopCont .operBt01{ background:url('http://img.zbird.cn/ww3/bojin/supt_28.jpg') no-repeat; width:80px; height:17px; text-align:center; margin:0 auto; padding-top:3px;}
+.product_pop .suptPopCont .operBt02{ background:url('http://img.zbird.cn/ww3/bojin/supt_29.jpg') no-repeat; width:80px; height:17px; text-align:center; margin:0 auto; padding-top:3px;}
+.product_pop .suptPopCont .Num{ background:url('http://img.zbird.cn/ww3/bojin/supt_30.jpg') repeat-x; height:22px; line-height:22px; border:solid 1px #CCC; text-align:center; padding:0 0px; font-family:Arial;}
+.product_pop .suptPopWapperTit{ background:url('http://img.zbird.cn/ww3/bojin/supt_27.jpg') repeat-x; height:29px;font-size:12px;  }
+.product_pop .suptPopWapperTit h3{ float:left;padding-left:10px; line-height:29px; color:#FFF; font-weight:normal;}
+.product_pop .suptPopWapperTit p{ float:right;line-height:29px; color:#FFF; padding-right:10px;}
+.product_pop .suptPopContPages{ width:160px; margin:0 auto; padding:8px 0;}
+.product_pop .suptPopContPages li{ float:left; margin-right:7px; color:#999;}
+.product_pop .suptPopContPages .pre01{ background:url('http://img.zbird.cn/ww3/bojin/supt_31.jpg') no-repeat 0 2px; width:4px; height:10px; }
+.product_pop .suptPopCont .pre02{ background:url('http://img.zbird.cn/ww3/bojin/supt_33.jpg') no-repeat 0 3px; padding-left:10px; }
+.product_pop .suptPopContPages .next01{ background:url('http://img.zbird.cn/ww3/bojin/supt_32.jpg') no-repeat 0 2px; width:4px; height:10px; }
+.product_pop .suptPopCont .next02{ background:url('http://img.zbird.cn/ww3/bojin/supt_34.jpg') no-repeat 40px 3px;  padding-right:15px; }
+
+.diamond_list {  }
+.diamond_list .shape_001 { width:30px; height:14px; float:left; background:url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') no-repeat -116px -30px; }
+.diamond_list .shape_002 { width:30px; height:14px; float:left; background:url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') no-repeat -156px -30px; }
+.diamond_list .shape_003 { width:30px; height:14px; float:left; background:url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') no-repeat -196px -30px; }
+.diamond_list .shape_004 { width:30px; height:14px; float:left; background:url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') no-repeat -236px -30px; }
+.diamond_list .shape_005 { width:30px; height:14px; float:left; background:url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') no-repeat -276px -30px; }
+.diamond_list .shape_006 { width:30px; height:14px; float:left; background:url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') no-repeat -316px -30px; }
+.diamond_list .shape_007 { width:30px; height:14px; float:left; background:url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') no-repeat -356px -30px; }
+.diamond_list .shape_008 { width:30px; height:14px; float:left; background:url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') no-repeat -396px -30px; }
+.diamond_list .shape_009 { width:30px; height:14px; float:left; background:url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') no-repeat -436px -30px; }
+.diamond_list .shape_010 { width:30px; height:14px; float:left; background:url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') no-repeat -476px -30px; }
+.diamond_list .shape_011 { width:30px; height:14px; float:left; }
+.diamond_list .shape_012 { width:30px; height:14px; float:left; }
+.diamond_list .btn_diy { }
+.diamond_list .btn_diy_on { }
+.diamond_list .btn_prebuy { width:50px; height:20px; cursor:pointer; float:left; background:url('http://img.zbird.cn/ww3/button/diamond_pre.png') no-repeat; }
+.diamond_list .btn_prebuy_on { width:50px; height:20px; cursor:pointer; float:left; background:url('http://img.zbird.cn/ww3/button/diamond_pre_on.png') no-repeat; }
+.diamond_list .btn_consult { width:50px; height:20px; cursor:pointer; float:left; background:url('http://img.zbird.cn/ww3/button/diamond_consult.png') no-repeat; }
+.diamond_list .btn_consult_on { width:50px; height:20px; cursor:pointer; float:left; background:url('http://img.zbird.cn/ww3/button/diamond_consult_on.png') no-repeat; }
+.diamond_list .btn_cart { }
+.diamond_list .btn_cart_on { }
+.diamond_list .result_big { width:980px; }
+.diamond_list .result { width:755px; }
+.diamond_list .total { height:22px; padding-top:8px; float:left; }
+.diamond_list .total label { padding:0 2px; color: #d70034 }
+.diamond_list .psize { height:26px; padding-top:4px; float:right; }
+.diamond_list .psize input { height: 18px; line-height: 16px; margin: 0px; padding: 0px; border: 1px solid #ccc; cursor: pointer; background : #fff url('http://img.zbird.cn/ww2/product/arrow.gif') right center no-repeat; }
+.diamond_psize_list { border: 1px solid #eee; text-align: left; background-color: #fff; }
+.diamond_psize_list ul li { border-top:1px solid #CCCCCC; padding: 1px 2px 1px 2px; white-space: nowrap; font-size: 12px; cursor: default; text-align: left; }
+.diamond_psize_selected { background-color: #CCCCCC; color: #fff; font-weight: normal; }
+.diamond_list .head { height:35px; border-bottom:1px solid #CCC; padding-left:1px; overflow:hidden; background:url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') 0 -310px; }
+.diamond_list .head li { height:15px; border-left:1px solid #FFF; border-right:1px solid #CCC; margin:12px 0 0 0; padding:0; text-align:center; float:left; overflow:hidden; }
+.diamond_list .head .last { border-right:1px solid #FFF; }
+.diamond_list .head .rspace { width:5px; height:35px; margin:0; padding:0; border:0; float:right; overflow:hidden; background:url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') -975px -310px; }
+.diamond_list .head .desc { margin:0 auto; padding:0 10px 0 0; cursor:pointer; background:url('http://img.zbird.cn/ww3/ico/arrow_down.gif') no-repeat right center; }
+.diamond_list .head .asc { margin:0 auto; padding:0 10px 0 0; cursor:pointer; background:url('http://img.zbird.cn/ww3/ico/arrow_up.gif') no-repeat right center; }
+.diamond_list .content { height:30px; }
+.diamond_list .content li { height:30px; line-height:30px; text-align:center; float:left; overflow:hidden; }
+.diamond_list .content .oper span { margin-left:2px; margin-right:2px; }
+.diamond_list .content .rspace { width:5px; margin:0; padding:0; float:right; overflow:hidden; }
+.diamond_list .even { background-color:#FEF5F4; } 
+.diamond_list .hover { background-color:#F8C8C5; }
+.diamond_list .content .norecord { width:100%; height:100px; line-height:100px; text-align:center; height:100px; }
+.diamond_list .foot { height:35px; overflow:hidden; border-top:1px solid #ccc; background:url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') 0 -350px; }
+.diamond_list .foot li.cont { height:30px; margin-top:5px; padding-left:10px; text-align:center; float:left; overflow:hidden; }
+.diamond_list .foot .rspace { width:5px; height:35px; margin:0; padding:0; float:right; overflow:hidden; background:url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') -975px -350px; }
+
+.diamond_pop { width:181px; height:322px; position:absolute; display:none; background-color:#fff; float:left; text-align:left; overflow:hidden; }
+.diamond_pop li { width:150px; float:left; }
+.diamond_pop a:link { color: #CC3366; text-decoration:none; }
+.diamond_pop a:hover { color: #CC3366; text-decoration:underline; }
+
+.diamond_pop .left ul.arrow { width:10px; height:322px; float:right; overflow:hidden; }
+.diamond_pop .left .top { width:9px; height:152px; border-left:1px solid #b6b6b6; float:left; }
+.diamond_pop .left li.arrow { width:10px; height:18px; float:left; background:url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') no-repeat -251px 0; }
+.diamond_pop .left .bottom { width:9px; height:152px; border-left:1px solid #b6b6b6; float:left; }
+.diamond_pop .left .info { width:150px; height:300px; padding:10px; border:1px solid #b6b6b6; border-right:0; float:right; overflow:hidden; }
+.diamond_pop .left .pic { width:150px; height:300px; padding:10px; border:1px solid #b6b6b6; border-right:0; float:right; overflow:hidden; }
+
+.diamond_pop .right ul.arrow { width:10px; height:322px; float:left; overflow:hidden; }
+.diamond_pop .right .top { width:9px; height:152px; border-right:1px solid #b6b6b6; float:left; }
+.diamond_pop .right li.arrow { width:10px; height:18px; float:left; background:url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') no-repeat -267px 0; }
+.diamond_pop .right .bottom { width:9px; height:152px; border-right:1px solid #b6b6b6; float:left; }
+.diamond_pop .right .info { width:150px; height:300px; padding:10px; border:1px solid #b6b6b6; border-left:0; float:left; overflow:hidden; }
+.diamond_pop .right .pic { width:150px; height:300px; padding:10px; border:1px solid #b6b6b6; border-left:0; float:left; overflow:hidden; }
+
+.diamond_pop .info { width:150px; height:300px; float:left; overflow:hidden; }
+.diamond_pop .info .img { width:54px; height:54px; padding:5px 0; }
+.diamond_pop .info .cert { width:96px; height:44px; padding:10px 0 0 0; line-height:20px; }
+.diamond_pop .info .item { height:18px; line-height:18px; }
+.diamond_pop .info .line { height:0; line-height:0; font-size:0; margin:2px 0; border-bottom: 1px dashed #A8B1B8; }
+.diamond_pop .pic .button { height:20px; text-align:right; }
+.diamond_pop .pic .img { height:280px; }
+.diamond_pop .pic span { line-height:12px; text-align:left; float:left; overflow:hidden; }
+.diamond_pop .pic .img .table { width:102px; height:65px; padding-left:48px; }
+.diamond_pop .pic .img .depth { width:131px; height:27px; padding-left:19px; }
+.diamond_pop .pic .img .culet { width:42px; height:28px; padding:32px 0 0 52px; }
+.diamond_pop .pic .img .girdle { width:54px; height:58px; padding:2px 0 0 0; }
+.diamond_pop .pic .img .width { width:54px; height:57px; padding:0 42px 0 54px; }
+.diamond_pop .pic .img .height {  }
+
+
+.history { width:960px; height:273px; margin:11px auto 0 auto; padding:6px 11px 6px 9px; background-color:#FDE8E3; overflow:hidden; }
+.history dt { height:23px; }
+.history dt span { width:114px; height:23px; line-height:23px; padding-left:24px; text-align:left; color:#666; font-size:14px; font-weight:bold; background-color:#FFF; float:left; }
+.history dd { width:960px; height:250px; background-color:#FFF; }
+.history dd ul { width:240px; height:250px; text-align:left; float:left; }
+.history dd ul p { margin:0; padding:3px 0 0 28px; }
+.history dd ul h2 { padding:7px 0 0 28px; color:#666; }
+.history dd ul span { padding:9px 0 0 28px; color:#F3776E; font-weight:bold; float:left; }
+.history dd ul li span a:link{color:#F3776E; text-decoration:none;}
+.history dd ul li span a:hover {color:#F3776E; text-decoration:none;}
+.history dd ul li span a:active {color:#F3776E; text-decoration:none;}
+.history dd ul li span a:visited {color:#F3776E; text-decoration:none;}
+.history dd ul span { padding:9px 0 0 28px; color:#F3776E; font-weight:bold; float:left;}
+
+
+#commonPromptPop { width:400px; background:#FFFFFF; z-index: 9999; position: absolute; }
+#commonPromptPop dl {  margin:0; padding:0; }
+#commonPromptPop .top { width:400px; height:35px; line-height:35px; color:#FFF; background: url('http://img.zbird.cn/ww3/common/pop/pop_top_bg.gif') repeat-x; }
+#commonPromptPop .top dd{color: #8A8A8A;font-weight: bold;}
+#commonPromptPop .topL { width:15px; height:35px; float:left; background:#FFF url('http://img.zbird.cn/ww3/common/pop/pop_top_l.gif') no-repeat; }
+#commonPromptPop .topR { width:15px; height:35px; float:right; background:#FFF url('http://img.zbird.cn/ww3/common/pop/pop_top_r.gif') no-repeat; }
+#commonPromptPop .middle { width:378px; padding:10px 7px 5px; line-height:200%; border-left:4px solid #AABFC4; border-right:4px solid #AABFC4; }
+#commonPromptPop .middle .button { padding:5px 0 0 0; line-height:0; }
+#commonPromptPop .middle img { margin:0 10px 0 10px; }
+#commonPromptPop .footer { width:400px; height:15px; line-height:15px; background: url('http://img.zbird.cn/ww3/common/pop/pop_bottom_bg.gif') repeat-x; }
+#commonPromptPop .footerL { width:15px; height:15px; float:left; background:#FFF url('http://img.zbird.cn/ww3/common/pop/pop_bottom_l.gif') no-repeat; }
+#commonPromptPop .footerR { width:15px; height:15px; float:right; background:#FFF url('http://img.zbird.cn/ww3/common/pop/pop_bottom_r.gif') no-repeat; }
+
+.commGrayDDBox { height: 18px; line-height: 16px; margin: 0px; padding: 0px; border: 1px solid #ccc; cursor: pointer; background : #fff url('http://img.zbird.cn/ww2/product/arrow.gif') right center no-repeat; }
+.commGraycompleter { border: 1px solid #eee; text-align: left; background-color: #fff; }
+.commGraycompleter ul li { border-top:1px solid #CCCCCC; padding: 1px 2px 1px 2px; white-space: nowrap; font-size: 12px; cursor: default; text-align: left; }
+.commGraycompleterSelected { background-color: #CCCCCC; color: #fff; font-weight: normal; }
+
+.memberMenu { width:213px; margin-bottom:6px; text-align:left; border: 1px solid #ccc; background: transparent url('http://img.zbird.cn/ww2/newindex/bg_lift.gif') repeat-y top center; }
+.memberMenu dt { width:100%; height:22px; line-height:22px; color:#D70034; font-weight:bold; background: transparent url('http://img.zbird.cn/ww2/newindex/bg_til03.jpg') no-repeat center left; }
+.memberMenu dt span { width:16px; height:16px; margin:3px 5px 0 5px; float:left; }
+.memberMenu dt span.ico01 { background: transparent url('http://img.zbird.cn/ww2/newindex/ico_001.gif') no-repeat; }
+.memberMenu dt span.ico02 { background: transparent url('http://img.zbird.cn/ww2/newindex/ico_002.gif') no-repeat; }
+.memberMenu dt span.ico03 { background: transparent url('http://img.zbird.cn/ww2/newindex/ico003.gif') no-repeat; }
+.memberMenu dt span.ico04 { background: transparent url('http://img.zbird.cn/ww2/newindex/ico004.gif') no-repeat; }
+.memberMenu dd { width:203px; padding:5px; }
+.memberMenu dd ul { width:201px; border: 1px solid #ccc; border-bottom:0; background-color:#fff; }
+.memberMenu dd ul li { width:186px; height:26px; line-height:26px; padding-left:15px; border-bottom: 1px solid #ccc; }
+
+.ac_loading {
+	background : Window url('http://img.zbird.cn/loading-2.gif') right center no-repeat;
+}
+#memberLoginPopDiv { width:360px; height:417px; overflow: hidden; z-index: 2000; top: 0pt; left: 0pt; position: absolute; background:#eeeeee}
+
+.friend_link {width:950px; margin:0 auto; color:#BABABA; text-align:left; line-height:25px; background-color:#f2f2f2}
+.friend_link li{ float:left;  color:#BABABA; display:block;}
+.friend_link li a{color:#BABABA; text-decoration:none;}
+.friend_link li a:hover{ color:#999999;text-decoration:underline;}
+
+
+
+
+/***footer开始***/
+
+.indexw_foot_service{
+	width:100%;
+	height: auto;
+	overflow:hidden;
+	background-color: #f2f1f1;
+	clear:both;
+}
+.indexw_foot_service_border{
+	width:1180px;
+	height:160px;
+	margin:0 auto;
+	position:relative;
+		
+}
+.indexw_foot_service_left{
+	width:84px;
+	height:90px;
+	float:left;
+	margin-left:22px;
+	margin-top:30px;
+	background:url('http://img.zbird.cn/ww3/index/1180/footer/indexw_foot_service_logo.jpg') no-repeat left top;
+}
+.indexw_foot_service_middle{
+
+	height:110px;
+	float:left;
+	margin-top:25px;
+	
+}
+.indexw_foot_service_middle ul{
+	
+	height:auto;
+	overflow:hidden;
+	float:left;
+}
+.indexw_foot_service_middle ul li{
+	float:left;
+}
+.indexw_foot_service_middle ul li a{
+	width:96px;
+	height:20px;
+	line-height:20px;
+	color:#999999;
+	display:block;
+	text-align:left;
+}
+.indexw_foot_service_middle ul li a:hover{
+	color:#ff8a81;
+}
+.indexw_foot_service_middle ul li span{
+	width:96px;
+	height:25px;
+	display:block;
+	color:#666666;
+	font-size:14px;
+	text-align:left;
+}
+.indexw_foot_service_right{
+	width:288px;
+	height:109px;
+	float:left;
+	margin-top:25px;
+	margin-left:6px;
+	background:url('http://img.zbird.cn/ww3/index/1180/footer/indexw_foot_service_right.jpg') no-repeat left top;
+}
+.foot_other dt {
+	width: 1180px;
+	height: 33px;
+	margin: 0 auto;
+	padding-left: 34px;
+	text-align: left;
+	color: #999;
+	overflow: hidden;
+}
+.foot_other dt div {
+	width:1180px;
+	height:auto;
+	overflow:hidden;
+	margin:0 auto;
+	line-height: 33px;
+	text-align:center;
+}
+.foot_other dt a {
+	line-height: 33px;
+	margin: 0;
+	padding: 0;
+	float: left;
+	color: #999;
+	text-decoration: none;
+}
+.foot_other dt div span {
+	padding: 0 10px 0 10px;
+	float: left;
+}
+.foot_other .copyright a {
+	color: #999999;
+	text-decoration: none;
+}
+.foot_other .copyright {
+	width: 980px;
+	margin: 0 auto;
+	padding-bottom: 10px;
+	color: #999999;
+}
+.friend_link {
+	width: 950px;
+	height:20px;
+	overflow:hidden;
+	margin: 0 auto;
+	color: #BABABA;
+	text-align: left;
+	line-height: 25px;
+	background-color: #f2f2f2;
+}
+.friend_link ul{
+	height:20px;
+	overflow:hidden;
+}
+.friend_link li a:hover {
+	color: #999999;
+	text-decoration:none;
+}
+.foot_other .img {
+	width: 980px;
+	height: 50px;
+	margin: 0 auto;
+	padding-bottom: 10px;
+	color: #9FB1BA;
+}
+#picp_span{-webkit-transform:scale(0.65);font-size:8px;color:#001b75;padding:0;margin:0;text-decoration:none;top:20px;left:46px;position:absolute;cursor:pointer;display:block;}
+@media screen and (-webkit-min-device-pixel-ratio:0)
+{   
+	#picp_span{      left:26px;   }
+}
+.browse_tip{
+    width: 880px;
+    height: 24px;
+    margin: 0 auto;
+    background-color: #E6FF6F;
+    border: 1px solid #F5AF2E;
+    position: relative;
+}
+.browse_tip_content{
+	position: absolute;
+	left:0;
+	width: 780px;
+	height: 24px;
+	overflow: hidden;
+}
+.browse_tip label{
+	position: absolute;
+	left:0;
+	height: 24px;
+	line-height: 24px;
+	display: block;
+	float: left;
+	width: 880px;
+}
+.browse_tip a{
+	height: 24px;
+	line-height: 24px;
+	float: right;
+	display: block;
+	width: 50px;
+}
+.browse_tip a:link{
+	color: red;
+}
+.browse_tip a:hover{
+	color: red;
+    text-decoration: underline;
+}
+.bfd_img_logo{
+	background:url("http://static.baifendian.com/themes/logo/bfd_logo_ch.gif") no-repeat scroll 0 0 transparent;
+	height:14px;
+	width:101px;
+	position: absolute;
+	cursor:default;
+	overflow:hidden;
+}
+.bfd_img_logo:hover{
+	background:url("http://static.baifendian.com/themes/logo/bfd_logo_ch.gif") no-repeat 0 -14px;
+}
+body, html {margin: 0px; padding: 0px;}
+
+.ac_results {
+	background:white none repeat scroll 0 0;
+	border:1px solid #ccc;
+	cursor:default;
+	font-size:13px;
+	line-height:24px;
+	margin:3px 0 0 0;
+	position:absolute;
+	z-index:99;
+	padding: 6px 0;
+	display: none;
+	font-family:arial,"宋体";
+	width: 272px!important;
+}
+
+.ac_results td.l {
+	overflow:hidden;
+	padding-left:10px;
+	text-align:left;
+	white-space:nowrap;
+	color:#666;
+}
+.ac_results td.r {
+	color:#999;
+	font-size:10px;
+	overflow:hidden;
+	padding:0 10px 0 3px;
+	text-align:right;
+	white-space:nowrap;
+}
+
+.ac_over {
+	background:none;
+	cursor:pointer;
+}
+
+.ac_match {
+	text-decoration: none;
+	font-weight: bold;
+	color:#f6827a;
+}
+
+.ac_over .ac_match {
+	color:#f6827a !important;
+}
+
+.ac_over .l{color:#f6827a!important;}
+.ac_over .r {
+	color:#999 !important;
+}

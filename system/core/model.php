@@ -190,6 +190,16 @@ class model
 		}
 		return NULL;
 	}
+	
+	/**
+	 * count
+	 * @param string $filed
+	 * @return mixed|NULL
+	 */
+	function count($filed = '*')
+	{
+		return $this->scalar('count('.$filed.')');
+	}
 
 	/**
 	 * 载入redis
@@ -685,5 +695,15 @@ class model
 	public function lastInsertId($name = NULL)
 	{
 		return $this->_db->lastInsert($name);
+	}
+	
+	public function error()
+	{
+		return $this->_db->error();
+	}
+	
+	public function errno()
+	{
+		return $this->_db->errno();
 	}
 }

@@ -1,5 +1,7 @@
 <?php
 namespace system\core;
+use system\core\exception\request;
+
 /**
  * 应用程序类
  *
@@ -45,7 +47,7 @@ class webApplication extends base
         }
 
         try {
-            $handler = $this->parseUrl();
+        	$handler = $this->parseUrl();
             if (is_array($handler)) {
                 list ($module, $control, $action) = $handler;
                 $path = ROOT . '/application/control/' . $module . '/' . $control . '.php';
@@ -56,16 +58,32 @@ class webApplication extends base
                         $class = new $class();
                         $class->response = &$response;
                         if ((method_exists($class, $action) && is_callable(array($class, $action))) || method_exists($class, '__call')) {
-                            if ($this->http->isWebsocket()) {
-                                //对于websocket使用101响应
-                                $response->setCode(101);
-                                $response->setBody($this->__101($module, $class, $action));
-                            } else {
-
-                                $response->setCode(200);
-                                $response->setBody($this->__200($module, $class, $action));
-
-
+                            $actionsFilter = new actionsFilter($class,$action);
+                            if ($actionsFilter->validate())
+                            {
+                            	if ($this->http->isWebsocket()) {
+	                                //对于websocket使用101响应
+	                                $response->setCode(101);
+	                                $response->setBody($this->__101($module, $class, $action));
+	                            }
+	                            else
+	                            {
+	                                $response->setCode(200);
+	                                $response->setBody($this->__200($module, $class, $action));
+	                            }
+                            }
+                            else
+                            {
+                            	if($actionsFilter->rewriteCode())
+                            	{
+                            		$response->setCode($actionsFilter->getHeaderCode());
+                            	}
+                            	else
+                            	{
+                            		$response->setCode(403);
+                            	}
+                            	$response->addHeader('Location',$actionsFilter->getRedict());
+                            	$response->setBody($actionsFilter->getMessage());
                             }
                         } else {
                             $response->setCode(404);
@@ -143,7 +161,14 @@ class webApplication extends base
      */
     function __200($module, $control, $action)
     {
-
+		if (method_exists($control, '__initlize'))
+		{
+			$response = $control->__initlize();
+			if (!is_null($response))
+			{
+				return $response;
+			}
+		}
         return $control->$action();
 
     }

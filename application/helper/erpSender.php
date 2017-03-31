@@ -254,14 +254,8 @@ class erpSender extends base
 			}
 			
 			// 判断订单数据是否全部发送成功
-			$not_sending_num = $this->model('order')
-			->table('suborder_store', 'left join', 'suborder_store.main_orderno=order.orderno')
-			->where('order.orderno=? and suborder_store.erp=?', [$orderno,0])
-			->scalar('count(*)');
-			$sending_num = $this->model('order')
-			->table('suborder_store', 'left join', 'suborder_store.main_orderno=order.orderno')
-			->where('order.orderno=? and suborder_store.erp=?', [$orderno,1])
-			->scalar('count(*)');
+			$not_sending_num = $this->model('suborder_store')->where('main_orderno=? and erp=?',[$order['orderno'],0])->scalar('count(*)');
+			$sending_num = $this->model('suborder_store')->where('main_orderno=? and erp=?',[$orderno,1])->scalar('count(*)');
 			if ($not_sending_num == 0 && $sending_num>0)
 			{
 				$this->model('order')

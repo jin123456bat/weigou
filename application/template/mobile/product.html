@@ -84,14 +84,16 @@
                     <span class="old_price">￥{%$product.oldprice%}</span>
                 </div>
                 <div class="g_flag clearfix">
-                    <div class="flag" {%if isset($product.origin.logo) && !empty($product.origin.logo)%}style="background-image:url({%$product.origin.logo%});float: left;" {%/if%}>{%$product.origin.name%}进口</div>
+                    <div class="flag" {%if isset($product.origin.logo) && !empty($product.origin.logo)%}style="background-image:url({%$product.origin.logo%});float: left;" {%/if%}>{%if $product.origin.id==42%}国产商品{%else%}{%$product.origin.name%}进口{%/if%}</div>
                 {%if $product.outside==2 || $product.outside==3%}
                     <div class="flag" style="margin-left: 20px; float: left;">跨境商品</div>
                     <a class="g_tips">跨境小提示</a>
                 {%/if%}
                 </div>
             </div>
+            <!--
             <div class="goods_info">商品说明:<span class="pink">·</span><span>保税区发货</span><span class="pink">·</span><span>配送地区</span><span class="pink">·</span><span>温馨提示</span></div>
+            -->
             <!-- {%if !empty($product.tags)%}
             <div class="shuo_ming">
                 说&nbsp;&nbsp;明：<span class="red_circle"></span>{%'<span class="red_circle"></span>'|implode:(','|explode:$product.tags)%}

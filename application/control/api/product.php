@@ -253,6 +253,7 @@ class product extends common
 			'store.name as store',
 			'product.origin',
 			'product.selled',
+			'product.outside',
 			'sum(product.percent) as percent'
 		];
 		
@@ -459,7 +460,8 @@ class product extends common
 				'store.name as store',
 				'product.origin',
 				'product.stock',
-				'product.selled'
+				'product.selled',
+				'product.outside',
 			]
 		];
 		$product = $this->model('product_top')->fetchAll($product_filter);

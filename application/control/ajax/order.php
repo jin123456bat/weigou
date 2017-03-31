@@ -11,9 +11,19 @@ use application\model\roleModel;
 class order extends ajax
 {
 
+	/**
+	 * 给订单添加备注信息，这个备注信息是给管理员看的
+	 * @return \application\message\json
+	 */
 	function note()
 	{
-		$admin = $this->session->id;
+		$adminHelper = new \application\helper\admin();
+		$admin = $adminHelper->getAdminId();
+		if (empty($admin))
+		{
+			return new json(json::NOT_LOGIN);
+		}
+		
 		$orderno = $this->post('orderno');
 		if (! empty($orderno))
 		{
@@ -34,8 +44,7 @@ class order extends ajax
 				$note = $this->model('order')
 					->where('orderno=?', [
 					$orderno
-				])
-					->find('note');
+				])->find('note');
 				
 				return new json(json::OK, NULL, $note);
 			}
@@ -48,6 +57,7 @@ class order extends ajax
 	function delete()
 	{
 		$orderno = $this->post('orderno');
+		
 		$userHelper = new user();
 		$uid = $userHelper->isLogin();
 		if (empty($uid))
@@ -60,6 +70,13 @@ class order extends ajax
 			return new json(json::PARAMETER_ERROR, '订单编号不能为空');
 		}
 		
+		$orderHelper = new \application\helper\order();
+		$order = $this->model('order')->where('orderno=?',[$orderno])->find();
+		if (empty($order))
+		{
+			return new json(json::PARAMETER_ERROR);
+		}
+		
 		if ($this->model('order')
 			->where('orderno=?', [
 			$orderno
@@ -70,6 +87,7 @@ class order extends ajax
 			'deletetime' => $_SERVER['REQUEST_TIME']
 		]))
 		{
+			$this->model('order_log')->add($orderno,'订单删除',NULL,$orderHelper->convertStatus($order));
 			return new json(json::OK);
 		}
 		return new json(json::PARAMETER_ERROR, '不要重复删除订单嘛');
@@ -337,7 +355,7 @@ class order extends ajax
 				}
 			}
 			
-			$this->model('order_log')->add($order['orderno'], '订单创建成功，等待支付');
+			$this->model('order_log')->add($order['orderno'], '订单创建成功，等待支付',NULL,'待支付',$msg);
 			
 			$this->model('order')->commit();
 			
@@ -364,7 +382,8 @@ class order extends ajax
 	 */
 	function quit()
 	{
-		$admin = $this->session->id;
+		$adminHelper = new \application\helper\admin();
+		$admin = $adminHelper->getAdminId();
 		$orderno = $this->post('orderno');
 		if (! empty($orderno))
 		{
@@ -374,42 +393,38 @@ class order extends ajax
 			])
 				->find()))
 			{
-				$this->model("admin_log")->insertlog($admin, '取消订单失败（团购订单无法手动取消）');
 				return new json(json::PARAMETER_ERROR, '团购订单无法手动取消');
 			}
 			
 			$orderHelper = new \application\helper\order();
 			
+			$order = $this->model('order')
+			->where('orderno=?', [
+				$orderno
+			])->find();
+			$orderStatus = $orderHelper->convertStatus($order);
+			
 			$userHelper = new \application\helper\user();
 			$uid = $userHelper->isLogin();
 			if (empty($uid))
 			{
-				$adminHelper = new \application\helper\admin();
-				$aid = $adminHelper->getAdminId();
-				if (empty($aid))
+				if (empty($admin))
 				{
 					return new json(json::NOT_LOGIN);
 				}
 				else
 				{
-					$order = $this->model('order')
-						->where('orderno=?', [
-						$orderno
-					])
-						->find();
 					if ($order['pay_status'] == 1 || $order['pay_status'] == 4)
 					{
 						$roleModel = $this->model('role');
 						$role = $adminHelper->getGroupId();
 						if (! $roleModel->checkPower($role, 'refund', roleModel::POWER_ALL))
 						{
-							$this->model("admin_log")->insertlog($admin, '取消订单失败（权限不足）');
 							return new json(json::PARAMETER_ERROR, '权限不足');
 						}
 						
 						if (! $orderHelper->refund($orderno))
 						{
-							$this->model("admin_log")->insertlog($admin, '取消订单失败（订单退款失败）');
 							return new json(json::PARAMETER_ERROR, '订单退款失败');
 						}
 					}
@@ -421,17 +436,21 @@ class order extends ajax
 			if ($orderHelper->quitOrder($orderno, false))
 			{
 				$this->model('order')->commit();
-				$this->model("admin_log")->insertlog($admin, '取消订单成功，订单号：' . $orderno, 1);
+				//add($orderno,$content,$aid,$status,$note = '')
+				
+				if (!empty($admin))
+				{
+					$this->model("admin_log")->insertlog($admin, '取消订单成功，订单号：' . $orderno, 1);
+					$this->model('order_log')->add($orderno,'订单取消',$admin,$orderStatus);
+				}
 				return new json(json::OK);
 			}
 			else
 			{
 				$this->model('order')->rollback();
-				$this->model("admin_log")->insertlog($admin, '取消订单失败（订单退款失败）');
 				return new json(json::PARAMETER_ERROR, '取消失败');
 			}
 		}
-		$this->model("admin_log")->insertlog($admin, '取消订单失败（参数错误）');
 		return new json(json::PARAMETER_ERROR);
 	}
 
@@ -459,13 +478,25 @@ class order extends ajax
 		}
 		
 		$orderno = $this->post('orderno');
+		$note = $this->post('note','','htmlspecialchars');
 		if (! empty($orderno))
 		{
+			//添加备注信息
+			if (!empty($note))
+			{
+				$this->model('order')->where('orderno=?',[$orderno])->limit(1)->update('erp_note',$note);
+			}
+			
+			$orderHelper = new \application\helper\order();
+			$order = $this->model('order')->where('orderno=?',[$orderno])->find();
+			$orderStatus = $orderHelper->convertStatus($order);
+			
 			$erpSender = new erpSender();
 			$result = $erpSender->doSendOrder($orderno);
 			if ($result)
 			{
 				$this->model("admin_log")->insertlog($aid, '订单审核成功,订单号:' . $orderno, 1);
+				$this->model('order_log')->add($orderno,'订单取消',$aid,$orderStatus,$note);
 				return new json(json::OK);
 			}
 			else
@@ -473,98 +504,34 @@ class order extends ajax
 				return new json(json::PARAMETER_ERROR, '订单推送失败，没有需要推送的订单');
 			}
 		}
-	}
-
-	/**
-	 * 推送支付单
-	 */
-	function payed()
-	{
-		$orderno = $this->post('orderno');
-		$order = $this->model('order')
-			->where('orderno=?', [
-			$orderno
-		])
-			->find();
-		if (! empty($order))
+		else
 		{
-			if ($order['status'] == '0')
-				return new json(json::PARAMETER_ERROR, '无效订单无法发送支付单');
-			
-			if ($order['pay_status'] == '0')
-				return new json(json::PARAMETER_ERROR, '尚未支付的订单无法推送支付单');
-			
-			$partner = $this->model('system')->get('partner', $order['pay_type']);
-			$key = $this->model('system')->get('key', $order['pay_type']);
-			
-			$pay = new pay();
-			$pay->setId($orderno);
-			$pay->setCharset('utf-8');
-			$pay->setSigntype('md5');
-			$pay->setPartner($partner);
-			$pay->setKey($key);
-			$pay->setPayType($order['pay_type']);
-			$pay->setPaynumber($order['pay_number']);
-			$pay->setMoney($order['pay_money']);
-			$pay->setUrl('https://mapi.alipay.com/gateway.do');
-			$pay->createParameter([
-				'customs_place' => $this->model('system')
-					->get('customs_place', 'system'),
-				'customs_code' => $this->model('system')
-					->get('customs_code', 'system'),
-				'customs_name' => $this->model('system')
-					->get('customs_name', 'system')
-			]);
-			$result = $pay->payed();
-			$result = xmlToArray($result);
-			if (strtoupper($result['response']['alipay']['result_code']) == 'SUCCESS')
-			{
-				$this->model('order')
-					->where('orderno=?', [
-					$orderno
-				])
-					->limit(1)
-					->update([
-					'payed' => 1,
-					'payed_time' => $_SERVER['REQUEST_TIME']
-				]);
-				
-				if ($this->http->isAjax())
-				{
-					return new json(json::OK);
-				}
-				else
-				{
-					$this->response->setCode(302);
-					$this->response->addHeader('Location', $this->http->referer());
-				}
-			}
-			else
-			{
-				if ($this->http->isAjax())
-				{
-					return new json(json::PARAMETER_ERROR, $result['response']['alipay']['detail_error_des']);
-				}
-				else
-				{
-					echo $result['response']['alipay']['detail_error_des'];
-				}
-			}
+			return new json(json::PARAMETER_ERROR);
 		}
-		return new json(json::PARAMETER_ERROR, '订单不存在');
 	}
 
 	function receive()
 	{
+		$userHelper = new \application\helper\user();
+		if(empty($userHelper->isLogin()))
+		{
+			return new json(json::NOT_LOGIN);
+		}
+		
 		$orderno = $this->post('orderno');
 		if (empty($orderno))
+		{
 			return new json(json::PARAMETER_ERROR);
+		}
 		
 		$order = $this->model('order')
 			->where('orderno=?', [
 			$orderno
-		])
-			->find();
+		])->find();
+			
+		$orderHelper = new \application\helper\order();
+		$convertStatus = $orderHelper->convertStatus($order);
+		
 		if (! empty($order))
 		{
 			if ($order['way_status'] != 1)
@@ -582,7 +549,7 @@ class order extends ajax
 				'receive_time' => $_SERVER['REQUEST_TIME']
 			]))
 			{
-				$this->model('order_log')->add($orderno, '订单确认收货了');
+				$this->model('order_log')->add($orderno, '订单确认收货',NULL,$convertStatus);
 				
 				return new json(json::OK);
 			}
@@ -595,11 +562,10 @@ class order extends ajax
 	 */
 	function refund()
 	{
-		$admin = $this->session->id;
 		$adminHelper = new admin();
-		if (empty($adminHelper->getAdminId()))
+		$admin = $adminHelper->getAdminId();
+		if (empty($admin))
 		{
-			$this->model("admin_log")->insertlog($admin, '订单商品退款失败（用户未登陆）');
 			return new json(json::NOT_LOGIN, '请重新登陆');
 		}
 		
@@ -607,7 +573,6 @@ class order extends ajax
 		$role = $adminHelper->getGroupId();
 		if (! $roleModel->checkPower($role, 'refund', roleModel::POWER_ALL))
 		{
-			$this->model("admin_log")->insertlog($admin, '订单商品退款失败（权限不足）');
 			return new json(json::PARAMETER_ERROR, '权限不足');
 		}
 		
@@ -621,11 +586,12 @@ class order extends ajax
 		$order = $this->model('order')
 			->where('orderno=?', [
 			$orderno
-		])
-			->find();
+		])->find();
+		
 		if (! empty($order))
 		{
 			$orderHelper = new \application\helper\order();
+			$orderStatus = $orderHelper->convertStatus($order);
 			
 			if ($orderHelper->refund($orderno, $order_product_id))
 			{
@@ -634,25 +600,38 @@ class order extends ajax
 					// 订单取消
 					if ($orderHelper->quitOrder($orderno))
 					{
+						//纪录退款原因和退款备注
+						$this->model('order')->where('orderno=?',[$orderno])->limit(1)->update([
+							'refund_reason' => $order['refund_reason'].'|'.$this->post('refund_reason','','htmlentities'),
+							'refund_note' => $order['refund_reason'].'|'.$this->post('refund_note','','htmlentities'),
+						]);
+						
 						$this->model("admin_log")->insertlog($admin, '订单商品退款成功,订单商品：' . $orderno, 1);
+						
+						$this->model('order_log')->add($orderno, '订单确认收货',$admin,$orderStatus);
 						return new json(json::OK, NULL, $order['pay_type'] == 'alipay' ? '正在退款' : '退款完成');
 					}
 					else
 					{
-						$this->model("admin_log")->insertlog($admin, '订单商品退款失败（订单取消失败）');
 						return new json(json::PARAMETER_ERROR, '订单取消失败');
 					}
 				}
 				else
 				{
+					//纪录退款原因和退款备注
+					$this->model('order')->where('orderno=?',[$orderno])->limit(1)->update([
+						'refund_reason' => $order['refund_reason'].'|'.$this->post('refund_reason','','htmlentities'),
+						'refund_note' => $order['refund_reason'].'|'.$this->post('refund_note','','htmlentities'),
+					]);
+					
 					$this->model("admin_log")->insertlog($admin, '订单商品退款成功,订单商品：' . $orderno, 1);
+					
+					$this->model('order_log')->add($orderno, '订单确认收货',NULL,$orderStatus);
 					return new json(json::OK, NULL, $order['pay_type'] == 'alipay' ? '正在退款' : '退款完成');
 				}
 			}
-			$this->model("admin_log")->insertlog($admin, '订单商品退款失败（退款失败）' . $orderHelper->getRefundError());
 			return new json(json::PARAMETER_ERROR, '退款失败:' . $orderHelper->getRefundError());
 		}
-		$this->model("admin_log")->insertlog($admin, '订单商品退款失败（参数错误）');
 		return new json(json::PARAMETER_ERROR);
 	}
 
@@ -744,191 +723,405 @@ class order extends ajax
 			}
 		}
 	}
-
-	function confirmSend()
+	
+	/**
+	 * 订单中的商品单独发货，顺便修改供货商和发货仓库
+	 */
+	function sendProduct()
 	{
-		$adminHelper = new admin();
+		$adminHelper = new \application\helper\admin();
 		$admin = $adminHelper->getAdminId();
-		$data = $this->post('data');
-		$data = json_decode($data, true);
-		$orderno = $this->post('orderno');
-		if (! empty($data) && ! empty($orderno))
+		if (empty($admin))
 		{
-			$order = $this->model('order')
-				->where('orderno=?', [
-				$orderno
-			])
-				->find();
-			if (empty($order))
+			return new json(json::NOT_LOGIN);
+		}
+		$order_product_id = $this->post('order_product_id');
+		$publish = $this->post('publish');
+		$store = $this->post('store');
+		$ship_type = $this->post('ship_type','','trim');
+		$ship_number = $this->post('ship_number','','trim');
+		$ship_note = $this->post('ship_note','','htmlspecialchars');
+		
+		$store_info = $this->model('store')->where('id=?',[$store])->find();
+		$publish_info = $this->model('publish')->where('id=?',[$publish])->find();
+		
+		$order_product = $this->model('order_product')->where('id=?',[$order_product_id])->find();
+		$order_package = $this->model('order_package')->where('id=?',[$order_product['package_id']])->find();
+		
+		//假如要更改供货商或者仓库的时候需要检查一下是否匹配
+		if ($store != $order_package['store_id'] || $publish_info['name'] != $order_product['publish'])
+		{
+			$product_publish = $this->model('product_publish')->where('product_id=? and publish_id=? and store=?',[$order_product['pid'],$publish,$store])->find();
+			if (empty($product_publish))
 			{
-				$this->model("admin_log")->insertlog($admin, '订单发货失败（订单不存在）');
-				return new json(json::PARAMETER_ERROR, '订单不存在');
+				return new json(json::PARAMETER_ERROR,'供货商和仓库不匹配');
 			}
 			
-			if ($order['status'] != 1)
+			if ($product_publish['stock'] < $order_product['num'] * $order_product['bind'])
 			{
-				$this->model("admin_log")->insertlog($admin, '订单发货失败（订单无效）');
-				return new json(json::PARAMETER_ERROR, '订单无效');
+				return new json(json::PARAMETER_ERROR,'库存不足');
 			}
-			
-			if ($order['way_status'] == 1)
+		}
+		
+		$orderHelper = new \application\helper\order();
+		$orderStatus = $orderHelper->convertStatus($order_package['orderno']);
+		
+		
+		//应该首先判断是否需要更改发货仓库
+		if ($store!=$order_package['store_id'])
+		{
+			//假如更改了发货仓库，那么应该判断这个包裹下面是否只有这一个商品，假如只有这一个商品直接更改就好了，不是的话需要新建一个包裹
+			//退款了的商品不要计算进去
+			$package_products_num = $this->model('order_product')->where('package_id=? and refund=?',[$order_product['package_id'],0])->count();
+			if ($package_products_num==1)
 			{
-				$this->model("admin_log")->insertlog($admin, '订单发货失败（订单已发货）');
-				return new json(json::PARAMETER_ERROR, '订单已发货');
-			}
-			
-			// 过滤掉空值
-			$data = array_values(array_filter($data));
-			
-			$this->model('order_package')->transaction();
-			foreach ($data as $ship)
-			{
-				if (empty($ship['ship_type']) || empty($ship['ship_number']))
-				{
-					$this->model('order_package')->rollback();
-					$this->model("admin_log")->insertlog($admin, '订单发货失败（请填写所有的快递单号和配送方式）');
-					return new json(json::PARAMETER_ERROR, '请填写所有的快递单号和配送方式');
-				}
+				//开启事务
+				$this->model('order')->transaction();
 				
-				if (! $this->model('order_package')
-					->where('id=?', [
-					$ship['id']
-				])
-					->limit(1)
-					->update([
-					'ship_type' => $ship['ship_type'],
-					'ship_number' => $ship['ship_number'],
-					'ship_time' => $_SERVER['REQUEST_TIME'],
-					'ship_status' => 1
+				//减少库存
+				if(!$this->model('product_publish')->where('product_id=? and publish_id=? and store=?',[$order_product['pid'],$publish,$store])->increase('stock',-$order_product['num'] * $order_product['bind']))
+				{
+					$this->model('order')->rollback();
+					return new json(json::PARAMETER_ERROR,'系统繁忙');
+				}
+				$this->model('product')->where('id=? and store=? and publish',[$order_product['pid'],$store,$publish])->increase('stock',-$order_product['num'] * $order_product['bind']);
+				
+				//更改order_package中的发货仓库
+				if(!$this->model('order_package')->where('id=?',[$order_product['package_id']])->limit(1)->update([
+					'store_id' => $store,
+					'ship_type' => $ship_type,
+					'ship_number' => $ship_number,
+					'ship_status' => 1,
+					'ship_time' => time(),
+					'ship_note' => $ship_note,
 				]))
 				{
-					$this->model('order_package')->rollback();
-					$this->model("admin_log")->insertlog($admin, '订单发货失败（参数错误）');
-					return new json(json::PARAMETER_ERROR);
+					$this->model('order')->rollback();
+					return new json(json::PARAMETER_ERROR,'系统繁忙');
+				}
+				//更改商品信息中的发货仓库 供货商 和 sku
+				if(!$this->model('order_product')->where('id=?',[$order_product_id])->limit(1)->update([
+					'store_name'=>$store_info['name'],
+					'publish' => $publish_info['name'],
+					'sku' => $product_publish['sku'],
+				]))
+				{
+					$this->model('order')->rollback();
+					return new json(json::PARAMETER_ERROR,'系统繁忙');
+				}
+				//去子订单中更改发货仓库
+				$suborder_store_product = $this->model('suborder_store_product')->where('order_product_id=?',[$order_product_id])->limit(1)->find();
+				//$suborder_store = $this->model('suborder_store')->where('id=?',[$suborder_store_product['suborder_id']])->find();
+				if(!$this->model('suborder_store')->where('id=?',[$suborder_store_product['suborder_id']])->limit(1)->update([
+					'store'=>$store,
+					'erp' => 0,
+					'erptime' => 0,
+				]))
+				{
+					$this->model('order')->rollback();
+					return new json(json::PARAMETER_ERROR,'系统繁忙');	
+				}
+				//更改完毕
+				$this->model('order')->commit();
+				
+				
+				//更改订单中的way_status  注意可能有退款商品
+				$not_send_product_num = 0;
+				$not_send_packages = $this->model('order_package')->where('orderno=? and ship_status=?',[$order_package['orderno'],0])->select();
+				foreach ($not_send_packages as $package)
+				{
+					$not_send_product_num += $this->model('order_product')->where('package_id=? and refund=?',[$package['id'],0])->count();
+				}
+				if ($not_send_product_num>0)
+				{
+					$this->model('order')->where('orderno=?',[$order_package['orderno']])->limit(1)->update([
+						'way_status'=>2,
+						'way_time' => time(),
+						'way_type' => 1
+					]);
+				}
+				else
+				{
+					$this->model('order')->where('orderno=?',[$order_package['orderno']])->limit(1)->update([
+						'way_status'=>1,
+						'way_time' => time(),
+						'way_type' => 1
+					]);
+				}
+				
+				if (!empty($store_info['erp']))
+				{
+					//推送ERP
+					$erpSender = new erpSender();
+					$erpSender->doSendOrder($order_package['orderno']);
+				}
+				
+				$this->model('order_log')->add($order_package['orderno'], '订单中商品单独发货，包裹中只有一个商品，ship_type:'.$ship_type.',ship_number:'.$ship_number.',store:'.$store.',.publish:'.$publish,$admin,$orderStatus);
+				return new json(json::OK);
+			}
+			elseif ($package_products_num>1)
+			{
+				//开启事务
+				$this->model('order')->transaction();
+				
+				if($this->model('order_package')->insert([
+					'orderno' => $order_package['orderno'],
+					'ship_status' => 1,
+					'ship_type' => $ship_type,
+					'ship_time' => time(),
+					'ship_number' => $ship_number,
+					'ship_money' => 0,
+					'store_id' => $store,
+					'ship_note' => $ship_note,
+				]))
+				{
+					$new_order_package_id = $this->model('order_package')->lastInsertId();
+					$this->model('order_product')->where('id=?',[$order_product_id])->update([
+						'package_id'=>$new_order_package_id,
+						'store_name' => $store_info['name'],
+						'publish' => $publish_info['name'],
+						'sku' => $product_publish['sku'],
+					]);
+					
+					//减少库存
+					if(!$this->model('product_publish')->where('product_id=? and publish_id=? and store=?',[$order_product['pid'],$publish,$store])->increase('stock',-$order_product['num'] * $order_product['bind']))
+					{
+						$this->model('order')->rollback();
+						return new json(json::PARAMETER_ERROR,'系统繁忙');
+					}
+					$this->model('product')->where('id=? and store=? and publish',[$order_product['pid'],$store,$publish])->increase('stock',-$order_product['num'] * $order_product['bind']);
+					
+					//获取原来的子订单的信息
+					$suborder_store_product = $this->model('suborder_store_product')->where('order_product_id=?',[$order_product_id])->find();
+					$suborder_store = $this->model('suborder_store')->where('id=?',[$suborder_store_product['suborder_id']])->find();
+					$order = $this->model('order')->where('orderno=?',[$suborder_store['main_orderno']])->find();
+					
+					//更改新的子订单的信息，这里有个bug啊，旧的子订单的基本信息没有修改
+					unset($suborder_store['id']);
+					$suborder_store['date'] = date('Y-m-d');
+					$suborder_store['pay_money'] = $order_product['price'] * $order_product['num'] - $order_product['price'] * $order_product['num']/$order['goodsamount']*$order['discount'];
+					$suborder_store['orderamount'] = $suborder_store['pay_money'];
+					$suborder_store['goodsamount'] = $order_product['price'] * $order_product['num'];
+					$suborder_store['discount'] = $order_product['price'] * $order_product['num']/$order['goodsamount']*$order['discount'];
+					$suborder_store['feeamount'] = $order_product['fee'];
+					$suborder_store['taxamount'] = $order_product['tax'];
+					$suborder_store['erp'] = 0;
+					$suborder_store['erptime'] = 0;
+					$suborder_store['store'] = $store;
+					//创建一个子订单
+					if($this->model('suborder_store')->insert($suborder_store))
+					{
+						$new_suborder_store_id = $this->model('suborder_store')->lastInsertId();
+						if(!$this->model('suborder_store_product')->where('order_product_id=?',[$order_product_id])->update([
+							'suborder_id' => $new_suborder_store_id,
+						]))
+						{
+							$this->model('order')->rollback();
+							return new json(json::PARAMETER_ERROR,'创建子订单失败');
+						}
+					}
+					
+					$this->model('order')->commit();
+					
+					//更改订单中的way_status  注意可能有退款商品
+					$not_send_product_num = 0;
+					$not_send_packages = $this->model('order_package')->where('orderno=? and ship_status=?',[$order_package['orderno'],0])->select();
+					foreach ($not_send_packages as $package)
+					{
+						$not_send_product_num += $this->model('order_product')->where('package_id=? and refund=?',[$package['id'],0])->count();
+					}
+					if ($not_send_product_num>0)
+					{
+						$this->model('order')->where('orderno=?',[$order_package['orderno']])->limit(1)->update([
+							'way_status'=>2,
+							'way_time' => time(),
+							'way_type' => 1
+						]);
+					}
+					else
+					{
+						$this->model('order')->where('orderno=?',[$order_package['orderno']])->limit(1)->update([
+							'way_status'=>1,
+							'way_time' => time(),
+							'way_type' => 1
+						]);
+					}
+					
+					if (!empty($store_info['erp']))
+					{
+						//推送ERP
+						$erpSender = new erpSender();
+						$erpSender->doSendOrder($order_package['orderno']);
+					}
+					
+					$this->model('order_log')->add($order_package['orderno'], '订单中商品单独发货，包裹中有多个商品，ship_type:'.$ship_type.',ship_number:'.$ship_number.',store:'.$store.',.publish:'.$publish,$admin,$orderStatus);
+					return new json(json::OK);
+				}
+				else
+				{
+					$this->model('order')->rollback();
+					return new json(json::PARAMETER_ERROR,'创建包裹失败');
 				}
 			}
-			
-			if (! $this->model('order')
-				->where('orderno=?', [
-				$orderno
-			])
-				->limit(1)
-				->update([
-				'way_status' => 1,
-				'way_type' => 1,
-				'way_time' => $_SERVER['REQUEST_TIME']
-			]))
+			else
 			{
-				$this->model('order_package')->rollback();
-				$this->model("admin_log")->insertlog($admin, '订单发货失败（参数错误）');
 				return new json(json::PARAMETER_ERROR);
 			}
-			
-			$this->model('order_package')->commit();
-			$this->model("admin_log")->insertlog($admin, '订单发货成功，订单号：' . $orderno, 1);
-			return new json(json::OK);
-			/*
-			 * //获取现在所有的商品
-			 * $pre_product = $this->model('order_package')
-			 * ->table('order_product','left join','order_product.package_id=order_package.id')
-			 * ->where('order_package.orderno=?',[$orderno])
-			 * ->select([
-			 * 'order_product.pid',
-			 * 'order_product.content',
-			 * 'order_product.num',
-			 * 'order_product.price',
-			 * ]);
-			 *
-			 * //检查商品是否正确和商品数量是否匹配
-			 * //匹配总数
-			 * if(array_sum(array_column($pre_product,'num')) != array_sum(array_column($data,'num')))
-			 * {
-			 * return new json(json::PARAMETER_ERROR,'参数错误，请刷新页面重试1');
-			 * }
-			 *
-			 * //开始重新分配包裹
-			 * //标识数据
-			 * array_walk($data, function(&$value,$index,$pre_product){
-			 * foreach ($pre_product as $product)
-			 * {
-			 * if ($product['pid'] == $value['pid'])
-			 * {
-			 * $value['price'] = $product['price'];
-			 * }
-			 * }
-			 * },$pre_product);
-			 *
-			 * $this->model('order_package')->transaction();
-			 * //清空原包裹
-			 * if(!$this->model('order_package')->where('orderno=?',[$orderno])->delete())
-			 * {
-			 * $this->model('order_package')->rollback();
-			 * return new json(json::PARAMETER_ERROR,'清空原包裹失败');
-			 * }
-			 * foreach ($data as $package)
-			 * {
-			 * if (empty($package['ship_type']))
-			 * {
-			 * $this->model('order_package')->rollback();
-			 * return new json(json::PARAMETER_ERROR,'请选择配送方式');
-			 * }
-			 * if (empty($package['ship_number']))
-			 * {
-			 * $this->model('order_package')->rollback();
-			 * return new json(json::PARAMETER_ERROR,'请输入配送编号');
-			 * }
-			 *
-			 * $product = $this->model('product')->where('id=?',[$package['pid']])->find();
-			 *
-			 * $last_package = $this->model('order_package')->where('orderno=? and ship_status=? and ship_type=? and ship_number=? and store_id=?',[$orderno,1,$package['ship_type'],$package['ship_number'],$product['store']])->find();
-			 * if (empty($last_package))
-			 * {
-			 * if(!$this->model('order_package')->insert([
-			 * 'orderno' => $orderno,
-			 * 'ship_status'=>1,
-			 * 'ship_type' => $package['ship_type'],
-			 * 'ship_time' => $_SERVER['REQUEST_TIME'],
-			 * 'ship_number' => $package['ship_number'],
-			 * 'ship_money' => 0,
-			 * 'store_id' => $product['store'],
-			 * ]))
-			 * {
-			 * $this->model('order_package')->rollback();
-			 * return new json(json::PARAMETER_ERROR,'重新分配包裹失败1');
-			 * }
-			 * $package_id = $this->model('order_package')->lastInsertId('order_package');
-			 * }
-			 * else
-			 * {
-			 * $package_id = $last_package['id'];
-			 * }
-			 *
-			 * if(!$this->model('order_product')->insert([
-			 * 'package_id' => $package_id,
-			 * 'pid' => $package['pid'],
-			 * 'content' => $package['content'],
-			 * 'num' => $package['num'],
-			 * 'price' => $package['price'],
-			 * ]))
-			 * {
-			 * $this->model('order_package')->rollback();
-			 * return new json(json::PARAMETER_ERROR,'重新分配包裹失败2');
-			 * }
-			 * }
-			 *
-			 * if(!$this->model('order')->where('orderno=?',[$orderno])->update([
-			 * 'way_status'=>1,
-			 * 'way_time'=>$_SERVER['REQUEST_TIME']
-			 * ]))
-			 * {
-			 * $this->model('order_package')->rollback();
-			 * return new json(json::PARAMETER_ERROR,'订单发货失败');
-			 * }
-			 *
-			 * $this->model('order_package')->commit();
-			 * return new json(json::OK);
-			 */
 		}
+		else if ($order_product['publish'] != $publish_info['name'])//只是简单的更改供应商
+		{
+			$this->model('order_product')->where('id=?',[$order_product_id])->limit(1)->update([
+				'publish'=>$publish_info['name']
+			]);
+			//判断快递方式是否需要更改
+			if ($order_package['ship_type'] != $ship_type || $order_package['ship_number'] != $ship_number)
+			{
+				$this->model('order_package')->where('id=?',[$order_product['package_id']])->limit(1)->update([
+					'ship_type' => $ship_type,
+					'ship_note'=>$ship_note,
+					'ship_number'=>$ship_number,
+					'ship_status'=>1,
+					'ship_time' =>time(),
+				]);
+			}
+			//更改订单中的way_status  注意可能有退款商品
+			$not_send_product_num = 0;
+			$not_send_packages = $this->model('order_package')->where('orderno=? and ship_status=?',[$order_package['orderno'],0])->select();
+			foreach ($not_send_packages as $package)
+			{
+				$not_send_product_num += $this->model('order_product')->where('package_id=? and refund=?',[$package['id'],0])->count();
+			}
+			if ($not_send_product_num>0)
+			{
+				$this->model('order')->where('orderno=?',[$order_package['orderno']])->limit(1)->update([
+					'way_status'=>2,
+					'way_time' => time(),
+					'way_type' => 1
+				]);
+			}
+			else
+			{
+				$this->model('order')->where('orderno=?',[$order_package['orderno']])->limit(1)->update([
+					'way_status'=>1,
+					'way_time' => time(),
+					'way_type' => 1
+				]);
+			}
+			$this->model('order_log')->add($order_package['orderno'], '更改了供应商，ship_type:'.$ship_type.',ship_number:'.$ship_number.',store:'.$store.',.publish:'.$publish,$admin,$orderStatus);
+			return new json(json::OK);
+		}
+		else//更改快递方式
+		{
+			//判断快递方式是否需要更改
+			if ($order_package['ship_type'] != $ship_type || $order_package['ship_number'] != $ship_number)
+			{
+				$this->model('order_package')->where('id=?',[$order_product['package_id']])->limit(1)->update([
+					'ship_type' => $ship_type,
+					'ship_note'=>$ship_note,
+					'ship_number'=>$ship_number,
+					'ship_status'=>1,
+					'ship_time' =>time(),
+				]);
+				$this->model('order_log')->add($order_package['orderno'], '订单中商品单独发货，只是更改了物流信息，ship_type:'.$ship_type.',ship_number:'.$ship_number.',store:'.$store.',.publish:'.$publish,$admin,$orderStatus);
+				
+			}
+			//更改订单中的way_status  注意可能有退款商品
+			$not_send_product_num = 0;
+			$not_send_packages = $this->model('order_package')->where('orderno=? and ship_status=?',[$order_package['orderno'],0])->select();
+			foreach ($not_send_packages as $package)
+			{
+				$not_send_product_num += $this->model('order_product')->where('package_id=? and refund=?',[$package['id'],0])->count();
+			}
+			if ($not_send_product_num>0)
+			{
+				$this->model('order')->where('orderno=?',[$order_package['orderno']])->limit(1)->update([
+					'way_status'=>2,
+					'way_time' => time(),
+					'way_type' => 1
+				]);
+			}
+			else
+			{
+				$this->model('order')->where('orderno=?',[$order_package['orderno']])->limit(1)->update([
+					'way_status'=>1,
+					'way_time' => time(),
+					'way_type' => 1
+				]);
+			}
+			return new json(json::OK);
+		}
+	}
+	
+	/**
+	 * 单个订单手动发货
+	 * @return \application\message\json
+	 */
+	function send()
+	{
+		$orderno = $this->post('orderno','');
+		if (empty($orderno))
+		{
+			return new json(json::PARAMETER_ERROR);
+		}
+		$adminHelper = new admin();
+		$admin = $adminHelper->getAdminId();
+		if (empty($admin))
+		{
+			return new json(json::NOT_LOGIN);
+		}
+		
+		$order = $this->model('order')->where('orderno=?',[$orderno])->find();
+		$orderHelper = new \application\helper\order();
+		$orderStatus = $orderHelper->convertStatus($order);
+		
+		if (empty($order))
+		{
+			return new json(json::PARAMETER_ERROR,'订单不存在');
+		}
+		
+		if ($order['status'] != 1)
+		{
+			return new json(json::PARAMETER_ERROR, '订单无效');
+		}
+		
+		if ($order['way_status']==1)
+		{
+			return new json(json::PARAMETER_ERROR,'订单已经发货');
+		}
+		
+		$send_order = $this->model('order_package')->where('orderno=? and ship_status=?',[$orderno,1])->find();
+		if (!empty($send_order))
+		{
+			return new json(json::PARAMETER_ERROR,'有已经发货了的订单');
+		}
+		
+		$this->model('order')->transaction();
+		
+		if(!$this->model('order')->where('orderno=?',[$orderno])->limit(1)->update([
+			'way_status'=>1,
+			'way_time'=>$_SERVER['REQUEST_TIME'],
+			'way_type' => 1,
+		]))
+		{
+			$this->model('order')->rollback();
+			return new json(json::PARAMETER_ERROR,'订单状态更改失败');
+		}
+		
+		if (!$this->model('order_package')->where('orderno=?',[$orderno])->update([
+			'ship_status'=>1,
+			'ship_type' => $this->post('ship_type',''),
+			'ship_time' => $_SERVER['REQUEST_TIME'],
+			'ship_number' => $this->post('ship_number',''),
+			'ship_note' => $this->post('ship_note',''),
+		]))
+		{
+			$this->model('order')->rollback();
+			return new json(json::PARAMETER_ERROR,'包裹状态更改失败');
+		}
+		$this->model('order')->commit();
+		$this->model("admin_log")->insertlog($admin, '订单发货成功，订单号：' . $orderno, 1);
+		$this->model('order_log')->add($orderno,'订单手动发货',$admin,$orderStatus);
+		return new json(json::OK);
 	}
 
 	function importWay()

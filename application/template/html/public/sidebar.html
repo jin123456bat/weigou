@@ -1,0 +1,28 @@
+<div class="sidebar">
+	<div class="datetime">
+		<div class="week">星期<script type="text/javascript">document.write(['日','一','二','三','四','五','六'][new Date().getDay()]);</script></div>
+		<div class="time"><script type="text/javascript">document.write(lpad(new Date().getHours(),2)+':'+lpad(new Date().getMinutes(),2));</script></div>
+		<div class="date"><script type="text/javascript">document.write(new Date().getFullYear()+'-'+lpad(new Date().getMonth()+1,2)+'-'+lpad(new Date().getDate(),2));</script></div>
+	</div>
+	<div class="menu">
+		<div class="menu1">
+			{%section name=menu1 loop=$menu1%}
+			<div class="menu1-item {%if $menu1[menu1].active%}active{%/if%}">
+				<a href="{%if !empty($menu1[menu1].link)%}./index.php?c=html&a={%$menu1[menu1].link%}{%/if%}">
+					<img src="{%$VIEW_ROOT%}/html/images/u11.png">
+					{%$menu1[menu1].name%}
+				</a>
+			</div>
+			{%/section%}
+		</div>
+		<div class="menu2">
+			{%section name=menu2 loop=$menu2%}
+			<div class="menu2-item {%if $menu2[menu2].active%}active{%/if%}">
+				<a href="{%if !empty($menu2[menu2].link)%}./index.php?c=html&a={%$menu2[menu2].link%}{%/if%}">
+					•&nbsp;{%$menu2[menu2].name%}
+				</a>
+			</div>
+			{%/section%}
+		</div>
+	</div>
+</div>

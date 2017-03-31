@@ -1,0 +1,1141 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<script type="text/javascript" src="{%$VIEW_ROOT%}/index/js/br_common.js"></script>
+<meta name="applicable-device" content="pc">
+<meta name="keywords" content="{%$product.name%}" />
+<meta name="description" content="{%$product.short_description%}" />
+<link href="favicon.ico" type="image/x-icon" rel="shortcut icon" />
+<link rel="stylesheet" type="text/css" media="screen" href="{%$VIEW_ROOT%}/index/css/style.css" />
+<script language="JavaScript" type="text/javascript" src="{%$VIEW_ROOT%}/index/js/j.1.2.6.js"></script>
+<script language="JavaScript" type="text/javascript" src="{%$VIEW_ROOT%}/index/js/style.js"></script>
+<script language="JavaScript" type="text/javascript" src="{%$VIEW_ROOT%}/index/js/common.js"></script>
+<script language="JavaScript" type="text/javascript" src="{%$VIEW_ROOT%}/index/js/j.mobilecheck.js"></script>
+<script language="javascript" type="text/javascript">
+var extras = (GetCookie(g_brdCkiPrfx+'extras')||'').split('|');
+var getMmbExtra = function(pos,bdecode,beval){
+    if(pos >= extras.length) return '';
+    bdecode = bdecode || false;
+    beval = beval || false;
+    var ret = extras[pos];
+    if(bdecode) ret = decodeURIComponent(ret);
+    if(beval) ret = eval(ret);
+    return ret;
+};
+
+var nick = eval(GetCookie(g_brdCkiPrfx+'nick'));
+var hash = GetCookie(g_brdCkiPrfx+'hash');
+var uid = "";
+var userlevel = "";
+if(!nick || !hash){
+    nick = "";
+}else{
+    uid = GetCookie(g_brdCkiPrfx+'uid');
+    userlevel = getMmbExtra(1,true,true);
+}
+
+NTKF_PARAM = {
+    siteid:"kf_9910",
+    settingid: "kf_9910_1353159430540",
+    uid:uid ? uid : "",
+    uname:nick ? nick : "",
+    isvip:uid ? "1" : "0",
+    userlevel:userlevel ? userlevel : ""
+};
+
+</script><link rel="stylesheet" type="text/css" href="{%$VIEW_ROOT%}/index/css/1180.css" />
+<link rel="stylesheet" type="text/css" href="{%$VIEW_ROOT%}/index/css/wwwcache-new_publicstyle.css" />
+</head>
+<body >
+<style type="text/css">
+  input[type=checkbox],
+input[type=radio]{
+-webkit-appearance: none;
+appearance: none;
+width: 13px;
+height: 13px;
+margin: 0;
+cursor: pointer;
+vertical-align: bottom;
+background: #fff;
+border: 1px solid B9BBBE;
+-webkit-border-radius: 1px;
+-moz-border-radius: 1px;
+border-radius: 1px;
+-webkit-box-sizing: border-box;
+-moz-box-sizing: border-box;
+box-sizing: border-box;
+position: relative;
+}
+
+input[type=checkbox]:active,
+input[type=radio]:active {
+border-color: #c6c6c6;
+background: #ebebeb;
+}
+
+input[type=checkbox]:hover {
+border-color: #c6c6c6;
+-webkit-box-shadow: inset 0 2px 2px rgba(0,0,0,0.1);
+-moz-box-shadow: inset 0 2px 2px rgba(0,0,0,0.1);
+box-shadow: inset 0 2px 2px rgba(0,0,0,0.1);
+}
+
+input[type=checkbox]:checked,
+input[type=radio]:checked {
+background: #fff;
+}
+
+input[type=checkbox]:checked::after {
+content: url({%$VIEW_ROOT%}/index/images/checkmark.png);
+display: block;
+position: absolute;
+top: -5px;
+right: 0px;
+left: -5px
+}
+
+input[type=checkbox]:focus {
+outline: none;
+border-color:#4d90fe;
+}
+
+input[type=text],input[type=password],select{
+display: block;    width: 100%;height: 34px;border: none;outline: none;color: #999;font-size: 12px;line-height: normal;padding-left: 16px;overflow: hidden;background-color: #fff;
+}
+input[type=text],input[type=password]{
+  padding-left: 3%;
+  width: 97%;
+}
+select{
+  padding-left: 10px;
+}
+input[type=submit]{
+  width: 100%;
+  text-align: center;
+  background-color: #ff8a81;
+  margin:0 auto;
+  color:#fff;
+  padding: 0px;
+  display: block;
+  height: 34px;
+  line-height: 34px;
+  outline: none;
+  border: none;
+}
+</style>
+<div class="address_modal" style="z-index: 30000; position: fixed; display: none;background: #fff;width: 500px;height: auto; left: 700px; top:223px;">
+  <div class="main" style="padding: 40px; background-color: #fff0ed;">
+    <form id="addressForm">
+      <h1 style="text-align: left;color: #000;font-family: 宋体;font-size: 20px;float:left;display: inline; margin-bottom: 10px;">选择收货地址</h1><h3 style="display: inline;float: right;cursor: pointer;" onmouseenter="this.style.color='#ff8a81';" onmouseleave="this.style.color='#000';" id="showAddressForm">没有地址?</h3>
+      <select name="address" style="outline: none;border: none;">
+        <option value="" disabled="disabled" selected="selected">请选择一个收货地址</option>
+      </select>
+      <div id="createAddressForm" style="display: none;">
+          <input type="text" placeholder="收货人姓名" name="name">
+          <input type="text" placeholder="电话号码" name="telephone">
+          <input type="text" placeholder="身份证号码" name="identify">
+          <div class="input">
+            <select name="province" style="border: none;outline: none;">
+              <option value="" disabled="disabled" selected="selected">请选择省份</option>
+              {%section name=province loop=$province%}
+              <option value="{%$province[province].id%}">{%$province[province].name%}</option>
+              {%/section%}
+            </select>
+            <select name="city" style="border: none;outline: none;">
+              <option value="" disabled="disabled" selected="selected">请选择城市</option>
+            </select>
+            <select name="county" style="border: none;outline: none;">
+              <option value="" disabled="disabled" selected="selected">请选择地区</option>
+            </select>
+          </div>
+          <input type="text" placeholder="详细地址" name="address">
+      </div>
+      <input type="submit" value="确定" name="submit" style="margin-top: 10px;">
+    </form>
+  </div>
+</div>
+<div class="login_modal" style="z-index: 30000; position: fixed; display: none;background: #fff;width: 400px;height: auto; left: 750px; top:223px;">
+  <div class="main" style="padding: 40px; background-color: #fff0ed;">
+    <form id="loginForm">
+      <h1 style="text-align: left;color: #000;font-family: 宋体;font-size: 20px;float:left;display: inline; margin-bottom: 10px;">用户登录</h1><h3 style="display: inline;float: right;cursor: pointer;" onmouseenter="this.style.color='#ff8a81';" onmouseleave="this.style.color='#000';" onclick="window.alert('暂不支持PC端注册');">快速注册</h3>
+      <input type="text" placeholder="手机号码" name="username" style="margin-top: 20px;">
+      <input type="password" placeholder="密码" name="password" style="margin-top: 20px;">
+      <div class="" style="display: block; width: 100%; height: 40px;">
+        <input type="checkbox" name="remember" id="remember" checked="checked" style="border: none;float: left;margin-top: 20px;">
+        <label for="remember" style="cursor: pointer;float: left;margin-top: 20px;">
+           记住密码
+        </label>
+        <div style="float: right;margin-top: 20px; cursor: pointer;" onmouseenter="this.style.color='#ff8a81';" onmouseleave="this.style.color='#000';" onclick="window.alert('修改密码请移步APP端');">忘记密码?</div>
+      </div>
+      <input name="submit" type="submit" value="登录" style="width: 100%; background-color: #ff8a81; margin:0 auto; color:#fff; padding: 0px;display: block;height: 34px;line-height: 34px;text-align: center;border: none;outline: none; margin-top: 20px; cursor: pointer;">
+    </form>
+  </div>
+</div>
+<div class="hide_idxtips">
+ </div>
+<a name="top"></a>
+<dl class="resetClear"></dl>
+<div class="indexw_header">
+      <div class="indexw_header_top">
+            <div class="indexw_header_top_border">
+            <div class="indexw_header_topL">
+              <h1 class="headerwelcome">欢迎进入淘微购官网</h1>
+              {%if isset($user)%}
+              <a style="margin:0 10px 0 10px;" href="#">{%$user.name|default:$user.telephone%}</a>
+              {%else%}
+              <a style="margin: 0 10px 0 10px" href="#" id="loginBtn">登录</a>
+              <span></span>
+              <a style="margin-left: 10px;" href="#" id="registerBtn">注册</a>
+              {%/if%}
+            </div>
+
+            <div class="indexw_header_topR">
+                <ul>
+                    <li style="width:55px;" id='mycartg'>
+                        <div class="indexw_header_gray" id='my_cart_show'>
+                            <div class="indexw_header_div_1" style="width:72px;height: 30px;">
+                              <a href="#" class="indexw_shop_text" style="padding-left: 5px;">购物车</a><span class="indexw_shop_num" id='my_header_count'>0</span>
+                              <span class="indexw_header_arrow"></span>
+                            </div>
+                        </div>
+
+                        <div id="indexw_header_cart" class="indexw_header_show" style="width:240px;top:30px; height:auto; max-height:399px;min-height:56px; overflow-y:auto;overflow-x:hidden; display:none">
+                          <div class="indexw_shopCard_border" style="margin-top:0px;padding-top:8px;"> <img  src="{%$VIEW_ROOT%}/index/images/loading2.gif" />
+                          </div>
+                        </div>
+
+                    </li>
+                    <li style="width:58px">
+                        <div class=""> <a href="#" class="indexw_header_div_1" >我的订单</a>
+                        </div>
+                      </li>
+                      <li class="arrow_hover">
+                        <div class="indexw_header_gray"> 
+                            <a href="#" class="indexw_header_div_1" style="line-height: 25px">个人中心</a> 
+                            <span class="indexw_header_arrow" style="margin-top:9px;"></span>
+                        </div>
+                        <div class="indexw_header_show" style="display:none">
+                          <a class="indexw_header_show_a" href="#" style="margin-top:5px;">订单查询</a>
+                          <a class="indexw_header_show_a" href="#">售后服务</a>
+                          <a class="indexw_header_show_a" href="#" style="padding-bottom:5px;">积分换礼</a>
+                        </div>
+                      </li>
+                      <li style="width:58px">
+                        <div class=""> <a target='_blank' href="#" class="indexw_header_div_1" >创业学院</a> </div>
+                      </li>
+                      <li class="phone_hover">
+                        <a href="index.php?c=mobile&a=index" class="indexw_header_div_1"  target="_blank">手机官网</a>
+                        <div class="u_hide_code" style="left:-44px; width: 100px; height:100px;"><img src="{%$VIEW_ROOT%}/index/images/code_wechat.jpg" alt="微信扫码" width=100 height=100></div>
+                      </li>
+                      <!-- <li style="width:54px; text-align:right">
+                        <a id="memberCollectBtn" class="collectImg" onClick="addFavorite(this);">收藏本站</a>
+                      </li> -->
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="indexw_header_middle" >
+        <div class="indexw_header_middleL">
+          <a href="#"><img class="indexw_logo" src="{%$VIEW_ROOT%}/index/images/logo_small.jpg"    width=139 height=41 /></a>
+        </div>
+        <div class="indexw_header_middleR">
+                                                 <div class="indexw_header_input_border">
+                <div class="indexw_header_input">
+                    <form id="headCommSearchFrm">
+                      <input id="headCommSearchKeyword" disabled="disabled" class="indexw_header_input_text" type="text"  value="搜索..."/>
+                      <input type="hidden" value="product" id="headSearchTypeKey"/>
+                      <input type="hidden" id="headSearchTypeName" class="commGrayDDBox" readonly value="&nbsp;产 品"/>
+                      <a class="disabled">搜索</a>
+                      <script type="text/javascript">
+                          $('form#headCommSearchFrm a').click(function(){
+                            return false;
+                          });
+                      </script>
+                    </form>
+                </div>
+              </div>
+        </div>
+    </div>
+    <input type='hidden' value='1' id='new_search_lianxiang'>
+</div>
+<div class="indexw_header">
+    <div class="indexw_nav">
+      <div class="indexw_nav_border">
+          <div  id="subnav">
+            <ul class="indexw_nav_ul_2">
+              <li class="indexw_nav_li"><a  class=" indexw_nav_a"  href="#">首页</a></li>
+            </ul>
+          </div>
+          <!--
+          <div  id="subnav_02">
+            <ul class="indexw_nav_ul_3">
+              <li class="indexw_nav_li"><a target='_blank' class="indexw_nav_a" href="#">品牌故事</a></li>
+              <li class="indexw_nav_li"><a target='_blank' class="indexw_nav_a" href="#">鸟巢论坛</a></li>
+            </ul>
+          </div>
+          -->
+      </div>
+    </div>
+    <input type='hidden' value='1' id='new_search_lianxiang'>
+</div>
+  
+<link rel="stylesheet" type="text/css" media="screen" href="{%$VIEW_ROOT%}/index/css/jqzoom.css" />
+<link rel="stylesheet" type="text/css" href="{%$VIEW_ROOT%}/index/css/wwwcache-new_comment.css">
+
+<!-- 新版详情页样式 20150815 -->
+<link rel="stylesheet" type="text/css" href="{%$VIEW_ROOT%}/index/css/detail15815.css?r212838" />
+<!-- end -->
+<link rel="stylesheet" type="text/css" href="{%$VIEW_ROOT%}/index/css/wwwcache-new_chengpinfaqconsult.css?r212838">
+
+<script language="JavaScript" type="text/javascript" src="{%$VIEW_ROOT%}/index/js/jquery-1.8.2.min.js"></script>
+<script language="JavaScript" type="text/javascript" src="{%$VIEW_ROOT%}/index/js/md5.js"></script> 
+<script type="text/javascript">
+  var jQ = $.noConflict(true);
+  function getNum(text){
+    return Number(text.replace(/[^0-9]/ig,""));
+  }
+
+</script>
+
+<!-- 详情页 js -->
+<script type="text/javascript" src="{%$VIEW_ROOT%}/index/js/wwwcache-new_detail15815.js?r212838"></script>
+<!-- 详情页 js end --> 
+<div class="g_header_bg">
+    <dl class="block">
+    <div class="floatL"><style type="text/css">
+  .navTit_span{
+    float: left;
+    margin-right: 5px;
+    font-size: 12px;
+  }
+  .navTit_a{
+    float: left;
+    margin-right: 5px;
+    font-size: 12px;
+  }
+  .navTit_h1{
+    height: 100%;
+    font-weight: normal;
+    font-size: 12px;
+  }
+  .firstnav{
+    line-height: 46px\9\0;
+    line-height: 46px\0;
+    +line-height: 46px;
+    font-size: 12px;
+  }
+</style>
+<span class="navTit_span"><a class="firstnav navTit_a" href="#">首页</a></span>
+  <!-- <span class="nav_arrow">&nbsp;&nbsp;</span> --><span class="navTit_span">&gt;</span>
+      <span class="navTit_span"><h1 class="navTit_h1">
+    <a class="navTit_a" href="#">商品</a>
+    </h1></span>
+    <!-- <span class="nav_arrow">&nbsp;&nbsp;</span> --><span class="navTit_span">&gt;</span>
+          <span class="navTit_span">
+            <h1 class="navTit_h1">
+            {%$product.name%}
+            </h1>
+          </span>
+          <div class="resetClear"></div> </div>
+    <div class="floatR contactCollect" style="width:306px;"></div>
+  </dl>
+  <div class="g_dtal_wrap page_detlnow">
+    <div class="g_show_pic">
+      <div id="proPic" class="stylePic">
+          <ul class="proPic_ul">
+            <li class="big" id="styleBigImg"></li>
+            <li id="style3D" class="3D hide"><span id="proPic3d"></span>
+          </ul>
+        </div>
+    </div>
+        <div class="g_pro_sys ">
+        <div class="f_psys_tlt">{%$product.name%}</div>
+        <div class="f_psys_pri">
+          <em class="u_psys_pri">
+            价格
+            <i>￥</i>
+            <b>
+              {%if $user.vip==1%}
+              {%$product.v1price * $product.selled%}
+              {%else if $user.vip==2%}
+              {%$product.v2price * $product.selled%}
+              {%else%}
+              {%$product.price * $product.selled%}
+              {%/if%}
+            </b>
+          </em>
+          <span class="u_psys_sale perPrice"><i>均价</i><b style="font-size: 14px;font-weight: bold;">
+            {%if $user.vip==1%}
+              {%$product.v1price%}
+              {%else if $user.vip==2%}
+              {%$product.v2price%}
+              {%else%}
+              {%$product.price%}
+              {%/if%}
+          </b></span>
+          <span class="u_psys_sale">
+            <i>售出</i>
+            <b>4866</b>
+            <i>评论</i>
+            <b>0</b>
+          </span>
+        </div>
+        <div class="f_psys_inf inf_txtcode">
+          <span>国家</span><i>{%$product.origin.name%}</i>
+        </div>
+       <div class="f_psys_inf inf_txtqulty">
+        <span>类别</span><b>{%if $product.outside==0%}普通{%elseif $product.outside==1%}进口{%elseif $product.outside==2%}直供{%elseif $product.outside==3%}直邮{%/if%}</b>
+       </div>
+        <div class="f_psys_inf inf_txtsize">
+          <span>税率</span><b>{%if empty($product.tax)%}包税{%else%}{%$product.tax*100%}%{%/if%}</b><a href="javascript:void(0)" onclick="showHowToMeasure()" class="howToMeasure_txt location">税率说明</a>       </div>
+        <div class="f_psys_inf inf_txtdiam">
+          <span>发货仓库</span><b>{%$product.store.name%}</b><b></b>
+       </div>
+        <div class="f_psys_inf inf_txtqulty">
+          <span>配送费</span><b>{%if $product.fee==0%}包邮{%else%}￥{%$product.fee%}{%/if%}</b>     </div>
+     <!--测试惠立方埋点 -->
+      <div class="f_psys_inf inf_txtqulty">
+          <div class="ui-entrance1" style="display:"></div>
+     </div>
+     <div class="f_psys_line"></div>
+
+    {%if !empty($bind)%}
+    <div class="f_psys_inf inf_txtsel" ><span>数量</span>
+      {%section name=bind loop=$bind%}
+      <a href="javascript:;" class="btn_nor_lnk {%if $bind[bind].num==$product.selled%}on{%/if%}" data-num="{%$bind[bind].num%}" data-price="{%$bind[bind].price%}" data-v1price="{%$bind[bind].v1price%}" data-v2price="{%$bind[bind].v2price%}">{%$bind[bind].num%}{%$bind[bind].unit%}</a>
+      {%/section%}
+    </div>
+    {%/if%}
+
+      <div class="f_psys_btn">
+        <div id="f_psys_btn_lst">
+          <div id="detailnow_001">
+            <input id="buyNowPopBtn"  name="shop_car" type="button" value="立即购买" alt="立即购买" title="立即购买" class="btn_pink_138x32 mr_5">
+          </div>
+        </div>
+     <div class="share_icon">
+        <span class="share_colet_num"></span>
+        <i id="shareRouterBtn" class="share_colet">分享</i>
+        <div class="bdsharebuttonbox bdshare-button-style0-16" data-tag="share_1" data-bd-bind="1407229330762">
+            <a href="javascript:void(0)" data-cmd="tsina"  class="tsina"   title="分享到新浪微博" alt="分享到新浪微博"></a>
+            <a href="javascript:void(0)" data-cmd="tqq"    class="tqq"     title="分享到腾讯微博" alt="分享到腾讯微博"></a>
+            <a href="javascript:void(0)" data-cmd="renren" class="renren"  title="分享到人人网" alt="分享到人人网"></a>
+            <a href="javascript:void(0)" data-cmd="sqq"    class="bds_sqq" title="分享到QQ好友" alt="分享到QQ好友"></a>
+        <a href="javascript:void(0)" data-cmd="qzone"  class="bds_qzone" title="分享到QQ空间" alt="分享到QQ空间"></a>
+        <a href="javascript:void(0)" data-cmd="weixin" class="bds_weixin"  title="分享到微信" alt="分享到微信"></a>
+        </div>
+      </div> 
+     </div>
+    </div>
+  </div>
+</div>
+<div class="g_header_bg">
+
+  <div class="f_sys_tab" >
+    <div id="hide_tab">
+    <span class="btn_pink_115x28" id="zixun_up" hidden="hidden" src="{%$VIEW_ROOT%}/index/images/tab_consult.png" onclick="javascript:openOnlineCustomWin();_hmt.push(['_trackPageview','/virtual/preconsult']);ga('send','event','zixun', 'click', 'button');" style="display:none">买前咨询</span>
+    <a href="javascript:;" class="on" >商品详情</a><i>/</i>
+    <a href="javascript:;" >商品参数</a><i>/</i>
+    <a href="javascript:;">全部评价</a><i>/</i>
+    <a href="javascript:;" >产品介绍</a>
+    </div>
+  </div>
+        <div class="f_cont_detl f_cont" >   
+      <div class="f_cont_detl_pic">
+        <div>
+          {%$product.description%}
+        </div>
+      </div>
+       
+    </div>
+      
+      <div class="f_cont_sys f_cont" style="display:none">
+        <dl class="f_cont_sys_lst">
+          <dt><span>条形码</span><span>计量单位</span><span>包装</span></dt>
+          <dd><span>{%$product.barcode%}</span><span>{%$product.MeasurementUnit%}</span><span>{%$product.package%}</span>
+          </dd>
+        </dl>
+      
+        <dl class="f_cont_sys_lst">
+          {%section name=prototype loop=$prototype%}
+          <dd><span>{%$prototype[prototype].name%}</span><span>{%$prototype[prototype].value%}</span></dd>
+          {%/section%}
+        </dl>
+        <i class="u_but_tips">温馨提示：展示图片仅供参考，产品请以实物为准</i>
+      </div>
+      
+      <div class="f_cont_comm f_cont" >
+      
+        <div id="u_comm_tlt">全部评论</div>
+
+          <div class="f_cont_comm_detail" id="chengpinpinglun"><!--评论样式-->
+            <!-- ajax调用加载 -->
+          </div>
+          <script language="JavaScript" type="text/javascript" src="{%$VIEW_ROOT%}/index/js/util.js"></script> 
+        </div>
+
+        <div class="f_cont_serv f_cont" style="display:none" >
+          <dl class="f_cont_serv_txt">
+            <p style="font-size: 12px; font-family:宋体; color:#666; line-height: 22px; text-indent: 24px;">{%$product.short_description%}</p>
+          </dl>
+        </div>
+
+      </div>
+
+
+<div class="g_header_bg">
+    <link rel="stylesheet" type="text/css" href="{%$VIEW_ROOT%}/index/css/footertab.css" />
+<script type="text/javascript">
+var getGbLength = function (str) {
+    var realLength = 0, len = str.length, charCode = -1;
+    for (var i = 0; i < len; i++) {
+        charCode = str.charCodeAt(i);
+        if (charCode >= 0 && charCode <= 128) realLength += 1;
+        else realLength += 2;
+    }
+    return realLength;
+};
+var cutGbStr = function (str, len) {
+    var str_length = 0;
+    var str_len = 0;
+    str_cut = new String();
+    str_len = str.length;
+    for (var i = 0; i < str_len; i++) {
+        a = str.charAt(i);
+        str_length++;
+        if (escape(a).length > 4) str_length++;
+        str_cut = str_cut.concat(a);
+        if (str_length >= len) {
+            str_cut = str_cut.concat("...");
+            return str_cut;
+        }
+    }
+    return str;
+};
+</script>
+    <div style="height:25px;"></div>
+</div>
+<!--  手寸弹框  --> 
+<div id="divlock"></div>
+<div id="modalwindow">
+  <div class="modalwindowclose" onclick="hideHowToMeasure()"></div>
+  <h1>《跨境电商综合税表》适用跨境电商综合税的商品税率</h1>
+  <br>
+  <p style="color: #666;font-size: 13px;line-height: 23px;text-align: left;">
+  跨境电子商务零售进口商品的单次交易限值为人民币2000元，个人年度交易限值为人民币20000元。
+  在限值以内进口的跨境电子商务零售进口商品，关税税率暂设为0%；进口环节增值税、消费税取消免征税额，暂按法定应纳税额的70%征收。
+  高档化妆品：高档美容修饰类和高档护肤类化妆品界定标准为进口完税价格在10元/毫升（克）或15元/片（张）及以上。
+  跨境电商综合税率 = （消费税率+增值税率）/（1-消费税率）×0.7
+  </p>
+  <h1>《跨境电商行邮税》</h1>
+  <p style="color: #666;font-size: 13px;line-height: 23px;text-align: left;">
+  书报、刊物、教育用影视资料；计算机、视频摄录一体机、数字照相机等   0.15
+  运动用品（不含高尔夫球及球具）、钓鱼用品；纺织品及其制成品；电视   0.3
+  烟、酒；贵重首饰及珠宝玉石；高尔夫球及球具；高档手表；化妆品       0.6
+  </p>
+  <br>
+  <h2 style="text-align: left;">
+  注:部分商品税率由淘微购承担
+  </h2>
+  </div>
+</div>
+
+<div class="resetClear"></div>
+<div class="indexw_foot_service">
+  <div class="indexw_foot_service_border">
+    <a class="indexw_foot_service_left" style="background-image: url('{%$VIEW_ROOT%}/index/images/logo.jpg');"></a>
+    <div class="indexw_foot_service_middle">
+      <ul>
+        <li><span>关于我们</span></li>
+        <li><a rel="nofollow" target="_blank" href="#">品牌简介</a></li>
+        <li><a rel="nofollow" target="_blank" href="#">市场合作</a></li>
+        <li><a rel="nofollow" target="_blank" href="#">诚聘贤才</a></li>
+        <li><a rel="nofollow" target="_blank" href="#">联系我们</a></li>
+        <li><a rel="nofollow" target="_blank" href="#">商务加盟</a></li>
+      </ul>
+      <ul>
+        <li><span>购物指南</span></li>
+        <li><a rel="nofollow" target="_blank" href="#">购物流程</a></li>
+        <li><a rel="nofollow" target="_blank" href="#">订单处理时间</a></li>
+        <li><a rel="nofollow" target="_blank" href="#">订单查询</a></li>
+        <li><a rel="nofollow" target="_blank" href="#">特色商品说明</a></li>
+      </ul>
+      <ul>
+        <li><span>支付方式</span></li>
+        <li><a rel="nofollow" target="_blank" href="#">在线支付</a></li>
+        <li><a rel="nofollow" target="_blank" href="#">货到付款</a></li>
+        <li><a rel="nofollow" target="_blank" href="#">银行汇款</a></li>
+        <li><a rel="nofollow" target="_blank" href="#">海外汇款</a></li>
+      </ul>
+      <ul>
+        <li><span>配送方式</span></li>
+        <li><a rel="nofollow" target="_blank" href="#">体验中心自提</a></li>
+        <li><a rel="nofollow" target="_blank" href="#">全国免费配送</a></li>
+        <li><a rel="nofollow" target="_blank" href="#">海外配送</a></li>
+        <li><a rel="nofollow" target="_blank" href="#">货品包装</a></li>
+      </ul>
+      <ul>
+        <li><span>售后服务</span></li>
+        <li><a rel="nofollow" target="_blank" href="#">售后政策</a></li>
+        <li><a rel="nofollow" target="_blank" href="#">15天退换</a></li>
+        <li><a rel="nofollow" target="_blank" href="#">以小换大</a></li>
+        <li><a rel="nofollow" target="_blank" href="#">优惠换款</a></li>
+      </ul>
+    </div>
+    <div class="indexw_foot_service_right" style=" background-image: url('{%$VIEW_ROOT%}/index/images/wechat_code.png');">
+      <a class='xlwb' target='_blank' style="width:188px;right:0px;"></a>
+    </div>
+  </div>
+</div>
+<dl class="indexw_foot_other" >
+  <dt>
+    <div> <a  href="#sitemap">网站地图</a><span>|</span> <a href="#friendLink">友情链接</a><span>|</span> <a href="#comment">在线投诉</a><span>|</span>Copyright &copy; 2002-2017 www.twillg.com &nbsp;淘微购&nbsp; All Rights Reserved.
+    </div>
+    <p style="text-align: center;">杭州名堂网络科技有限公司</p>
+    
+ </dt>
+   <dd class="copyright"></dd>
+</dl>
+
+<div id="totop" class="s_totop_out"></div>
+<script type="text/javascript">
+    
+  $(function(){
+    var friend_con = null;
+        /***top菜单效果***/
+        jQ('#my_cart_show').live('mouseenter',function(){
+            mycartload();
+      $(this).addClass("indexw_header_white_bg");
+      $(this).parent().children("div").eq(1).show();
+    }).mouseleave(function(){
+      $(this).removeClass("indexw_header_white_bg");
+      $(this).parent().children("div").eq(1).hide();
+    });
+        
+        jQ('.indexw_header_gray').mouseenter(function(){
+            jQ(this).addClass("indexw_header_white_bg");
+            jQ(this).parent().children("div").eq(1).show();
+        }).mouseleave(function(){
+            jQ(this).removeClass("indexw_header_white_bg");
+            jQ(this).parent().children("div").eq(1).hide();
+        });
+        //saoma 
+
+         jQ('.phone_hover').mouseenter(function(){
+          
+            jQ(this).addClass("on");
+            jQ(this).children(".u_hide_code").show();
+        }).mouseleave(function(){
+            jQ(this).removeClass("on");
+            jQ(this).children(".u_hide_code").hide();
+        });
+        //客服扫码
+         jQ('.u_hv_code').mouseenter(function(){
+          
+           
+            jQ(this).siblings(".u_hv_code_hide").show();
+        }).mouseleave(function(){
+            
+            jQ(this).siblings(".u_hv_code_hide").hide();
+        });
+
+  
+    jQ('.indexw_header_show').mouseenter(function(){
+      $(this).show();
+      $(this).parent().children("div").eq(0).addClass("indexw_header_white_bg");
+    }).mouseleave(function(){
+      $(this).hide();
+      $(this).parent().children("div").eq(0).removeClass("indexw_header_white_bg");
+    });
+
+
+     jQ('.indexw_shopCard_del').live('click',function(){
+        var $obj = $(this);
+        var id = $obj.attr('data');
+        if($.isempty(id)) return;
+        urls = g_baseUrls.base+'/cart/ajaxdel/id/'+id + '/';
+        hostA = document.domain.split(".");
+        if(hostA[0] != 'www' && hostA[0] !='www2'){
+          $.ajax({
+                type:'get',
+                async:false,
+                url:urls,
+                dataType:'jsonp',
+                jsonp:'jsoncallback',
+                jsonpCallback:"success_jsonpCallback",
+                success:function(result){
+                    if(result.code == 1){
+                        $obj.parent().remove();
+                        var price = 0;
+                        $('#mycartg div[class=indexw_shopCard_border]').each(function(){
+                            price += parseInt($(this).attr('data'));
+                        });
+                        var count = parseInt($('#my_header_count').html());
+                        count = count - 1;
+                        $('#my_header_count').html(count);
+                        if( count == 0 ){
+                            $('.indexw_shopCard_border').html('<div class="indexw_shopCard_wushangpin">购物车中无商品</div>');
+                        }else{
+                            $('#my_header_price').html(price);
+                        }
+          }
+                }
+            });
+        }else{
+          $.ajax({
+            url: urls,
+            cache : false,
+            success: function(resp){
+                try{            
+                var retcode = $.dealWithRetInDialog(resp,true);
+                if(retcode.code == 1){
+                    $obj.parent().remove();
+                    var price = 0;
+                    $('#mycartg div[class=indexw_shopCard_border]').each(function(){
+                        price += parseInt($(this).attr('data'));
+                    });
+                    var count = parseInt($('#my_header_count').html());
+                    count = count - 1;
+                    $('#my_header_count').html(count);
+                    if( count == 0 ){
+                        $('.indexw_shopCard_border').html('<div class="indexw_shopCard_wushangpin">购物车中无商品</div>');
+                    }else{
+                        $('#my_header_price').html(price);
+                    }
+                  if(typeof retcode.info != 'object'){
+                    retcode = eval("(" + retcode.info + ")");
+                  }
+
+                }
+            }catch(e){}},
+            error: function(){
+                cartContentObj.unblock();
+            }
+          });
+        }
+      });
+
+//新版官网首页导航js2015-04-03
+     jQ('.indexw_nav_ul_2  .indexw_nav_li ').mouseenter(function(){
+       var a_index=parseInt( jQ(this).index());
+       var hide_par=jQ(this).parent('.indexw_nav_ul_2').siblings('.m_idx_snav_hide');
+       jQ('.m_idx_snav_hide').hide();
+       jQ('.indexw_nav_ul_2').find('.indexw_nav_a').removeClass('indexw_nav_a_hover02');
+       if (a_index >= 1) {  
+         
+          jQ(this).children('.indexw_nav_a').addClass('indexw_nav_a_hover02');
+          jQ(hide_par).stop().show();
+          jQ(hide_par).children('.m_idx_snav_wp').eq(a_index-1).stop().show().siblings('.m_idx_snav_wp').hide();
+       }      
+        })
+         jQ('#subnav ').mouseleave(function(){   
+            jQ('.m_idx_snav_hide').hide();
+            jQ('.m_idx_snav_hide').children('.m_idx_snav_wp').hide();
+            jQ('.indexw_nav_ul_2').find('.indexw_nav_a').removeClass('indexw_nav_a_hover02');
+
+            });
+    jQ('.indexw_nav_ul_3  .indexw_nav_li ').mouseenter(function(){
+       var a_index=parseInt( jQ(this).index());
+       var hide_par=jQ(this).parent('.indexw_nav_ul_3').siblings('.m_idx_snav_hide');
+       jQ('.m_idx_snav_hide').hide();
+       jQ('.indexw_nav_ul_3').find('.indexw_nav_a').removeClass('indexw_nav_a_hover02');
+       if (a_index < 1) { 
+         
+          jQ(this).children('.indexw_nav_a').addClass('indexw_nav_a_hover02');
+          jQ(hide_par).stop().show();
+          jQ(hide_par).children('.m_idx_snav_wp').eq(a_index).stop().show().siblings('.m_idx_snav_wp').hide();
+       }      
+        })
+         jQ('#subnav_02').mouseleave(function(){   
+            jQ('.m_idx_snav_hide').hide();
+            jQ('.m_idx_snav_hide').children('.m_idx_snav_wp').hide();
+            jQ('.indexw_nav_ul_3').find('.indexw_nav_a').removeClass('indexw_nav_a_hover02');
+
+            });
+         jQ('.indexw_nav_ul_shan').mouseenter(function(){
+        jQ('.m_idx_snav_hide').hide();
+        jQ('.indexw_nav_ul_2').find('.indexw_nav_a').removeClass('indexw_nav_a_hover02');
+      });
+  });
+
+    $("#headCommSearchKeyword").bind("click",function(){
+    $(this).css("color","#666");
+    $(this).unbind("click");
+    });
+  $("#headCommSearchKeyword").focus(function(){
+    $(this).parent().parent().addClass("indexw_header_input_hover");
+    }).blur(function(){
+    $(this).parent().parent().removeClass("indexw_header_input_hover");
+  });
+    $('.indexw_header_input_text').focus(function() {
+    var val = $('.indexw_header_input_text').val();
+    if (val=='戒托') {
+        $(this).attr('value','');
+    }
+    $(this).attr('value', '').css({'color':'#666','font-size':'12px'}); 
+  });
+  $('.indexw_header_input_text').blur(function() {
+    var val = $('.indexw_header_input_text').val();
+    if (val=="") {
+      $('.indexw_header_input_text').attr('value', '戒托').css({'color':'#999','font-size':'12px'});
+    }
+    
+  /***************头部箭头变化**************/
+    jQ("#mycartg").mouseenter(function(){
+      jQ(this).children("div").children("div").children("span").last().addClass("indexw_header_arrow_hover");
+      
+    }).mouseleave(function(){
+        jQ(this).children("div").children("div").children("span").last().removeClass("indexw_header_arrow_hover");
+    });
+    jQ(".arrow_hover").mouseover(function(){
+      jQ(this).children("div").children("span").last().addClass("indexw_header_arrow_hover");
+      
+    }).mouseleave(function(){
+        jQ(this).children("div").children("span").last().removeClass("indexw_header_arrow_hover");
+    });
+    
+   
+    /***锚点***/
+    $(".return_top").click(function(){
+        $("html,body").animate({scrollTop:$("#ntkf_flash_div_presence").offset().top},300);//1000是ms,也可以用slow代替
+    });
+      
+  });
+    
+  /***收藏本页***/
+  function addFavorite(obj, opts){
+    var _t, _u;
+    if(typeof opts != 'object'){
+        _t = document.title;
+        _u = location.href;
+    }else{
+        _t = opts.title || document.title;
+        _u = opts.url || location.href;
+    }
+    try{
+        window.external.addFavorite(_u, _t);
+    }catch(e){
+        if(window.sidebar){
+            obj.href = _u;
+            obj.title = _t;
+            obj.rel = 'sidebar';
+            if(isFirefox=navigator.userAgent.indexOf("Firefox")>0){  
+            alert('抱歉，您所使用的浏览器无法完成此操作。\n\n请使用 Ctrl + D 将本页加入收藏夹！');
+            }  
+            if(isSafari=navigator.userAgent.indexOf("Safari")>0) {  
+            alert('抱歉，您所使用的浏览器无法完成此操作。\n\n请使用 Ctrl + D 将本页加入收藏夹！');
+            }
+        }else{
+            alert('抱歉，您所使用的浏览器无法完成此操作。\n\n请使用 Ctrl + D 将本页加入收藏夹！');
+        }
+    }
+}
+
+  
+
+  function mycartload(){
+      try{
+        $('#indexw_header_cart').html('<div class="indexw_shopCard_wushangpin">购物车中无商品</div><input type="hidden" id="my_cart_all_count" value="0" />');
+        $('#my_header_count').html(0);
+            /*var urls = g_baseUrls.base+'/cart/ajaxinfo/act/i';
+              $.ajax({
+                type:'get',
+                async:false,
+                url:urls,
+                dataType:'jsonp',
+                jsonp:'jsoncallback',
+                jsonpCallback:"success_jsonpCallback",
+                success:function(result){
+                    $('#indexw_header_cart').html('<div class="indexw_shopCard_wushangpin">购物车中无商品</div><input type="hidden" id="my_cart_all_count" value="0" />');
+                    $('#my_header_count').html( $('#my_cart_all_count').val() );
+                }
+            });*/
+        }catch(e){};
+  }
+  function getQueryString(name){
+      var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+      var r = window.location.search.substr(1).match(reg);
+      if (r != null)
+          return unescape(r[2]);
+      return null;
+  }
+  function closeBrowseTip(){
+      $('.browse_tip').slideUp();
+    var time = new Date();
+    time.setTime(time.getTime() + 7*24*60*60*1000);
+      SetCookie('zbird_ie_browse_tip', 1, time, '/');
+  }
+
+
+  $(document).ready(function(){
+      if($.isIE67 && !getCookie('zbird_ie_browse_tip')){
+          $('body').prepend('<div class="browse_tip" ><div class="browse_tip_content"><label>尊敬的用户，您正在使用的浏览器版本过低，为了您更好的浏览淘微购网站，建议您更换或者升级浏览器，谢谢！</label></div><a href="javascript:closeBrowseTip();" >关闭</a></div>');
+      };
+    
+    if(getCookie('zbird_notice_line'))
+      {
+      $('.hide_idxtips').html('');
+      }else{
+    $('.hide_idxtips').html( '    ');  
+    }
+      $('.hide_idxtips i').click(function(){
+      var time = new Date();
+        time.setTime(time.getTime()+24*60*60*1000);
+          SetCookie('zbird_notice_line', 1, time, '/');
+         $('.hide_idxtips').html('');
+      });
+  });
+</script>
+<script language="JavaScript" type="text/javascript" src="{%$VIEW_ROOT%}/index/js/jquery-1.8.2.min.js"></script>
+<script type="text/javascript">
+  $(document).ready(function(){
+    if(getQueryString('pay') == 'success')
+    {
+      alert('支付成功,订单详情请到移动端查看');
+    }
+  });
+</script>
+<script type="text/javascript">
+
+$('select[name=province]').on('change',function(){
+  $.get('{%url m=api c=common a=address%}',{type:'city',pid:$(this).val()},function(response){
+    response = JSON.parse(response);
+    if(response.code==1)
+    {
+      $('select[name=city]').empty();
+      $('select[name=city]').append('<option value="" disabled="disabled" selected="selected">请选择城市</option>');
+      for(var i=0;i<response.body.length;i++)
+      {
+        $('select[name=city]').append('<option value="'+response.body[i].id+'">'+response.body[i].name+'</option>');
+      }
+    }
+  });
+});
+
+$('select[name=city]').on('change',function(){
+  $.get('{%url m=api c=common a=address%}',{type:'county',cid:$(this).val()},function(response){
+    response = JSON.parse(response);
+    if(response.code==1)
+    {
+      $('select[name=county]').empty();
+      $('select[name=county]').append('<option value="" disabled="disabled" selected="selected">请选择地区</option>');
+      for(var i=0;i<response.body.length;i++)
+      {
+        $('select[name=county]').append('<option value="'+response.body[i].id+'">'+response.body[i].name+'</option>');
+      }
+    }
+  });
+});
+
+  $('#addressForm').on('submit',function(){
+    if($('#createAddressForm').is(':hidden'))
+    {
+      var address = $('select[name=address]').val();
+      if ($('.btn_nor_lnk.on').length>0) {
+        var bind = $('.btn_nor_lnk.on').attr('data-num');
+      }else{
+        var bind = '{%$product.selled%}';
+      }
+      var product = {
+        'id':'{%$smarty.get.id%}',
+        'content':'',
+        'num':1,
+        'bind':bind
+      };
+      var data = {
+        product:JSON.stringify([product]),
+        prepay:0,
+        address:address,
+        X_CSRF_TOKEN:'{%$x_csrf_token%}'
+      };
+      $.post('{%url m=ajax c=order a=create%}',data,function(response){
+        response = JSON.parse(response);
+        if(response.code==1)
+        {
+          window.open('./index.php?c=order&a=payment&paytype=alipay&pc=0&return=this&orderno='+response.body.orderno);
+        }
+        else
+        {
+          alert(response.result);
+        }
+      });
+    }
+    else
+    {
+      var name = $.trim($('#createAddressForm').find('input[name=name]').val());
+      var telephone = $.trim($('#createAddressForm').find('input[name=telephone]').val());
+      var identify = $.trim($('#createAddressForm').find('input[name=identify]').val());
+      var address = $.trim($('#createAddressForm').find('input[name=address]').val());
+      var province = $('#createAddressForm').find('select[name=province]').val();
+      var city = $('#createAddressForm').find('select[name=city]').val();
+      var county = $('#createAddressForm').find('select[name=county]').val();
+
+      $.post('{%url m=ajax c=address a=create%}',{name:name,telephone:telephone,identify:identify,address:address,province:province,city:city,county:county,X_CSRF_TOKEN:'{%$x_csrf_token%}'},function(response){
+        response = JSON.parse(response);
+        if(response.code==1)
+        {
+          val = response.body.province+response.body.city+response.body.county+response.body.address+" "+response.body.name+"("+response.body.telephone+")收";
+          $('select[name=address]').find('option').removeAttr('selected');
+          $('select[name=address]').append('<option value='+response.body.id+' selected="selected">'+val+'</option>');
+          $('select[name=address]').val(response.body.id);
+
+          $('#showAddressForm').trigger('click');
+        }
+        else
+        {
+          alert(response.result);
+        }
+      })
+    }
+    return false;
+  });
+
+  $('#showAddressForm').on('click',function(){
+    $('#createAddressForm').slideToggle();
+    $('select[name=address]').slideToggle();
+    if($(this).html()!='选一个地址')
+    {
+      $(this).html('选一个地址');
+    }
+    else
+    {
+      $(this).html('没有地址?');
+    }
+    return false;
+  });
+
+
+  $('#buyNowPopBtn').on('click',function(){
+    $('#divlock').show();
+    $('.address_modal').show();
+    $.post('{%url m=ajax c=address a=mylists%}',{X_CSRF_TOKEN:'{%$x_csrf_token%}'},function(response){
+      response = JSON.parse(response);
+      if(response.code==2)
+      {
+         $('.address_modal').hide();
+         $('.login_modal').show();
+      }
+      else if (response.code==1)
+      {
+        $('select[name=address]').empty();
+        $('select[name=address]').append('<option value="" disabled="disabled" selected="selected">请选择一个收货地址</option>');
+        for(var i=0;i<response.body.length;i++)
+        {
+          $('select[name=address]').append('<option value="'+response.body[i].id+'">'+response.body[i].province+response.body[i].city+response.body[i].county+response.body[i].address+' '+response.body[i].name+'('+response.body[i].telephone+')收</option>');
+        }
+      }
+      else
+      {
+        alert(response.result);
+      }
+    });
+    /**/
+    return false;
+  });
+
+
+  $('.btn_nor_lnk').on('click',function(){
+    $(this).siblings().removeClass('on');
+    $(this).addClass('on');
+    {%if isset($user) && $user.vip==2%}
+    $('.u_psys_pri b').html(parseFloat(parseFloat($(this).attr('data-num')) * parseFloat($(this).attr('data-v2price'))).toFixed(2));
+    $('.perPrice b').html($(this).attr('data-v2price'));
+    {%elseif isset($user) && $user.vip==1%}
+    $('.u_psys_pri b').html(parseFloat(parseFloat($(this).attr('data-num')) * parseFloat($(this).attr('data-v1price'))).toFixed(2));
+    $('.perPrice b').html($(this).attr('data-v1price'));
+    {%else%}
+    $('.u_psys_pri b').html(parseFloat(parseFloat($(this).attr('data-num')) * parseFloat($(this).attr('data-price'))).toFixed(2));
+    $('.perPrice b').html($(this).attr('data-price'));
+    {%/if%}
+    return false;
+  });
+
+  $('#loginBtn').on('click',function(){
+    $('#divlock').show();
+    $('.login_modal').show();
+  });
+
+  $('#loginForm').on('submit',function(){
+    var username = $.trim($(this).find('input[name=username]').val());
+    var password = $.trim($(this).find('input[name=password]').val());
+    $.post('{%url m=ajax c=user a=login%}',{telephone:username,password:password,X_CSRF_TOKEN:'{%$x_csrf_token%}'},function(response){
+      response = JSON.parse(response);
+      if(response.code==1)
+      {
+        $('#divlock').hide();
+        $('.login_modal').hide();
+
+        $(".indexw_header_topL").html('<h1 class="headerwelcome">欢迎进入淘微购官网</h1><a style="margin:0 10px 0 10px;" href="#">'+response.body.name+'</a>');
+      }
+      else
+      {
+        alert(response.result);
+      }
+    });
+    return false;
+  });
+</script>
+<script type="text/javascript">
+  var jQ = $.noConflict(true);
+  try{
+    mycartload();
+     memberLoginInitBG();    }catch(e){}
+    if(getQueryString('utm_source')){
+      var time = new Date();
+      time.setTime(time.getTime() + 30*24*60*60*1000);
+      SetCookie('zbird_utm_trace', window.location.search.substr(1), time, '/');
+    }
+</script>
+<!--统计 -->
+<script type="text/javascript">
+var peple = 1;
+if($.isIE67 && !getCookie('zbird_ie_browse_tip')){
+  peple = 0;
+}
+if(peple == 1)
+  {
+    /*百度统计*/
+    try{
+    window.onerror = function() { return true; };
+    var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+    document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F7196bd18e4ae9242c4c930ffaa724011' type='text/javascript'%3E%3C/script%3E"));
+    }catch(err) {}
+  }
+</script>
+
+
+
+<!-- End Piwik Code -->
+</body></html> 
+ 
+<script language="JavaScript" type="text/javascript" src="{%$VIEW_ROOT%}/index/js/j.zoom.util.js"></script> 
+
+<script language="JavaScript" type="text/javascript">
+var qualityInfo = {
+  "s":[
+      "{%$product.listImage%}",
+      {%foreach item=image from=$product.detailImage%}
+      "{%$image%}",
+      {%/foreach%}
+    ],
+    "b":[
+    "{%$product.listImage%}",
+      {%foreach item=image from=$product.detailImage%}
+      "{%$image%}",
+      {%/foreach%}
+    ],
+    "o":[
+      "{%$product.listImage%}",
+      {%foreach item=image from=$product.detailImage%}
+      "{%$image%}",
+      {%/foreach%}
+    ],"flv360":""};
+var g_topic = 'proexstyle';
+var g_tpl = 'ajaxconsult';
+</script> 
+<!-- 产品图片展示 js -->
+<script language="JavaScript" type="text/javascript" src="{%$VIEW_ROOT%}/index/js/product_new.js"></script>
+<!-- 产品图片展示 js end --> 

@@ -20,6 +20,9 @@
 		height: 100%;
 		overflow: hidden;
 	}
+	p{
+		font-size: 14px;
+	}
 </style>
 <body style="background-color: #fff;">
     {%include file='mobile/public/search.html'%}
@@ -49,7 +52,7 @@ $(document).ready(function(){
 		if(product.origin)
 		{
 			line1.append($('<img src="'+product.origin.logo+'">'));
-			line1.append($('<p>'+product.origin.name+'品牌 '+(product.store?(product.store+'发货'):'')+'</p>' ));
+			line1.append($('<p>'+(product.origin.id==42?'国产':(product.origin.name+'进口 '))+(product.store?(product.store+'发货'):'')+'</p>' ));
 		}
 		rightDiv.append('<div class="sou-goods-line2">'+product.name+'</div>');
 		

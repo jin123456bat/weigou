@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="utf-8" />
+		<title>{%$page_title%}</title>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+       	<meta name="renderer" content="webkit">
+        <meta content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport" />
+        <!-- reset -->
+        <link rel="stylesheet" href="//cdn.bootcss.com/normalize/5.0.0/normalize.min.css">
+		<!-- 新 Bootstrap 核心 CSS 文件 -->
+        <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<!-- 可选的Bootstrap主题文件（一般不用引入） -->
+		<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
+		<!--icon-->
+		<link rel="stylesheet" href="{%$VIEW_ROOT%}/html/css/plugins/font-awesome/css/font-awesome.min.css">
+		<!--自定义css-->
+		<link rel="stylesheet" href="{%resource path='/html/css/global.css'%}">
+		<script type="text/javascript">
+			function lpad(num, n) {  
+				return Array(n>(''+num).length?(n-(''+num).length+1):0).join(0)+num;  
+			}
+		</script>
+	</head>
+	<style>
+		.icon{
+			display: inline-block;
+			width: 30px;
+			height: 30px;
+		}
+
+		.logistics .logistics-line{
+			display: block;
+			color: #787878;
+			padding-bottom: 15px;
+		}
+		.logistics .logistics-line .logisticsDatetime{
+			display: inline-block;
+			width: 100px;
+		}
+		.logistics .logistics-line .logisticsDatetime .logisticsDate{
+			text-align: center;
+			font-size: 12px;
+			height: 20px;
+		}
+		.logistics .logistics-line .logisticsDatetime .logisticsTime{
+			display: inline-block;
+			text-align: center;
+			width: 50%;
+			font-size: 18px;
+		}
+		.logistics .logistics-line .logisticsDatetime .logisticsWeek{
+			text-align: center;
+			display: inline-block;
+		}
+
+		.logistics .logistics-line .note{
+			display: inline-block;
+			height: 45px;
+			line-height: 20px;
+			position: absolute;
+			word-wrap: break-word;
+			word-break: break-all;
+			padding-left: 10px;
+			padding-right: 50px;
+		}
+
+		.logistics .logistics-line .note p{
+			vertical-align: middle;
+			display: inline-block;
+		}
+		.logistics .logistics-line .note i{
+			vertical-align: middle;
+			display: inline-block;
+			height: 100%;
+		}
+
+		.logistics .current{
+			color: #ed5a00;
+		}
+
+		.logistics .current .icon{
+			color: #ed5a00;
+			background-size: 25px 25px;
+			background-image: url({%resource path='/html/images/check.png'%});
+			background-repeat: no-repeat;
+			background-position:center;
+		}
+		.logistics .common .icon{
+			color: #787878;
+			background-size: 15px 15px;
+			background-image: url({%resource path='/html/images/up.png'%});
+			background-repeat: no-repeat;
+			background-position:center;
+		}
+		.logistics .start .icon{
+			color: #787878;
+			background-size: 15px 15px;
+			background-image: url({%resource path='/html/images/yuan.png'%});
+			background-repeat: no-repeat;
+			background-position:center;
+		}
+	</style>
+	<body>
+		<div id="refundModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<form class="form-horizontal" role="form">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							<h4 class="modal-title">全额退款</h4>
+						</div>
+						<div class="modal-body">
+							<input type="hidden" name="orderno" value="">
+							<div class="form-group">
+								<label class="col-md-2 control-label">原因</label>
+								<div class="col-md-9">
+									<select name="refund_reason" class="form-control">
+										
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-md-2 control-label">描述</label>
+								<div class="col-md-9">
+									<textarea style="resize: none;" placeholder="详细原因描述" name="refund_note" rows="5" class="form-control"></textarea>
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer" style="padding: 0px;">
+							<div class="modal-button-group">
+								<div class="modal-button submit">确认</div>
+								<div data-dismiss="modal" class="modal-button">取消</div>
+							</div>
+						</div>
+					</form>
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+
+		<div id="sendModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<form class="form-horizontal" role="form">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							<h4 class="modal-title">一键发货</h4>
+						</div>
+						<div class="modal-body">
+							<input type="hidden" name="orderno" value="">
+							<div class="form-group">
+								<label class="col-md-2 control-label">配送方</label>
+								<div class="col-md-9">
+									<select name="ship_type" class="form-control">
+										{%section name=ship loop=$ship%}
+										<option value="{%$ship[ship].code%}">{%$ship[ship].name%}</option>
+										{%/section%}
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-md-2 control-label">物流单号</label>
+								<div class="col-md-9">
+									<input type="text" name="ship_number" class="form-control">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-md-2 control-label">备注</label>
+								<div class="col-md-9">
+									<textarea style="resize: none;" placeholder="详细原因描述" name="ship_note" rows="5" class="form-control"></textarea>
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer" style="padding: 0px;">
+							<div class="modal-button-group">
+								<div class="modal-button submit">确认</div>
+								<div data-dismiss="modal" class="modal-button">取消</div>
+							</div>
+						</div>
+					</form>
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+		
+		
+		<div id="erpModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<form class="form-horizontal" role="form">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							<h4 class="modal-title">推送ERP</h4>
+						</div>
+						<div class="modal-body">
+							<input type="hidden" name="orderno" value="">
+							<div class="form-group">
+								<label class="col-md-2 control-label">备注</label>
+								<div class="col-md-9">
+									<textarea style="resize: none;" placeholder="详细原因描述" name="erp_note" rows="5" class="form-control"></textarea>
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer" style="padding: 0px;">
+							<div class="modal-button-group">
+								<div class="modal-button submit">确认</div>
+								<div data-dismiss="modal" class="modal-button">取消</div>
+							</div>
+						</div>
+					</form>
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+		
+		<div id="logisticsModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
+			<div class="modal-dialog" role="document" style="width: 686px;">
+				<div class="modal-content" style="margin-top: 20%;">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title">物流轨迹</h4>
+					</div>
+					<div class="modal-body">
+						<div class="white-block logistics">
+						</div>
+					</div>
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+
+		{%include file='html/public/header.html'%}
+		<div class="body container-fluid">
+			<div class="row">
+				{%include file='html/public/sidebar.html'%}
+				<div class="content">
+			  		<div class="content-body">
+			  			<div class="white-block">
+			  				<div class="wall-block">
+								<p>{%$page_title_reverse%}</p>
+							</div>
+			  			</div>
+			  			<div class="divider"></div>
+			  			<div class="white-block">
+			  			
+			  				<div class="tab">
+			  					<div class="tab-header">
+			  						<a class="tab-title active" href="#all">全部订单</a>
+			  						<a class="tab-title" href="#paying">待付款</a>
+			  						<a class="tab-title" href="#sending">待发货</a>
+			  						<a class="tab-title" href="#receiving">待收货</a>
+			  						<a class="tab-title" href="#completed">已完成</a>
+			  						<a class="tab-title" href="#closed">已失效</a>
+			  					</div>
+			  					<div class="tab-body">
+			  						<div class="tab-page active" id="all">
+			  							<div class="space"></div>
+										<div class="top-tips">
+											<div class="top-tips-title">
+												操作提示
+											</div>
+											<div class="top-tips-body">
+												<p>全部订单指全部有效订单，无效的订单暂不显示。</p>
+												<p>可输入商品名称关键字进行搜索，侧边栏进行高级搜索。</p>
+											</div>
+										</div>
+										<div class="line">
+											<div class="btn-group">
+												<a class="btn red btn-outline btn-small dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+													导出 <span class="caret"></span>
+												</a>
+												<ul class="dropdown-menu red">
+													<li><a href="#">所有的商品</a></li>
+													<li><a href="#">搜索结果中的商品</a></li>
+													<li><a href="#">选中的商品</a></li>
+												</ul>
+											</div>
+											<form class="form-inline pull-right" id="all_search">
+												<div class="form-group">
+													<select class="input-sm form-control">
+														<option value="" selected="selected">订单状态</option>
+														<option value="status:1,pay_status:0">待付款</option>
+														<option value="status:1,(pay_status:1|pay_status:4),way_status:0">待发货</option>
+														<option value="status:1,(way_status:1|way_status:2),receive:0">待收货</option>
+														<option value="status:1,receive:1">已完成</option>
+													</select>
+												</div>
+												<div class="form-group">
+													<input type="text" name="search" class="form-control input-sm" placeholder="订单号 / 手机号 / 用户名 / 收货人   ">
+												</div>
+												<button class="btn btn-small btn-orange pull-right" style="height: 30px; margin-left: 10px;">搜索</button>
+											</form>
+										</div>
+										<div class="">
+											<table class="table table-hover table-bordered table-responsive">
+												<thead>
+													<tr>
+			  											<td width="2%" style="padding-left: 20px;padding-right: 20px;">
+			  												<input type="checkbox" class="select-all">
+			  											</td>
+			  											<td width="13%" style="min-width: 160px;">
+			  												订单号
+			  											</td>
+			  											<td width="13%" style="min-width: 128px;">
+			  												下单时间
+			  											</td>
+			  											<td width="15%" style="min-width: 132px;">
+			  												收货人信息
+			  											</td>
+			  											<td width="10%" style="min-width: 105px;">
+			  												支付信息
+			  											</td>
+			  											<td width="10%" style="min-width: 80px;">
+			  												应付金额
+			  											</td>
+			  											<td width="5%" style="min-width: 66px;">
+			  												订单类型
+			  											</td>
+			  											<td width="10%" style="min-width: 100px; text-align: center;">
+			  												订单状态
+			  											</td>
+			  											<td style="text-align: center; min-width: 240px;">
+			  												操作
+			  											</td>
+			  										</tr>
+												</thead>
+												<tbody>
+													
+												</tbody>
+												<tfoot>
+													<tr>
+														<td colspan="5">
+															<div class="col-md-4">
+																<select class="form-control multipleSelect">
+																	<option>请选择...</option>
+																	<option value="delete">删除</option>
+																</select>
+																
+															</div>
+															<div class="col-md-2">
+																<button class="btn multipleBtn">确定</button>
+															</div>
+														</td>
+														<td id="split_page" colspan="4" style="text-align: right;">
+			  											
+			  											</td>
+													</tr>
+												</tfoot>
+											</table>
+										</div>
+									</div>
+			  						<div class="tab-page" id="paying">
+			  							<div class="space"></div>
+										<div class="top-tips">
+											<div class="top-tips-title">
+												操作提示
+											</div>
+											<div class="top-tips-body">
+												<p>全部订单指全部有效订单，无效的订单暂不显示。</p>
+												<p>可输入商品名称关键字进行搜索，侧边栏进行高级搜索。</p>
+											</div>
+										</div>
+										<div class="line">
+											<div class="btn-group">
+												<a class="btn red btn-outline btn-small dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+													导出 <span class="caret"></span>
+												</a>
+												<ul class="dropdown-menu red">
+													<li><a href="#">所有的商品</a></li>
+													<li><a href="#">搜索结果中的商品</a></li>
+													<li><a href="#">选中的商品</a></li>
+												</ul>
+											</div>
+											<form class="form-inline pull-right" id="paying_search">
+												<div class="form-group">
+													<select class="input-sm form-control">
+														<option value="" selected="selected">订单状态</option>
+														<option value="status:1,pay_status:0">待付款</option>
+														<option value="status:1,(pay_status:1|pay_status:4),way_status:0">待发货</option>
+														<option value="status:1,(way_status:1|way_status:2),receive:0">待收货</option>
+														<option value="status:1,receive:1">已完成</option>
+													</select>
+												</div>
+												<div class="form-group">
+													<input type="text" name="search" class="form-control input-sm" placeholder="订单号 / 手机号 / 用户名 / 收货人   ">
+												</div>
+												<button class="btn btn-small btn-orange pull-right" style="height: 30px; margin-left: 10px;">搜索</button>
+											</form>
+										</div>
+										<div class="">
+											<table class="table table-hover table-bordered table-responsive">
+												<thead>
+													<tr>
+			  											<td width="2%" style="padding-left: 20px;padding-right: 20px;">
+			  												<input type="checkbox" class="select-all">
+			  											</td>
+			  											<td width="13%" style="min-width: 160px;">
+			  												订单号
+			  											</td>
+			  											<td width="13%" style="min-width: 128px;">
+			  												下单时间
+			  											</td>
+			  											<td width="15%" style="min-width: 132px;">
+			  												收货人信息
+			  											</td>
+			  											<td width="10%" style="min-width: 105px;">
+			  												支付信息
+			  											</td>
+			  											<td width="10%" style="min-width: 80px;">
+			  												应付金额
+			  											</td>
+			  											<td width="5%" style="min-width: 66px;">
+			  												订单类型
+			  											</td>
+			  											<td width="10%" style="min-width: 100px; text-align: center;">
+			  												订单状态
+			  											</td>
+			  											<td style="text-align: center; min-width: 240px;">
+			  												操作
+			  											</td>
+			  										</tr>
+												</thead>
+												<tbody>
+													
+												</tbody>
+												<tfoot>
+													<tr>
+														<td colspan="5">
+															<div class="col-md-4">
+																<select class="form-control multipleSelect">
+																	<option>请选择...</option>
+																	<option value="delete">删除</option>
+																</select>
+																
+															</div>
+															<div class="col-md-2">
+																<button class="btn multipleBtn">确定</button>
+															</div>
+														</td>
+														<td id="split_page" colspan="4" style="text-align: right;">
+			  											
+			  											</td>
+													</tr>
+												</tfoot>
+											</table>
+										</div>
+									</div>
+			  						<div class="tab-page" id="sending">
+			  							<div class="space"></div>
+										<div class="top-tips">
+											<div class="top-tips-title">
+												操作提示
+											</div>
+											<div class="top-tips-body">
+												<p>全部订单指全部有效订单，无效的订单暂不显示。</p>
+												<p>可输入商品名称关键字进行搜索，侧边栏进行高级搜索。</p>
+											</div>
+										</div>
+										<div class="line">
+											<div class="btn-group">
+												<a class="btn red btn-outline btn-small dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+													导出 <span class="caret"></span>
+												</a>
+												<ul class="dropdown-menu red">
+													<li><a href="#">所有的商品</a></li>
+													<li><a href="#">搜索结果中的商品</a></li>
+													<li><a href="#">选中的商品</a></li>
+												</ul>
+											</div>
+											<form class="form-inline pull-right" id="sending_search">
+												<div class="form-group">
+													<select class="input-sm form-control">
+														<option value="" selected="selected">订单状态</option>
+														<option value="status:1,pay_status:0">待付款</option>
+														<option value="status:1,(pay_status:1|pay_status:4),way_status:0">待发货</option>
+														<option value="status:1,(way_status:1|way_status:2),receive:0">待收货</option>
+														<option value="status:1,receive:1">已完成</option>
+													</select>
+												</div>
+												<div class="form-group">
+													<input type="text" name="search" class="form-control input-sm" placeholder="订单号 / 手机号 / 用户名 / 收货人   ">
+												</div>
+												<button class="btn btn-small btn-orange pull-right" style="height: 30px; margin-left: 10px;">搜索</button>
+											</form>
+										</div>
+										<div class="">
+											<table class="table table-hover table-bordered table-responsive">
+												<thead>
+													<tr>
+			  											<td width="2%" style="padding-left: 20px;padding-right: 20px;">
+			  												<input type="checkbox" class="select-all">
+			  											</td>
+			  											<td width="13%" style="min-width: 160px;">
+			  												订单号
+			  											</td>
+			  											<td width="13%" style="min-width: 128px;">
+			  												下单时间
+			  											</td>
+			  											<td width="15%" style="min-width: 132px;">
+			  												收货人信息
+			  											</td>
+			  											<td width="10%" style="min-width: 105px;">
+			  												支付信息
+			  											</td>
+			  											<td width="10%" style="min-width: 80px;">
+			  												应付金额
+			  											</td>
+			  											<td width="5%" style="min-width: 66px;">
+			  												订单类型
+			  											</td>
+			  											<td width="10%" style="min-width: 100px; text-align: center;">
+			  												订单状态
+			  											</td>
+			  											<td style="text-align: center; min-width: 240px;">
+			  												操作
+			  											</td>
+			  										</tr>
+												</thead>
+												<tbody>
+													
+												</tbody>
+												<tfoot>
+													<tr>
+														<td colspan="5">
+															<div class="col-md-4">
+																<select class="form-control multipleSelect">
+																	<option>请选择...</option>
+																	<option value="delete">删除</option>
+																</select>
+																
+															</div>
+															<div class="col-md-2">
+																<button class="btn multipleBtn">确定</button>
+															</div>
+														</td>
+														<td id="split_page" colspan="4" style="text-align: right;">
+			  											
+			  											</td>
+													</tr>
+												</tfoot>
+											</table>
+										</div>
+									</div>
+			  						<div class="tab-page" id="receiving">
+			  							<div class="space"></div>
+										<div class="top-tips">
+											<div class="top-tips-title">
+												操作提示
+											</div>
+											<div class="top-tips-body">
+												<p>全部订单指全部有效订单，无效的订单暂不显示。</p>
+												<p>可输入商品名称关键字进行搜索，侧边栏进行高级搜索。</p>
+											</div>
+										</div>
+										<div class="line">
+											<div class="btn-group">
+												<a class="btn red btn-outline btn-small dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+													导出 <span class="caret"></span>
+												</a>
+												<ul class="dropdown-menu red">
+													<li><a href="#">所有的商品</a></li>
+													<li><a href="#">搜索结果中的商品</a></li>
+													<li><a href="#">选中的商品</a></li>
+												</ul>
+											</div>
+											<form class="form-inline pull-right" id="receiving_search">
+												<div class="form-group">
+													<select class="input-sm form-control">
+														<option value="" selected="selected">订单状态</option>
+														<option value="status:1,pay_status:0">待付款</option>
+														<option value="status:1,(pay_status:1|pay_status:4),way_status:0">待发货</option>
+														<option value="status:1,(way_status:1|way_status:2),receive:0">待收货</option>
+														<option value="status:1,receive:1">已完成</option>
+													</select>
+												</div>
+												<div class="form-group">
+													<input type="text" name="search" class="form-control input-sm" placeholder="订单号 / 手机号 / 用户名 / 收货人   ">
+												</div>
+												<button class="btn btn-small btn-orange pull-right" style="height: 30px; margin-left: 10px;">搜索</button>
+											</form>
+										</div>
+										<div class="">
+											<table class="table table-hover table-bordered table-responsive">
+												<thead>
+													<tr>
+			  											<td width="2%" style="padding-left: 20px;padding-right: 20px;">
+			  												<input type="checkbox" class="select-all">
+			  											</td>
+			  											<td width="13%" style="min-width: 160px;">
+			  												订单号
+			  											</td>
+			  											<td width="13%" style="min-width: 128px;">
+			  												下单时间
+			  											</td>
+			  											<td width="15%" style="min-width: 132px;">
+			  												收货人信息
+			  											</td>
+			  											<td width="10%" style="min-width: 105px;">
+			  												支付信息
+			  											</td>
+			  											<td width="10%" style="min-width: 80px;">
+			  												应付金额
+			  											</td>
+			  											<td width="5%" style="min-width: 66px;">
+			  												订单类型
+			  											</td>
+			  											<td width="10%" style="min-width: 100px; text-align: center;">
+			  												订单状态
+			  											</td>
+			  											<td style="text-align: center; min-width: 240px;">
+			  												操作
+			  											</td>
+			  										</tr>
+												</thead>
+												<tbody>
+													
+												</tbody>
+												<tfoot>
+													<tr>
+														<td colspan="5">
+															<div class="col-md-4">
+																<select class="form-control multipleSelect">
+																	<option>请选择...</option>
+																	<option value="delete">删除</option>
+																</select>
+																
+															</div>
+															<div class="col-md-2">
+																<button class="btn multipleBtn">确定</button>
+															</div>
+														</td>
+														<td id="split_page" colspan="4" style="text-align: right;">
+			  											
+			  											</td>
+													</tr>
+												</tfoot>
+											</table>
+										</div>
+									</div>
+			  						<div class="tab-page" id="completed">
+			  							<div class="space"></div>
+										<div class="top-tips">
+											<div class="top-tips-title">
+												操作提示
+											</div>
+											<div class="top-tips-body">
+												<p>全部订单指全部有效订单，无效的订单暂不显示。</p>
+												<p>可输入商品名称关键字进行搜索，侧边栏进行高级搜索。</p>
+											</div>
+										</div>
+										<div class="line">
+											<div class="btn-group">
+												<a class="btn red btn-outline btn-small dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+													导出 <span class="caret"></span>
+												</a>
+												<ul class="dropdown-menu red">
+													<li><a href="#">所有的商品</a></li>
+													<li><a href="#">搜索结果中的商品</a></li>
+													<li><a href="#">选中的商品</a></li>
+												</ul>
+											</div>
+											<form class="form-inline pull-right" id="completed_search">
+												<div class="form-group">
+													<select class="input-sm form-control">
+														<option value="" selected="selected">订单状态</option>
+														<option value="status:1,pay_status:0">待付款</option>
+														<option value="status:1,(pay_status:1|pay_status:4),way_status:0">待发货</option>
+														<option value="status:1,(way_status:1|way_status:2),receive:0">待收货</option>
+														<option value="status:1,receive:1">已完成</option>
+													</select>
+												</div>
+												<div class="form-group">
+													<input type="text" name="search" class="form-control input-sm" placeholder="订单号 / 手机号 / 用户名 / 收货人   ">
+												</div>
+												<button class="btn btn-small btn-orange pull-right" style="height: 30px; margin-left: 10px;">搜索</button>
+											</form>
+										</div>
+										<div class="">
+											<table class="table table-hover table-bordered table-responsive">
+												<thead>
+													<tr>
+			  											<td width="2%" style="padding-left: 20px;padding-right: 20px;">
+			  												<input type="checkbox" class="select-all">
+			  											</td>
+			  											<td width="13%" style="min-width: 160px;">
+			  												订单号
+			  											</td>
+			  											<td width="13%" style="min-width: 128px;">
+			  												下单时间
+			  											</td>
+			  											<td width="15%" style="min-width: 132px;">
+			  												收货人信息
+			  											</td>
+			  											<td width="10%" style="min-width: 105px;">
+			  												支付信息
+			  											</td>
+			  											<td width="10%" style="min-width: 80px;">
+			  												应付金额
+			  											</td>
+			  											<td width="5%" style="min-width: 66px;">
+			  												订单类型
+			  											</td>
+			  											<td width="10%" style="min-width: 100px; text-align: center;">
+			  												订单状态
+			  											</td>
+			  											<td style="text-align: center; min-width: 240px;">
+			  												操作
+			  											</td>
+			  										</tr>
+												</thead>
+												<tbody>
+													
+												</tbody>
+												<tfoot>
+													<tr>
+														<td colspan="5">
+															<div class="col-md-4">
+																<select class="form-control multipleSelect">
+																	<option>请选择...</option>
+																	<option value="delete">删除</option>
+																</select>
+																
+															</div>
+															<div class="col-md-2">
+																<button class="btn multipleBtn">确定</button>
+															</div>
+														</td>
+														<td id="split_page" colspan="4" style="text-align: right;">
+			  											
+			  											</td>
+													</tr>
+												</tfoot>
+											</table>
+										</div>
+									</div>
+									
+									<div class="tab-page" id="closed">
+			  							<div class="space"></div>
+										<div class="top-tips">
+											<div class="top-tips-title">
+												操作提示
+											</div>
+											<div class="top-tips-body">
+												<p>全部订单指全部有效订单，无效的订单暂不显示。</p>
+												<p>可输入商品名称关键字进行搜索，侧边栏进行高级搜索。</p>
+											</div>
+										</div>
+										<div class="line">
+											<div class="btn-group">
+												<a class="btn red btn-outline btn-small dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+													导出 <span class="caret"></span>
+												</a>
+												<ul class="dropdown-menu red">
+													<li><a href="#">所有的商品</a></li>
+													<li><a href="#">搜索结果中的商品</a></li>
+													<li><a href="#">选中的商品</a></li>
+												</ul>
+											</div>
+											<form class="form-inline pull-right" id="closed_search">
+												<div class="form-group">
+													<select class="input-sm form-control">
+														<option value="" selected="selected">订单状态</option>
+														<option value="status:1,pay_status:0">待付款</option>
+														<option value="status:1,(pay_status:1|pay_status:4),way_status:0">待发货</option>
+														<option value="status:1,(way_status:1|way_status:2),receive:0">待收货</option>
+														<option value="status:1,receive:1">已完成</option>
+													</select>
+												</div>
+												<div class="form-group">
+													<input type="text" name="search" class="form-control input-sm" placeholder="订单号 / 手机号 / 用户名 / 收货人   ">
+												</div>
+												<button class="btn btn-small btn-orange pull-right" style="height: 30px; margin-left: 10px;">搜索</button>
+											</form>
+										</div>
+										<div class="">
+											<table class="table table-hover table-bordered table-responsive">
+												<thead>
+													<tr>
+			  											<td width="2%" style="padding-left: 20px;padding-right: 20px;">
+			  												<input type="checkbox" class="select-all">
+			  											</td>
+			  											<td width="13%" style="min-width: 160px;">
+			  												订单号
+			  											</td>
+			  											<td width="13%" style="min-width: 128px;">
+			  												下单时间
+			  											</td>
+			  											<td width="15%" style="min-width: 132px;">
+			  												收货人信息
+			  											</td>
+			  											<td width="10%" style="min-width: 105px;">
+			  												支付信息
+			  											</td>
+			  											<td width="10%" style="min-width: 80px;">
+			  												应付金额
+			  											</td>
+			  											<td width="5%" style="min-width: 66px;">
+			  												订单类型
+			  											</td>
+			  											<td width="10%" style="min-width: 100px; text-align: center;">
+			  												订单状态
+			  											</td>
+			  											<td style="text-align: center; min-width: 240px;">
+			  												操作
+			  											</td>
+			  										</tr>
+												</thead>
+												<tbody>
+													
+												</tbody>
+												<tfoot>
+													<tr>
+														<td colspan="5">
+															<div class="col-md-4">
+																<select class="form-control multipleSelect">
+																	<option>请选择...</option>
+																	<option value="delete">删除</option>
+																</select>
+																
+															</div>
+															<div class="col-md-2">
+																<button class="btn multipleBtn">确定</button>
+															</div>
+														</td>
+														<td id="split_page" colspan="4" style="text-align: right;">
+			  											
+			  											</td>
+													</tr>
+												</tfoot>
+											</table>
+										</div>
+									</div>
+									
+								</div>
+							</div>
+							
+			  			</div>
+			  		</div>				  
+				</div>
+			</div>
+		</div>
+		<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+		<script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+		<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+		<script src="http://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		<!--alert-->
+		<script src="//cdn.bootcss.com/bootbox.js/4.4.0/bootbox.min.js"></script>
+		<!--datatables-->
+		<script src="{%resource path='/html/js/datatables.js'%}"></script>
+		<script src="{%resource path='/html/js/tab.js'%}"></script>
+		<script src="{%resource path='/html/js/global.js'%}"></script>
+		<script type="text/javascript">
+			$.ajaxSetup({
+				headers:{
+					'X-CSRF-TOKEN':'{%$x_csrf_token%}'
+				}
+			});
+			
+			//刷新同一个订单号的所有页面的数据
+			var flushTr = function(order){
+				$('tbody tr').each(function(index,value){
+					var orderno = $(value).find('td:eq(1)').text();
+					if(orderno==order)
+					{
+						$(value).trigger('flush.datatables');
+					}
+				});
+			}
+			
+			
+			$('table').on('change','input[type=checkbox].select-all',function(){
+				if($(this).is(':checked'))
+				{
+					$(this).closest('table').find('input[type=checkbox]:not(.select-all)').each(function(index,value){
+						$(value).prop('checked',true);
+					});
+				}
+				else
+				{
+					$(this).closest('table').find('input[type=checkbox]:not(.select-all)').each(function(index,value){
+						$(value).prop('checked',false);
+					});
+				}
+				return false;
+			});
+			
+			var warning = function(msg){
+				msg = msg||'错误的订单状态';
+				return '<font color="color:#FF3300;">'+msg+'</font>';
+			}
+			
+			var getSelectedCheckbox = function(table){
+				$_id = [];
+				table.find('tbody input[type=checkbox]').each(function(index,value){
+					if($(value).is(':checked'))
+					{
+						$_id.push($(value).val());
+					}
+				});
+				return $_id;
+			}
+			
+			$('table').on('click','.refundBtn',function(){
+				$('#refundModal input[name=orderno]').val($(this).data('id'));
+				$('#refundModal').modal('show');
+			});
+			
+			$('#refundModal .submit').on('click',function(){
+				var orderno = $('#refundModal input[name=orderno]').val();
+				var refund_reason = $('#refundModal select[name=refund_reason]').val();
+				var refund_note = $.trim($('#refundModal [name=refund_note]').val());
+				$.post('./index.php?m=ajax&c=order&a=refund',{orderno:orderno,refund_reason:refund_reason,refund_note:refund_note},function(response){
+					if(response.code==1)
+					{
+						flushTr(orderno);
+						$('#refundModal').modal('hide');
+					}
+					else
+					{
+						bootbox.alert(response.result);
+					}
+				});
+				return false;
+			});
+			
+			$('table').on('click','.sendBtn',function(){
+				$('#sendModal input[name=orderno]').val($(this).data('id'));
+				$('#sendModal').modal('show');
+			});
+			
+			$('#sendModal .submit').on('click',function(){
+				var orderno = $('#sendModal input[name=orderno]').val();
+				var ship_type = $('#sendModal select[name=ship_type]').val();
+				var ship_number = $.trim($('#sendModal input[name=ship_number]').val());
+				var ship_note = $.trim($('#sendModal [name=ship_note]').val());
+				$.post('./index.php?m=ajax&c=order&a=send',{orderno:orderno,ship_type:ship_type,ship_number:ship_number,ship_note:ship_note},function(response){
+					if(response.code==1)
+					{
+						flushTr(orderno);
+						$('#sendModal').modal('hide');
+					}
+					else
+					{
+						bootbox.alert(response.result);
+					}
+				});
+				return false;
+			});
+			
+			$('table').on('click','.erpBtn',function(){
+				$('#erpModal').modal('show');
+				$('#erpModal input[name=orderno]').val($(this).data('id'));
+			});
+			
+			$('#erpModal .submit').on('click',function(){
+				var orderno = $('#erpModal input[name=orderno]').val();
+				var note = $.trim($('#erpModal [name=erp_note]').val());
+				$.post('./index.php?m=ajax&c=order&a=erp',{orderno:orderno,note:note},function(response){
+					if(response.code==1)
+					{
+						flushTr(orderno);
+						$('#erpModal').modal('hide');
+					}
+					else
+					{
+						bootbox.alert(response.result);
+					}
+				});
+				return false;
+			});
+			
+			$('table').on('click','.logisticsBtn',function(){
+				$('#logisticsModal').modal('show');
+				$('#logisticsModal .white-block').load('./index.php?c=order&a=way&orderno='+$(this).data('id'));
+			});
+			
+			$('table').on('click','.orderdetail',function(){
+				window.location = './index.php?c=html&a=orderdetail&orderno='+$(this).data('id');
+			});
+		</script>
+		<script type="text/javascript" src="{%resource path='/html/js/order/all.js'%}"></script>
+		<script type="text/javascript" src="{%resource path='/html/js/order/paying.js'%}"></script>
+		<script type="text/javascript" src="{%resource path='/html/js/order/sending.js'%}"></script>
+		<script type="text/javascript" src="{%resource path='/html/js/order/receiving.js'%}"></script>
+		<script type="text/javascript" src="{%resource path='/html/js/order/completed.js'%}"></script>
+		<script type="text/javascript" src="{%resource path='/html/js/order/closed.js'%}"></script>
+	</body>
+</html>

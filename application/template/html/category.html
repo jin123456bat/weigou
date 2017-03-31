@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="utf-8" />
+		<title>{%$page_title%}</title>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+       	<meta name="renderer" content="webkit">
+        <meta content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport" />
+        <!-- reset -->
+        <link rel="stylesheet" href="//cdn.bootcss.com/normalize/5.0.0/normalize.min.css">
+		<!-- 新 Bootstrap 核心 CSS 文件 -->
+        <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<!-- 可选的Bootstrap主题文件（一般不用引入） -->
+		<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
+		<!--icon-->
+		<link rel="stylesheet" href="{%$VIEW_ROOT%}/html/css/plugins/font-awesome/css/font-awesome.min.css">
+		<!--自定义css-->
+		<link rel="stylesheet" href="{%resource path='/html/css/global.css'%}">
+		<!--category-->
+		<link rel="stylesheet" href="{%resource path='/html/css/category.css'%}">
+		<link rel="stylesheet" href="{%resource path='/html/plugin/jquery-ui-1.12.1/jquery-ui.min.css'%}">
+		<script type="text/javascript">
+			function lpad(num, n) {
+				return Array(n>(''+num).length?(n-(''+num).length+1):0).join(0)+num;  
+			}
+		</script>
+	</head>
+	<body>
+		
+		
+		{%include file='html/public/header.html'%}
+		<div class="body container-fluid">
+			<div class="row">
+				{%include file='html/public/sidebar.html'%}
+				<div class="content">
+			  		<div class="content-body">
+			  			<div class="white-block">
+			  				<div class="wall-block">
+								<p>商品配置 - 商品分类</p>
+							</div>
+			  			</div>
+			  			<div class="divider"></div>
+			  			<div class="white-block">
+			  				
+			  				<div class="line"></div>
+							<div class="top-tips">
+								<div class="top-tips-title">
+									操作提示
+								</div>
+								<div class="top-tips-body">
+									<p>该页面展示了商城所有的商品信息，可对商品进行编辑修改操作。</p>
+									<p>可输入商品名称关键字进行搜索，侧边栏进行高级搜索。</p>
+								</div>
+							</div>
+		  					<div class="line"></div>
+		  					<div id="main" style="display: inline;">
+		  						<div class="create_category">
+		  						</div>
+							</div>
+			  			</div>
+			  			<div id="categoryModal" style="display: none;">
+			  				<div class="close">x</div>
+							<div id="category1">
+								<div class="category1_input center-block">
+									<div class="input-icon">
+										<i class="fa fa-pencil pull-right"></i>
+										<input type="text" name="name" placeholder="请输入一级类目名称" autocomplete="off">
+									</div>
+								</div>
+								<div class="line"></div>
+								<div class="line"></div>
+								<div class="line"></div>
+								<div class="help-block center-block" style="width: 160px;"><p>一级类目图片</p></div>
+								<div class="upload_image center-block">
+								</div>
+								<div class="line"></div>
+								<div class="line"></div>
+								<div class="col-md-6 col-md-offset-3">
+									<textarea class="form-control" name="description" placeholder="请输入分类描述"></textarea>
+								</div>
+							</div>
+							<div id="category2">
+								<div class="category2_body">
+									<div class="category2">
+										<div class="input-icon" style="width: 50%;">
+											<i class="fa fa-pencil pull-right"></i>
+											<input type="text" name="name" placeholder="请输入二级类目名称" autocomplete="off">
+										</div>
+										<div class="line"></div>
+										<div class="category2_area">
+											<div class="remove_category3_item">
+
+											</div>
+											<div class="create_category3_item">
+											</div>
+										</div>
+									</div>
+									<div class="create_category2">
+
+									</div>
+								</div>
+								<div class="category2_footer">
+									<button class="btn btn-outline red">删除</button>
+									<button class="btn btn-primary">保存</button>
+									<button class="btn btn-warning">取消</button>
+								</div>
+							</div>
+							<div id="category3">
+								<div class="category3_body">
+
+									<div class="title"><font id="category1_name">上级类目</font> &gt; <font id="category2_name">XXXXX</font> &gt; <font id="category3_name">XXXXX</font></div>
+
+									<div class="line"></div>
+
+									<div class="input-icon" style="width: 50%;">
+										<i class="fa fa-pencil pull-right"></i>
+										<input type="text" name="name" placeholder="请输入三级类目名称" autocomplete="off">
+									</div>
+
+									<div class="line"></div>
+									<div class="help-block">三级类目图片</div>
+									<div class="upload_image" style="margin-left: 0px;">
+									</div>
+
+									<div class="line"></div>
+
+									<div class="help-block">关联分类（可关联多组）</div>
+									<div class="selector">
+										<select class="form-control" name="bcategory"></select>
+										<i class="fa fa-remove bcategory-remove"></i>
+									</div>
+									
+									<div class="create_bcategory"></div>
+								</div>
+								<div class="category3_footer">
+									<button class="btn btn-outline red">删除</button>
+									<button class="btn btn-primary">保存</button>
+									<button class="btn btn-warning">取消</button>
+								</div>
+							</div>
+						</div>
+			  		</div>				  
+				</div>
+			</div>
+		</div>
+		<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+		<script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+		<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+		<script src="http://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		<!--alert-->
+		<script src="//cdn.bootcss.com/bootbox.js/4.4.0/bootbox.min.js"></script>
+		<script src="{%resource path='/html/js/selector.js'%}"></script>
+		<script src="{%resource path='/html/js/global.js'%}"></script>
+		<script src="{%resource path='/html/plugin/jquery-ui-1.12.1/jquery-ui.min.js'%}"></script>
+		<script type="text/html" id="category2_template">
+			<div class="category2" data-id="[id]">
+				<div class="input-icon" style="width: 50%;">
+					<i class="fa fa-pencil pull-right"></i>
+					<input type="text" name="name" placeholder="请输入二级类目名称" value="[name]" autocomplete="off">
+				</div>
+				<div class="line"></div>
+				<div class="category2_area">
+					<div class="remove_category3_item">
+					</div>
+					<div class="create_category3_item">
+					</div>
+				</div>
+			</div>
+		</script>
+		<script type="text/javascript">
+			$.ajaxSetup({
+				headers:{
+					'X-CSRF-TOKEN':'{%$x_csrf_token%}'
+				}
+			});
+			
+			$('#category2 .category2_footer .btn-outline.red').on('click',function(){
+				var id = $('#category1').data('id');
+				bootbox.confirm({
+					message:'确认删除当前分类树吗?',
+					buttons:{
+						cancel:{
+							label: '<i class="fa fa-times"></i> 取消',
+						},
+						confirm:{
+							label:'<i class="fa fa-check"></i> 确定',
+						}
+					},
+					callback: function(result,a) {
+						if(result) {
+							$.post('./index.php?m=ajax&c=category&a=remove',{id:id},function(response){
+								if(response.code==1)
+								{
+									$('#main').find('.category[id='+id+']').remove();
+									$('#categoryModal').slideToggle();
+								}
+								else
+								{
+									bootbox.alert(response.result);
+								}
+							});
+						}
+					},  
+				});
+			});
+			
+			$('#category3').on('click','.bcategory-remove',function(){
+				$(this).parent().next('#pulldown').remove();
+				$(this).parent().remove();
+			});
+			
+			$('#category3 input[name=name]').on('change',function(){
+				$('#category3 #category3_name').html($(this).val());
+			});
+			
+			//保存二级分类
+			$('#category2 .category2_footer .btn-primary').on('click',function(){
+				var category2 = [];
+				$('#category2 .category2').each(function(index,value){
+					var child = [];
+					$(value).find('.category2_area').find('.category3_item').each(function(key,item){
+						child.push($(item).attr('id'));
+					})
+					
+					category2.push({
+						id:$(value).data('id'),//假如id为空的话则是新建的
+						name:$(value).find('input[name=name]').val(),
+						child:child,//三级分类的id数组
+					});
+				});
+				
+				var category1 = {
+					id:$('#category1').data('id'),//这个id也有可能是空的
+					name:$.trim($('#category1 input[name=name]').val()),//但是名字一定不能为空
+					logo:$('#category1 img').data('id'),
+					description:$('#category1 [name=description]').val(),
+					child:category2,
+				};
+				
+				$.post('./index.php?m=ajax&c=category&a=setRecursive',{category:category1},function(response){
+					if(response.code==1)
+					{
+						if($('#main').find('.category[id='+response.body.id+']').length==0)
+						{
+							createItem(response.body).insertBefore($('#main .create_category'));
+						}
+						else
+						{
+							$('#main').find('.category[id='+response.body.id+']').find('.title').html(response.body.name);
+							$('#main').find('.category[id='+response.body.id+']').find('img').attr('src',response.body.logo);
+						}
+						$('#categoryModal').slideToggle();
+					}
+					else
+					{
+						bootbox.alert(response.result);
+					}
+				});
+				
+			});
+			
+			//保存三级分类
+			$('#category3 .category3_footer .btn-primary').on('click',function(){
+				var id = $(this).data('id');
+				var name = $('#category3 input[name=name]').val();
+				var logo = $('#category3 img').data('id');
+				var logourl = $('#category3 img').attr('src');
+				var cid = $('.category3_item[id='+id+']').closest('.category2').data('id');
+				var bcategory = [];
+				$('#category3 .selector select').each(function(index,value){
+					bcategory.push($(value).val());
+				});
+				if(id!=0)
+				{
+					$.post('./index.php?m=ajax&c=category&a=save',{id:id,name:name,logo:logo,cid:cid,bcategory:bcategory},function(response){
+						if(response.code==1)
+						{
+							$('.category3_item[id='+id+']').html(name).css({
+								backgroundImage:'url('+logourl+')',
+							});
+							hideCategory3();
+						}
+						else
+						{
+							bootbox.alert(response.result);
+						}
+					});
+				}
+				else
+				{
+					//isdelete:1 设定为草稿状态,只有当保存二级分类的时候才把三级分类的id一起提交上去，由服务器更改为一般状态
+					if(!cid)
+					{
+						isdelete=1;
+					}
+					$.post('./index.php?m=ajax&c=category&a=create',{name:name,logo:logo,cid:cid,bcategory:bcategory,isdelete:isdelete},function(response){
+						if(response.code==1)
+						{
+							var category3_item = $('<div id="'+response.body.id+'" class="category3_item">'+response.body.name+'</div>');
+							category3_item.css({
+								backgroundImage:'url('+response.body.logourl+')',
+								backgroundRepeat:'no-repeat',
+								backgroundSize:'100% 100%',  
+							}).on('click',function(){
+								var id = $(this).attr('id');
+								showCategory3(id);
+							}).insertBefore($('#category2').find('.category2.selected').find('.create_category3_item'));
+							$('#category2').find('.category2.selected').find('.remove_category3_item').addClass('display-none');
+							hideCategory3();
+						}
+						else
+						{
+							bootbox.alert(response.result);
+						}
+					});
+				}
+			})
+			
+			//删除三级分类
+			$('#category3 .category3_footer .btn-outline.red').on('click',function(){
+				var id = $(this).data('id');
+				if(id!=0)
+				{
+					$.post('./index.php?m=ajax&c=category&a=remove',{id:id},function(response){
+						if(response.code==1)
+						{
+							if($('#categoryModal').find('.category3_item[id="'+id+'"]').siblings('.category3_item').length==0)
+							{
+								$('#categoryModal').find('.category3_item[id="'+id+'"]').siblings('.remove_category3_item').removeClass('display-none');
+							}
+							$('#categoryModal').find('.category3_item[id="'+id+'"]').remove();
+							hideCategory3();
+						}
+						else
+						{
+							bootbox.alert(response.result);
+						}
+					})
+				}
+			});
+			
+			var $_selector = [];
+			
+			$_selector.push(selector($('.selector select'),{
+				ajax:{
+					url:'./index.php?m=ajax&c=bcategory&a=source'
+				},
+				position:function(obj){
+					return obj.parents('.selector');
+				}
+			}));
+
+			var createItem = function(item){
+				var tpl = $('<div id="'+item.id+'" class="category">'+
+							'<img src="'+item.logo+'" alt="LOGO">'+
+								'<div class="title">'+
+									item.name+
+									'</div>'+
+								'</div>');
+				return tpl;
+			}
+			
+			var create_bcategory = function(value){
+				var selectorDiv = $('<div class="selector"></div>');
+				var select = $('<select class="form-control" name="bcategory"></select>');
+				var remove = $('<i class="fa fa-remove bcategory-remove"></i>');
+				selectorDiv.append(select);
+				selectorDiv.append(remove);
+				
+				if($('#category3 #pulldown:last').length>0)
+				{
+					selectorDiv.insertAfter($('#category3 #pulldown:last'));
+				}
+				else
+				{
+					selectorDiv.insertBefore($('#category3 .create_bcategory'));
+				}
+				
+				var t_selector = selector(select,{
+					ajax:{
+						url:'./index.php?m=ajax&c=bcategory&a=source'
+					},
+					position:function(obj){
+						return obj.parents('.selector');
+					}
+				});
+				if(value){
+					t_selector.val(value);
+				}
+				$_selector.push(t_selector);
+				return selectorDiv;
+			};
+			
+			//创建一个空的后台分类选择器
+			$('.create_bcategory').on('click',function(){
+				create_bcategory();
+			});
+			
+			//第一级分类排序
+			$('#main').sortable({
+				items:'.category',
+				distance :100,
+				update: function(event, ui) { //更新排序之后
+					var categoryids = $(this).sortable("toArray");
+					var $this = $(this);
+					$.post('./index.php?m=ajax&c=category&a=sort',{sort:categoryids},function(response){
+						if(response.code!=1)
+						{
+							$this.sortable("cancel");
+							bootbox.alert(response.result);
+						}
+					});
+				}
+			});
+			$('#main').disableSelection();
+			
+			//载入一级分类
+			$.post('./index.php?m=ajax&c=category&a=lists',function(response){
+				if(response.code==1)
+				{
+					for(var i=0;i<response.body.length;i++)
+					{
+						createItem(response.body[i]).insertBefore($('#main .create_category'));
+					}
+				}
+				else
+				{
+					bootbox.alert(response.result);
+				}
+			});
+			
+			$('.create_category').on('click',function(){
+				initCategory();
+				$('#categoryModal').slideToggle();
+			});
+			
+			$('#categoryModal .close').on('click',function(){
+				$('#categoryModal').slideToggle();
+			});
+			
+			var initCategory = function(){
+				hideCategory3();
+				$('#category1 .category1_input input').val('').removeAttr('readonly');
+				$('#category1 img').remove();
+				$('#category1 .upload_image').removeClass('display-none');
+				
+				$('#category2 .category2').remove();
+				$('#category1').data('id',0);
+				$('#category1 [name=description]').val('');
+			}
+			
+			var $_categoryModalWidthMinus = false;
+			var hideCategory3 = function(){
+				if(!$_categoryModalWidthMinus)
+				{
+					$_categoryModalWidthMinus = true;
+					$('#category3').addClass('display-none');
+					$('#categoryModal').width($('#categoryModal').width()*0.66);
+					$('#category1').width($('#categoryModal').width()*0.5);
+					$('#category2').width($('#categoryModal').width()*0.5);
+					$('#category2 .category2_footer').removeClass('display-none');
+				}
+			}
+			var showCategory3 = function(id){
+				if(id)
+				{
+					var category3 = null;
+					//var category2 = null;
+					//var category1 = null;
+					var category2_name = null;
+					var category1_name = null;
+					$.ajax({
+						url:'./index.php?m=ajax&c=category&a=find',
+						async:false,
+						type:'post',
+						data:{id:id},
+						dataType:'json',
+						success:function(response){
+							if(response.code==1)
+							{
+								category3 = response.body;
+								category2_name = 'XXXXX' || category3.parent.name;
+								category1_name = 'XXXXX' || category3.parent.parent.name;
+							}
+							else
+							{
+								bootbox.alert(response.result);
+							}
+						}
+					});
+					
+					$('#category3 .category3_footer .btn-outline.red').removeClass('display-none').data('id',id);
+					$('#category3 .category3_footer .btn-primary').data('id',id);
+					
+					$('#category3 #category1_name').html(category1_name);
+					$('#category3 #category2_name').html(category2_name);
+					$('#category3 #category3_name').html(category3.name);
+					$('#category3 input').val(category3.name);
+					
+					
+					$('#category3 img').remove();
+					var img = $('<img src="'+category3.logourl+'" width="160" height="160">');
+					img.css({
+						cursor:'pointer',
+					}).data('id',category3.logo).on('click',function(){
+						replaceImg($(this));
+					}).insertAfter($('#category3 .upload_image').addClass('display-none'));
+					
+					//删除所有的selector 只保留第一个 第一个设置为空值
+					$('#category3 .selector').map(function(index,value){
+						if(index!=0)
+						{
+							$(value).next('#pulldown').remove();
+							$(value).remove();
+						}
+						else
+						{
+							$(value).find('select').val('').trigger('change');//val方法不会触发change事件
+						}
+					});
+					for(var i=0;i<category3.bcategory.length;i++)
+					{
+						var value = [];
+						var bcategory = category3.bcategory[i];
+						for(var j=0;j<bcategory.length;j++)
+						{
+							value.push(bcategory[j].id);
+						}
+						create_bcategory(value.join(','));
+					}
+				}
+				else
+				{
+					$('#category3 .category3_footer .btn-outline.red').addClass('display-none').data('id',0);
+					$('#category3 .category3_footer .btn-primary').data('id',0);
+					$('#category3 #category3_name').html('');
+					$('#category3 input[name=name]').val('');
+					$('#category3 img').remove();
+					$('#category3 .upload_image').removeClass('display-none');
+					
+					//删除所有的selector 只保留第一个 第一个设置为空值
+					$('#category3 .selector').each(function(index,value){
+						if(index!=0)
+						{
+							$(value).next('#pulldown').remove();
+							$(value).remove();
+						}
+						else
+						{
+							$(value).find('select').val('').trigger('change');
+						}
+					});
+				}
+				
+				if($_categoryModalWidthMinus)
+				{
+					$('#category3').removeClass('display-none');
+					$('#category2 .category2_footer').addClass('display-none');
+					$('#categoryModal').width($('#categoryModal').width()/0.66);
+					$_categoryModalWidthMinus = false;
+					$('#category3 .category3_footer').removeClass('display-none');
+					$('#category1').width($('#categoryModal').width()*0.33);
+					$('#category2').width($('#categoryModal').width()*0.33);
+				}
+			}
+			
+			var createCategory2 = function(data,category1){//category1 一级分类的信息
+				var category2_template = $('#category2_template').html();
+				var reg = new RegExp("\\[([^\\[\\]]*?)\\]", 'igm');
+				if(data)
+				{
+					category2 = $(category2_template.replace(reg, function (node, key) {
+						return data[key];
+					}));
+					category2.find('input').prop('readonly',true);
+					
+					//第二级分类排序
+					category2.find('.category2_area').sortable({
+						items:'.category3_item',
+						update: function(event, ui) { //更新排序之后
+							var categoryids = $(this).sortable("toArray");
+							var $this = $(this);
+							$.post('./index.php?m=ajax&c=category&a=sort',{sort:categoryids},function(response){
+								if(response.code!=1)
+								{
+									$this.sortable("cancel");
+									bootbox.alert(response.result);
+								}
+							});
+						}
+					});
+					category2.find('.category2_area').disableSelection();
+					
+					//载入二级分类下的三级分类
+					$.ajax({
+						url:'./index.php?m=ajax&c=category&a=lists',
+						type:'get',
+						data:{cid:data.id},
+						async:false,
+						dataType:'json',
+						success:function(response){
+							if(response.body.length>0)
+							{
+								category2.find('.remove_category3_item').addClass('display-none');
+								for(var i=0;i<response.body.length;i++)
+								{
+									var category3_item = $('<div id="'+response.body[i].id+'" class="category3_item">'+response.body[i].name+'</div>');
+									category3_item.css({
+										backgroundImage:'url('+response.body[i].logo+')',
+										backgroundRepeat:'no-repeat',
+										backgroundSize:'100% 100%',  
+									}).on('click',function(){
+										var id = $(this).attr('id');
+										showCategory3(id);
+									}).insertBefore(category2.find('.create_category3_item'));
+								}
+							}
+						}
+					});
+				}
+				else
+				{
+					category2 = $(category2_template.replace(reg, function (node, key) {
+						return {
+							id:'',
+							name:'',
+						}[key];
+					}));
+				}
+				return category2;
+			}
+			
+			$('.create_category2').on('click',function(){
+				var category2 = createCategory2();
+				category2.insertBefore($(this));
+			});
+			
+			//删除二级分类
+			$('#categoryModal').on('click','.remove_category3_item',function(){
+				$(this).parents('.category2').remove();
+			})
+			
+			//添加三级分类
+			$('#categoryModal').on('click','.create_category3_item',function(){
+				showCategory3();
+				$('#category2').find('.category2').removeClass('selected');
+				$(this).closest('.category2').addClass('selected');
+			});
+			
+			//取消创建三级分类
+			$('.category3_footer .btn-warning').on('click',function(){
+				hideCategory3();
+			});
+			
+			//取消编辑或者创建分类
+			$('.category2_footer .btn-warning').on('click',function(){
+				$('#categoryModal').slideToggle();
+			});
+			
+			//查看一级分类详情
+			$('#main').on('click','.category',function(){
+				initCategory();
+				var id = $(this).attr('id');
+				$.post('./index.php?m=ajax&c=category&a=find',{id:id},function(category1){
+					var title = category1.body.name;
+					var logourl = category1.body.logourl;
+					var logo = category1.body.logo;
+					$('#categoryModal #category1 input[name=name]').val(title).prop('readonly',true);
+					var img = $('<img src="'+logourl+'" width="160" height="160" />').addClass('center-block');
+					img.data('id',logo).css('cursor','pointer').insertAfter($('#categoryModal #category1 .upload_image')).on('click',function(){
+						replaceImg($(this));
+					});
+					$('#categoryModal #category1 .upload_image').addClass('display-none');
+					$('#categoryModal #category1 [name=description]').val(category1.body.description);
+					
+					//载入二级分类
+					$.get('./index.php?m=ajax&c=category&a=lists',{cid:id},function(response){
+						$('#category2 .category2').remove();
+						for(var i=0;i<response.body.length;i++)
+						{
+							var category2 = createCategory2(response.body[i],category1.body);
+							category2.insertBefore($('#category2 .create_category2'));
+						}
+						$('#categoryModal').slideToggle();
+						$('#category1').data('id',id);
+					});
+				});
+			});
+			
+			$('#categoryModal').on('click','.fa-pencil',function(){
+				$(this).parents('.input-icon').find('input').removeAttr('readonly').trigger('focus').trigger('select');
+			});
+			
+			var replaceImg = function(img){
+				var input = $('<input type="file">');
+				input.on('change',function(){
+					var file = input[0].files[0];
+					var formData = new FormData();
+					formData.append('file',file);
+					var xhr = new XMLHttpRequest();
+					xhr.open('POST','./index.php?m=api&c=common&a=upload',true);
+					xhr.onload = function(){
+						if(xhr.status == 200 && xhr.readyState == 4)
+						{
+							var response = xhr.response;
+							response = $.parseJSON(response);
+							img.attr('src',response.body.path).data('id',response.body.id);
+						}
+					};
+					xhr.send(formData);
+				}).trigger('click');
+			}
+			
+			$('.upload_image').on('click',function(){
+				var input = $('<input type="file">');
+				var upload_image = $(this);
+				input.on('change',function(){
+					var file = input[0].files[0];
+					var formData = new FormData();
+					formData.append('file',file);
+					var xhr = new XMLHttpRequest();
+					xhr.open('POST','./index.php?m=api&c=common&a=upload',true);
+					xhr.onload = function(){
+						if(xhr.status == 200 && xhr.readyState == 4)
+						{
+							var response = xhr.response;
+							response = $.parseJSON(response);
+							var img = $('<img src="'+response.body.path+'" width="160" height="160" />');
+							if(upload_image.hasClass('center-block'))
+							{
+								img.addClass('center-block');
+							}
+							img.data('id',response.body.id).css('cursor','pointer').insertAfter(upload_image).on('click',function(){
+								replaceImg($(this));
+							});
+							upload_image.addClass('display-none');
+						}
+					};
+					xhr.send(formData);
+				}).trigger('click');
+			});
+		</script>
+	</body>
+</html>

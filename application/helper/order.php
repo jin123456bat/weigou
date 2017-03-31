@@ -35,6 +35,67 @@ class order extends base
 	{
 		parent::__construct();
 	}
+	
+	/**
+	 * 计算订单状态
+	 */
+	function convertStatus($order)
+	{
+		if (is_scalar($order))
+		{
+			$order = $this->model('order')->where('orderno=?',[$order])->find();
+		}
+		
+		if ($order.status == 0)
+		{
+			$content = '已关闭';
+			if ($order.pay_status==2)
+			{
+				$content .= '(已退款)';
+			}
+			return $content;
+		}
+		else
+		{
+			if ($order['receive']==0)
+			{
+				if ($order['way_status']==0)
+				{
+					if ($order.pay_status == 0)
+					{
+						return '待付款';
+					}
+					else if ($order['pay_status']==1)
+					{
+						return '待发货';
+					}
+					else if ($order['pay_status'] == 3)
+					{
+						return '正在退款(支付宝)';
+					}
+					else if ($order['pay_status']==4)
+					{
+						return '待发货(部分退款)';
+					}
+				}
+				else
+				{
+					if ($order['way_status']==1)
+					{
+						return '待收货';
+					}
+					else if ($order['way_status']==2)
+					{
+						return '待收货(部分发货)';
+					}
+				}
+			}
+			else
+			{
+				return '已完成';	
+			}
+		}
+	}
 
 	/**
 	 * 按照仓库拆分订单
@@ -199,6 +260,9 @@ class order extends base
 		$feeamount = 0;
 		$taxamount = 0;
 		
+		//判断是否收了欧渝运费
+		$ouyu = false;
+		
 		// 仓库下 行邮税 应征收数额
 		$_current_store_cal_tax = [];
 		// 计算了行邮税的商品
@@ -242,6 +306,32 @@ class order extends base
 				$address = $this->_address;
 				if (! empty($address))
 				{
+					//欧渝的专属运费
+					if ($product['publish']==13 && !$ouyu)
+					{
+						if (in_array(trim($this->_address['province']), [
+							'新疆维吾尔自治区',
+							'西藏自治区',
+							'内蒙古自治区',
+						]))
+						{
+							$feeamount += 7;
+						}
+						else if (in_array(trim($this->_address['province']), [
+							'甘肃省',
+							'青海省',
+							'宁夏回族自治区',
+							'海南省',
+							'黑龙江省',
+							'吉林省',
+							'辽宁省',
+						]))
+						{
+							$feeamount += 5;
+						}
+						$ouyu = true;
+					}
+					
 					if (empty($this->model('product_province')
 						->where('province_id=? and product_id=?', [
 						$address['province'],
@@ -507,20 +597,12 @@ class order extends base
 			'note' => '',
 			'msg' => $msg,
 			'invoice' => $invoice,
-			'personal' => 0,
-			'personal_time' => 0,
-			'ordered' => 0,
-			'ordered_time' => 0,
-			'payed' => 0,
-			'payed_time' => 0,
-			'kouan' => 0,
-			'kouan_time' => 0,
-			'kouan_result' => '',
 			'coupon' => $this->_usedCoupon ? $this->_used_coupon_id : NULL,
 			'quittime' => 0,
 			'need_erp' => $this->_need_erp,
 			'erp' => 0,
 			'erp_time' => 0,
+			'erp_note' => '',//erp备注信息
 			'receive' => 0, // 订单是否收货
 			'receive_time' => 0, // 订单收货时间
 			'refundtime' => 0,
@@ -882,6 +964,14 @@ class order extends base
 					}
 				}
 				
+				//这里还需要判断一下是否是团购订单，假如是团购订单的话，不需要推送
+				//团购订单让管理员手动推送
+				$task_user = $this->model('task_user')->where('orderno=?',[$orderno])->find();
+				if (empty($task_user))
+				{
+					$auto = false;
+				}
+				
 				if ($auto)
 				{
 					$erpSender = new erpSender();
@@ -1003,8 +1093,6 @@ class order extends base
 						return false;
 					}
 				}
-				
-				$this->model('order_log')->add($orderno, '订单取消成功');
 				
 				if ($transaction)
 				{
@@ -1326,16 +1414,8 @@ class order extends base
 							'pay_status' => 3
 						]))
 						{
-							if ($this->model('order_log')->add($orderno, '订单申请退款，等待处理'))
-							{
-								$this->model('order')->commit();
-								return true;
-							}
-							else
-							{
-								$this->model('order')->rollback();
-								return false;
-							}
+							$this->model('order')->commit();
+							return true;
 						}
 						else
 						{
@@ -1359,7 +1439,6 @@ class order extends base
 							'order_product.refundtime' => $_SERVER['REQUEST_TIME']
 						]))
 						{
-							
 							$this->model('order')->commit();
 							return true;
 						}

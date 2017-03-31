@@ -40,7 +40,14 @@ class productModel extends model
 	
 	function datatables($post)
 	{
-		$this->table('store','left join','store.id=product.store');
+		if (isset($post['ajaxData']) && is_array($post['ajaxData']))
+		{
+			foreach($post['ajaxData'] as $key => $value)
+			{
+				$this->where($key.'=?',[$value]);
+			}
+		}
+		
 		$parameter = [];
 		foreach ($post['columns'] as $index => $columns)
 		{
@@ -56,55 +63,17 @@ class productModel extends model
 				}
 			}
 		}
-		if (isset($post['action']) && $post['action'] === 'filter')
+		if (isset($post['keywords']) && !empty($post['keywords']))
 		{
-			if (!empty($post['sku']))
+			$this->where('product.id=? or name like ?',[trim($post['keywords']),'%'.trim($post['keywords']).'%']);
+		}
+		if (isset($post['status']) && !empty($post['status']))
+		{
+			$status = explode(',', $post['status']);
+			foreach ($status as $stat)
 			{
-				$this->where('product.sku like ?',['%'.$post['sku'].'%']);
-			}
-			if (!empty($post['name']))
-			{
-				$this->where('product.name like ?',['%'.$post['name'].'%']);
-			}
-			if (!empty($post['category']))
-			{
-				$this->table('category_product','left join','category_product.pid=product.id');
-				$this->where('category_product.cid=?',[$post['category']]);
-			}
-			if (!empty($post['price_from']))
-			{
-				$this->where('product.price >= ? or product.v1price >= ? or product.v2price >= ?',[$post['price_from'],$post['price_from'],$post['price_from']]);
-			}
-			if(!empty($post['price_to']))
-			{
-				$this->where('product.price <= ? or product.v1price <= ? or product.v2price <= ?',[$post['price_to'],$post['price_to'],$post['price_to']]);
-			}
-			if (!empty($post['store']))
-			{
-				$this->where('product.store = ?',[$post['store']]);
-			}
-			if (!empty($post['stock_from']))
-			{
-				$this->where('product.stock >= ?',[$post['stock_from']]);
-			}
-			if (!empty($post['stock_to']))
-			{
-				$this->where('product.stock <= ?',[$post['stock_to']]);
-			}
-			if ($post['product_status'] != '')
-			{
-				if ($post['product_status'] == 1)
-				{
-					$this->where('(auto_status = 0 and status = 1) or (auto_status = 1 and avaliabletime_from <= ? and avaliabletime_to >= ?)',[$_SERVER['REQUEST_TIME'],$_SERVER['REQUEST_TIME']]);
-				}
-				else if ($post['product_status'] == 0)
-				{
-					$this->where('(auto_status = 0 and status = 0) or (auto_status = 1 and (avaliabletime_from > ?  or  avaliabletime_to < ?))',[$_SERVER['REQUEST_TIME'],$_SERVER['REQUEST_TIME']]);
-				}
-			}
-			if ($post['outside'] != '')
-			{
-				$this->where('product.outside=?',[$post['outside']]);
+				list($name,$value) = explode(':', $stat);
+				$this->where($name.'=?',[$value]);
 			}
 		}
 		return $this->select($parameter);

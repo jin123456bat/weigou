@@ -3,16 +3,20 @@ namespace application\control\view;
 
 use system\core\view;
 use system\core\image;
-use application\helper\productSearchEngine;
 use application\helper\product;
-use application\helper\erpSender;
+use application\helper\user;
 
 class index extends view
 {
-
 	function __construct()
 	{
+		$this->_csrf_token_refresh = false;
 		parent::__construct();
+	}
+	
+	function test()
+	{
+		file_put_contents('./test', $_POST['a']);
 	}
 
 	function index()
@@ -27,7 +31,65 @@ class index extends view
 			$this->response->addHeader('Location', 'http://willg.cn');
 		}
 	}
+	
+	function product()
+	{
+		$userHelper = new \application\helper\user();
+		if($userHelper->isLogin())
+		{
+			$user = $this->model('user')->where('id=?',[$userHelper->isLogin()])->find();
+			$this->assign('user', $user);
+		}
+		
+		$id = $this->get('id',0,'intval');
+		$product = $this->model('product')->where('id=?',[$id])->find();
+		$productHelper = new \application\helper\product();
+		$product['origin'] = $this->model('country')->get($product['origin']);
+		$product['store'] = $this->model('store')->where('id=?',[$product['store']])->find();
+		// 商品详情图
+		$product['listImage'] = $productHelper->getListImage($id);
+		$product['detailImage'] = $productHelper->getDetailImage($id);
+		$product['tax'] = $productHelper->getTaxFields($id);
+		$product['MeasurementUnit'] = $this->model('dictionary')->where('id=? and type=?',[$product['MeasurementUnit'],'MeasurementUnit'])->scalar('name');
+		$product['package'] = $this->model('dictionary')->where('id=? and type=?',[$product['package'],'package'])->scalar('name');
+		$this->assign('product', $product);
+		
+		$prototype = $this->model('prototype')->where('pid=? and type=? and isdelete=?',[$id,'text',0])->select();
+		$this->assign('prototype', $prototype);
+		
+		$bind = $this->model('bind')->orderby('sort','asc')->where('pid=?',[$id])->select();
+		$this->assign('bind', $bind);
+		
+		$this->assign('province', $this->model('province')->select());
+		return $this;
+	}
+	
+	/**
+	 * 移动端地址二维码
+	 */
+	function mobileAddressEqcode()
+	{
+		$content = 'http://twillg.com/index.php?c=mobile&a=index';
+		
+		$image = new image();
+		$size = empty($this->get->size) ? 4 : intval($this->get->size);
+		$blank = empty($this->get->blank) ? 2 : intval($this->get->blank);
+		
+		//$logo = $this->model('system')->get('logo', 'system');
+		//$logo = is_file($logo) ? $logo : NULL;
+		$logo = ROOT.'/logo_small.jpg';
+		
+		$file = $image->QRCode($content, $logo, 'M', $size, $blank);
+		$this->response->addHeader('Content-Type', 'image/png');
+		if ($this->get->download == 'true') {
+			$this->response->addHeader('Content-Disposition', 'attachment; filename="eqcode.png"');
+		}
+		return file_get_contents($file);
+	}
 
+	/**
+	 * 图形验证码
+	 */
 	function code()
 	{
 		$image = new image();
@@ -55,6 +117,38 @@ class index extends view
 	}
 	
 	/**
+	 * 修复订单表中erp字段错误的脚本
+	 */
+	function erpError()
+	{
+		$orders = $this->model('order')->select();
+		
+		foreach ($orders as $order)
+		{
+			$sending_num = $this->model('suborder_store')->where('main_orderno=? and erp=?',[$order['orderno'],1])->count();
+			$not_sending_num = $this->model('suborder_store')->where('main_orderno=? and erp=?',[$order['orderno'],0])->count();
+			if ($sending_num>0 && $not_sending_num==0)
+			{
+				$this->model('order')->where('orderno=?',[$order['orderno']])->limit(1)->update([
+					'erp'=>1
+				]);
+			}
+			if ($sending_num==0 && $not_sending_num>0)
+			{
+				$this->model('order')->where('orderno=?',[$order['orderno']])->limit(1)->update([
+					'erp'=>0
+				]);
+			}
+			if ($sending_num>0 && $not_sending_num>0)
+			{
+				$this->model('order')->where('orderno=?',[$order['orderno']])->limit(1)->update([
+					'erp'=>2
+				]);
+			}
+		}
+	}
+	
+	/**
 	 * 升级脚本
 	 */
 	function upgrade()
@@ -63,138 +157,51 @@ class index extends view
 		
 		$this->model('order')->transaction();
 		try {
-			if ($recover)
+			//删除订单表的无用的字段
+			if (!$recover)
 			{
 				$sql = '
-					ALTER TABLE  `order` DROP  `address_province` ,
-					DROP  `address_city` ,
-					DROP  `address_county` ,
-					DROP  `address_address` ,
-					DROP  `address_name` ,
-					DROP  `address_telephone` ,
-					DROP  `address_zcode` ,
-					DROP  `address_identify` ,
-					DROP  `address_ishost` ;
+					ALTER TABLE `order`
+					DROP `personal`,
+					DROP `personal_time`,
+					DROP `ordered`,
+					DROP `ordered_time`,
+					DROP `payed`,
+					DROP `payed_time`,
+					DROP `kouan`,
+					DROP `kouan_time`,
+					DROP `kouan_result`;
 				';
 				$this->model('order')->exec($sql);
 			}
 			
-			$sql = 
-			'
-				ALTER TABLE  `order` ADD  `address_province` varchar(32) NOT NULL,
-				add `address_city` varchar(32) not null,
-				add `address_county` varchar(32) not null,
-				add `address_address` varchar(256) not null,
-				add `address_name` varchar(32) not null,
-				add `address_telephone` char(11) not null,
-				add `address_zcode` char(6) not null,
-				add `address_identify` char(18) not null,
-				add `address_ishost` tinyint(1) not null;
-			';
+			
+			$sql = 'ALTER TABLE `order` ADD `erp_note` VARCHAR(256) NOT NULL COMMENT \'erp备注信息\' AFTER `erp_time`;';
 			$this->model('order')->exec($sql);
 			
-			if ($recover)
-			{
-				$sql = '
-					ALTER TABLE  `suborder_store` DROP  `address_province` ,
-					DROP  `address_city` ,
-					DROP  `address_county` ,
-					DROP  `address_address` ,
-					DROP  `address_name` ,
-					DROP  `address_telephone` ,
-					DROP  `address_zcode` ,
-					DROP  `address_identify` ,
-					DROP  `address_ishost` ;
-				';
-				$this->model('order')->exec($sql);
-			}
-			
-			$sql =
-			'
-				ALTER TABLE  `suborder_store` ADD  `address_province` varchar(32) NOT NULL,
-				add `address_city` varchar(32) not null,
-				add `address_county` varchar(32) not null,
-				add `address_address` varchar(256) not null,
-				add `address_name` varchar(32) not null,
-				add `address_telephone` char(11) not null,
-				add `address_zcode` char(6) not null,
-				add `address_identify` char(18) not null,
-				add `address_ishost` tinyint(1) not null;
-			';
+			$sql = 'ALTER TABLE `order` ADD `refund_reason` VARCHAR(256) NOT NULL COMMENT \'退款原因\' AFTER `refundtime`, ADD `refund_note` VARCHAR(256) NOT NULL COMMENT \'退款备注\' AFTER `refund_reason`;';
 			$this->model('order')->exec($sql);
 			
-			//更新订单中的地址信息
-			$orders = $this->model('order')->select();
-			foreach ($orders as $order)
-			{
-				$address = $this->model('address')->where('id=?',[$order['address']])->find();
-				$this->model('order')->where('orderno=?',[$order['orderno']])
-				->limit(1)->update([
-					'address_province'=>$this->model('province')->where('id=?',[$address['province']])->scalar('name'),
-					'address_city' => $this->model('city')->where('id=?',[$address['city']])->scalar('name'),
-					'address_county' => $this->model('county')->where('id=?',[$address['county']])->scalar('name'),
-					'address_address' => $address['address'],
-					'address_name' => $address['name'],
-					'address_telephone' => $address['telephone'],
-					'address_zcode' => $address['zcode'],
-					'address_identify' => $address['identify'],
-					'address_ishost' => $address['host'],
-				]);
-			}
+			$sql = 'ALTER TABLE `order_package` ADD `ship_note` VARCHAR(256) NOT NULL COMMENT \'发货备注\' ;';
+			$this->model('order_package')->exec($sql);
 			
+			$sql = 'ALTER TABLE `order_log` ADD `aid` INT NOT NULL COMMENT \'管理员id\' , ADD `note` VARCHAR(256) NOT NULL COMMENT \'相关备注抄送\' , ADD `status` VARCHAR(24) NOT NULL COMMENT \'操作前状态\' ;';
+			$this->model('order')->exec($sql);
 			
-			//更新子订单中的地址信息
-			$orders = $this->model('suborder_store')->select();
-			foreach ($orders as $order)
-			{
-				$address = $this->model('address')->where('id=?',[$order['address']])->find();
-				$this->model('suborder_store')->where('id=?',[$order['id']])
-				->limit(1)->update([
-					'address_province'=>$this->model('province')->where('id=?',[$address['province']])->scalar('name'),
-					'address_city' => $this->model('city')->where('id=?',[$address['city']])->scalar('name'),
-					'address_county' => $this->model('county')->where('id=?',[$address['county']])->scalar('name'),
-					'address_address' => $address['address'],
-					'address_name' => $address['name'],
-					'address_telephone' => $address['telephone'],
-					'address_zcode' => $address['zcode'],
-					'address_identify' => $address['identify'],
-					'address_ishost' => $address['host'],
-				]);
-			}
+			$sql = 'ALTER TABLE `order` ADD `msg_to_user` VARCHAR(256) NOT NULL COMMENT \'给用户的留言\' ;';
+			$this->model('order')->exec($sql);
 			
-			if ($recover)
-			{
-				$sql = 
-				'
-					ALTER TABLE `order_product`
-					  DROP `sku`,
-					  DROP `barcode`;
-				';
-				$this->model('order_product')->exec($sql);
-			}
+			$sql = 'ALTER TABLE `order_log` CHANGE `aid` `aid` INT(11) NULL DEFAULT NULL COMMENT \'管理员id\';';
+			$this->model('order')->exec($sql);
 			
-			//商品信息中添加sku和barcode
-			$sql = 
-			'
-				ALTER TABLE  `order_product` ADD  `sku` VARCHAR( 32 ) NOT NULL ,
-				ADD  `barcode` VARCHAR( 32 ) NOT NULL ;
-			';
-			$this->model('order_product')->exec($sql);
-			$product = $this->model('order_product')->select();
-			foreach ($product as $p)
-			{
-				$sku_barcode = $this->model('product')->where('id=?',[$p['pid']])->find('sku,barcode');
-				$this->model('order_product')->where('id=?',[$p['id']])->update(array(
-					'sku' => $sku_barcode['sku'],
-					'barcode' => $sku_barcode['barcode'],
-				));
-			}
+			//删除category的alias
+			$sql = 'ALTER TABLE `category` drop `alias`';
+			$this->model('category')->exec($sql);
 		}
 		catch (\Exception $e)
 		{
-			$this->model('order')->rollback();
+			var_dump("升级失败");
 			var_dump($e);
-			exit('升级失败');
 		}
 		$this->model('order')->commit();
 	}

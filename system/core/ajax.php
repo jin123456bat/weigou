@@ -1,7 +1,6 @@
 <?php
 namespace system\core;
 
-use system\core\exception as exception;
 use application\message\json;
 
 class ajax extends control

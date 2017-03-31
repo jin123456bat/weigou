@@ -13,14 +13,8 @@ class orderModel extends model
 
 	function datatables($post)
 	{
-		$this->table('user', 'left join', 'user.id=order.uid');
-		$this->table('address', 'left join', 'address.id=order.address');
-		//$this->table('province', 'left join', 'province.id=address.province');
-		//$this->table('city', 'left join', 'city.id=address.city');
-		//$this->table('county', 'left join', 'county.id=address.county');
-		$this->table('task_user', 'left join', 'task_user.orderno=order.orderno');
-		
 		$parameter = [];
+		
 		foreach ($post['columns'] as $index => $columns)
 		{
 			if (! empty($columns['name']))
@@ -35,145 +29,108 @@ class orderModel extends model
 				}
 			}
 		}
-		if (isset($post['action']) && $post['action'] === 'filter')
+		
+		if (isset($post['pk']) && is_array($post['pk']) && !empty($post['pk']))
 		{
-			if (! empty($post['orderno']))
+			foreach ($post['pk'] as $pk)
 			{
-				// 修复搜索主订单号，数据显示异常的问题，
-				// $this->table('suborder_store','left join','suborder_store.main_orderno=order.orderno');
-				// $this->where('order.orderno like ? or concat(replace(suborder_store.date,"-",""),suborder_store.id) like ?',['%'.trim($post['orderno']).'%','%'.trim($post['orderno']).'%']);
-				
-				$this->where('order.orderno like ? or order.orderno = (select main_orderno from suborder_store where order.orderno=suborder_store.main_orderno and concat(replace(suborder_store.date,"-",""),suborder_store.id) like ? limit 1)', [
-					'%' . trim($post['orderno']) . '%',
-					'%' . trim($post['orderno']) . '%'
-				]);
-			
+				$this->where($pk['key'].'=?',[$pk['value']]);
 			}
-			if (! empty($post['createtime_from']))
-			{
-				$this->where('order.createtime >= ?', [
-					strtotime($post['createtime_from'])
-				]);
-			}
-			if (! empty($post['createtime_to']))
-			{
-				$this->where('order.createtime <= ?', [
-					strtotime($post['createtime_to'])
-				]);
-			}
-			if (! empty($post['uid']))
-			{
-				$this->where('order.uid=?', [
-					$post['uid']
-				]);
-			}
-			if (! empty($post['orderamount_from']))
-			{
-				$this->where('order.orderamount >= ?', [
-					$post['orderamount_from']
-				]);
-			}
-			if (! empty($post['orderamount_to']))
-			{
-				$this->where('order.orderamount <= ?', [
-					$post['orderamount_to']
-				]);
-			}
-			if (! empty($post['address_province']))
-			{
-				$this->where('address.province=?', [
-					$post['address_province']
-				]);
-			}
-			if (! empty($post['address_city']))
-			{
-				$this->where('address.city=?', [
-					$post['address_city']
-				]);
-			}
-			
-			if ($post['pay_status'] != '')
-			{
-				if ($post['pay_status'] == 1)
-				{
-					$this->where('pay_status=1 or pay_status=4');
-				}
-				else
-				{
-					$this->where('pay_status=?', [
-						$post['pay_status']
-					]);
-				}
-			}
-			
-			if (! empty($post['pay_number']))
-			{
-				$this->where('pay_number=?', [
-					trim($post['pay_number'])
-				]);
-			}
-			if ($post['erp'] != '')
-			{
-				$this->where('order.erp=?',[$post['erp']]);
-			}
-			if ($post['status'] != '')
-			{
-				$this->where('order.status=?', [
-					$post['status']
-				]);
-			}
-			if ($post['way_status'] != '')
-			{
-				if ($post['way_status'] == 0)
-				{
-					$this->where('order.way_status in (?)',[0,2]);
-				}
-				else
-				{
-					$this->where('order.way_status=?', [
-						$post['way_status']
-					]);
-				}
-			}
-			
-			// //////////////////////////////mychange///////根据地址号码来搜索
-			if ($post['address_telephone'] != '')
-			{
-				$this->where('address.telephone like ? or address.name like ?', [
-					'%' . trim($post['address_telephone']) . '%',
-					'%' . trim($post['address_telephone']) . '%'
-				]);
-			}
-			// //////////////////////////////
-			if ($post['task'] != '')
-			{
-				if ($post['task'] == 1)
-				{
-					$this->where('task_user.orderno is not null');
-				}
-				else
-				{
-					$this->where('task_user.orderno is null');
-				}
-			}
-			if (trim($post['note']) != '')
-			{
-				if ($post['note'] == 1)
-				{
-					$this->where('order.note != ""');
-				}
-				else
-				{
-					$this->where('order.note = ""');
-				}
-			}
-		}
-		else
-		{
-			$this->where('order.pay_status != 0'); // 默认不显示未支付的订单
 		}
 		
-		return $this->select($parameter);
+		if (isset($post['ajaxData']) && is_array($post['ajaxData']) && !empty($post['ajaxData']))
+		{
+			foreach($post['ajaxData'] as $key => $value)
+			{
+				if ($key == 'where')
+				{
+					$this->where($value);
+				}
+				else
+				{
+					//假如是array的话使用or链接
+					if (is_array($value))
+					{
+						$sql = '';
+						$parameters = [];
+						foreach ($value as $v)
+						{
+							$parameters[] = $v;
+							if (empty($sql))
+							{
+								$sql .= $key.'=?';
+							}
+							else
+							{
+								$sql .= ' or '.$key.'=?';
+							}
+						}
+						$this->where($sql,$parameters);
+					}
+					else
+					{
+						$this->where($key.'=?',[$value]);
+					}
+				}
+			}
+		}
+		
+		if (isset($post['keywords']) && !empty(trim($post['keywords'])))
+		{
+			$this->where('order.orderno like ?',['%'.trim($post['keywords']).'%']);
+		}
+		
+		//解析status，让status支持复杂的表达式
+		if (isset($post['status']) && !empty(trim($post['status'])))
+		{
+			$status = trim($post['status']);
+			$pattern = '/\([^()]+\)/';
+			if(preg_match_all($pattern, $status,$matches))
+			{
+				foreach ($matches[0] as $express)
+				{
+					$express = trim($express,'()');
+					
+					$expresses = explode('|', $express);
+					$sql = '';
+					$parameters = [];
+					foreach ($expresses as $e)
+					{
+						list($key,$value) = explode(':', $e);
+						$parameters[] = $value;
+						if (empty($sql))
+						{
+							$sql .= $key.'=?';
+						}
+						else
+						{
+							$sql .= ' or '.$key.'=?';
+						}
+					}
+					if (!empty($sql))
+					{
+						$sql = '('.$sql.')';
+					}
+					$this->where($sql,$parameters);
+					
+					$status = str_replace('('.$express.')', '', $status);
+					
+					$status = str_replace(',,', ',', $status);
+				}
+			}
+			if (!empty($status))
+			{
+				$expresses = explode(',', $status);
+				foreach ($expresses as $express)
+				{
+					list($key,$value) = explode(':', $express);
+					$this->where($key.'=?',[$value]);
+				}
+			}
+		}
+		
+		$result = $this->select($parameter);
+		return $result;
 	}
 
 	/*

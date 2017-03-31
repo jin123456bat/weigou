@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="utf-8" />
+		<title>{%$page_title%}</title>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+       	<meta name="renderer" content="webkit">
+        <meta content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport" />
+        <!-- reset -->
+        <link rel="stylesheet" href="//cdn.bootcss.com/normalize/5.0.0/normalize.min.css">
+		<!-- 新 Bootstrap 核心 CSS 文件 -->
+        <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<!-- 可选的Bootstrap主题文件（一般不用引入） -->
+		<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
+		<!--icon-->
+		<link rel="stylesheet" href="{%$VIEW_ROOT%}/html/css/plugins/font-awesome/css/font-awesome.min.css">
+		<!--自定义css-->
+		<link rel="stylesheet" href="{%resource path='/html/css/global.css'%}">
+		<script type="text/javascript">
+			function lpad(num, n) {  
+				return Array(n>(''+num).length?(n-(''+num).length+1):0).join(0)+num;  
+			}
+		</script>
+	</head>
+	<body>
+		<div id="selectProductModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
+			<div class="modal-dialog" role="document" style="width: 900px;">
+				<div class="modal-content">
+					<form class="form-horizontal" role="form">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							<h4 class="modal-title" id="gridSystemModalLabel">选择商品</h4>
+						</div>
+						<div class="modal-body">
+							<form class="form-horizontal" role="form">
+								<div class="form-group">
+									<div class="col-md-3">
+										<select class="form-control">
+											<option disabled="disabled" selected="selected" value="">请选择分类</option>
+										</select>
+									</div>
+									<div class="col-md-3">
+										<select class="form-control">
+											<option disabled="disabled" selected="selected" value="">请选择品牌</option>
+										</select>
+									</div>
+									<div class="col-md-3">
+										<input type="text" class="form-control" placeholder="请输入关键字">
+									</div>
+									<div class="col-md-3" style="display: inline-block;float: inherit;">
+										<button class="btn btn-blue" style="background-color: rgba(98, 179, 255, 1); color: #FFFFFF;">确定</button>
+									</div>
+								</div>
+							</form>
+							<table class="table table-hover table-striped" id="product_selector">
+								<thead><tr><td></td><td>SPU</td><td>商品图片</td><td>商品名称</td><td>商品库存</td></tr></thead>
+								<tbody>
+									
+								</tbody>
+							</table>
+						</div>
+						<div class="modal-footer" style="padding: 0px;">
+							<div class="modal-button-group">
+								<div class="modal-button submit">确认</div>
+								<div data-dismiss="modal" class="modal-button">取消</div>
+							</div>
+						</div>
+					</form>
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+		{%include file='html/public/header.html'%}
+		<div class="body container-fluid">
+			<div class="row">
+				{%include file='html/public/sidebar.html'%}
+				<div class="content">
+			  		<div class="content-body">
+			  			<div class="white-block">
+			  				<div class="wall-block">
+								<p>商品管理 - 商品列表</p>
+							</div>
+			  			</div>
+			  			<div class="divider"></div>
+			  			<div class="white-block">
+			  				<div class="space"></div>
+							<div class="top-tips">
+								<div class="top-tips-title">
+									操作提示
+								</div>
+								<div class="top-tips-body">
+									<p>显示在首页的商品</p>
+								</div>
+							</div>
+		  					<div class="line">
+								<a class="btn red btn-outline btn-small createTopProduct">
+									添加首页商品 
+								</a>
+		  					</div>
+			  				<table class="table table-hover table-bordered table-responsive" id="product">
+								<thead>
+									<tr>
+										<td width="2%" style="padding-left: 20px;padding-right: 20px;">
+											<input type="checkbox" class="select-all">
+										</td>
+										<td width="25%" style="min-width: 305px;">
+											商品名称
+										</td>
+										<td width="10%" style="min-width: 80px;">
+											商品类型
+										</td>
+										<td width="10%" style="min-width: 65px;">
+											商品价格
+										</td>
+										<td width="10%" style="min-width: 115px;">
+											库存
+										</td>
+										<td width="10%" style="min-width: 80px;">
+											添加时间
+										</td>
+										<td width="10%">
+											排序
+										</td>
+										<td style="text-align: center;">
+											操作
+										</td>
+									</tr>
+								</thead>
+								<tbody>
+
+								</tbody>
+								<tfoot>
+									<tr>
+										<td colspan="4">
+											<div class="col-md-4">
+												<select class="form-control input-sm" id="multipleSelect">
+													<option>请选择...</option>
+													<option value="delete">删除</option>
+												</select>
+											</div>
+											<div class="col-md-2">
+												<button class="btn" id="multipleBtn">确定</button>
+											</div>
+										</td>
+										<td id="split_page" colspan="9" style="text-align: right;">
+
+										</td>
+									</tr>
+								</tfoot>
+							</table>
+							
+			  			</div>
+			  		</div>				  
+				</div>
+			</div>
+		</div>
+		<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+		<script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+		<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+		<script src="http://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		<!--alert-->
+		<script src="//cdn.bootcss.com/bootbox.js/4.4.0/bootbox.min.js"></script>
+		<script src="{%resource path='/html/js/datatables.js'%}"></script>
+		<script src="{%resource path='/html/js/global.js'%}"></script>
+		<script type="text/javascript">
+			$.ajaxSetup({
+				headers:{
+					'X-CSRF-TOKEN':'{%$x_csrf_token%}'
+				}
+			});
+			
+			$('.createTopProduct').on('click',function(){
+				$('#selectProductModal').modal('show');
+			});
+			
+			$('table').on('change','input[type=checkbox].select-all',function(){
+				if($(this).is(':checked'))
+				{
+					$(this).closest('table').find('input[type=checkbox]:not(.select-all)').each(function(index,value){
+						$(value).prop('checked',true);
+					});
+				}
+				else
+				{
+					$(this).closest('table').find('input[type=checkbox]:not(.select-all)').each(function(index,value){
+						$(value).prop('checked',false);
+					});
+				}
+				return false;
+			});
+			
+			var dt = datatables({
+				table:$('#product'),
+				ajax:{
+					url:'{%url c=datatables a=product_top%}',
+					data:{
+						isdelete:0,
+					},
+				},
+				empty:function(){
+					return '<tr><td colspan="10" style="text-align:center;">尚无数据</td></tr>';
+				},
+				columns:[{
+					data:'id',
+					name:'product.id',
+				},{
+					data:'name',
+					name:'product.name',
+				},{
+					data:'outside',
+					name:'product.outside',
+				},{
+					data:'price',
+					name:'product.price',
+				},{
+					data:'v1price',
+					name:'product.v1price',
+					visible:false,
+				},{
+					data:'v2price',
+					name:'product.v2price',
+					visible:false,
+				},{
+					data:'stock',
+					name:'product.stock',
+				},{
+					data:'time',
+					name:'product_top.time',
+				},{
+					data:'sort',
+					name:'product_top.sort',
+				},{
+					data:'id',
+					name:'product.id',
+				},
+				
+				{
+					data:'pic',
+					name:'(select upload.path from product_img left join upload on upload.id=product_img.fid where product_img.pid=product.id order by product_img.position asc limit 1)',
+					visible:false,
+				},{
+					data:'brand',
+					name:'(select brand.name_cn from brand where brand.id=product.brand limit 1)',
+					visible:false,
+				}],
+				sort:[{
+					column:8,
+					dir:'asc',
+				}],
+				columnDefs:[{
+					targets:0,
+					render:function(data,full){
+						return '<input type="checkbox" name="id[]" value="'+data+'">';
+					}
+				},{
+					targets:1,
+					render:function(data,full){
+						return '<div style="display: inline-block;width: 70px;height: 60px;vertical-align:middle;"><img onerror="this.src=\'https://placeholdit.imgix.net/~text?txtsize=18&txt=%E6%AD%A4%E5%A4%84%E6%97%A0%E5%9B%BE&w=60&h=60\';" src="'+full.pic+'" width="60px" height="60px"></div><div style="display: inline-block;width: 70%;height: 60px;vertical-align:middle;"><div style="display: block;width: 100%;word-break: break-all;overflow: hidden;height: 40px;line-height: 20px;">'+data+'</div><div style="height:20px;line-height: 20px;width:100%;overflow: hidden;">品牌：'+(full.brand==null?'':full.brand)+'</div></div>';
+					}
+				},{
+					targets:2,
+					render:function(data){
+						if(data == 0)
+						{
+							return '普通商品';
+						}
+						else if(data == 1)
+						{
+							return '进口商品';
+						}
+						else if(data == 2)
+						{
+							return '直供商品';
+						}
+						else if(data == 3)
+						{
+							return '直邮商品';
+						}
+						alert('商品outside错误');
+					}
+				},{
+					targets:3,
+					render:function(data,full){
+						return '普通:'+full.price+'<br>白金:'+full.v1price+'<br>钻石:'+full.v2price;
+					}
+				},{
+					targets:7,
+					render:function(data,full){
+						return unixtotime(data,true,8);
+					}
+				},{
+					targets:8,
+					render:function(data,full){
+						content = '<button class="btn btn-outline btn-xs moveup" data-id="'+full.id+'">上</button>';
+						content += '<div class="space"></div>';
+						content += '<button class="btn btn-outline btn-xs movedown" data-id="'+full.id+'">下</button>';
+						return content;
+					}
+				},{
+					targets:9,
+					render:function(data,full){
+						content = '<button class="btn btn-outline btn-xs look" data-id="'+data+'">查看</button>';
+						content += '<div class="space"></div>';
+						content += '<button class="btn btn-outline btn-xs edit" data-id="'+data+'">编辑</button>';
+						content += '<div class="space"></div>';
+						content += '<button class="btn btn-outline btn-xs remove" data-id="'+data+'">移除</button>';
+						return content;
+					}
+				}],
+				pagesize:10,
+				onRowLoaded:function(row){
+					row.find('td:last').css('text-align','center');
+					row.find('td:first').css({'padding-left':'20px','padding-right':'20px'});
+				}
+			});
+			
+			$('#product').on('click','.moveup',function(){
+				var id = $(this).data('id');
+				$.post('./index.php?m=ajax&c=product&a=topmove',{id:id,forward:'up'},function(response){});
+				$(this).parents('tr').insertBefore($(this).parents('tr').prev('tr'));
+			}).on('click','.movedown',function(){
+				var id = $(this).data('id');
+				$.post('./index.php?m=ajax&c=product&a=topmove',{id:id,forward:'down'},function(response){});
+				$(this).parents('tr').insertAfter($(this).parents('tr').next('tr'));
+			}).on('click','.look',function(){
+				window.open('./index.php?c=index&a=product&id='+$(this).data('id'));
+			}).on('click','.remove',function(){
+				var tr = $(this).parents('tr');
+				$.post('./index.php?m=ajax&c=product&a=untop',{id:$(this).data('id')},function(response){
+					if(response.code==1)
+					{
+						tr.remove();
+					}
+					else
+					{
+						bootbox.alert(response.result);
+					}
+				});
+			});
+			
+			var getSelectedCheckbox = function(obj){
+				$_id = [];
+				obj.find('tbody input[type=checkbox]').each(function(index,value){
+					if($(value).is(':checked'))
+					{
+						$_id.push($(value).val());
+					}
+				});
+				return $_id;
+			}
+			
+			$('#multipleBtn').on('click',function(){
+				var id = getSelectedCheckbox($('#product'));
+				if($('#multipleSelect').val() == '')
+				{
+					return false;
+				}
+				if(id.length == 0)
+				{
+					bootbox.alert('请选择商品');
+					return false;
+				}
+				if($('#multipleSelect').val() == 'delete')
+				{
+					bootbox.confirm({
+						message:'确认删除?',
+						buttons:{
+							cancel:{
+								label: '<i class="fa fa-times"></i> 取消',
+							},
+							confirm:{
+								label:'<i class="fa fa-check"></i> 确定',
+							}
+						},
+						callback: function(result,a) {
+							if(result) {
+								dt.addAjaxParameter('customActionType','group_action');
+								dt.addAjaxParameter('id',id);
+								dt.addAjaxParameter('customActionName','remove');
+								dt.reload();
+							}
+						},
+					});
+				}
+				return false;
+			});
+		</script>
+	</body>
+</html>

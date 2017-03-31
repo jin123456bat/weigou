@@ -460,6 +460,7 @@ class product extends ajax
 	function topmove()
 	{
 		$admin = $this->session->id;
+		
 		$id = $this->post('id');
 		$forward = $this->post('forward', 'up');
 		$line = $this->model('product_top')
@@ -1190,7 +1191,6 @@ class product extends ajax
 						->insert(array(
 							'product_id' => $product_id,
 							'publish_id' => $publish_id,
-							'oldprice' => 0,
 							'stock' => $stock,
 							'sku' => $sku,
 							'store' => $store_id,
@@ -1263,14 +1263,8 @@ class product extends ajax
 								$need_conflict_product_id[] = $product_id;
 							}
 							
-							//调整市场价
-							$this->model('product_publish')->where('product_id=? and publish_id=?',[$product_id,$publish_id])->limit(1)->update([
-								'oldprice' => $oldprice,
-							]);
-							
 							$this->model('product_publish_price')->where('product_id=? and publish_id=?',[$product_id,$publish_id])->delete();
 						}
-						
 						
 						if($this->model('product_publish_price')->insert(array(
 							'product_id' => $product_id,
@@ -1280,6 +1274,7 @@ class product extends ajax
 							'price' => $price,
 							'v1price' => $v1price,
 							'v2price' => $v2price,
+							'oldprice' => $oldprice,
 						)))
 						{
 							$success_price[] = [

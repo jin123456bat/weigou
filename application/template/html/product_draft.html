@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="utf-8" />
+		<title>{%$page_title%}</title>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+       	<meta name="renderer" content="webkit">
+        <meta content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport" />
+        <!-- reset -->
+        <link rel="stylesheet" href="//cdn.bootcss.com/normalize/5.0.0/normalize.min.css">
+		<!-- 新 Bootstrap 核心 CSS 文件 -->
+        <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <!--icon-->
+		<link rel="stylesheet" href="{%$VIEW_ROOT%}/html/css/plugins/font-awesome/css/font-awesome.min.css">
+		<!--自定义css-->
+		<link rel="stylesheet" href="{%resource path='/html/css/global.css'%}">
+		<script type="text/javascript">
+			function lpad(num, n) {
+				return Array(n>(''+num).length?(n-(''+num).length+1):0).join(0)+num;  
+			}
+		</script>
+	</head>
+	<style>
+	table>thead>tr>th{
+		background-color: rgba(244, 245, 250, 1);
+		color: #5E5E5E;
+		font-size: 13px;
+		text-align: center;
+		height: 51px;
+	}
+	table>tbody>tr>td{
+		text-align: center;
+		font-size: 13px;
+		height: 80px;
+	}
+	</style>
+	<body>
+		{%include file='html/public/header.html'%}
+		<div class="body container-fluid">
+			<div class="row">
+				{%include file='html/public/sidebar.html'%}
+				<div class="content">
+			  		<div class="content-body">
+			  			<div class="white-block">
+			  				<div class="wall-block">
+								<p>商品管理 - 商品发布</p>
+							</div>
+			  			</div>
+			  			<div class="divider"></div>
+			  			<div class="white-block">
+			  				<div class="tab">
+			  					<div class="tab-header">
+			  						<a class="tab-title active" href="#draft">商品编辑列表</a>
+			  					</div>
+			  					<div class="tab-body">
+			  						<div class="tab-page active" id="draft">
+			  							<div class="space"></div>
+			  							<div class="top-tips">
+											<div class="top-tips-title">
+												操作提示
+											</div>
+											<div class="top-tips-body">
+												<p>该页面展示了商城所有的商品信息，可对商品进行编辑修改操作。</p>
+												<p>可输入商品名称关键字进行搜索，侧边栏进行高级搜索。</p>
+											</div>
+										</div>
+										<div class="line">
+											<a href="./index.php?c=html&a=product_create" class="btn red btn-outline btn-small">创建商品</a>
+										</div>
+										<div class="">
+											<table id="product_draft" class="table table-hover table-bordered table-responsive">
+												<thead>
+													<tr><th>SPU编号</th><th>商品名称</th><th>状态</th><th>商品类别</th><th>修改时间</th><th>编辑</th><th>删除</th></tr>
+												</thead>
+												<tbody>
+													
+												</tbody>
+												<tfoot>
+													<tr><td colspan="10"></td></tr>
+												</tfoot>
+											</table>
+										</div>
+			  						</div>
+								</div>
+			  				</div>
+			  			</div>
+			  		</div>				  
+				</div>
+			</div>
+		</div>
+		<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+		<script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+		<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+		<script src="http://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		<!--alert-->
+		<script src="//cdn.bootcss.com/bootbox.js/4.4.0/bootbox.min.js"></script>
+		<!--datatables-->
+		<script src="{%resource path='/html/js/datatables.js'%}"></script>
+		<script src="{%resource path='/html/js/tab.js'%}"></script>
+		<script src="{%resource path='/html/js/global.js'%}"></script>
+		<script type="text/javascript">
+			var dt = datatables({
+				table:$('#product_draft'),
+				ajax:{
+					data:{
+						draft:0,
+					},
+					url:'{%url c=datatables a=product%}',
+				},
+				columns:[{
+					data:'id',
+					name:'product.id',
+				},{
+					data:'name',
+					name:'product.name',
+				},{
+					data:'examine',
+					name:'product.examine',
+				},{
+					data:'isnew',
+					name:'product.isnew',
+				},{
+					data:'modifytime',
+					name:'product.modifytime',
+				},{
+					data:'id',
+					name:'product.id',
+				},{
+					data:'id',
+					name:'product.id',
+				}
+				
+				,{
+					data:'status',
+					name:'product.status',
+					visible:false,
+				},{
+					data:'draft',
+					name:'product.draft',
+					visible:false,
+				},{
+					data:'stock',
+					name:'product.stock',
+					visible:false,
+				},{
+					data:'examine_result',
+					name:'product.examine_result',
+					visible:false,
+				},{
+					data:'downStatus',
+					name:'product.downStatus',
+					visible:false,
+				}],
+				columnDefs:[{
+					targets:2,
+					render:function(data,full){
+						if(full.status==1)
+						{
+							if(full.stock<=0)
+							{
+								return '销售中,库存不足';
+							}
+							else
+							{
+								return '销售中';
+							}
+						}
+						else
+						{
+							if(full.examine == -1)
+							{
+								tooltips = full.examine_result.length>0?'<br><div style="cursor:pointer;" data-toggle="tooltip" data-placement="bottom" title="'+full.examine_result+'">（提示）</div>':'';
+								return '<font style="color:#FF3300;font-weight: 700;">未通过'+tooltips+'</font>';
+							}
+							else if(full.examine == 0)
+							{
+								return '<font style="color:#FF6600;">待审核</font>';
+							}
+							else if(full.examine == 1)
+							{
+								if(full.downStatus == 1)
+								{
+									return '已下架,编辑中';
+								}
+								else
+								{
+									return '已下架';
+								}
+							}
+							else if(full.examine == 2)
+							{
+								return '审核中';
+							}
+						}
+						return data;
+					}
+				},{
+					targets:3,
+					render:function(data,full){
+						if(data == 1)
+						{
+							return '新增';
+						}
+						else
+						{
+							return '修改';
+						}
+					}
+				},{
+					targets:4,
+					render:function(data,full){
+						return unixtotime(data,true,8);
+					}
+				},{
+					targets:5,
+					render:function(data,full){
+						return '<button data-id="'+data+'" class="btn btn-outline btn-xs editBtn">编辑</button>';
+					}
+				},{
+					targets:6,
+					render:function(data,full){
+						return '<button data-id="'+data+'" class="btn btn-outline btn-xs removeBtn">删除</button>';
+					}
+				}],
+				pagesize:10,
+				onRowLoaded:function(row){
+					row.find('td:last').css('text-align','center');
+					row.find('td:last').prev('td').css('text-align','center');
+				},
+				afterTableLoaded:function(table){
+					table.find('[data-toggle="tooltip"]').tooltip();
+				}
+			});
+		</script>
+	</body>
+</html>
