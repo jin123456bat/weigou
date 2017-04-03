@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8 no-js"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9 no-js"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en">
+    <!--<![endif]-->
+    <!-- BEGIN HEAD -->
+
+    <head>
+        <meta charset="utf-8" />
+        <title>常见问题</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta content="width=device-width, initial-scale=1" name="viewport" />
+        <meta content="" name="description" />
+        <meta content="" name="author" />
+        <!-- BEGIN GLOBAL MANDATORY STYLES -->
+        <link href="{%$VIEW_ROOT%}/assets/global/css/font.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/plugins/uniform/css/uniform.default.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css" rel="stylesheet" type="text/css" />
+        <!-- END GLOBAL MANDATORY STYLES -->
+        <!-- BEGIN THEME GLOBAL STYLES -->
+        <link href="{%$VIEW_ROOT%}/assets/global/css/components.min.css" rel="stylesheet" id="style_components" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/css/plugins.min.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css" rel="stylesheet" type="text/css" />
+        <!-- END THEME GLOBAL STYLES -->
+        <!-- BEGIN THEME LAYOUT STYLES -->
+        <link href="{%$VIEW_ROOT%}/assets/layouts/layout/css/layout.min.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/layouts/layout/css/themes/darkblue.min.css" rel="stylesheet" type="text/css" id="style_color" />
+        <link href="{%$VIEW_ROOT%}/assets/layouts/layout/css/custom.min.css" rel="stylesheet" type="text/css" />
+        <!-- END THEME LAYOUT STYLES -->
+        <link rel="shortcut icon" href="favicon.ico" /> </head>
+    <!-- END HEAD -->
+
+    <body class="page-header-fixed page-sidebar-closed-hide-logo page-content-white">
+        <!-- BEGIN HEADER -->
+        {%include file='admin/public/header.html'%}
+        <!-- END HEADER -->
+        <!-- BEGIN HEADER & CONTENT DIVIDER -->
+        <div class="clearfix"> </div>
+        <!-- END HEADER & CONTENT DIVIDER -->
+        <!-- BEGIN CONTAINER -->
+        <div class="page-container">
+            <!-- BEGIN SIDEBAR -->
+            {%include file='admin/public/sidebar.html'%}
+            <!-- END SIDEBAR -->
+            <!-- BEGIN CONTENT -->
+            <div class="page-content-wrapper">
+                <!-- BEGIN CONTENT BODY -->
+                <div class="page-content">
+                    <!-- BEGIN PAGE HEADER-->
+                    <!-- BEGIN THEME PANEL -->
+                    {%include file='admin/public/style.html'%}
+                    <!-- END THEME PANEL -->
+                    <!-- BEGIN PAGE BAR -->
+                    <div class="page-bar">
+                        <ul class="page-breadcrumb">
+                            <li>
+                                <a href="index.php">首页</a>
+                                <i class="fa fa-circle"></i>
+                            </li>
+                            <li>
+                                <span>页面</span>
+                                <i class="fa fa-circle"></i>
+                            </li>
+                            <li>
+                                <span>常见问题</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- END PAGE BAR -->
+                    <!-- BEGIN PAGE TITLE-->
+                    <h3 class="page-title"> 常见问题
+                        <small>常见问题</small>
+                    </h3>
+                    <div id="create_categoryModal" class="modal container fade" tabindex="-1" data-focus-on="input:first">
+                        <form action="{%url m=form c=question a=create_category%}" role="form" class="form-horizontal" method="post">
+                       		<input type="hidden" name="X_CSRF_TOKEN" value="{%$x_csrf_token%}">
+                            <input type="hidden" name="id">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                                <h4 class="modal-title">添加问题分类</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label class="col-md-1 control-label">分类标题</label>
+                                    <div class="col-md-11">
+                                        <input type="text" class="form-control" name="title" placeholder="标题" maxlength="256">
+                                        <span class="help-block"> 分类标题 </span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-1 control-label">分类排序</label>
+                                    <div class="col-md-11">
+                                        <input type="text" class="form-control" name="sort" placeholder="排序">
+                                        <span class="help-block"> 分类排序，从小到大 </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" data-dismiss="modal" class="btn btn-outline dark">关闭</button>
+                                <button type="submit" class="btn green">添加</button>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- END PAGE TITLE-->
+                    <!-- END PAGE HEADER-->
+                    <button class="btn blue" onClick="window.location = '{%url c=admin a=create_question%}';">添加问题</button>
+                    <button class="btn green create_category">添加问题分类</button>
+                    
+                    {%section name=category loop=$category%}
+                    <div class="category">
+                    <h4 class="page-title">{%$category[category].title%}</h4>
+                    <button class="btn btn-xs blue edit_category" data-sort="{%$category[category].sort%}" data-id="{%$category[category].id%}">编辑分类</button><button class="btn btn-xs red remove_category" data-id="{%$category[category].id%}">删除分类</button>
+                    {%if !empty($category[category].question)%}
+                    <table class="table table-hover">
+                    	<thead>
+                        	<tr><th>问题标题</th><th>问题答案</th><th>排序</th><th>操作</th></tr>
+                        </thead>
+                        <tbody>
+                            {%section name=question loop=$category[category].question%}
+                            <tr><td>{%$category[category].question[question].title%}</td><td>{%$category[category].question[question].answer|strip_tags%}</td><td>{%$category[category].question[question].sort%}</td><td><button class="remove btn btn-xs red btn-outline" data-id="{%$category[category].question[question].id%}">
+                            删除</button><button class="edit btn btn-xs btn-outline yellow" onClick="window.location = '{%url c=admin a=edit_question id=$category[category].question[question].id%}';">编辑</button></td></tr>
+                            {%/section%}
+                        </tbody>
+                    </table>
+                    {%else%}
+                    没有任何数据
+                    {%/if%}
+                    {%/section%}
+                    </div>
+                </div>
+                <!-- END CONTENT BODY -->
+            </div>
+            <!-- END CONTENT -->
+            <!-- BEGIN QUICK SIDEBAR -->
+            {%include file='admin/public/quick_sidebar.html'%}
+            <!-- END QUICK SIDEBAR -->
+        </div>
+        <!-- END CONTAINER -->
+        <!-- BEGIN FOOTER -->
+        {%include file='admin/public/footer.html'%}
+        <!-- END FOOTER -->
+        <!--[if lt IE 9]>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/respond.min.js"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/excanvas.min.js"></script> 
+<![endif]-->
+        <!-- BEGIN CORE PLUGINS -->
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/jquery.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/js.cookie.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/jquery.blockui.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/uniform/jquery.uniform.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js" type="text/javascript"></script>
+        <!-- END CORE PLUGINS -->
+        <!-- BEGIN THEME GLOBAL SCRIPTS -->
+        <script src="{%$VIEW_ROOT%}/assets/global/scripts/app.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-modal/js/bootstrap-modalmanager.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-modal/js/bootstrap-modal.js" type="text/javascript"></script>
+        <!-- END THEME GLOBAL SCRIPTS -->
+        <!-- BEGIN THEME LAYOUT SCRIPTS -->
+        <script src="{%$VIEW_ROOT%}/assets/layouts/layout/scripts/layout.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/layouts/layout/scripts/demo.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/layouts/global/scripts/quick-sidebar.min.js" type="text/javascript"></script>
+        <!-- END THEME LAYOUT SCRIPTS -->
+        <script type="text/javascript">
+		$.ajaxSetup({
+			headers:{
+				'X-CSRF-TOKEN':'{%$x_csrf_token%}'
+			}
+		});
+		
+		$('.remove').on('click',function(){
+			if(window.confirm('确定删除?'))
+			{
+				var btn = $(this);
+				var id = $(this).data('id');
+				$.post('{%url m=ajax c=question a=remove%}',{id:id},function(response){
+					if(response.code==1)
+					{
+						btn.parents('tr').remove();
+					}
+				});
+			}
+		});
+		
+		$('.create_category').on('click',function(){
+			$('#create_categoryModal').find('input[name=title]').val('');
+			$('#create_categoryModal').find('input[name=sort]').val('');
+			$('#create_categoryModal').find('input[name=id]').val('');
+			$('#create_categoryModal').modal('show');
+		});
+		
+		$('.edit_category').on('click',function(){
+			var sort = $(this).data('sort');
+			var id = $(this).data('id');
+			var title = $(this).prev('.page-title').text();
+			$('#create_categoryModal').find('input[name=title]').val(title);
+			$('#create_categoryModal').find('input[name=sort]').val(sort);
+			$('#create_categoryModal').find('input[name=id]').val(id);
+			$('#create_categoryModal').modal('show');
+		});
+		
+		
+		$('.remove_category').on('click',function(){
+			var id = $(this).data('id');
+			var btn = $(this);
+			$.post('{%url m=ajax c=question a=remove_category%}',{id:id},function(response){
+				if(response.code==1)
+				{
+					window.location.reload();
+				}
+			});
+			return false;
+		});
+		
+		$('form').on('submit',function(){
+			if($.trim($(this).find('input[name=title]').val()) == '')
+			{
+				alert('请填写标题');
+				return false;	
+			}
+		});
+        </script>
+    </body>
+
+</html>

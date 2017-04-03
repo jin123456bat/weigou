@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<!--[if IE 8]>
+<html lang="en" class="ie8 no-js"> <![endif]-->
+<!--[if IE 9]>
+<html lang="en" class="ie9 no-js"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en">
+<!--<![endif]-->
+<!-- BEGIN HEAD -->
+
+<head>
+    <meta charset="utf-8"/>
+    <title>权限管理</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1" name="viewport"/>
+    <meta content="" name="description"/>
+    <meta content="" name="author"/>
+    <!-- BEGIN GLOBAL MANDATORY STYLES -->
+    <link href="{%$VIEW_ROOT%}/assets/global/css/font.css" rel="stylesheet" type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/global/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet"
+          type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/global/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet"
+          type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/global/plugins/uniform/css/uniform.default.css" rel="stylesheet" type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css" rel="stylesheet"
+          type="text/css"/>
+    <!-- END GLOBAL MANDATORY STYLES -->
+    <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css" rel="stylesheet"
+          type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css" rel="stylesheet"
+          type="text/css"/>
+
+    <!-- BEGIN THEME GLOBAL STYLES -->
+    <link href="{%$VIEW_ROOT%}/assets/global/css/components.min.css" rel="stylesheet" id="style_components"
+          type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/global/css/plugins.min.css" rel="stylesheet" type="text/css"/>
+    <!-- END THEME GLOBAL STYLES -->
+    <!-- BEGIN THEME LAYOUT STYLES -->
+    <link href="{%$VIEW_ROOT%}/assets/layouts/layout/css/layout.min.css" rel="stylesheet" type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/layouts/layout/css/themes/darkblue.min.css" rel="stylesheet" type="text/css"
+          id="style_color"/>
+    <link href="{%$VIEW_ROOT%}/assets/layouts/layout/css/custom.min.css" rel="stylesheet" type="text/css"/>
+    <!-- END THEME LAYOUT STYLES -->
+    <link rel="shortcut icon" href="favicon.ico"/>
+</head>
+<!-- END HEAD -->
+
+<body class="page-header-fixed page-sidebar-closed-hide-logo page-content-white">
+<!-- BEGIN HEADER -->
+{%include file='admin/public/header.html'%}
+<!-- END HEADER -->
+<!-- BEGIN HEADER & CONTENT DIVIDER -->
+<div class="clearfix"></div>
+<!-- END HEADER & CONTENT DIVIDER -->
+<!-- BEGIN CONTAINER -->
+<div class="page-container">
+    <!-- BEGIN SIDEBAR -->
+    {%include file='admin/public/sidebar.html'%}
+    <!-- END SIDEBAR -->
+    <!-- BEGIN CONTENT -->
+    <div class="page-content-wrapper">
+        <!-- BEGIN CONTENT BODY -->
+        <div class="page-content">
+            <!-- BEGIN PAGE HEADER-->
+            <!-- BEGIN THEME PANEL -->
+            {%include file='admin/public/style.html'%}
+            <!-- END THEME PANEL -->
+            <!-- BEGIN PAGE BAR -->
+            <div class="page-bar">
+                <ul class="page-breadcrumb">
+                    <li>
+                        <a href="index.php">首页</a>
+                        <i class="fa fa-circle"></i>
+                    </li>
+                    <li>
+                        <span>用户管理</span>
+                        <i class="fa fa-circle"></i>
+                    </li>
+                    <li>
+                        <span>权限管理</span>
+                    </li>
+                </ul>
+            </div>
+            <!-- END PAGE BAR -->
+            <!-- BEGIN PAGE TITLE-->
+            <h3 class="page-title"> 用户管理
+                <small>权限管理</small>
+            </h3>
+            <div id="roleModal" class="modal fade" tabindex="-1" data-width="760">
+                <form class="form-horizontal" role="form" id="roleForm">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                        <h4 class="modal-title">创建角色</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">角色名</label>
+
+                            <div class="col-md-10">
+                                <input type="text" name="name" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" data-dismiss="modal" class="btn btn-outline dark">关闭</button>
+                        <button type="submit" class="btn green">添加</button>
+                    </div>
+                </form>
+            </div>
+            <!-- END PAGE TITLE-->
+            <!-- END PAGE HEADER-->
+            <button class="btn blue" data-toggle="modal" data-target="#roleModal">添加角色</button>
+            <table class="table table-hover">
+                <tr>
+                    <td>组名</td>
+                    <th>订单</th>
+                    <th>提现</th>
+                    <th>商品</th>
+                    <th>分类</th>
+                    <th>仓库</th>
+                    <th>团购任务</th>
+                    <th>优惠卷</th>
+                    <th>创业学院</th>
+                    <th>页面</th>
+                    <th>滚动图</th>
+                    <th>主题</th>
+                    <th>用户</th>
+                    <th>团队</th>
+                    <th>管理员</th>
+                    <th>导师</th>
+                    <th>供货商</th>
+                    <th>系统</th>
+                    <th>建议反馈</th>
+                    <th>渠道</th>
+                    <th>退款</th>
+                    <th>导出</th>
+                    <th>群发短信</th>
+                    <th>删除</th>
+                </tr>
+                {%section name=role loop=$role%}
+                <tr>
+                    <td>{%$role[role].name%}</td>
+                    <td><input type="checkbox" class="role" name="order" data-id="{%$role[role].id%}" {%if
+                               $role[role].order== 15%}checked=checked{%/if%}></td>
+                    <td><input type="checkbox" class="role" name="drawal" data-id="{%$role[role].id%}" {%if
+                               $role[role].drawal== 15%}checked=checked{%/if%}></td>
+                    <td><input type="checkbox" class="role" name="product" data-id="{%$role[role].id%}" {%if
+                               $role[role].product== 15%}checked=checked{%/if%}></td>
+                    <td><input type="checkbox" class="role" name="category" data-id="{%$role[role].id%}" {%if
+                               $role[role].category== 15%}checked=checked{%/if%}></td>
+                    <td><input type="checkbox" class="role" name="store" data-id="{%$role[role].id%}" {%if
+                               $role[role].store== 15%}checked=checked{%/if%}></td>
+                    <td><input type="checkbox" class="role" name="task" data-id="{%$role[role].id%}" {%if
+                               $role[role].task== 15%}checked=checked{%/if%}></td>
+                    <td><input type="checkbox" class="role" name="coupon" data-id="{%$role[role].id%}" {%if
+                               $role[role].coupon== 15%}checked=checked{%/if%}></td>
+                    <td><input type="checkbox" class="role" name="college" data-id="{%$role[role].id%}" {%if
+                               $role[role].college== 15%}checked=checked{%/if%}></td>
+                    <td><input type="checkbox" class="role" name="page" data-id="{%$role[role].id%}" {%if
+                               $role[role].page== 15%}checked=checked{%/if%}></td>
+                    <td><input type="checkbox" class="role" name="carousel" data-id="{%$role[role].id%}" {%if
+                               $role[role].carousel== 15%}checked=checked{%/if%}></td>
+                    <td><input type="checkbox" class="role" name="theme" data-id="{%$role[role].id%}" {%if
+                               $role[role].theme== 15%}checked=checked{%/if%}></td>
+                    <td><input type="checkbox" class="role" name="user" data-id="{%$role[role].id%}" {%if
+                               $role[role].user== 15%}checked=checked{%/if%}></td>
+                    <td><input type="checkbox" class="role" name="team" data-id="{%$role[role].id%}" {%if
+                               $role[role].team== 15%}checked=checked{%/if%}></td>
+                    <td><input type="checkbox" class="role" name="admin" data-id="{%$role[role].id%}" {%if
+                               $role[role].admin== 15%}checked=checked{%/if%}></td>
+                    <td><input type="checkbox" class="role" name="teacher" data-id="{%$role[role].id%}" {%if
+                               $role[role].teacher== 15%}checked=checked{%/if%}></td>
+                    <td><input type="checkbox" class="role" name="publish" data-id="{%$role[role].id%}" {%if
+                               $role[role].publish== 15%}checked=checked{%/if%}></td>
+                    <td><input type="checkbox" class="role" name="system" data-id="{%$role[role].id%}" {%if
+                               $role[role].system== 15%}checked=checked{%/if%}></td>
+                    <td><input type="checkbox" class="role" name="feedback" data-id="{%$role[role].id%}" {%if
+                               $role[role].feedback== 15%}checked=checked{%/if%}></td>
+                    <td><input type="checkbox" class="role" name="source" data-id="{%$role[role].id%}" {%if
+                               $role[role].source== 15%}checked=checked{%/if%}></td>
+                    <td><input type="checkbox" class="role" name="refund" data-id="{%$role[role].id%}" {%if
+                               $role[role].refund== 15%}checked=checked{%/if%}></td>
+                    <td><input type="checkbox" class="role" name="export" data-id="{%$role[role].id%}" {%if
+                               $role[role].export== 15%}checked=checked{%/if%}></td>
+                    <td><input type="checkbox" class="role" name="send" data-id="{%$role[role].id%}" {%if
+                               $role[role].send== 15%}checked=checked{%/if%}></td>
+                    <td>
+                        <button class="red btn btn-xs remove" data-id="{%$role[role].id%}">删除</button>
+                    </td>
+                </tr>
+                {%/section%}
+            </table>
+        </div>
+        <!-- END CONTENT BODY -->
+    </div>
+    <!-- END CONTENT -->
+    <!-- BEGIN QUICK SIDEBAR -->
+    {%include file='admin/public/quick_sidebar.html'%}
+    <!-- END QUICK SIDEBAR -->
+</div>
+<!-- END CONTAINER -->
+<!-- BEGIN FOOTER -->
+{%include file='admin/public/footer.html'%}
+<!-- END FOOTER -->
+<!--[if lt IE 9]>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/respond.min.js"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/excanvas.min.js"></script>
+<![endif]-->
+<!-- BEGIN CORE PLUGINS -->
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/jquery.min.js" type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/js.cookie.min.js" type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js"
+        type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js"
+        type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/jquery.blockui.min.js" type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/uniform/jquery.uniform.min.js" type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js"
+        type="text/javascript"></script>
+<!-- END CORE PLUGINS -->
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-modal/js/bootstrap-modalmanager.js"
+        type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-modal/js/bootstrap-modal.js"
+        type="text/javascript"></script>
+<!-- BEGIN THEME GLOBAL SCRIPTS -->
+<script src="{%$VIEW_ROOT%}/assets/global/scripts/app.min.js" type="text/javascript"></script>
+<!-- END THEME GLOBAL SCRIPTS -->
+<!-- BEGIN THEME LAYOUT SCRIPTS -->
+<script src="{%$VIEW_ROOT%}/assets/layouts/layout/scripts/layout.min.js" type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/layouts/layout/scripts/demo.min.js" type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/layouts/global/scripts/quick-sidebar.min.js" type="text/javascript"></script>
+<!-- END THEME LAYOUT SCRIPTS -->
+<script type="text/javascript">
+    $(document).ready(function (e) {
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': '{%$x_csrf_token%}'
+            }
+        });
+
+        $('table').on('click', '.role', function () {
+            var id = $(this).data('id');
+            var name = $(this).attr('name');
+            var ths = $(this);
+            $.post('{%url m=ajax c=role a=role%}', {id: id, name: name}, function (response) {
+            });
+        });
+
+        $('table').on('click', '.remove', function () {
+            var id = $(this).data('id');
+            var ths = $(this);
+            $.post('{%url m=ajax c=role a=remove%}', {id: id}, function (response) {
+                if (response.code == 1) {
+                    ths.parents('tr').remove();
+                }
+                else {
+                    App.alert({
+                        container: $('#alert_container').val(), // alerts parent container
+                        place: 'append', // append or prepent in container
+                        type: 'danger', // alert's type
+                        message: response.result,
+                        close: true,
+                        focus: true, // auto scroll to the alert after shown
+                        closeInSeconds: 3, // auto close after defined seconds
+                        icon: 'fa fa-remove' // put icon class before the message
+                    });
+                }
+            });
+            return false;
+        });
+
+        $('#roleForm').on('submit', function () {
+            var name = $.trim($(this).find('input[name=name]').val());
+            $.post('{%url m=ajax c=role a=create%}', {name: name}, function (response) {
+                if (response.code == 1) {
+                    tr = $('tbody tr:last').clone();
+                    tr.find('td:first').html(name);
+                    tr.find('td input').attr('data-id', response.body.id);
+                    tr.find('td input').attr('checked', 'checked');
+                    tr.find('td input').parent().addClass('checked');
+                    tr.find('td:last button').attr('data-id', response.body.id);
+                    $('tbody').append(tr);
+                    $('#roleModal').modal('hide');
+                }
+                else {
+                    App.alert({
+                        container: $('#alert_container').val(), // alerts parent container
+                        place: 'append', // append or prepent in container
+                        type: 'danger', // alert's type
+                        message: response.result,
+                        close: true,
+                        focus: true, // auto scroll to the alert after shown
+                        closeInSeconds: 3, // auto close after defined seconds
+                        icon: 'fa fa-remove' // put icon class before the message
+                    });
+                }
+            });
+            return false;
+        });
+    });
+</script>
+</body>
+</html>

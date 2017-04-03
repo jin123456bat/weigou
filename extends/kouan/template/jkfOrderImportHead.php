@@ -1,0 +1,38 @@
+<?php
+return <<<DATA
+<jkfOrderImportHead>
+	<eCommerceCode>%s</eCommerceCode>
+	<eCommerceName>%s</eCommerceName>
+	<ieFlag>%s</ieFlag>
+	<payType>%s</payType>
+	<payCompanyCode>%s</payCompanyCode>
+	<payNumber>%s</payNumber>
+	<orderTotalAmount>%s</orderTotalAmount>
+	<orderNo>%s</orderNo>
+	<orderTaxAmount>%s</orderTaxAmount>
+	<orderGoodsAmount>%s</orderGoodsAmount>
+	<feeAmount>%s</feeAmount>
+	<companyName>%s</companyName>
+	<companyCode>%s</companyCode>
+	<tradeTime>%s</tradeTime>
+	<currCode>%s</currCode>
+	<totalAmount>%s</totalAmount>
+	<consigneeEmail>%s</consigneeEmail>
+	<consigneeTel>%s</consigneeTel>
+	<consignee>%s</consignee>
+	<consigneeAddress>%s</consigneeAddress>
+	<totalCount>%s</totalCount>
+	<postMode>%s</postMode>
+	<senderCountry>%s</senderCountry>
+	<senderName>%s</senderName>
+	<purchaserId>%s</purchaserId>
+	<logisCompanyName>%s</logisCompanyName>
+	<logisCompanyCode>%s</logisCompanyCode>
+	<zipCode>%s</zipCode>
+	<note>%s</note>
+	<wayBills>%s</wayBills>
+	<rate>%s</rate>
+	<userProcotol>%s</userProcotol>
+</jkfOrderImportHead>
+DATA;
+?>

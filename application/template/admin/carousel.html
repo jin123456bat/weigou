@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8 no-js"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9 no-js"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en">
+    <!--<![endif]-->
+    <!-- BEGIN HEAD -->
+    <head>
+        <meta charset="utf-8" />
+        <title>滚动图</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta content="width=device-width, initial-scale=1" name="viewport" />
+        <meta content="" name="description" />
+        <meta content="" name="author" />
+        <!-- BEGIN GLOBAL MANDATORY STYLES -->
+        <link href="{%$VIEW_ROOT%}/assets/global/css/font.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/plugins/uniform/css/uniform.default.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css" rel="stylesheet" type="text/css" />
+        <!-- END GLOBAL MANDATORY STYLES -->
+        <!-- BEGIN PAGE LEVEL PLUGINS -->
+        <link href="{%$VIEW_ROOT%}/assets/global/plugins/cubeportfolio/css/cubeportfolio.css" rel="stylesheet" type="text/css" />
+		<link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css" rel="stylesheet" type="text/css" />
+        <!-- END PAGE LEVEL PLUGINS -->
+        <!-- BEGIN THEME GLOBAL STYLES -->
+        <link href="{%$VIEW_ROOT%}/assets/global/css/components.min.css" rel="stylesheet" id="style_components" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/css/plugins.min.css" rel="stylesheet" type="text/css" />
+        <!-- END THEME GLOBAL STYLES -->
+        <!-- BEGIN PAGE LEVEL STYLES -->
+        <link href="{%$VIEW_ROOT%}/assets/pages/css/portfolio.min.css" rel="stylesheet" type="text/css" />
+        <!-- END PAGE LEVEL STYLES -->
+        <!-- BEGIN THEME LAYOUT STYLES -->
+        <link href="{%$VIEW_ROOT%}/assets/layouts/layout/css/layout.min.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/layouts/layout/css/themes/darkblue.min.css" rel="stylesheet" type="text/css" id="style_color" />
+        <link href="{%$VIEW_ROOT%}/assets/layouts/layout/css/custom.min.css" rel="stylesheet" type="text/css" />
+        <!-- END THEME LAYOUT STYLES -->
+        <link rel="shortcut icon" href="favicon.ico" /> </head>
+    <!-- END HEAD -->
+
+    <body class="page-header-fixed page-sidebar-closed-hide-logo page-content-white">
+        <!-- BEGIN HEADER -->
+        {%include file='admin/public/header.html'%}
+        <!-- END HEADER -->
+        <!-- BEGIN HEADER & CONTENT DIVIDER -->
+        <div class="clearfix"> </div>
+        <!-- END HEADER & CONTENT DIVIDER -->
+        <!-- BEGIN CONTAINER -->
+        <div class="page-container">
+            <!-- BEGIN SIDEBAR -->
+            {%include file='admin/public/sidebar.html'%}
+			<!-- END SIDEBAR -->
+            <!-- BEGIN CONTENT -->
+            <div class="page-content-wrapper">
+                <!-- BEGIN CONTENT BODY -->
+                <div class="page-content">
+                    <!-- BEGIN PAGE HEADER-->
+                    <!-- BEGIN THEME PANEL -->
+                    {%include file='admin/public/style.html'%}
+                    <!-- END THEME PANEL -->
+                    <!-- BEGIN PAGE BAR -->
+                    <div class="page-bar">
+                        <ul class="page-breadcrumb">
+                            <li>
+                                <a href="index.php">首页</a>
+                                <i class="fa fa-circle"></i>
+                            </li>
+                            <li>
+                                <a href="#">页面</a>
+                                <i class="fa fa-circle"></i>
+                            </li>
+                            <li>
+                                <span>滚动图</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- END PAGE BAR -->
+					<div id="carouselModal" class="modal fade" tabindex="-1" data-width="760">
+						<form class="form-horizontal" role="form" id="carouselForm">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+								<h4 class="modal-title">添加滚动图</h4>
+							</div>
+							<div class="modal-body">
+								<div class="form-group">
+									<label class="col-md-2 control-label">位置</label>
+									<div class="col-md-10">
+										<select name="position" class="form-control">
+											<option value="index">首页</option>
+										</select>
+										<span class="help-block"> 位置. </span>
+									</div>
+								</div>
+							</div>
+							<div class="modal-footer">
+								<button type="button" data-dismiss="modal" class="btn btn-outline dark">关闭</button>
+								<button type="submit" class="btn green">保存</button>
+							</div>
+						</form>
+					</div>
+									
+                    <!-- BEGIN PAGE TITLE-->
+                    <h3 class="page-title"> 滚动图
+                        <small>滚动图</small>
+                    </h3>
+                    <!-- END PAGE TITLE-->
+                    <!-- END PAGE HEADER-->
+                    <div class="portfolio-content portfolio-3">
+                        <div class="clearfix">
+                            <div id="js-filters-lightbox-gallery2" class="cbp-l-filters-button cbp-l-filters-left">
+                                <div data-filter="*" id="allCarousel" class="cbp-filter-item-active cbp-filter-item btn blue btn-outline uppercase">全部</div>
+								{%section name=position loop=$position%}
+                                <div data-filter=".{%$position[position].position%}" class="cbp-filter-item btn blue btn-outline uppercase">首页</div>
+								{%/section%}
+								<div data-filter=".isdelete" class="cbp-filter-item btn red btn-outline uppercase">已删除</div>
+                            </div>
+							<button class="btn btn-xs green btn-outline" data-toggle="modal" data-target="#carouselModal">添加滚动图</button>
+                        </div>
+                        <div id="js-grid-lightbox-gallery" class="cbp">
+							{%section name=carousel loop=$carousel%}
+                            <div id="carousel_{%$carousel[carousel].id%}" class="cbp-item web-design {%$carousel[carousel].position%}">
+                                <a href="{%url c=carousel a=detail id=$carousel[carousel].id%}" class="cbp-caption cbp-singlePageInline" data-title="{%$carousel[carousel].title%}" rel="nofollow">
+                                    <div class="cbp-caption-defaultWrap">
+                                        <img src="{%$carousel[carousel].logo|default:'http://placehold.it/640x320'%}" alt=""> </div>
+                                    <div class="cbp-caption-activeWrap">
+                                        <div class="cbp-l-caption-alignLeft">
+                                            <div class="cbp-l-caption-body">
+                                                <div class="cbp-l-caption-title">{%$carousel[carousel].title%}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+							{%/section%}
+                        </div>
+						<div id="js-loadMore-lightbox-gallery" class="cbp-l-loadMore-button">
+                            <a href="{%url c=carousel a=loadmore%}" class="cbp-l-loadMore-link btn grey-mint btn-outline" rel="nofollow">
+                                <span class="cbp-l-loadMore-defaultText">载入更多</span>
+                                <span class="cbp-l-loadMore-loadingText">载入中.</span>
+                                <span class="cbp-l-loadMore-noMoreLoading">没有了</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <!-- END CONTENT BODY -->
+            </div>
+            <!-- END CONTENT -->
+            <!-- BEGIN QUICK SIDEBAR -->
+            {%include file='admin/public/quick_sidebar.html'%}
+			<!-- END QUICK SIDEBAR -->
+        </div>
+        <!-- END CONTAINER -->
+        <!-- BEGIN FOOTER -->
+        {%include file='admin/public/footer.html'%}
+        <!-- END FOOTER -->
+        <!--[if lt IE 9]>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/respond.min.js"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/excanvas.min.js"></script> 
+<![endif]-->
+        <!-- BEGIN CORE PLUGINS -->
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/jquery.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/js.cookie.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/jquery.blockui.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/uniform/jquery.uniform.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js" type="text/javascript"></script>
+        <!-- END CORE PLUGINS -->
+        <!-- BEGIN PAGE LEVEL PLUGINS -->
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/cubeportfolio/js/jquery.cubeportfolio.min.js" type="text/javascript"></script>
+        <!-- END PAGE LEVEL PLUGINS -->
+        <!-- BEGIN THEME GLOBAL SCRIPTS -->
+        <script src="{%$VIEW_ROOT%}/assets/global/scripts/app.js" type="text/javascript"></script>
+		<script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-modal/js/bootstrap-modalmanager.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-modal/js/bootstrap-modal.js" type="text/javascript"></script>
+        <!-- END THEME GLOBAL SCRIPTS -->
+        <!-- BEGIN PAGE LEVEL SCRIPTS -->
+		<script type="text/javascript">
+		$.ajaxSetup({
+			headers:{
+				'X-CSRF-TOKEN':'{%$x_csrf_token%}'
+			}
+		});
+		</script>
+        <script src="{%$VIEW_ROOT%}/assets/pages/scripts/portfolio-3.js" type="text/javascript"></script>
+        <!-- END PAGE LEVEL SCRIPTS -->
+        <!-- BEGIN THEME LAYOUT SCRIPTS -->
+        <script src="{%$VIEW_ROOT%}/assets/layouts/layout/scripts/layout.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/layouts/layout/scripts/demo.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/layouts/global/scripts/quick-sidebar.min.js" type="text/javascript"></script>
+        <!-- END THEME LAYOUT SCRIPTS -->
+		<script type="text/javascript">
+		
+		$('#js-grid-lightbox-gallery').on('change','select[name=linktype]',function(){
+			"use strict";
+			var cname = $(this).val();
+			if(cname=='none')
+			{
+				$('#linkurl').addClass('display-hide');
+			}
+			else
+			{
+				$('#linkurl').removeClass('display-hide');
+				$('.hideorshow').addClass('hide');
+				$('.hideorshow.'+cname).removeClass('hide');
+			}
+		});
+		
+		$('#carouselForm').on('submit',function(){
+			var position = 'index';
+			$.post('{%url m=ajax c=carousel a=create%}',{position:position},function(response){
+				if(response.code==1)
+				{
+					var tpl = '<div id="carousel_'+response.body+'" class="cbp-item web-design '+position+'">'
+                              + ' <a href="{%url c=carousel a=detail%}&id='+response.body+'" class="cbp-caption cbp-singlePageInline" data-title="" rel="nofollow">'
+                               +'	 <div class="cbp-caption-defaultWrap">'
+                               +'         <img src="http://placehold.it/300x300" alt=""> </div>'
+                               +'     <div class="cbp-caption-activeWrap">'
+                               +'         <div class="cbp-l-caption-alignLeft">'
+                               +'             <div class="cbp-l-caption-body">'
+                               +'                 <div class="cbp-l-caption-title"></div>'
+                               +'             </div>'
+                               +'         </div>'
+                               +'     </div>'
+                               +' </a>'
+                            +'</div>';
+					jQuery("#js-grid-lightbox-gallery").cubeportfolio('appendItems', tpl,function(){
+						$('#carouselModal').modal('hide');
+					});	
+				}
+				else
+				{
+					App.alert({
+						container: $('#alert_container').val(), // alerts parent container 
+						place: 'append', // append or prepent in container 
+						type: 'danger', // alert's type 
+						message: response.result,
+						close: true,
+						focus: true, // auto scroll to the alert after shown
+						closeInSeconds: 3, // auto close after defined seconds 
+						icon:'fa fa-remove' // put icon class before the message
+					});
+				}
+			});
+			return false;
+		});
+		
+		$('#js-grid-lightbox-gallery').on('click','.remove',function(){
+			var id = $(this).data('id');
+			$.post('{%url m=ajax c=carousel a=remove%}',{id:id},function(response){
+				if(response.code==1)
+				{
+					$('#carousel_'+id).removeClass('index').addClass('isdelete');
+					jQuery("#js-grid-lightbox-gallery").cubeportfolio('filter', '.index');
+				}
+				else
+				{
+					App.alert({
+						container: $('#alert_container').val(), // alerts parent container 
+						place: 'append', // append or prepent in container 
+						type: 'danger', // alert's type 
+						message: response.result,
+						close: true,
+						focus: true, // auto scroll to the alert after shown
+						closeInSeconds: 3, // auto close after defined seconds 
+						icon:'fa fa-remove' // put icon class before the message
+					});
+				}
+			});
+		});
+		
+		$('#js-grid-lightbox-gallery').on('click','.submit',function(){
+			var id = $(this).data('id');
+			var data = {
+				id:id,
+				title:$('.cbp-l-inline-right').find('input[name=title]').val(),
+				sort:$('.cbp-l-inline-right').find('input[name=sort]').val(),
+				logo:$('.cbp-l-inline-right').find('input[name=logo]').val(),
+				linktype:$('.cbp-l-inline-right').find('select[name=linktype]').val(),
+				url:$('.cbp-l-inline-right').find('.hideorshow.'+$('.cbp-l-inline-right').find('select[name=linktype]').val()).val(),
+			};
+			$.post('{%url m=ajax c=carousel a=save%}',data,function(response){
+				if(response.code!=1)
+				{
+					App.alert({
+						container: $('#alert_container').val(), // alerts parent container 
+						place: 'append', // append or prepent in container 
+						type: 'danger', // alert's type 
+						message: response.result,
+						close: true,
+						focus: true, // auto scroll to the alert after shown
+						closeInSeconds: 3, // auto close after defined seconds 
+						icon:'fa fa-remove' // put icon class before the message
+					});
+				}
+				else
+				{
+					$('#carousel_'+id).find('.cbp-l-caption-title').html(data.title);
+				}
+			});
+		});
+		
+		$('#js-grid-lightbox-gallery').on('click','#changeLogo',function(){
+			var input = $('<input type="file">');
+			var id = $(this).data('id');
+			input.on('change',function(){
+				var file = $(this)[0].files[0];
+				var formData = new FormData();
+				formData.append('file',file);
+				var xhr = new XMLHttpRequest();
+				xhr.open('POST','{%url m=api c=common a=upload%}',true);
+				xhr.onload = function(){
+					if(xhr.status == 200 && xhr.readyState == 4)  
+					{
+						var response = xhr.response;
+						response = $.parseJSON(response);
+						$('.cbp-l-inline-right').find('input[name=logo]').val(response.body.id);
+						$('.portfolio-tile').find('a').attr('href',response.body.path);
+						$('.portfolio-tile').find('img').attr('src',response.body.path);
+						$('#carousel_'+id).find('img').attr('src',response.body.path);
+					}
+				};  
+				xhr.send(formData); 
+			});
+			input.trigger('click');
+		});
+		</script>
+    </body>
+
+</html>

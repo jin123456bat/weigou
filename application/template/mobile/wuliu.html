@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>微购</title>
+    <meta name="viewport"
+          content="width=device-width, height=device-height, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=0"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-touch-fullscreen" content="yes"/>
+    <meta name="full-screen" content="yes"/>
+    <meta name="screen-orientation" content="portrait"/>
+    <meta name="x5-fullscreen" content="true"/>
+    <link rel="stylesheet" type="text/css" href="{%$VIEW_ROOT%}/mobile/css/reset.css">
+    <link rel="stylesheet" type="text/css" href="{%$VIEW_ROOT%}/mobile/css/style.css">
+    <script type="text/javascript" src="{%$VIEW_ROOT%}/mobile/js/jquery-1.8.3.min.js"></script>
+    <script type="text/javascript" src="{%$VIEW_ROOT%}/mobile/js/resolution.js"></script>
+</head>
+<body style="background-color: #ebeded;">
+{%if !isset($smarty.get.webview) || $smarty.get.webview!=1%}
+<div id="header">
+    <header>
+        <a href="javascript:window.history.go(-1);" class="left_btn"><i class="icon back"></i></a>
+
+        <h1>物流详情</h1>
+    </header>
+</div>
+{%/if%}
+<div class="wuliu-title" {%if isset($smarty.get.webview) && $smarty.get.webview==1%}style="margin-top:0px;"{%/if%}>
+    <img src="{%$VIEW_ROOT%}/mobile/image/wuliiu2.png">
+
+    <div class="wul-text">
+        {%if isset($wuliu)%}
+        <div class="name">{%$wuliu.company|default:$package.ship_type%}</div>
+        <div class="tel">运单号：{%$wuliu.no|default:$package.ship_number%}</div>
+        {%else%}
+        <div class="name">物流处理中</div>
+        <div class="tel">暂无运单数据</div>
+        {%/if%}
+
+    </div>
+</div>
+<section id="wul-timeline" class="wuliu-cont">
+    <div class="wul-detail">订单跟踪</div>
+    {%if isset($wuliu.list) || isset($ti) || isset($fu) || isset($qu) || isset($su)%}
+    {%if isset($su)%}
+    <div class="wul-itme">
+        <div class="wul-point1 j-icon"></div>
+        <div class="wul-content">
+            <div class="wul-text10">{%$su.zone|default:''%} {%$su.remark%}</div>
+            <div class="wul-text20">{%$su.datetime%}</div>
+        </div>
+    </div>
+    {%/if%}
+
+
+    {%if isset($wuliu)%}
+    {%section name=wuliu loop=$wuliu.list%}
+
+    <div class="wul-itme">
+        <div class="wul-point1 j-icon"><img src="{%$VIEW_ROOT%}/mobile/image/wancheng.png" alt=""></div>
+        <div class="wul-content">
+            <div class="wul-text10">{%$wuliu.list[wuliu].zone|default:''%} {%$wuliu.list[wuliu].remark%}</div>
+            <div class="wul-text20">{%$wuliu.list[wuliu].datetime%}</div>
+        </div>
+    </div>
+    {%/section%}
+    {%/if%}
+
+    {%if isset($qu)%}
+    <div class="wul-itme">
+        <div class="wul-icon j-icon"><img src="{%$VIEW_ROOT%}/mobile/image/huoche.png" alt=""></div>
+        <div class="wul-content">
+            <div class="wul-text10">{%$qu.zone|default:''%} {%$qu.remark%}</div>
+            <div class="wul-text20">{%$qu.datetime%}</div>
+        </div>
+    </div>
+    {%/if%}
+
+    {%if isset($fu)%}
+    <div class="wul-itme">
+        <div class="wul-icon j-icon"><img src="{%$VIEW_ROOT%}/mobile/image/zhi.png" alt=""></div>
+        <div class="wul-content">
+            <div class="wul-text10">{%$fu.zone|default:''%} {%$fu.remark%}</div>
+            <div class="wul-text20">{%$fu.datetime%}</div>
+        </div>
+    </div>
+    {%/if%}
+
+    {%if isset($ti)%}
+    <div class="wul-itme">
+        <div class="wul-icon j-icon"><img src="{%$VIEW_ROOT%}/mobile/image/ding.png" alt=""></div>
+        <div class="wul-content">
+            <div class="wul-text10">{%$ti.zone|default:''%} {%$ti.remark%}</div>
+            <div class="wul-text20">{%$ti.datetime%}</div>
+        </div>
+    </div>
+    {%/if%}
+
+
+    {%else%}
+    <div class="wul-itme">
+        <div class="wul-point j-icon"></div>
+        <div class="wul-content" style="margin-bottom: 30px;">
+            <div class="wul-text10">尚未找到任何物流信息</div>
+        </div>
+    </div>
+    {%/if%}
+</section>
+<script>
+    $(".wul-content").eq(0).children("div").css("color", "#09bd69");
+    if ($(".j-icon:first").hasClass("wul-point1"))
+        $(".j-icon:first").removeClass("wul-point1").addClass("wul-point");
+    else if ($(".j-icon:first").hasClass("wul-icon")) {
+        var oldSrc = $(".j-icon:first img").attr("src");
+        var newSrc = oldSrc.substring(0, oldSrc.length - 4) + "2.png";
+        $(".j-icon:first img").attr("src", newSrc);
+    }
+
+</script>
+</body>
+</html>

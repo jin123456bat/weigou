@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8 no-js"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9 no-js"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en">
+    <!--<![endif]-->
+    <!-- BEGIN HEAD -->
+
+    <head>
+        <meta charset="utf-8" />
+        <title>添加课程</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta content="width=device-width, initial-scale=1" name="viewport" />
+        <meta content="" name="description" />
+        <meta content="" name="author" />
+        <!-- BEGIN GLOBAL MANDATORY STYLES -->
+        <link href="{%$VIEW_ROOT%}/assets/global/css/font.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/plugins/uniform/css/uniform.default.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css" rel="stylesheet" type="text/css" />
+        <!-- END GLOBAL MANDATORY STYLES -->
+		<link href="{%$VIEW_ROOT%}/assets/global/plugins/select2/css/select2.min.css" rel="stylesheet" type="text/css" />
+		<link href="{%$VIEW_ROOT%}/assets/global/plugins/select2/css/select2-bootstrap.min.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.css" rel="stylesheet" type="text/css" />
+        <!-- BEGIN THEME GLOBAL STYLES -->
+        <link href="{%$VIEW_ROOT%}/assets/global/css/components.min.css" rel="stylesheet" id="style_components" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/css/plugins.min.css" rel="stylesheet" type="text/css" />
+		<link href="{%$VIEW_ROOT%}/umeditor/themes/default/css/umeditor.min.css" rel="stylesheet" type="text/css"/>
+        <!-- END THEME GLOBAL STYLES -->
+        <!-- BEGIN THEME LAYOUT STYLES -->
+        <link href="{%$VIEW_ROOT%}/assets/layouts/layout/css/layout.min.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/layouts/layout/css/themes/darkblue.min.css" rel="stylesheet" type="text/css" id="style_color" />
+        <link href="{%$VIEW_ROOT%}/assets/layouts/layout/css/custom.min.css" rel="stylesheet" type="text/css" />
+        <!-- END THEME LAYOUT STYLES -->
+        <link rel="shortcut icon" href="favicon.ico" /> </head>
+    <!-- END HEAD -->
+
+    <body class="page-header-fixed page-sidebar-closed-hide-logo page-content-white">
+        <!-- BEGIN HEADER -->
+        {%include file='admin/public/header.html'%}
+        <!-- END HEADER -->
+        <!-- BEGIN HEADER & CONTENT DIVIDER -->
+        <div class="clearfix"> </div>
+        <!-- END HEADER & CONTENT DIVIDER -->
+        <!-- BEGIN CONTAINER -->
+        <div class="page-container">
+            <!-- BEGIN SIDEBAR -->
+            {%include file='admin/public/sidebar.html'%}
+            <!-- END SIDEBAR -->
+            <!-- BEGIN CONTENT -->
+            <div class="page-content-wrapper">
+                <!-- BEGIN CONTENT BODY -->
+                <div class="page-content">
+                    <!-- BEGIN PAGE HEADER-->
+                    <!-- BEGIN THEME PANEL -->
+                    {%include file='admin/public/style.html'%}
+                    <!-- END THEME PANEL -->
+                    <!-- BEGIN PAGE BAR -->
+                    <div class="page-bar">
+                        <ul class="page-breadcrumb">
+                            <li>
+                                <a href="index.php">首页</a>
+                                <i class="fa fa-circle"></i>
+                            </li>
+                            <li>
+                                <span>创业学院</span>
+                            </li>
+							<li>
+                                <span>添加课程</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- END PAGE BAR -->
+                    <!-- BEGIN PAGE TITLE-->
+                    <h3 class="page-title"> 课程管理
+                        <small>课程管理</small>
+                    </h3>
+                    <!-- END PAGE TITLE-->
+                    <!-- END PAGE HEADER-->
+                    <div class="portlet light bordered">
+						<div class="portlet-title">
+							<div class="caption">
+								<i class="icon-settings font-dark"></i>
+								<span class="caption-subject font-dark sbold uppercase">添加课程</span>
+							</div>
+						</div>
+						<div class="portlet-body form">
+							<form class="form-horizontal" role="form" id="collegeForm">
+								<div class="form-body">
+									<div class="form-group">
+										<label class="col-md-2 control-label">课程标题</label>
+										<div class="col-md-10">
+											<input type="text" name="title" class="form-control" placeholder="标题">
+											<span class="help-block"> 课程标题. </span>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-md-2 control-label">描述</label>
+										<div class="col-md-10">
+											<input type="text" name="description" class="form-control" placeholder="">
+											<span class="help-block"> 描述. </span>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-md-2 control-label">排序</label>
+										<div class="col-md-10">
+											<input type="text" name="sort" class="form-control" placeholder="1">
+											<span class="help-block"> 从小到大. </span>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-md-2 control-label">导师</label>
+										<div class="col-md-10">
+											<select name="uid" class="form-control select2"></select>
+										</div>
+									</div>
+                                    <div class="form-group">
+                                        <label class="control-label col-md-2">视屏文件</label>
+                                        <div class="col-md-10">
+											<button class="btn green btn-sm" id="chooseVideoFileBtn">选择文件</button>
+                                            <input type="hidden" name="video" value="">
+                                            <span class="help-block"> 文件大小100MB以内，MP4或者OGG文件. </span>
+										</div>
+                                    </div>
+                                    <div class="form-group hide">
+                                    	<div class="col-md-10 col-md-offset-2">
+                                            <video src="" controls="controls">
+                                            </video>
+                                        </div>
+                                    </div>
+									<div class="form-group">
+										<label class="col-md-2 control-label">内容</label>
+										<div class="col-md-10">
+											<script id="content" name="content" type="text/plain" style="width:100%;"></script>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-md-2 control-label">LOGO1</label>
+										<div class="col-md-10">
+											<img src="http://placehold.it/150x150" data-width="150" data-height="150" class="img-responsive img-rounded uploader">
+											<input type="hidden" name="logo1" value="">
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-md-2 control-label">LOGO2</label>
+										<div class="col-md-10">
+											<img src="http://placehold.it/300x150" data-width="300" data-height="150" class="img-responsive img-rounded uploader">
+											<input type="hidden" name="logo2" value="">
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-md-2 control-label">精品</label>
+										<div class="col-md-10">
+											<div class="checkbox-list">
+												<label>
+													<input type="checkbox" name="isgood"> 是否精品
+												</label>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="form-actions">
+									<div class="row">
+										<div class="col-md-offset-3 col-md-10">
+											<button type="submit" class="btn green">保存</button>
+											<button type="button" class="btn default" onClick="window.history.go(-1);">取消</button>
+										</div>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+                </div>
+                <!-- END CONTENT BODY -->
+            </div>
+            <!-- END CONTENT -->
+            <!-- BEGIN QUICK SIDEBAR -->
+            {%include file='admin/public/quick_sidebar.html'%}
+            <!-- END QUICK SIDEBAR -->
+        </div>
+        <!-- END CONTAINER -->
+        <!-- BEGIN FOOTER -->
+        {%include file='admin/public/footer.html'%}
+        <!-- END FOOTER -->
+        <!--[if lt IE 9]>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/respond.min.js"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/excanvas.min.js"></script> 
+<![endif]-->
+        <!-- BEGIN CORE PLUGINS -->
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/jquery.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/js.cookie.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/jquery.blockui.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/uniform/jquery.uniform.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js" type="text/javascript"></script>
+        <!-- END CORE PLUGINS -->
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/select2/js/select2.full.min.js" type="text/javascript"></script>
+		<script src="{%$VIEW_ROOT%}/umeditor/umeditor.js" type="text/javascript"></script>
+		<script src="{%$VIEW_ROOT%}/umeditor/umeditor.config.js" type="text/javascript"></script>
+		<script type="text/javascript" src="{%$VIEW_ROOT%}/umeditor/lang/zh-cn/zh-cn.js"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.js" type="text/javascript"></script>
+		<!-- BEGIN THEME GLOBAL SCRIPTS -->
+        <script src="{%$VIEW_ROOT%}/assets/global/scripts/app.min.js" type="text/javascript"></script>
+        <!-- END THEME GLOBAL SCRIPTS -->
+        <!-- BEGIN THEME LAYOUT SCRIPTS -->
+        <script src="{%$VIEW_ROOT%}/assets/layouts/layout/scripts/layout.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/layouts/layout/scripts/demo.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/layouts/global/scripts/quick-sidebar.min.js" type="text/javascript"></script>
+        <!-- END THEME LAYOUT SCRIPTS -->
+		<script type="text/javascript">
+		$.ajaxSetup({
+			headers:{
+				'X-CSRF-TOKEN':'{%$x_csrf_token%}'
+			}
+		});
+		
+		window.um = UM.getEditor('content');
+		
+		$('.uploader').on('click',function(){
+			var input = $('<input type="file">');
+			var img = $(this);
+			input.on('change',function(){
+				var input = $(this);
+				var file = $(this)[0].files[0];
+				var formData = new FormData();
+				formData.append('file',file);
+				formData.append('width',img.data('width'));
+				formData.append('height',img.data('height'));
+				var xhr = new XMLHttpRequest();
+				xhr.open('POST','{%url m=api c=common a=upload%}',true);
+				xhr.onload = function(){  
+					if(xhr.status == 200 && xhr.readyState == 4)  
+					{
+						var response = xhr.response;
+						response = $.parseJSON(response);
+						img.attr('src',response.body.path);
+						img.parents('.form-group').find('input').val(response.body.id);
+					}
+				};  
+				xhr.send(formData); 
+				return false;
+			});
+			input.trigger('click');
+		});
+		
+		$('#collegeForm').on('submit',function(){
+			var data = {
+				title:$(this).find('input[name=title]').val(),
+				uid:$(this).find('select[name=uid]').val(),
+				content:window.um.getContent(),
+				logo1:$(this).find('input[name=logo1]').val(),
+				logo2:$(this).find('input[name=logo2]').val(),
+				video:$(this).find('input[name=video]').val(),
+				isgood:$(this).find('input[name=isgood]:checked').length,
+				description:$(this).find('input[name=description]').val(),
+				sort:$(this).find('input[name=sort]').val(),
+			}
+			$.post('{%url m=ajax c=college a=create%}',data,function(response){
+				if(response.code==1)
+				{
+					window.location = '{%url c=admin a=college%}';
+				}
+				else
+				{
+					App.alert({
+						container: $('#alert_container').val(), // alerts parent container 
+						place: 'append', // append or prepent in container 
+						type: 'danger', // alert's type 
+						message: response.result,
+						close: true,
+						focus: true, // auto scroll to the alert after shown
+						closeInSeconds: 3, // auto close after defined seconds 
+						icon:'fa fa-remove' // put icon class before the message
+					});
+				}
+			});
+			return false;
+		});
+		
+		$.fn.select2.defaults.set("theme", "bootstrap");
+		
+		function formatRepo(user) {
+			var markup = "<table class='movie-result'><tr>";
+			markup += "<td valign='center'><img src='" + (user.gravatar==null?'http://placehold.it/50x50':user.gravatar) + "' width='50' heigth='50' /></td>";
+			markup += "<td align='center' valign='center'><h5> " + user.name + "</h5>";
+			markup += "<div class='movie-synopsis'> " + user.telephone + "</div>";
+			markup += "</td></tr></table>"
+			return markup;
+		}
+
+		function formatRepoSelection(repo) {
+			return repo.name;
+		}
+
+		$(".select2").select2({
+			placeholder: '请选择用户',
+			allowClear: true,
+			language: {
+			   noResults: function(){
+				   return "没有找到任何匹配项";
+			   },
+			   inputTooShort:function(){
+				   return '请输入用户名称';
+				},
+				searching:function(){
+					return '正在努力搜索...';
+				},
+				loadingMore:function(){
+					return '载入更多...';
+				},
+				inputTooLong:function(){
+					return '输入太多了...';
+				}
+			},
+			ajax: {
+				url: "{%url m=ajax c=user a=search%}",
+				dataType: 'json',
+				delay: 250,
+				data: function(params) {
+					return {
+						keywords: params.term, // search term
+						length: params.page
+					};
+				},
+				processResults: function(data, page) {
+					return {
+						results: data.body.data
+					};
+				},
+				cache: true
+			},
+			escapeMarkup: function(markup) {
+				return markup;
+			},
+			minimumInputLength: 1,
+			templateResult: formatRepo,
+			templateSelection: formatRepoSelection
+		});
+		
+		var inArray = function(value,array){
+			for(var i=0;i<array.length;i++)
+			{
+				if(array[i] == value)
+				return true;
+			}
+			return false;
+		}
+		
+		$('#chooseVideoFileBtn').on('click',function(){
+			var input = $('<input type="file">');
+			var button = $(this);
+			if(button.hasClass('disabled'))
+			return false;
+			var fileInput = button.parent().find('input');
+			input.trigger('click');
+			input.on('change',function(){
+				button.addClass('disabled').html('正在上传..');
+				var input = $(this);
+				var file = $(this)[0].files[0];
+				if(file.size > 1024*1024*100)
+				{
+					button.html('文件大小不能超过100MB').addClass('red').removeClass('blue').removeClass('disabled');
+					return false;
+				}
+				if(!inArray(file.type,['video/mp4','video/ogg']))
+				{
+					button.html('目前只支持mp4或ogg文件').addClass('red').removeClass('blue').removeClass('disabled');
+					return false;
+				}
+				var formData = new FormData();
+				formData.append('file',file);
+				var xhr = new XMLHttpRequest();
+				xhr.open('POST','{%url m=api c=common a=upload%}',true);
+				xhr.onload = function(){  
+					if(xhr.status == 200 && xhr.readyState == 4)  
+					{
+						var response = xhr.response;
+						response = $.parseJSON(response);
+						if(response.code==1)
+						{
+							button.html('文件上传成功：'+file.name).removeClass('disabled').removeClass('red').addClass('blue');
+							fileInput.val(response.body.id);
+							$('video').parents('.form-group').removeClass('hide');
+							$('video').attr('src',response.body.path);
+						}
+						else
+						{
+							button.html(response.result).removeClass('disabled').addClass('red').removeClass('blue');
+						}
+					}
+				};
+				xhr.upload.addEventListener('progress', function(event){
+					if(event.lengthComputable) {
+						var howmuch = (event.loaded / event.total) * 100;
+						button.html('正在上传:'+Math.ceil(howmuch)+'%').addClass('disabled').removeClass('red').addClass('blue');
+					} else {
+						button.html('无法计算上传进度').addClass('disabled').removeClass('blue').addClass('red');
+					}
+				}, false);
+				xhr.send(formData); 
+				return false;
+			});
+			return false;
+		});
+		</script>
+    </body>
+
+</html>
