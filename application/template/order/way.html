@@ -1,0 +1,15 @@
+{%if isset($way)%}
+{%section name=way loop=$way%}
+<div class="{%if $smarty.section.way.first%}current{%elseif $smarty.section.way.last%}start{%else%}common{%/if%} logistics-line">
+	<div class="logisticsDatetime">
+		<div class="logisticsDate">{%$way[way].datetime.date%}</div>
+		<div class="logisticsTime">{%$way[way].datetime.time%}</div>
+		<div class="logisticsWeek">{%$way[way].datetime.week%}</div>
+	</div>
+	<div class="icon"></div>
+	<div class="note"><p>{%$way[way].remark%}</p><i></i></div>
+</div>
+{%/section%}
+{%else%}
+<h3>Sorry!没有找到物流轨迹</h3>
+{%/if%}

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>淘微购</title>
+    <meta name="viewport"
+          content="width=device-width, height=device-height, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=0"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-touch-fullscreen" content="yes"/>
+    <meta name="full-screen" content="yes"/>
+    <meta name="screen-orientation" content="portrait"/>
+    <meta name="x5-fullscreen" content="true"/>
+    <link rel="stylesheet" type="text/css" href="{%$VIEW_ROOT%}/mobile/css/reset.css">
+    <link rel="stylesheet" type="text/css" href="{%$VIEW_ROOT%}/mobile/css/style.css">
+    <link rel="stylesheet" type="text/css" href="{%$VIEW_ROOT%}/mobile/css/other.css">
+    <script type="text/javascript" src="{%$VIEW_ROOT%}/mobile/js/jquery-1.8.3.min.js"></script>
+    <script type="text/javascript" src="{%$VIEW_ROOT%}/mobile/js/resolution.js"></script>
+    <script type="text/javascript" src="{%$VIEW_ROOT%}/mobile/js/js.js"></script>
+</head>
+<body>
+{%if !isset($smarty.get.webview) || $smarty.get.webview!=1%}
+{%else%}
+<div id="header">
+    <header>
+        <a href="javascript:window.history.go(-1);" class="left_btn"><i class="icon back"></i></a>
+
+        <h1>学生身份验证</h1>
+    </header>
+</div>
+{%/if%}
+<div id="content">
+    <div class="student-head">
+
+        <div class="school-name student-item">学校名称<input type="text" id="scname"></div>
+        <div class=" student-item">专&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;业<input type="text" id="zhuanye"></div>
+        <div class=" student-item">年&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;级<select id="class">
+            <option style="background-color: #fc8c8b" value="职高（技校）">职高（技校）</option>
+            <option style="background-color: #fc8c8b" value="大一">大一</option>
+            <option style="background-color: #fc8c8b" value="大二">大二</option>
+            <option style="background-color: #fc8c8b" value="大三">大三</option>
+            <option style="background-color: #fc8c8b" value="大四">大四</option>
+            <option style="background-color: #fc8c8b" value="硕士">硕士</option>
+            <option style="background-color: #fc8c8b" value="博士">博士</option>
+        </select></div>
+        <div class="student-name student-item">真实姓名<input type="text" id="name"></div>
+        <div class="cart-num student-item">学生证号<input type="text" id="num"></div>
+        <div class=" student-item">身份证号<input type="text" id="numberc"></div>
+
+    </div>
+    <a class="coupon_btn student-btn clearfix" id="check" style="position: static;">确定</a>
+
+    <div class="student-foot">
+        <p>创业学院说明</p>
+
+        <div class="student-text">
+            创业学院是淘微购为落实李克强总理关于“大学生是推进大众创业、万众创新生力军”的重要批示，深化高校创新创业教育改革，
+            切实增强学生的创业意识和提高实践能力，满足国内百余所高校学生对创业创新社会实践平台的需求，推出的学生“零成本创业”
+            项目。创业学生通过创业学院入口填写学院及学生证等信息后，只要完成少量的任务，即可轻松成为淘微购创业合伙人（白金会员
+            ），享受合伙人（白金会员）权益。信息填写人应对信息填写的真实性负责，对提交虚假信息人士，淘微购有权取消其会员资格， 由此造成的包括但不限于收益损失由信息填写人本人负责。
+
+        </div>
+    </div>
+    {%include file='mobile/public/msg.html'%}
+</div>
+
+<div id="student-mask" class="g_tips_mask" style="display:none;">
+    <a href="{%url c=mobile a=myinvit%}">
+        <div class="student-mask-con">
+
+            <img src="{%$VIEW_ROOT%}/mobile/image/a1.png">
+            <span class="student-mask-yes">Let's Go&gt;</span>
+
+        </div>
+    </a>
+</div>
+
+<script>
+    //弹出层
+
+    $(".student-mask-con").click(function () {
+        {%if !isset($smarty.get.webview) || $smarty.get.webview != 1 %}
+            window.location.href = "{%url c=mobile a=myinvita%}";
+            {%else%}
+            window.location.href = "{%url c=mobile a=myinvita%}&webview=1";
+            {%/if%}
+            return false;
+        }
+        )
+        ;
+        $(document).click(function () {
+            $("#student-mask").hide();
+        });
+
+
+        {%if $user.school == 1 %}
+            // alert("您已经验证过，无需重复验证");
+
+            window.location.href = "{%url c=mobile a=myinvita%}";
+            {%/if%}
+
+
+            $("#check").click(function () {
+                var scname = $('#scname').val();
+                var name = $('#name').val();
+                var num = $('#num').val();
+                var numberc = $('#numberc').val();
+                var zhuanye = $('#zhuanye').val();
+                var cl = $('#class').val();
+                if (scname == "") {
+                    msg("学校名称不能为空");
+                    return false;
+                }
+                if (zhuanye == "") {
+                    msg("专业不能为空");
+                    return false;
+                }
+                if (cl == "") {
+                    msg("年纪不能为空");
+                    return false;
+                }
+                if (name == "") {
+                    msg("姓名不能为空");
+                    return false;
+                }
+                if (num == "") {
+                    msg("学生证号不能为空");
+                    return false;
+                }
+                if (numberc == "") {
+                    msg("身份证号不能为空");
+                    return false;
+                }
+
+                /*
+                 var bankcard = $('input[name=bankcard]').val();
+                 */
+                $.post('{%url m=ajax c=user a=student%}', {
+                    scname: scname,
+                    name: name,
+                    num: num,
+                    numberc: numberc,
+                    zhuanye: zhuanye,
+                    cl: cl
+                }, function (response) {
+                    if (response.code == 1) {
+                        $("#student-mask").show();
+                        return false;//关键是这里，阻止冒泡
+                    }
+                    else {
+                        msg(response.result);
+
+                    }
+                });
+
+            });
+</script>
+
+</body>
+</html>

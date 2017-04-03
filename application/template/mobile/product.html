@@ -1,0 +1,1422 @@
+<!DOCTYPE html>
+<html>
+
+<head lang="en">
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>淘微购</title>
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-touch-fullscreen" content="yes" />
+    <meta name="full-screen" content="yes" />
+    <meta name="screen-orientation" content="portrait" />
+    <meta name="x5-fullscreen" content="true" />
+    <link rel="stylesheet" type="text/css" href="{%$VIEW_ROOT%}/mobile/css/reset.css">
+    <link rel="stylesheet" type="text/css" href="{%$VIEW_ROOT%}/mobile/css/style.css">
+    <link rel="stylesheet" type="text/css" href="{%$VIEW_ROOT%}/mobile/css/other.css">
+    <link rel="stylesheet" type="text/css" href="{%$VIEW_ROOT%}/mobile/css/idangerous.swiper.css">
+    <script type="text/javascript" src="{%$VIEW_ROOT%}/mobile/js/jquery-1.8.3.min.js"></script>
+    <script type="text/javascript" src="{%$VIEW_ROOT%}/mobile/js/resolution.js"></script>
+    <script type="text/javascript" src="{%$VIEW_ROOT%}/mobile/js/js.js"></script>
+    <script type="text/javascript" src="{%$VIEW_ROOT%}/mobile/js/idangerous.swiper.js"></script>
+    <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+
+</head>
+<style>
+.use_coupon {
+    cursor: pointer;
+}
+.bind_box .grid{
+	cursor: pointer;
+}
+</style>
+
+<body style="background-color: #ebeded;">
+    <div class="godownload clearfix">
+        <div class="godownload-pic"><img src="{%$VIEW_ROOT%}/mobile/image/logo233.png" alt=""></div>
+        <div class="godownload-text">
+            <h3>淘微购-精选全球</h3>
+            <p><img src="{%$VIEW_ROOT%}/mobile/image/yes233.png" alt="" style="width:12px;margin-bottom: -3px;margin-right: 3px;">去伪存真，专属服务，不一样的购物体验</p>
+        </div>
+        <a href="http://a.app.qq.com/o/simple.jsp?pkgname=com.lianhai.MicroBuy">
+            <div class="godownload-btn">
+                立即下载
+            </div>
+        </a>
+        <img src="{%$VIEW_ROOT%}/mobile/image/close233.png" alt="" class="godownload-close">
+    </div>
+    <script type="text/javascript">
+    $(".godownload-close").click(function() {
+        $(".godownload").hide();
+        $("#header").css("margin-top", "0");
+        $("#content").css("padding-top", "50px");
+
+    })
+    </script>
+    <div id="header" style="margin-top: 56px;">
+        <header>
+            <a href="javascript:history.go(-1);" class="left_btn"><i class="icon back"></i></a>
+            <h1>商品详情</h1>
+            <a class="collect_btn {%if $product.favourite%}active{%/if%}" sel="no"></a>
+            <a href="#" class="right_btn" id="share_btn"><i class="icon share"></i></a>
+        </header>
+    </div>
+    <div id="content clearfix" style="padding-top: 50px;padding-bottom: 42px;">
+        <div class="goods_box">
+            <div class="goods_pic booth">
+                <div class="swiper-container">
+                    <div class="swiper-wrapper">
+                        {%foreach item=image from=$product.image%}
+                        <div class="swiper-slide"><img src="{%$image%}"></div>
+                        {%/foreach%}
+                    </div>
+                </div>
+                <div class="pagination"></div>
+                <!-- <img src="{%$VIEW_ROOT%}/mobile/image/goods_big.png"> -->
+            </div>
+            <div class="goods_details">
+                <div class="g_name">{%$product.name%}</div>
+                <div class="g_about">{%$product.short_description%}</div>
+                <div class="g_price">
+                    {%if isset($user) && $user.vip==1%}
+                    <span class="new_price red">￥{%$product.v1price%}</span> {%elseif isset($user) && $user.vip==2%}
+                    <span class="new_price red">￥{%$product.v2price%}</span> {%else%}
+                    <span class="new_price red">￥{%$product.price%}</span> {%/if%}
+                    <span class="old_price">￥{%$product.oldprice%}</span>
+                </div>
+                <div class="g_flag clearfix">
+                    <div class="flag" {%if isset($product.origin.logo) && !empty($product.origin.logo)%}style="background-image:url({%$product.origin.logo%});float: left;" {%/if%}>{%if $product.origin.id==42%}国产商品{%else%}{%$product.origin.name%}进口{%/if%}</div>
+                {%if $product.outside==2 || $product.outside==3%}
+                    <div class="flag" style="margin-left: 20px; float: left;">跨境商品</div>
+                    <a class="g_tips">跨境小提示</a>
+                {%/if%}
+                </div>
+            </div>
+            <!--
+            <div class="goods_info">商品说明:<span class="pink">·</span><span>保税区发货</span><span class="pink">·</span><span>配送地区</span><span class="pink">·</span><span>温馨提示</span></div>
+            -->
+            <!-- {%if !empty($product.tags)%}
+            <div class="shuo_ming">
+                说&nbsp;&nbsp;明：<span class="red_circle"></span>{%'<span class="red_circle"></span>'|implode:(','|explode:$product.tags)%}
+            </div>
+            {%/if%} -->
+            <div class="graphic_details">
+                {%if !empty($product.textPrototype)%}
+                <div class="writing">
+                    <h3>产品信息/PRODUCT INFORMATION</h3>
+                    <div class="row_wrap">
+                        {%section name=textPrototype loop=$product.textPrototype%}
+                        <div class="row">
+                            <b>{%$product.textPrototype[textPrototype].name%}：</b><span>{%$product.textPrototype[textPrototype].value%}</span>
+                        </div>
+                        {%/section%}
+                    </div>
+                </div>
+                {%/if%}
+                <div class="picture">
+                    <h3>产品详情</h3> {%$product.description%}
+                </div>
+            </div>
+        </div>
+        <div class="tishi_hasdown">别拉了，到底了~</div>
+    </div>
+
+    {%if ($product.outside==2 || $product.outside==3) && $product.freetax==0%}
+
+    <div class="g_tips_mask" id="g_tips_mask1" style="display:none;">
+        <ul class="gtm_details ths  ">
+            <li>· {%$product.store%}</li>
+            <li>· 适用税率：跨境电商税{%$product.tax*100%}%</li>
+
+        </ul>
+    </div>
+    {%else%}
+
+
+    <div class="g_tips_mask" id="g_tips_mask2" style="display:none;">
+        <ul class="gtm_details ths  ">
+            <li>· {%$product.store%}</li>
+            <li>· 适用税率：跨境电商税{%$product.tax*100%}%</li>
+            <li>· 此商品包税</li>
+        </ul>
+    </div>
+    {%/if%}
+    <div class="buy_box flex_box">
+        <div class="flex" style="flex:1;border-right: 1px solid #ccc;">
+
+            <!--<a class="half " href="http://kefu.easemob.com/webim/im.html?tenantId=16641&hide=false&sat=false&user=&referrer={%url c=mobile a=product id=$product.id urlencode=1%}&show=true">-->
+            <a class="half "  href="http://kefu.easemob.com/webim/im.html?tenantId=16641">
+                <div class="custom"></div>
+            </a>
+            </div>
+            <div class="flex" style="flex:1;border-right: 1px solid #ccc;">
+            <a class="half" href="{%url c=mobile a=cart%}">
+
+                <div class="car">{%if $num>0%}<span class="car_num">{%$num%}</span>{%/if%}</div>
+            </a>
+        </div>
+        {%if $product_status==1 && $product.stock>10%}
+        <div class="flex " style="flex:2;">
+            <a class="add_to_cart" >加入购物车</a>
+        </div>
+        <div class="flex" style="flex:2;">
+            <a class="buy_now">立即购买</a>
+        </div>
+        {%/if%}
+        {%if $product_status==0%}
+        <div class="g_hasdown" >产品已下架</div>
+        {%else if $product.stock<=10%}
+        <div class="g_notenough" >库存不足</div>
+        {%/if%}
+    </div>
+    <div class="message" style="width: 100%; height: 100%; position: fixed; left: 0; top: 0; background-color: rgba(0,0,0,0.5); z-index: 1000; display:none;">
+        <div class="message_dialog" style="background-color: #fff; position: absolute; bottom: 0; left: 0; width: 100%;">
+            <div class="title" style="padding: 10px; line-height: 30px; font-size: 14px; border-top: 1px solid #ccc; border-bottom: 1px solid #ccc; position: relative;">
+                税费
+                <span class="close_btn" onClick="$('.message').hide();"></span>
+            </div>
+            <div class="title" style="padding: 10px; line-height: 30px; font-size: 14px; border-top: 1px solid #ccc; border-bottom: 1px solid #ccc; position: relative;">
+                {%$product.tax * 100%}%
+            </div>
+            <div id="tax_content" style="padding:10px; margin-bottom:100px;line-height: 20px;">
+            </div>
+        </div>
+    </div>
+    <div id="black_bg" style="display: none">
+        <div class="all_box" style="display: block;">
+            <ul>
+                <li class="stock">
+                    <span class="red">
+                    {%if isset($user) && $user.vip==1%}
+                                       ￥{% $product.v1price*$product.selled %}
+                    {%elseif isset($user) && $user.vip==2%}
+                    ￥{%$product.v2price*$product.selled%}
+                    {%else%}
+                    ￥{%$product.price*$product.selled%}
+                    {%/if%}
+                    </span>
+                    <span class="black">{%if $product.auto_stock==0%}（不限库存）{%elseif $product.stock<10%}（库存不足）{%elseif $product.stock>10%}(库存充足){%/if%}</span>
+                    <a class="close_btn" onClick="$('#black_bg').hide();"></a>
+                </li>
+                {%if !empty($product.collection) || !empty($bind)%}
+                <li class="clearfix" id="size">
+                    <div class="left">
+                        规格
+                    </div>
+                    <div class="right">
+                        {%section name=collection loop=$product.collection%} {%if $product.collection[collection].available==1%} {%$product.collection[collection].content|replace:',':'、'%} {%break%} {%/if%} {%/section%}
+                    </div>
+                    <span class="down"></span>
+                </li>
+                {%/if%}
+                <li class="clearfix">
+                    <div class="left">数量</div>
+                    <div id="number" class="number flex_box">
+                        <a id="count_down" class="inC flex">-</a>
+                        <input id="goods_count" name="goods_count" type="text" class="qty flex" value="1">
+                        <a id="count_up" class="deC flex">+</a>
+                    </div>
+                </li>
+                {%if $product.outside == 2 || $product.outside == 3%}
+                <li class="clearfix">
+                    <div class="left">税率</div>
+                    <div class="right">{%$product.tax * 100%}%</div>
+                    <!--<span class="down"></span>-->
+                </li>
+                {%/if%}
+                <li>
+                    <a class="confirm_btn">确认购买</a>
+                </li>
+            </ul>
+        </div>
+        <div id="size_box" class="size_box" style="display: none;">
+            <div class="title">
+                	规格
+                <span class="up"></span>
+            </div>
+            <div class="img_box clearfix">
+                <div class="pic">
+                    <img id="collection_logo" src="{%$product.listImage%}">
+                </div>
+                <div class="right">
+                    <div class="stock">
+                        <span class="red" style="color:#000000;" id="collection_price">￥0</span>
+                        <span class="black" style="color: grey;" id="collection_stock">（库存充足）</span>
+                    </div>
+                    {%if !empty($bind)%}
+                    <div class="unitprice">
+                    	单价:<div id="unitprice" style="display:inline; color:#f32529;">￥123</div>
+                    </div>
+                    {%/if%}
+                    <div class="size">
+                        已选:<span>
+                        {%section name=collection loop=$product.collection%}
+                            {%if $product.collection[collection].available==1%}
+                            {%$product.collection[collection].content|replace:',':'</span>,<span>'%}
+                            {%break%}
+                            {%/if%}
+                        {%/section%}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <ul class="choose_size">
+                {%section name=radioPrototype loop=$product.radioPrototype%}
+                <li>
+                    <h6>{%$product.radioPrototype[radioPrototype].name%}</h6>
+                    <div class="grid_box clearfix">
+                        {%foreach name=radioPrototype item=radioPrototypeValue from=','|explode:$product.radioPrototype[radioPrototype].value%}
+                        <div class="grid {%if $smarty.foreach.radioPrototype.first%}active{%/if%}">{%$radioPrototypeValue%}</div>
+                        {%/foreach%}
+                    </div>
+                </li>
+                {%/section%}
+        		{%if !empty($bind)%}
+                <li>
+                    <h6>非系统默认数量请留意价格变动</h6>
+                    <div class="bind_box clearfix">
+                        {%section name=bind loop=$bind%}
+                        <div class="grid {%if $smarty.section.bind.first%}active{%/if%}" data-num="{%$bind[bind].num%}">{%$bind[bind].num%}{%$bind[bind].unit%}装</div>
+                        {%/section%}
+                    </div>
+                </li>
+                {%/if%}
+            </ul>
+            <div class="btn_box">
+                {%section name=collection loop=$product.collection%}
+	                {%if $product.collection[collection].available==1%}
+	                <div class="collection hide" data-content="{%$product.collection[collection].content%}" data-price="{%$product.collection[collection].price%}" data-v1price="{%$product.collection[collection].v1price%}" data-v2price="{%$product.collection[collection].v2price%}" data-stock="{%$product.collection[collection].stock%}" data-logo="{%$product.collection[collection].logo%}"></div>
+	                {%/if%}
+				{%/section%}
+				{%section name=bind loop=$bind%}
+					<div class="binddiv hide" data-sort="{%$bind[bind].sort%}" data-unit="{%$bind[bind].unit%}" data-price="{%$bind[bind].price%}" data-v1price="{%$bind[bind].v1price%}" data-v2price="{%$bind[bind].v2price%}" data-content="{%$bind[bind].content%}" data-num="{%$bind[bind].num%}"></div>
+				{%/section%}
+				
+				<div id="default_selled" class="hide" data-selled="{%$product.selled%}"></div>
+                <div id="default_unit" class="hide" data-unit="{%$product.MeasurementUnit%}"></div>
+                <div class="hide" id="product_autostock" data-value="{%$product.auto_stock%}"></div>
+                <a class="long_btn" id="save_collection">确认</a>
+            </div>
+        </div>
+        <div id="payment_box" class="payment_box" style="display: none;">
+            <div class="title">
+                <span class="arrow_left"></span>
+            </div>
+            <ul>
+                <li class="clearfix" id="modifyAddress">
+                    <div class="left">收货地址</div>
+                    <div class="right">{%if empty($address)%}添加地址{%else%}{%$address[0].name%},{%$address[0].address%}{%/if%}</div>
+                    <span class="down"></span>
+                </li>
+                <li class="clearfix" id="selectCoupon" onClick="$('#coupon').slideToggle('slow'); return false;">
+                    <div class="left">优惠券</div>
+                    <div class="right">选择优惠券</div>
+                    <span class="down"></span>
+                </li>
+                <li class="clearfix" id="selectPayment" onClick="$('#payment_method').slideToggle('slow'); return false;">
+                    <div class="left">支付方式</div>
+                    <div class="right">{%if $isWechat%}微信支付{%else%}支付宝{%/if%}</div>
+                    <span class="down"></span>
+                </li>
+                <li class="clearfix" onClick="$('#amount').slideToggle('slow'); return false;">
+                    <div class="left">应付金额</div>
+                    <div class="right orderamount">￥163.00</div>
+                    <span class="down"></span>
+                </li>
+                <div class="look" style="float: right;margin-right: 10px;font-size:12px;">点击查看价格明细</div>
+                <li style="margin-top: 18px;">
+                    <input type="checkbox" checked="checked" id="agreement_checkbox">
+                    <div class="agreement">本人接受<a>《进口个人委托申报委托》与《淘微购服务协议》</a></div>
+                    <a class="long_btn" id="submit">确认支付</a>
+                </li>
+            </ul>
+        </div>
+        <div id="address_box" class="address_box" style="display: none;">
+            <div class="title">
+                收货地址
+                <span class="up"></span>
+            </div>
+            <div class="have_address">
+                <div class="min">
+                    {%section name=address loop=$address%}
+                    <div class="row flex_box {%if $smarty.section.address.first%}active{%/if%}" data-id="{%$address[address].id%}">
+                        <div class="edit"></div>
+                        <div class="address">
+                            <div class="line1">{%$address[address].name%}</div>
+                            <div class="line2"><span class="red">{%if $address[address].host==1%}[默认]{%/if%}</span>{%$address[address].province%}&nbsp;{%$address[address].city%}&nbsp;{%$address[address].county%}&nbsp;{%$address[address].address%}</div>
+                        </div>
+                    </div>
+                    {%/section%}
+                    <div class="tianjia">
+                        <div class="left">添加新地址</div>
+                    </div>
+                </div>
+                <a class="long_btn" id="selectAddress">确认</a>
+            </div>
+            <div id="addAddress" class="wrap" style="display: none;">
+                <div class="row">
+                    <strong class="red">*</strong>
+                    <input type="text" name="name" placeholder="收货人姓名">
+                </div>
+                <div class="row">
+                    <strong class="red">*</strong>
+                    <input type="text" name="telephone" placeholder="手机号码">
+                </div>
+                <div class="row">
+                    <strong class="red">*</strong>
+                    <input type="text" name="identify" placeholder="身份证号码(跨境购物，海关特殊要求)">
+                </div>
+                <div class="row">
+                    <strong class="red">*</strong>
+                    <select name="province" id="province">
+                        <option value="">省份...</option>
+                        {%section name=province loop=$province%}
+                        <option value="{%$province[province].id%}">{%$province[province].name%}</option>
+                        {%/section%}
+                    </select>
+                </div>
+                <div class="row">
+                    <strong class="red">*</strong>
+                    <select name="city" id="city">
+                        <option value="">城市...</option>
+                    </select>
+                </div>
+                <div class="row">
+                    <strong class="red">*</strong>
+                    <select name="county" id="county">
+                        <option value="">地区...</option>
+                    </select>
+                </div>
+                <div class="row">
+                    <strong class="red">*</strong>
+                    <input type="text" name="address" placeholder="详细地址">
+                </div>
+                <div class="default" sel="no">设为默认地址</div>
+                <a class="long_btn" id="saveAddress">保存</a>
+            </div>
+        </div>
+        <div id="payment_method" class="payment_method" style="display: none;">
+            <div class="title">
+                支付方式
+                <span class="up"></span>
+            </div>
+            <div class="wrap">
+                <div class="row {%if !$isWechat%}active{%/if%}" data-type="alipay">
+                    <div class="left zhifu">支付宝</div>
+                </div>
+                <div class="row {%if $isWechat%}active{%/if%}" data-type="wechat">
+                    <div class="left weixin">微信支付</div>
+                </div>
+            </div>
+            <a class="long_btn">确认</a>
+        </div>
+        <div id="amount" style="display: none">
+            <div class="title">
+                价格明细
+                <span class="up"></span>
+            </div>
+            <div class="wrap">
+                <div class="row clearfix">
+                    <div class="left">商品总价</div>
+                    <div class="right" id="goodsamount">￥0</div>
+                </div>
+                <div class="row clearfix">
+                    <div class="left">运费</div>
+                    <div class="right" id="feeamount">￥0</div>
+                </div>
+                <div class="row clearfix">
+                    <div class="left">税费</div>
+                    <div class="right" id="taxamount">￥0</div>
+                </div>
+                <div class="row clearfix">
+                    <div class="left">优惠</div>
+                    <div class="right" id="discount">￥0</div>
+                </div>
+                <div class="row clearfix">
+                    <div class="left">应付总额</div>
+                    <div class="right red" id="orderamount">￥0</div>
+                </div>
+            </div>
+            <a class="long_btn" id="priceDetail" style="margin-top: 10px;">关闭</a>
+        </div>
+        <div id="coupon" style="display: none;">
+            <div class="title">
+                优惠券
+                <span class="up"></span>
+            </div>
+            <div class="wrap">
+                <div class="tianjia" id="createCoupon">
+                    <div class="left">兑换优惠券</div>
+                </div>
+                <div class="coupon_wrap">
+                    <div class="top flex_box">
+                        <div class="flex active" onClick="tabb(this,1)">可用优惠券</div>
+                        <div class="flex" onClick="tabb(this,2)">不可用优惠券</div>
+                    </div>
+                    <div class="bottom">
+                        <div class="coupon_page1 contitem">
+                        </div>
+                        <div class="coupon_page2 contitem hide">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <a class="long_btn" onClick="$('#coupon').slideToggle();">确认</a>
+        </div>
+        {%include file='mobile/public/xieyi.html'%}
+    </div>
+    <div id="black_bg" class="black_bg_share" style="display: none">
+        {%if isset($isWechat) && $isWechat%}
+        <div class="" style="width:50%; float:right;">
+            <img src="{%$VIEW_ROOT%}/mobile/image/share-it.png" style="width:50%; float:right;">
+            <div class="" style="color: white; font-size: x-large; float: right;">
+                <nobr>点击这里分享给其他的小伙伴</nobr>
+            </div>
+        </div>
+        {%else%}
+        <div class="spread-share" style="display: block;">
+            <div class="ss-head" onClick="$(this).parents('#black_bg').hide();"><img src="{%$VIEW_ROOT%}/mobile/image/close.png">
+                <p>分享</p>
+            </div>
+            <div class="ss-box">
+                <div class="ss-box3 sharetoqq">
+                    <img src="{%$VIEW_ROOT%}/mobile/image/btn_qq.png">
+                    <p>QQ</p>
+                </div>
+                <div class="ss-box4 sharetoweibo">
+                    <img src="{%$VIEW_ROOT%}/mobile/image/btn_weibo.png">
+                    <p>微博</p>
+                </div>
+            </div>
+        </div>
+        {%/if%}
+    </div>
+    <div class="task-login" style="display:none;">
+        <input type="text" id="telephone" class="name" placeholder="请输入手机号">
+        <input type="password" id="password" class="psd" placeholder="请输入密码">
+        <div class="go" id="loginBtn">登录</div>
+        <div class="foot">
+            <a id="registerBtn" class="right">没有账号？立即注册> </a>
+            <a href="{%url c=mobile a=forgetpwd%}" class="left">忘记密码</a>
+        </div>
+    </div>
+    <!-- 用户VIP等级,为空的话就是尚未登录 -->
+    <input type="hidden" id="user_vip" value="{%if isset($user)%}{%$user.vip%}{%/if%}">
+    {%if isset($user) && $user.vip==2%}
+    <input type="hidden" id="selected_unitprice" value="{%$product.v2price%}">
+    {%else if isset($user) && $user.vip==1%}
+    <input type="hidden" id="selected_unitprice" value="{%$product.v1price%}">
+    {%else%}
+    <input type="hidden" id="selected_unitprice" value="{%$product.price%}">
+    {%/if%}
+    {%include file='mobile/public/msg.html'%}
+</body>
+<script type="text/javascript">
+//轮播图固定高度
+    var w = $(".goods_box .goods_pic img").width();
+    $(".goods_box .goods_pic").css('height',w*1+'px');
+
+
+//跨境提示
+$('.g_tips').click(function() {
+    $('.g_tips_mask').show();
+})
+$('.g_tips_mask').click(function(e) {
+    $('.g_tips_mask').hide();
+})
+/*
+$('.goods_info').click(function() {
+    $('#g_tips_mask2').show();
+})
+$('.g_tips_mask').click(function(e) {
+    $('.g_tips_mask').hide();
+})
+
+*/
+
+$('#registerBtn').on('click', function() {
+    if (window.localStorage) {
+        window.localStorage.setItem('href', '{%url c=mobile a=product id=$smarty.get.id share_uid=$smarty.get.share_uid|default:""%}');
+        window.localStorage.setItem('href_time', Date.parse(new Date()) / 1000);
+    }
+    window.location = '{%url c=mobile a=register1%}';
+});
+var unixtotime = function(unixTime, isFull, timeZone) {
+    if (typeof(timeZone) == 'number') {
+        unixTime = parseInt(unixTime) + parseInt(timeZone) * 60 * 60;
+    }
+    var time = new Date(unixTime * 1000);
+    var ymdhis = "";
+    ymdhis += time.getUTCFullYear() + "-";
+    ymdhis += (time.getUTCMonth() + 1) + "-";
+    ymdhis += time.getUTCDate();
+    if (isFull === true) {
+        ymdhis += " " + time.getUTCHours() + ":";
+        ymdhis += time.getUTCMinutes() + ":";
+        ymdhis += time.getUTCSeconds();
+    }
+    return ymdhis;
+}
+
+$('.agreement').on('click', function() {
+    $.when(
+        $.get('{%url c=page a=detail id=5 html=false%}'),
+        $.get('{%url c=page a=detail id=6 html=false%}')
+    ).done(function(response1, response2) {
+        $('#geren_content').html(response1[0]);
+        $('#fuwu_content').html(response2[0]);
+        $('#xieyi').slideToggle();
+    });
+    return false;
+});
+
+var show_login = function() {
+    $('.task-login').show();
+}
+
+$('#loginBtn').on('click', function() {
+    var telephone = $('#telephone').val();
+    var password = $('#password').val();
+    var wx_openid = '{%$smarty.session.wx_openid|default:""%}';
+    $.post('{%url m=ajax c=user a=login%}', {
+        telephone: telephone,
+        password: password,
+        wx_openid: wx_openid
+    }, function(response) {
+        if (response.code == 1) {
+            msg('登陆成功');
+            $('#user_vip').val(response.body.vip);
+            $('.task-login').hide('normal', function() {
+                //加载我的地址列表
+                $.get('{%url m=ajax c=address a=mylists%}', function(response) {
+                    if (response.code == 1) {
+                        for (var i = 0; i < response.body.length; i++) {
+                            var tpl = $('<div class="row flex_box" data-id="' + response.body[i].id + '"><div class="edit"></div><div class="address"><div class="line1">' + response.body[i].name + '</div><div class="line2"><span class="red">' + (response.body[i].host == 1 ? '[默认]' : '') + '</span>' + response.body[i].province + '&nbsp;' + response.body[i].city + '&nbsp;' + response.body[i].county + '&nbsp;' + response.body[i].address + '</div></div></div>');
+                            if (i == 0) {
+                                tpl.addClass('active');
+                            }
+                            tpl.bind('click', function() {
+                                $('#address_box .have_address .flex_box').removeClass('active');
+                                $(this).addClass('active');
+                            });
+                            tpl.insertBefore('#address_box .have_address .tianjia');
+                        }
+                    } else {
+                        msg(response.result);
+                    }
+                });
+
+                //加载我的优惠卷
+                $.get('{%url m=ajax c=coupon a=mylists%}', function(response) {
+                    if (response.code == 1) {
+                        for (var i = 0; i < response.body.length; i++) {
+                            var max = response.body[i].max == 0 ? '无限制' : ('满' + response.body[i].max + '可使用');
+                            var endtime = response.body[i].endtime == 0 ? '无限制' : ('有效期至:' + unixtotime(response.body[i].endtime, false, 8));
+
+                            var tpl = '<div class="item flex_box"><div class="fl2 quota">￥' + response.body[i].value + '</div><div class="fl6"><div class="black coupon_name">' + response.body[i].name + '</div><div class="black">' + max + '</div><div class="gray">' + endtime + '</div></div><div class="fl2"><a class="use_btn use_coupon" data-id="' + response.body[i].id + '">使用</a></div></div>';
+                            $('.coupon_page1').append(tpl);
+                        }
+                    } else {
+                        msg(response.result);
+                    }
+                });
+            });
+        } else {
+            msg(response.result);
+        }
+    });
+    return false;
+});
+
+var mySwiper = new Swiper('.swiper-container', {
+    pagination: '.pagination',
+    grabCursor: true,
+    paginationClickable: true,
+    autoplay: 3000,
+    speed: 1500,
+    loop:true,
+    calculateHeight: true,
+    onSwiperCreated: function(swiper) {
+        $(".swiper-pagination-switch:eq(0)").addClass('swiper-visible-switch').addClass('swiper-active-switch');
+        $('.swiper-slide').css('height', null);
+        swiper.reInit();
+    }
+});
+$('.swiper-slide').css('height', null);
+$(document).ready(function() {
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': '{%$x_csrf_token%}'
+        }
+    });
+
+    $('#share_btn').on('click', function() {
+        $('.black_bg_share').show();
+        return false;
+    });
+
+    $('.sharetoqq').on('click', function() {
+        window.location = 'http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url={%url c=mobile a=product id=$smarty.get.id share_uid=$user.id|default:"" urlencode=1%}&title={%$product.name|urlencode%}&desc={%$product.short_description|urlencode%}&site=淘微购&pics={%$product.listImage%}';
+        return false;
+    });
+
+    $('.sharetoweibo').on('click', function() {
+        window.location = 'http://service.weibo.com/share/share.php?appkey={%$weibo_appkey%}&pic={%$product.listImage%}&title={%$product.name|default:"分享标题"|urlencode%}&url={%url c=mobile a=product id=$smarty.get.id share_uid=$user.id|default:"" urlencode=1%}&source=bshare&retcode=0&ralateUid={%$user.weibo_uid|default:""%}';
+        return false;
+    });
+
+    wx.config({
+        debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+        appId: '{%$jsApiTicket.appId|default:""%}', // 必填，公众号的唯一标识
+        timestamp: '{%$jsApiTicket.timestamp|default:""%}', // 必填，生成签名的时间戳
+        nonceStr: '{%$jsApiTicket.nonceStr|default:""%}', // 必填，生成签名的随机串
+        signature: '{%$jsApiTicket.signature|default:""%}', // 必填，签名，见附录1
+        jsApiList: [
+                'onMenuShareTimeline',
+                'onMenuShareAppMessage',
+                'onMenuShareQQ',
+                'onMenuShareWeibo',
+                'onMenuShareQZone',
+                'hideOptionMenu',
+                'showOptionMenu',
+                'hideMenuItems',
+                'showMenuItems',
+                'hideAllNonBaseMenuItem',
+                'showAllNonBaseMenuItem',
+                'scanQRCode',
+                'chooseWXPay',
+                'openCard',
+            ] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+    });
+
+
+    wx.ready(function() {
+        //分享给朋友
+        wx.onMenuShareAppMessage({
+            title: '{%$product.name|default:"分享的标题"%}',
+            desc: '{%$product.short_description|default:"分享的描述"|urlencode%}',
+            link: '{%url c=mobile a=product id=$smarty.get.id  share_uid=$user.id|default:""%}',
+            imgUrl: '{%$product.listImage%}',
+            success: function(res) {},
+            cancel: function(res) {},
+            fail: function(res) {}
+        });
+        //分享到朋友圈
+        wx.onMenuShareTimeline({
+            title: '{%$product.name|default:"分享的标题"%}',
+            desc: '{%$product.short_description|default:"分享的描述"|urlencode%}',
+            link: '{%url c=mobile a=product id=$smarty.get.id  share_uid=$user.id|default:""%}',
+            imgUrl: '{%$product.listImage%}',
+            success: function(res) {},
+            cancel: function(res) {},
+            fail: function(res) {}
+        });
+        //分享到QQ
+        wx.onMenuShareQQ({
+            title: '{%$product.name|default:"分享的标题"%}',
+            desc: '{%$product.short_description|default:"分享的描述"|urlencode%}',
+            link: '{%url c=mobile a=product id=$smarty.get.id  share_uid=$user.id|default:""%}',
+            imgUrl: '{%$product.listImage%}',
+            success: function(res) {},
+            cancel: function(res) {},
+            fail: function(res) {}
+        });
+        //分享到微博
+        wx.onMenuShareWeibo({
+            title: '{%$product.name|default:"分享的标题"%}',
+            desc: '{%$product.short_description|default:"分享的描述"|urlencode%}',
+            link: '{%url c=mobile a=product id=$smarty.get.id  share_uid=$user.id|default:""%}',
+            imgUrl: '{%$product.listImage%}',
+            success: function(res) {},
+            cancel: function(res) {},
+            fail: function(res) {}
+        });
+    });
+
+    $('#submit').on('click', function() {
+        if (!$('#agreement_checkbox').is(':checked')) {
+            msg('请先同意我们的协议');
+            return false;
+        }
+        var product = {
+            id: '{%$smarty.get.id%}',
+            content: $.trim($('#size .right').html()).replace('、', ','),
+            num: $('#goods_count').val(),
+        };
+        var data = {
+            product: JSON.stringify([product]),
+            coupon: $('#coupon .flex_box.active .use_coupon').data('id'),
+            address: $('#address_box .have_address .flex_box.active').data('id'),
+        };
+        $.post('{%url m=ajax c=order a=create%}', data, function(response) {
+            if (response.code == 1) {
+                var paytype = $('#payment_method .row.active').data('type');
+                if (paytype == 'alipay') {
+                    window.location = '{%url c=order a=payment%}&paytype=' + paytype + '&orderno=' + response.body.orderno;
+                } else if (paytype == 'wechat') {
+                    window.location = '{%url c=order a=payment%}&paytype=' + paytype + '&orderno=' + response.body.orderno;
+                }
+            } else if (response.code == 2) {
+                window.location = '{%url m=mobile a=login%}&href={%url urlencode=1 m=mobile a=product id=$smarty.get.id%}';
+            } else {
+                msg(response.result);
+            }
+        });
+        return false;
+    });
+
+    $('#priceDetail').on('click', function() {
+        $('#amount').slideToggle();
+    });
+
+    $('#createCoupon').on('click', function() {
+        var couponno = window.prompt('请输入优惠编码');
+        if (couponno != null && couponno != '') {
+            $.post('{%url m=ajax c=coupon a=couponno%}', {
+                couponno: couponno
+            }, function(response) {
+                if (response.code == 1) {
+                    var max = response.body.max == 0 ? '无限制' : ('满' + response.body.max + '可使用');
+                    var endtime = response.body.endtime == 0 ? '无限制' : ('有效期至:' + unixtotime(response.body.endtime, false, 8));
+                    var tpl = '<div class="item flex_box"><div class="fl2 quota">￥' + response.body.value + '</div><div class="fl6"><div class="black coupon_name">' + response.body.name + '</div><div class="black">' + max + '</div><div class="gray">' + endtime + '</div></div><div class="fl2"><a class="use_btn use_coupon" data-id="' + response.body.id + '">使用</a></div></div>';
+                    $('.coupon_page1').append(tpl);
+                } else {
+                    msg(response.result);
+                }
+            });
+        }
+        return false;
+    });
+
+    $('.coupon_page1 .use_coupon').live('click', function() {
+        if ($(this).html() == "已选择")
+            return false;
+        $('.coupon_page1 .use_coupon').html('使用');
+        $(this).html('已选择');
+        $(this).parents('.flex_box').addClass('active');
+        $('#selectCoupon .right').html($(this).parents('.flex_box').find('.coupon_name').html());
+
+        var coupon_id = $(this).data('id');
+
+        var product = {
+            id: '{%$smarty.get.id%}',
+            content: $.trim($('#size .right').html()).replace('、', ','),
+            num: $('#goods_count').val(),
+        };
+        var data = {
+            product: JSON.stringify([product]),
+            prepay: 1,
+            coupon: coupon_id,
+            address: $('#address_box .have_address .flex_box.active').data('id'),
+        };
+
+        $.post('{%url m=ajax c=order a=create%}', data, function(response) {
+            if (response.code == 1) {
+                // $('#payment_box').slideToggle("slow");
+                $('.orderamount').html('￥' + response.body.orderamount);
+                $('#orderamount').html('￥' + response.body.orderamount);
+                $('#goodsamount').html('￥' + response.body.goodsamount);
+                $('#taxamount').html('￥' + response.body.taxamount);
+                $('#feeamount').html('￥' + response.body.feeamount);
+                $('#discount').html('￥' + response.body.discount);
+            } else {
+                msg(response.result);
+            }
+        });
+        return false;
+    });
+
+    $('#province').on('change', function() {
+        $.get('{%url m=api c=common a=address%}', {
+            type: 'city',
+            pid: $(this).val()
+        }, function(response) {
+            if (response.code == 1) {
+                $('#city').empty().append('<option>请选择</option>');
+                for (var i = 0; i < response.body.length; i++) {
+                    $('#city').append('<option value="' + response.body[i].id + '">' + response.body[i].name + '</option>');
+                }
+            }
+        });
+    });
+
+    $('#city').on('change', function() {
+        $.get('{%url m=api c=common a=address%}', {
+            type: 'county',
+            cid: $(this).val()
+        }, function(response) {
+            if (response.code == 1) {
+                $('#county').empty().append('<option>请选择</option>');
+                for (var i = 0; i < response.body.length; i++) {
+                    $('#county').append('<option value="' + response.body[i].id + '">' + response.body[i].name + '</option>');
+                }
+            }
+        });
+    });
+
+    $('.have_address .flex_box').on('click', function() {
+        $('.have_address .flex_box').removeClass('active');
+        $(this).addClass('active');
+        return false;
+    });
+
+    $('#selectAddress').on('click', function() {
+
+        var product = {
+            id: '{%$smarty.get.id%}',
+            content: $.trim($('#size .right').html()).replace('、', ','),
+            num: $('#goods_count').val(),
+        };
+        var data = {
+            prepay: 1,
+            product: JSON.stringify([product]),
+            coupon: $('#coupon .flex_box.active .use_coupon').data('id'),
+            address: $('#address_box .have_address .flex_box.active').data('id'),
+        };
+        $.post('{%url m=ajax c=order a=create%}', data, function(response) {
+            if (response.code == 1) {
+                $('#address_box').slideToggle();
+                var addressString = $('#address_box .have_address .active .line1').html() + ',' + $('#address_box .have_address .active .line2').html().split('&nbsp;').pop();
+                $('#modifyAddress .right').html(addressString);
+                $('.orderamount').html('￥' + response.body.orderamount);
+                $('#orderamount').html('￥' + response.body.orderamount);
+                $('#goodsamount').html('￥' + response.body.goodsamount);
+                $('#taxamount').html('￥' + response.body.taxamount);
+                $('#feeamount').html('￥' + response.body.feeamount);
+                $('#discount').html('￥' + response.body.discount);
+            } else if (response.code == 2) {
+                window.location = '{%url m=mobile a=login%}&href={%url urlencode=1 m=mobile a=product id=$smarty.get.id%}';
+            } else {
+                msg(response.result);
+            }
+        });
+        return false;
+    });
+
+    $('#saveAddress').on('click', function() {
+        var data = {
+            name: $('#addAddress input[name=name]').val(),
+            telephone: $('#addAddress input[name=telephone]').val(),
+            identify: $('#addAddress input[name=identify]').val(),
+            province: $('#province').val(),
+            city: $('#city').val(),
+            county: $('#county').val(),
+            address: $('#addAddress input[name=address]').val(),
+            host: $('#addAddress .default').attr('sel') == 'yes' ? 1 : 0,
+        };
+        $.post('{%url m=ajax c=address a=create%}', data, function(response) {
+            if (response.code == 1) {
+                $('#addAddress').hide();
+                $('#address_box .have_address').show();
+                $('#address_box .have_address .flex_box').removeClass('active');
+                var addressTpl = $('<div class="row flex_box active" data-id="' + response.body.id + '"><div class="edit"></div><div class="address"><div class="line1">' + response.body.name + '</div><div class="line2"><span class="red">' + (response.body.host == 1 ? '[默认]' : '') + '</span>' + response.body.province + '&nbsp;' + response.body.city + '&nbsp;' + response.body.county + '&nbsp;' + response.body.address + '</div></div></div>');
+                addressTpl.bind('click', function() {
+                    $('#address_box .have_address .flex_box').removeClass('active');
+                    $(this).addClass('active');
+                });
+                addressTpl.insertBefore('#address_box .have_address .tianjia');
+
+                $('#addAddress input[name=name]').val('');
+                $('#addAddress input[name=telephone]').val('');
+                $('#addAddress input[name=identify]').val('');
+                $('#province').val('');
+                $('#city').val('');
+                $('#county').val('');
+                $('#addAddress input[name=address]').val('');
+            } else {
+                msg(response.result);
+            }
+        });
+        return false;
+    });
+
+    $('#modifyAddress').on('click', function() {
+        $('#address_box').slideToggle();
+        return false;
+    });
+
+    $('#address_box .title').on('click', function() {
+        if (!$('#addAddress').is(':hidden')) {
+            $('#addAddress').hide();
+            $('#address_box .have_address').show();
+        } else {
+            $('#address_box').slideToggle();
+        }
+        return false;
+    });
+
+    $('#address_box .tianjia').on('click', function() {
+        $('#addAddress').show();
+        $('#address_box .have_address').hide();
+        return false;
+    });
+
+    $('.collect_btn').on('click', function() {
+        var id = '{%$smarty.get.id%}';
+        if ($(this).hasClass('active')) {
+            $(this).removeClass('active');
+            $.post('{%url m=ajax c=favourite a=remove%}', {
+                id: id
+            }, function(response) {
+                if (response.code == 2) {
+                    window.location = '{%url c=mobile a=login%}';
+                } else if (response.code != 1) {
+                    msg(response.result);
+                }
+            });
+        } else {
+            $(this).addClass('active');
+            $.post('{%url m=ajax c=favourite a=create%}', {
+                id: id
+            }, function(response) {
+                if (response.code == 2) {
+                    window.location = '{%url c=mobile a=login%}';
+                } else if (response.code != 1) {
+                    msg(response.result);
+                }
+            });
+        }
+        return false;
+    });
+
+
+    $('.buy_now').on('click', function() {
+        $('#black_bg').show();
+        $('input[name=add_to_cart]').val(0);
+        $('.confirm_btn').html('立即购买');
+    });
+
+    $('.add_to_cart').on('click', function() {
+        // if ($(this).parent().hasClass('disabled'))
+        //     return false;
+        $('#black_bg').show();
+        $('input[name=add_to_cart]').val(1);
+        $('.confirm_btn').html('添加到购物车');
+    });
+
+    function array_equal(a, b) {
+        a = a.sort();
+        b = b.sort();
+        if (a.length != b.length)
+            return false;
+        for (var y = 0; y < a.length; y++) {
+            if (a[y] != b[y])
+                return false;
+        }
+        return true;
+    }
+
+    function get_collection(choose_size, collection) {
+        for (var i = 0; i < collection.length; i++) {
+            var size = collection[i].content.split(',');
+            if (array_equal(size, choose_size)) {
+                return collection[i];
+            }
+        }
+        return null;
+    }
+    
+    $('#size_box .choose_size .bind_box .grid').live('click',function(){
+    	$(this).siblings().removeClass('active');
+        $(this).addClass('active');
+        
+        var choose_size = [];
+        var grid_box = $('.choose_size .grid_box');
+        for (var i = 0; i < grid_box.length; i++)
+        {
+            choose_size.push($(grid_box[i]).find('.active').html());
+        }
+        
+        var bind_dom = $('.binddiv');
+        for(var i=0;i<bind_dom.length;i++)
+       	{
+        	if($(bind_dom[i]).data('content') == choose_size.join(','))
+       		{
+        		if($(this).data('num')==$(bind_dom[i]).data('num'))
+       			{
+        			var num = $(bind_dom[i]).data('num');
+       				var unit = $(bind_dom[i]).data('unit');
+       				
+       				if(choose_size.length!=0)
+       				{
+	       				var size = '已选:<span>' + choose_size.join('</span>,<span>') + '</span>,<span>'+num+unit+'装</span>';
+	       				$('.size').html(size);
+	       				
+	       				$('#size .right').html(choose_size.join(',')+','+num+unit);
+       				}
+       				else
+   					{
+       					var size = '已选:<span>'+num+unit+'装</span>';
+	       				$('.size').html(size);
+	       				
+	       				$('#size .right').html(num+unit);
+   					}
+       				
+       				if($('#user_vip').val()=='2')
+ 					{
+       					
+       					$('#unitprice').html($(bind_dom[i]).data('v2price'));
+ 						var price = parseFloat($(bind_dom[i]).data('v2price')) * parseInt(num);
+ 					}
+       				else if($('#user_vip').val()=='1')
+     				{
+       					$('#unitprice').html($(bind_dom[i]).data('v1price'));
+       					var price = parseFloat($(bind_dom[i]).data('v1price')) * parseInt(num);
+     				}
+       				else
+       				{
+       					$('#unitprice').html($(bind_dom[i]).data('price'));
+       					var price = parseFloat($(bind_dom[i]).data('price')) * parseInt(num);
+       				}
+       				$('#collection_price').html('￥' + parseFloat(price).toFixed(2));
+       				$('#selected_unitprice').val(price);
+       	        	$('.all_box .stock .red').html('￥' + parseFloat(parseFloat(price) * parseInt($('#goods_count').val())).toFixed(2));
+       				
+       			}
+       		}
+       	}
+        
+        return false;
+    });
+
+    $('#size_box .choose_size .grid_box .grid').on('click', function() {
+    	$(this).siblings().removeClass('active');
+        $(this).addClass('active');
+
+        var choose_size = [];
+        var grid_box = $('.choose_size .grid_box');
+        for (var i = 0; i < grid_box.length; i++)
+        {
+            choose_size.push($(grid_box[i]).find('.active').html());
+        }
+
+        var collection = [];
+        var collection_box = $('.collection');
+        for (var i = 0; i < collection_box.length; i++) {
+            collection.push({
+                content: $(collection_box[i]).data('content'),
+                price: $(collection_box[i]).data('price'),
+                v1price: $(collection_box[i]).data('v1price'),
+                v2price: $(collection_box[i]).data('v2price'),
+                stock: $(collection_box[i]).data('stock'),
+                logo: $(collection_box[i]).data('logo'),
+            });
+        }
+        
+        var bind_dom = $('.binddiv');
+        $('.bind_box').empty();
+        var has_active_div = false;
+        var selected_bind = null;
+        var default_selled = $('#default_selled').data('selled');
+        var default_unit = $('#default_unit').data('unit');
+        
+        for(var i=0;i<bind_dom.length;i++)
+       	{
+        	if($(bind_dom[i]).data('content') == choose_size.join(','))
+       		{
+        		var div = $('<div class="grid" data-num="'+$(bind_dom[i]).data('num')+'">'+$(bind_dom[i]).data('num')+$(bind_dom[i]).data('unit')+'装</div>');
+        		if(!has_active_div)
+        		{
+        			div.addClass('active');
+        			has_active_div = true;
+        			selected_bind = {
+        				'content':$(bind_dom[i]).data('content'),
+        				'num':$(bind_dom[i]).data('num'),
+        				'price':$(bind_dom[i]).data('price'),
+        				'v1price':$(bind_dom[i]).data('v1price'),
+        				'v2price':$(bind_dom[i]).data('v2price'),
+        			};
+        			default_selled = $(bind_dom[i]).data('num');
+        			default_unit = $(bind_dom[i]).data('unit');
+        		}
+        		$('.bind_box').append(div);
+       		}
+       	}
+        
+        if(bind_dom.length>0 && !has_active_div)
+        {
+        	$('.bind_box').append('<div class="grid active">'+default_selled+default_unit+'</div>');
+        }
+       
+        var temp_collection = get_collection(choose_size, collection);
+        if (temp_collection != null) {
+        	var size = '已选:<span>' + temp_collection.content.split(',').join('</span>,<span>') + '</span>';
+        	if(bind_dom.length>0)
+            {
+        		size += ',<span>'+default_selled+default_unit+'</span>';
+            }
+            $('.size').html(size);
+            
+            if(bind_dom.length>0)
+           	{
+            	$('#size .right').html(temp_collection.content+','+default_selled+default_unit);
+           	}
+            else
+           	{
+            	$('#size .right').html(temp_collection.content);
+           	}
+            
+            //价格
+            if($('#user_vip').val()=='1')
+           	{
+            	if(has_active_div)
+           		{
+            		$('#unitprice').html(selected_bind.v1price);
+           			var price = parseFloat(selected_bind.v1price) * parseInt(selected_bind.num);
+           		}
+            	else
+           		{
+            		$('#unitprice').html(temp_collection.v1price);
+            		var price = parseFloat(temp_collection.v1price) * parseInt(default_selled);
+           		}
+            }
+            else if($('#user_vip').val()=='2')
+	        {
+            	if(has_active_div)
+            	{
+            		$('#unitprice').html(selected_bind.v2price);
+            		var price = parseFloat(selected_bind.v2price) * parseInt(selected_bind.num);
+            	}
+            	else
+           		{
+            		$('#unitprice').html(temp_collection.v2price);
+            		var price = parseFloat(temp_collection.v2price) * parseInt(default_selled);
+           		}
+            }
+            else
+           	{
+            	if(has_active_div)
+           		{
+            		$('#unitprice').html(selected_bind.price);
+            		var price = parseFloat(selected_bind.price) * parseInt(selected_bind.num);
+           		}
+            	else
+           		{
+            		$('#unitprice').html(temp_collection.price);
+            		var price = parseFloat(temp_collection.price) * parseInt(default_selled);
+           		}
+            }
+            $('#collection_price').html('￥' + parseFloat(price).toFixed(2));
+            $('#selected_unitprice').val(price);
+             
+        	$('.all_box .stock .red').html('￥' + parseFloat(parseFloat(price) * parseInt($('#goods_count').val())).toFixed(2));
+            
+            if ($('#product_autostock').data('value') == '1') {
+                if (temp_collection.stock > 10) {
+                    $('#collection_stock').html('(库存充足)');
+                } else if (temp_collection.stock > 0) {
+                    $('#collection_stock').html('剩余:' + temp_collection.stock);
+                } else {
+                    $('#collection_stock').html('(库存不足)');
+                }
+            } else {
+                $('#collection_stock').html('(库存充足)');
+            }
+
+            if (temp_collection.logo != null && temp_collection.logo != '') {
+                $('#collection_logo').attr('src', temp_collection.logo);
+            }
+        } else {
+            msg('对不起该商品没有库存或暂不销售');
+        }
+    });
+
+    $('#payment_box .title').on('click', function() {
+        $('#payment_box').slideToggle("slow");
+    });
+
+    $('#size_box .title').on('click', function() {
+        $('#size_box').slideToggle("slow");
+    });
+
+    $('#save_collection').on('click', function() {
+        $('#size_box').slideToggle('slow');
+    });
+
+    $('#payment_method .title').on('click', function() {
+        $('#payment_method').slideToggle("slow");
+    });
+
+    $('#coupon .title').on('click', function() {
+        $('#coupon').slideToggle("slow");
+    });
+
+    $('#amount .title').on('click', function() {
+        $('#amount').slideToggle("slow");
+    });
+
+    $('#size').on('click', function() {
+        $('#size_box').slideToggle("slow");
+    });
+
+    $('.default').on('click', function() {
+        var sel = $(this).attr('sel');
+        if (sel == 'no') {
+            $(this).addClass('active');
+            $(this).attr('sel', 'yes');
+        } else {
+            $(this).removeClass('active');
+            $(this).attr('sel', 'no');
+        }
+    });
+
+    $('#payment_method .row').on('click', function() {
+        $(this).siblings().removeClass('active');
+        $(this).addClass('active');
+        $('#payment_method').slideToggle("slow");
+        $('#selectPayment .right').html($(this).find('.left').html());
+    });
+
+    $('.confirm_btn').on('click', function() {
+    	
+    	var choose_size = [];
+        var grid_box = $('.choose_size .grid_box');
+        for (var i = 0; i < grid_box.length; i++)
+        {
+            choose_size.push($(grid_box[i]).find('.active').html());
+        }
+    	
+        if ($('input[name=add_to_cart]').val() == 1) {
+            $.post('{%url m=ajax c=cart a=add%}', {
+                id: '{%$smarty.get.id%}',
+                content: choose_size.join(','),
+                num: $('#goods_count').val(),
+                bind:$('#size_box .choose_size .bind_box .grid.active').data('num'),
+            }, function(response) {
+                if (response.code == 1) {
+			    $(".car_num").html(response.body);
+                    msg('添加到购物车成功');
+                } else if (response.code == 2) {
+                    show_login();
+                } else {
+                    msg(response.result);
+                }
+            });
+            $('#black_bg').hide();
+        } else {
+            var product = {
+                id: '{%$smarty.get.id%}',
+                content: choose_size.join(','),
+                num: $('#goods_count').val(),
+                bind:$('#size_box .choose_size .bind_box .grid.active').data('num'),
+            };
+
+            $.post('{%url m=ajax c=coupon a=mylistsDynamic%}', {
+                product: JSON.stringify([product])
+            }, function(response) {
+                if (response.code == 1) {
+                    var valid = response.body.valid;
+                    var invalid = response.body.invalid;
+                    $('.coupon_page1').empty();
+                    $('.coupon_page2').empty();
+                    for (var i = 0; i < valid.length; i++) {
+                        coupon = valid[i];
+                        var tpl = '<div class="item flex_box"><div class="fl2 quota">￥' + coupon.value + '</div><div class="fl6"><div class="black coupon_name">' + coupon.name.substr(0, 30) + '</div><div class="black">' + (coupon.max != 0 ? '满' + coupon.max + '可使用' : '无限制') + '</div><div class="gray">' + (coupon.endtime == 0 ? '无期限' : unixtotime(coupon.endtime, false, 8)) + '</div></div><div class="fl2"><a class="use_btn use_coupon" data-id="' + coupon.id + '">使用</a></div></div>';
+                        $('.coupon_page1').append(tpl);
+                    }
+                    for (var i = 0; i < invalid.length; i++) {
+                        coupon = invalid[i];
+                        var timestamp = Date.parse(new Date()) / 1000;
+                        if (coupon.used == 1) {
+                            var result = '已使用';
+                        } else if (coupon.endtime != 0 && coupon.endtime <= timestamp) {
+                            var result = '已过期';
+                        } else {
+                            var result = '无法使用';
+                        }
+                        var tpl = '<div class="item flex_box"><div class="fl2 quota">￥' + coupon.value + '</div><div class="fl6"><div class="black coupon_name">' + coupon.name.substr(0, 30) + '</div><div class="black">' + (coupon.max != 0 ? '满' + coupon.max + '可使用' : '无限制') + '</div><div class="gray">' + (coupon.endtime == 0 ? '无期限' : unixtotime(coupon.endtime, false, 8)) + '</div></div><div class="fl2"><a class="use_btn">' + result + '</a></div></div>';
+                        $('.coupon_page2').append(tpl);
+                    }
+                }
+            });
+
+
+            var data = {
+                product: JSON.stringify([product]),
+                prepay: 1,
+                coupon: $('#coupon .flex_box.active .use_coupon').data('id'),
+                address: $('#address_box .have_address .flex_box.active').data('id'),
+            };
+            $.post('{%url m=ajax c=order a=create%}', data, function(response) {
+                if (response.code == 1) {
+                    $('#payment_box').slideToggle("slow");
+                    $('.orderamount').html('￥' + response.body.orderamount);
+                    $('#orderamount').html('￥' + response.body.orderamount);
+                    $('#goodsamount').html('￥' + response.body.goodsamount);
+                    $('#taxamount').html('￥' + response.body.taxamount);
+                    $('#feeamount').html('￥' + response.body.feeamount);
+                    $('#discount').html('￥' + response.body.discount);
+                } else if (response.code == 2) {
+                    show_login();
+                } else {
+                    msg(response.result);
+                }
+            });
+        }
+        return false;
+    });
+
+    $("a[id^=count_down]").click(function() {
+        var count = $("#goods_count").val();
+        if (count > 1) {
+            count--;
+            $("#goods_count").val(count);
+            
+            $('.all_box .stock .red').html('￥'+(count * parseFloat($('#selected_unitprice').val())));
+        }
+    });
+    $("a[id^=count_up]").click(function() {
+        var count = $("#goods_count").val();
+        if (count > 0) {
+            count++;
+            $("#goods_count").val(count);
+           
+            
+           	$('.all_box .stock .red').html('￥'+parseFloat(count * parseFloat($('#selected_unitprice').val())).toFixed(2));
+           	
+        }
+    });
+    $("input[id^=goods_count]").keyup(function() {
+        var cart_id = $(this).attr("cart_id");
+        var count = $("#goods_count").val().replace(/\D/g, '');
+        if (count == "") {
+            count = 1;
+        }
+        if (count > 0) {
+            $("#goods_count").val(count);
+            
+            $('.all_box .stock .red').html('￥'+parseFloat(count * parseFloat($('#selected_unitprice').val())).toFixed(2));
+        }
+    });
+    
+    $('.choose_size li .grid.active:first').trigger('click');
+})
+
+//实现滚动条无法滚动
+var move = function(e) {
+    e.preventDefault();
+};
+
+/***禁止滑动***/
+function stop() {
+    document.body.style.overflow = 'hidden';
+    document.addEventListener("touchmove", move, false); //禁止页面滑动
+}
+
+/***取消滑动限制***/
+function move() {
+    document.body.style.overflow = ''; //出现滚动条
+    document.removeEventListener("touchmove", move, false);
+}
+
+function tabb(obj, n) {
+    $(obj).siblings().removeClass('active');
+    $(obj).addClass('active');
+    var statusCur = n;
+    $('.contitem').hide();
+    $('.coupon_page' + statusCur).show();
+}
+
+
+</script>
+
+</html>

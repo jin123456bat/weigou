@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>淘微购</title>
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-touch-fullscreen" content="yes" />
+    <meta name="full-screen" content="yes"/>
+    <meta name="screen-orientation" content="portrait"/>
+    <meta name="x5-fullscreen" content="true"/>
+    <link rel="stylesheet" type="text/css" href="{%$VIEW_ROOT%}/mobile/css/reset.css">
+    <link rel="stylesheet" type="text/css" href="{%$VIEW_ROOT%}/mobile/css/style.css">
+	<link rel="stylesheet" type="text/css" href="{%$VIEW_ROOT%}/mobile/css/other.css">
+    <script type="text/javascript" src="{%$VIEW_ROOT%}/mobile/js/jquery-1.8.3.min.js"></script>
+    <script type="text/javascript" src="{%$VIEW_ROOT%}/mobile/js/resolution.js"></script>
+	<script type="text/javascript" src="{%$VIEW_ROOT%}/mobile/js/js.js"></script>
+</head>
+<body>
+    <div id="header">
+        <header>
+            <a href="javascript:history.go(-1);" class="left_btn"><i class="icon back"></i></a>
+            <h1>修改收货地址</h1>
+            <a id="submit" class="right_btn">保存</a>
+        </header>
+    </div>
+    <div id="content" style="padding-top: 50px;">
+        <div class="newly_added">
+            <ul>
+                <li class="flex_box">
+                    <div class="left"><span class="red">*</span>姓名：</div>
+                    <div class="right"><input type="text" id="name" placeholder="建议使用真实姓名" value="{%$address.name%}"></div>
+                </li>
+                <li class="flex_box">
+                    <div class="left"><span class="red">*</span>手机号：</div>
+                    <div class="right"><input type="text" id="telephone" placeholder="收货人手机号码" value="{%$address.telephone%}"></div>
+                </li>
+                <li class="flex_box">
+                    <div class="left"><span class="red">*</span>身份证：</div>
+                    <div class="right"><input type="text" id="identify" placeholder="填写后，我们将加密处理" value="{%$address.identify%}"></div>
+                </li>
+                <li class="flex_box">
+                    <div class="left"><span class="red">*</span>省：</div>
+                    <div class="right">
+                        <select name="province" id="province">
+							<option value="">请选择...</option>
+							{%section name=province loop=$province%}
+							<option value="{%$province[province].id%}" {%if $address.province_id == $province[province].id%}selected=selected{%/if%}>{%$province[province].name%}</option>
+							{%/section%}
+                        </select>
+                    </div>
+                </li>
+				<li class="flex_box">
+                    <div class="left"><span class="red">*</span>市：</div>
+                    <div class="right">
+                        <select name="city" id="city">
+							<option value="">请选择...</option>
+                        </select>
+                    </div>
+                </li>
+				<li class="flex_box">
+                    <div class="left"><span class="red">*</span>区：</div>
+                    <div class="right">
+                        <select name="county" id="county">
+							<option value="">请选择...</option>
+                        </select>
+                    </div>
+                </li>
+                <li class="flex_box">
+                    <div class="left"><span class="red">*</span>地址：</div>
+                    <div class="right"><input type="text" id="address" placeholder="" value="{%$address.address%}"></div>
+                </li>
+                <li class="flex_box">
+                    <div class="left"><span class="red"></span>设为默认：</div>
+                    <div class="right"><input type="checkbox" id="host" {%if $address.host==1%}checked="checked"{%/if%}></div>
+                </li>
+            </ul>
+            <div class="gray">注：由于跨境电商的特殊性，需填写真实身份信息谢谢配合。</div>
+        </div>
+    </div>
+	{%include file='mobile/public/msg.html'%}
+</body>
+<script type="text/javascript">
+    $.ajaxSetup({
+		headers:{
+			'X-CSRF-TOKEN':'{%$x_csrf_token%}'
+		}
+	});
+	
+	function loadAddress(province,city,county)
+	{
+		$.get('{%url m=api c=common a=address%}',{type:'city',pid:province},function(response){
+			if(response.code==1)
+			{
+				$('#city').empty().append('<option>请选择</option>');
+				for(var i=0;i<response.body.length;i++)
+				{
+					var selectedString = response.body[i].id==city?'selected="selected"':'';
+					$('#city').append('<option value="'+response.body[i].id+'" '+selectedString+'>'+response.body[i].name+'</option>');
+				}
+			}
+		});
+		
+		$.get('{%url m=api c=common a=address%}',{type:'county',cid:city},function(response){
+			if(response.code==1)
+			{
+				console.log(response);
+				console.log(county);
+				$('#county').empty().append('<option>请选择</option>');
+				for(var i=0;i<response.body.length;i++)
+				{
+					var selectedString = response.body[i].id==county?'selected="selected"':'';
+					$('#county').append('<option value="'+response.body[i].id+'" '+selectedString+'>'+response.body[i].name+'</option>');
+				}
+			}
+		});
+	}
+	
+	loadAddress('{%$address.province_id%}','{%$address.city_id%}','{%$address.county_id%}');
+	
+	
+	$('#province').on('change',function(){
+		$.get('{%url m=api c=common a=address%}',{type:'city',pid:$(this).val()},function(response){
+			if(response.code==1)
+			{
+				$('#city').empty().append('<option>请选择</option>');
+				for(var i=0;i<response.body.length;i++)
+				{
+					$('#city').append('<option value="'+response.body[i].id+'">'+response.body[i].name+'</option>');
+				}
+			}
+		});
+	});
+	
+	$('#city').on('change',function(){
+		$.get('{%url m=api c=common a=address%}',{type:'county',cid:$(this).val()},function(response){
+			if(response.code==1)
+			{
+				$('#county').empty().append('<option>请选择</option>');
+				for(var i=0;i<response.body.length;i++)
+				{
+					$('#county').append('<option value="'+response.body[i].id+'">'+response.body[i].name+'</option>');
+				}
+			}
+		});
+	});
+	
+	$('#submit').on('click',function(){
+		var data = {
+			id:'{%$address.id%}',
+			name:$.trim($('#name').val()),
+			telephone:$.trim($('#telephone').val()),
+			identify:$.trim($('#identify').val()),
+			province:$('#province').val(),
+			city:$('#city').val(),
+			county:$('#county').val(),
+			address:$.trim($('#address').val()),
+			host:$('#host:checked').length,
+		};
+		$.post('{%url m=ajax c=address a=save%}',data,function(response){
+			if(response.code==1)
+			{
+				window.location = '{%url c=mobile a=address%}';
+			}
+			else
+			{
+				msg(response.result);
+			}
+		});
+		return false;
+	});
+</script>
+</html>

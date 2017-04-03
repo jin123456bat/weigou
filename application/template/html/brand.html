@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="utf-8" />
+		<title>{%$page_title%}</title>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+       	<meta name="renderer" content="webkit">
+        <meta content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport" />
+        <!-- reset -->
+        <link rel="stylesheet" href="//cdn.bootcss.com/normalize/5.0.0/normalize.min.css">
+		<!-- 新 Bootstrap 核心 CSS 文件 -->
+        <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<!-- 可选的Bootstrap主题文件（一般不用引入） -->
+		<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
+		
+		<!--icon-->
+		<link rel="stylesheet" href="{%$VIEW_ROOT%}/html/css/plugins/font-awesome/css/font-awesome.min.css">
+		<!--自定义css-->
+		<link rel="stylesheet" href="{%resource path='/html/css/global.css'%}">
+		<script type="text/javascript">
+			function lpad(num, n) {  
+				return Array(n>(''+num).length?(n-(''+num).length+1):0).join(0)+num;  
+			}
+		</script>
+	</head>
+	<body>
+		{%include file='html/public/header.html'%}
+		<div class="body container-fluid">
+			<div class="row">
+				{%include file='html/public/sidebar.html'%}
+				<div class="content">
+			  		<div class="content-body">
+			  			<div class="white-block">
+			  				<div class="wall-block">
+								<p>商品配置 - 商品品牌</p>
+							</div>
+			  			</div>
+			  			<div class="divider"></div>
+			  			<div class="white-block">
+			  				
+			  				<div class="tab">
+			  					<div class="tab-header">
+			  						<a class="tab-title active" href="#all">全部品牌</a>
+			  					</div>
+			  					<div class="tab-body">
+			  						<div class="tab-page active" id="all">
+			  							<div class="line">
+			  								<a href="./index.php?c=html&a=create_brand" class="btn red btn-outline btn-small">添加品牌</a>
+			  								<a class="btn red btn-outline btn-small">导入品牌</a>
+			  								<a class="btn red btn-outline btn-small">导出品牌</a>
+			  								
+			  								<form class="form-inline pull-right" id="dt_search">
+												<div class="form-group">
+													<input type="text" name="search" class="form-control input-sm" placeholder="品牌名称">
+												</div>
+												<button class="btn btn-small btn-orange pull-right" style="height: 30px; margin-left: 10px;">搜索</button>
+											</form>
+			  							</div>
+			  							<div class="">
+			  								<table class="table table-hover">
+			  									<thead>
+			  										<tr>
+			  											<td width="1%">
+			  												<input type="checkbox">
+			  											</td>
+			  											<td width="10%">
+			  												品牌图片
+			  											</td>
+			  											<td width="10%">
+			  												品牌中文名
+			  											</td>
+			  											<td width="10%">
+			  												品牌英文名
+			  											</td>
+			  											<td width="10%">
+			  												品牌国家
+			  											</td>
+			  											<td width="49%">
+			  												品牌描述
+			  											</td>
+			  											<td width="10%" style="text-align: center;">
+			  												品牌操作
+			  											</td>
+			  										</tr>
+			  									</thead>
+			  									<tbody>
+			  									</tbody>
+			  									<tfoot>
+			  										<tr>
+			  										<td colspan="10" style="text-align: right;">
+			  											
+			  										</td>
+			  										</tr>
+			  									</tfoot>
+			  								</table>
+			  							</div>
+			  						</div>
+			  					</div>
+			  				</div>
+			  				<!--
+			  				<div class="top-tips">
+			  					<div class="top-tips-title">
+			  						操作提示
+			  					</div>
+			  					<div class="top-tips-body">
+			  						<p>该页面展示了商城所有的商品信息，可对商品进行编辑修改操作。</p>
+			  						<p>可输入商品名称关键字进行搜索，侧边栏进行高级搜索。</p>
+			  					</div>
+			  				</div>
+			  				-->
+			  			</div>
+			  			
+			  		</div>				  
+				</div>
+			</div>
+		</div>
+		<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+		<script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+		<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+		<script src="http://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		<!--alert-->
+		<script src="//cdn.bootcss.com/bootbox.js/4.4.0/bootbox.min.js"></script>
+		<script src="{%resource path='/html/js/datatables.js'%}"></script>
+		<script src="{%resource path='/html/js/global.js'%}"></script>
+		<script type="text/javascript">
+			setInterval(function(){
+				var datetimeController = new Date();
+				var date = datetimeController.getFullYear()+'-'+lpad(datetimeController.getMonth()+1,2)+'-'+lpad(datetimeController.getDate(),2);
+				$('.date').text(date);
+				
+				var time = lpad(datetimeController.getHours(),2)+':'+lpad(datetimeController.getMinutes(),2);
+				$('.time').text(time);
+			
+				var week = datetimeController.getDay();
+				var weekArray = ['日','一','二','三','四','五','六'];
+				var week = '星期'+weekArray[week];
+				$('.week').text(week);
+			},1000);
+			
+			var dt = datatables({
+				table:$('table'),
+				ajax:{
+					url:'{%url c=datatables a=brand%}',
+				},
+				columns:[{
+					data:'id',
+					name:'brand.id',
+				},{
+					data:'logo',
+					name:'upload.path',
+				},{
+					data:'name_cn',
+					name:'brand.name_cn',
+				},{
+					data:'name_en',
+					name:'brand.name_en',
+				},{
+					data:'origin',
+					name:'country.name',
+				},{
+					data:'description',
+					name:'description'
+				},{
+					data:'id',
+					name:'brand.id',
+				}],
+				columnDefs:[{
+					targets:0,
+					render:function(data,full){
+						return '<input type="checkbox">';
+					}
+				},{
+					targets:1,
+					render:function(data,full){
+						return '<img src="'+data+'" width="60" height="60" onerror="this.src=\'https://placeholdit.imgix.net/~text?txtsize=18&txt=%E6%AD%A4%E5%A4%84%E6%97%A0%E5%9B%BE&w=60&h=60\';">';
+					}
+				},{
+					targets:6,
+					render:function(data,full){
+						return '<button data-id="'+data+'" class="btn btn-outline btn-xs editBtn">编辑</button><div class="space"></div><button data-id="'+data+'" class="btn btn-outline btn-xs removeBtn">删除</button>';
+					}
+				}],
+				pagesize:10,
+				onRowLoaded:function(row){
+					row.find('td:last').css('text-align','center');
+				}
+			});
+			
+			$('table').on('click','.removeBtn',function(){
+				var id = $(this).data('id');
+				var btn = $(this);
+				bootbox.confirm({
+					message:'确认删除?',
+					buttons:{
+						cancel:{
+							label: '<i class="fa fa-times"></i> 取消',
+						},
+						confirm:{
+							label:'<i class="fa fa-check"></i> 确定',
+						}
+					},
+					callback: function(result,a) {
+						if(result) {
+							$.post('{%url m=ajax c=brand a=remove%}',{id:id},function(response){
+								if(response.code==1)
+								{
+									dt.reload();
+								}
+								else
+								{
+									bootbox.alert(response.result);
+								}
+							})
+						}
+					},  
+				});
+			});
+			
+			$('table').on('click','.editBtn',function(){
+				var id = $(this).data('id');
+				window.location = './index.php?c=html&a=edit_brand&id='+id;
+			});
+			
+			$('#dt_search').on('submit',function(){
+				var search = $.trim($(this).find('[name=search]').val());
+				dt.search(search);
+				return false;
+			});
+		</script>
+	</body>
+</html>

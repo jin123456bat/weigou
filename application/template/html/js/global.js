@@ -1,0 +1,58 @@
+/*获取当前时间戳*/
+var timestamp = function(){
+	"use strict";
+	
+	return Date.parse( new Date())/1000;
+};
+
+/*时间戳转时间*/
+var unixtotime = function(unixTime, isFull, timeZone) {
+	if (typeof (timeZone) == 'number')
+	{
+		unixTime = parseInt(unixTime) + parseInt(timeZone) * 60 * 60;
+	}
+	var time = new Date(unixTime * 1000);
+	var ymdhis = "";
+	ymdhis += time.getUTCFullYear() + "-";
+	ymdhis += (time.getUTCMonth()+1) + "-";
+	ymdhis += time.getUTCDate();
+	if (isFull === true)
+	{
+		ymdhis += " " + lpad(time.getUTCHours(),2) + ":";
+		ymdhis += lpad(time.getUTCMinutes(),2) + ":";
+		ymdhis += lpad(time.getUTCSeconds(),2);
+	}
+	return ymdhis;
+}
+
+$('img').on('error',function(){
+	$(this).prop('src','https://placeholdit.imgix.net/~text?txtsize=18&txt=%E6%AD%A4%E5%A4%84%E6%97%A0%E5%9B%BE&w=60&h=60');
+})
+
+setInterval(function(){
+	var datetimeController = new Date();
+	var date = datetimeController.getFullYear()+'-'+lpad(datetimeController.getMonth()+1,2)+'-'+lpad(datetimeController.getDate(),2);
+	$('.date').text(date);
+
+	var time = lpad(datetimeController.getHours(),2)+':'+lpad(datetimeController.getMinutes(),2);
+	$('.time').text(time);
+
+	var week = datetimeController.getDay();
+	var weekArray = ['日','一','二','三','四','五','六'];
+	var week = '星期'+weekArray[week];
+	$('.week').text(week);
+},1000);
+
+
+//兼容锚点
+var getHref = function(){
+	pos = window.location.href.indexOf('#');
+	if(pos!=-1)
+	{
+		return window.location.href.substring(pos+1);
+	}
+}
+if(getHref())
+{
+	$('a[href=#'+getHref()+']').trigger('click');
+}

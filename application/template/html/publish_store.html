@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="utf-8" />
+		<title>{%$page_title%}</title>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+       	<meta name="renderer" content="webkit">
+        <meta content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport" />
+        <!-- reset -->
+        <link rel="stylesheet" href="//cdn.bootcss.com/normalize/5.0.0/normalize.min.css">
+		<!-- 新 Bootstrap 核心 CSS 文件 -->
+        <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<!-- 可选的Bootstrap主题文件（一般不用引入） -->
+		<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
+		<!--icon-->
+		<link rel="stylesheet" href="{%$VIEW_ROOT%}/html/css/plugins/font-awesome/css/font-awesome.min.css">
+		<!--自定义css-->
+		<link rel="stylesheet" href="{%resource path='/html/css/global.css'%}">
+		<script type="text/javascript">
+			function lpad(num, n) {  
+				return Array(n>(''+num).length?(n-(''+num).length+1):0).join(0)+num;  
+			}
+		</script>
+	</head>
+	<body>
+		<div id="publishModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<form class="form-horizontal" role="form">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							<h4 class="modal-title">添加供货商</h4>
+						</div>
+						<div class="modal-body">
+							<div class="form-group">
+								<label class="col-md-2 control-label">名称</label>
+								<div class="col-md-9">
+									<input type="text" class="form-control" name="name">
+								</div>
+							</div>
+						</div>
+						<div class="modal-body">
+							<div class="form-group">
+								<label class="col-md-2 control-label">密码</label>
+								<div class="col-md-9">
+									<input type="text" class="form-control" name="password">
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer" style="padding: 0px;">
+							<div class="modal-button-group">
+								<div class="modal-button submit">确认</div>
+								<div data-dismiss="modal" class="modal-button">取消</div>
+							</div>
+						</div>
+					</form>
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+		<div id="storeModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<form class="form-horizontal" role="form">
+						<input type="hidden" name="id" value="">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							<h4 class="modal-title">添加/编辑仓库</h4>
+						</div>
+						<div class="modal-body">
+							<div class="form-group">
+								<label class="col-md-2 control-label">仓库名称</label>
+								<div class="col-md-9">
+									<input type="text" class="form-control" name="name">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-md-2 control-label">ERP</label>
+								<div class="col-md-9">
+									<input type="text" class="form-control" value="" name="erp" readonly>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-md-2 control-label">推送</label>
+								<div class="col-md-9">
+									<div class="radio-list">
+										<label class="radio-inline">
+											<input type="radio" name="is_auto" value="1"> 自动 </label>
+										<label class="radio-inline">
+											<input type="radio" name="is_auto" value="0"> 手动 </label>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer" style="padding: 0px;">
+							<div class="modal-button-group">
+								<div class="modal-button submit">确认</div>
+								<div data-dismiss="modal" class="modal-button">取消</div>
+							</div>
+						</div>
+					</form>
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+
+		{%include file='html/public/header.html'%}
+		<div class="body container-fluid">
+			<div class="row">
+				{%include file='html/public/sidebar.html'%}
+				<div class="content">
+			  		<div class="content-body">
+			  			<div class="white-block">
+			  				<div class="wall-block">
+								<p>商品管理 - 补货清单</p>
+							</div>
+			  			</div>
+			  			<div class="divider"></div>
+			  			<div class="white-block">
+							<div class="space"></div>
+							<div class="top-tips">
+								<div class="top-tips-title">
+									操作提示
+								</div>
+								<div class="top-tips-body">
+									<p>根据商品类目设定库存的临界值。</p>
+									<p>当商品的库存值低于临界值，起库存值将被归零。</p>
+								</div>
+							</div>
+
+							<div class="line"></div>
+							<div class="row">
+								<div class="col-md-4 publish">
+									<div class="select-multiple-search">
+										<input type="text" placeholder="输入名称查找" class="search">
+										<div class="icon">
+											<span class="glyphicon glyphicon-search"></span>
+										</div>
+									</div>
+									<div class="select-multiple-create" data-type="publish">
+										<div class="icon">
+											<i class="fa fa-plus"></i>
+										</div>
+										添加供货商
+									</div>
+									<div class="select-multiple font-dark">
+									</div>
+								</div>
+								<div class="col-md-4 store">
+									<div class="select-multiple-search">
+										<input type="text" placeholder="输入名称查找" class="search">
+										<div class="icon">
+											<span class="glyphicon glyphicon-search"></span>
+										</div>
+									</div>
+									<div class="select-multiple-create" data-type="store">
+										<div class="icon">
+											<i class="fa fa-plus"></i>
+										</div>
+										添加仓库
+									</div>
+									<div class="select-multiple font-dark">
+									</div>
+								</div>
+							</div>
+			  			</div>
+			  		</div>				  
+				</div>
+			</div>
+		</div>
+		<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+		<script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+		<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+		<script src="http://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		<!--alert-->
+		<script src="//cdn.bootcss.com/bootbox.js/4.4.0/bootbox.min.js"></script>
+		<script src="{%resource path='/html/js/global.js'%}"></script>
+		<script type="text/javascript">
+			$.ajaxSetup({
+				headers:{
+					'X-CSRF-TOKEN':'{%$x_csrf_token%}'
+				}
+			});
+			
+			//搜索分类
+			$('.search').on('keyup',function(){
+				if($.trim($(this).val()).length != 0)
+				{
+					var searchText = $.trim($(this).val());
+					$(this).parents('.col-md-4').find('.option').each(function(index,value){
+						if($(value).text().indexOf(searchText) >= 0)
+						{
+							$(value).show();
+						}
+						else
+						{
+							$(value).hide();
+						}
+					});
+				}
+				else
+				{
+					$(this).parents('.col-md-4').find('.option').each(function(index,value){
+						$(value).show();
+					});
+				}
+			});
+			//点击分类项目的时候设置为选中状态
+			$('.select-multiple').on('click','.option',function(){
+				$(this).siblings().removeClass('active');
+				$(this).addClass('active');
+				return false;
+			});
+			//载入分类的统一的函数
+			function load(type)
+			{
+				$('.col-md-4.'+type+' .select-multiple').empty();
+				$.get('./index.php?m=ajax&c='+type+'&a=lists',function(response){
+					if(response.code==1)
+					{
+						for(var i=0;i<response.body.length;i++)
+						{
+							if(type=='store')
+							{
+								$_icon = '<div class="icon"><i class="fa fa-edit"></i><i class="fa fa-remove"></i></div>';
+							}
+							else
+							{
+								$_icon = '<div class="icon"><i class="fa fa-remove"></i></div>';
+							}
+							tpl = '<div class="option" data-type="'+type+'" data-id="'+response.body[i].id+'">'+response.body[i].name+$_icon+'</div>';
+							$('.col-md-4.'+type+' .select-multiple').append(tpl);
+						}
+					}
+					else
+					{
+						alert('异常！');
+					}
+				});
+				return false;
+			}
+			
+			//载入publish
+			load('publish');
+			load('store');
+			
+			$('.select-multiple').on('click','.fa-remove',function(){
+				var type = $(this).parents('.option').data('type');
+				var id = $(this).parents('.option').data('id');
+				var option = $(this).parents('.option');
+				bootbox.confirm({
+					message:'确认删除?',
+					buttons:{
+						cancel:{
+							label: '<i class="fa fa-times"></i> 取消',
+						},
+						confirm:{
+							label:'<i class="fa fa-check"></i> 确定',
+						}
+					},
+					callback: function(result,a) {
+						if(result) {
+							$.post('./index.php?m=ajax&c='+type+'&a=remove',{id:id},function(response){
+								if(response.code==1)
+								{
+									option.remove();
+								}
+								else
+								{
+									bootbox.alert(response.result);
+								}
+							});
+						}
+					},
+				});
+			});
+			
+			$('.select-multiple').on('click','.fa-edit',function(){
+				id = $(this).parents('.option').data('id');
+				type = $(this).parents('.option').data('type');
+				if(type=='publish')
+				{
+					return false;
+				}
+				$.get('./index.php?m=ajax&c=store&a=find',{id:id},function(response){
+					if(response.code==1)
+					{
+						$('#storeModal input[name=id]').val(id);
+						$('#storeModal input[name=name]').val(response.body.name);
+						if(response.body.erp!=null)
+						{
+							$('#storeModal input[name=erp]').parents('.form-group').removeClass('display-none');
+							$('#storeModal input[name=is_auto]').parents('.form-group').removeClass('display-none');
+							$('#storeModal input[name=erp]').val(response.body.erp);
+							$('#storeModal input[name=is_auto][value='+response.body.is_auto+']').prop('checked',true);
+						}
+						else
+						{
+							$('#storeModal input[name=erp]').parents('.form-group').addClass('display-none');
+							$('#storeModal input[name=is_auto]').parents('.form-group').addClass('display-none');
+						}
+					}
+				});
+				$('#storeModal').modal('show');
+				return false;
+			});
+			
+			$('#storeModal .submit').on('click',function(){
+				$('#storeModal form').submit();
+			});
+			
+			$('.select-multiple-create').on('click',function(){
+				var type = $(this).data('type');
+				var modal = $('#'+type+'Modal');
+				modal.modal('show');
+				modal.find('input[name=name]').val('');
+				
+				$('#storeModal input[name=id]').val('');
+				$('#storeModal input[name=erp]').parents('.form-group').addClass('display-none');
+				$('#storeModal input[name=is_auto]').parents('.form-group').addClass('display-none');
+				$('#publishModal input[name=password]').val('');
+			});
+			
+			$('#storeModal form').on('submit',function(){
+				id=$.trim($(this).find('input[name=id]').val());
+				name = $.trim($(this).find('input[name=name]').val());
+				var data = {
+					id:id,
+					name:name,
+					is_auto:$(this).find('input[name=is_auto]:checked').val(),
+				};
+				var url = id.length==0?'./index.php?m=ajax&c=store&a=create':'./index.php?m=ajax&c=store&a=save';
+				$.post(url,data,function(response){
+					if(response.code==1)
+					{
+						load('store');
+						$('#storeModal').modal('hide');
+					}
+					else
+					{
+						bootbox.alert(response.result);
+					}
+				});
+				return false;
+			});
+			
+			$('#publishModal .submit').on('click',function(){
+				$('#publishModal form').submit();
+			});
+			$('#publishModal form').on('submit',function(){
+				var name = $(this).find('input[name=name]').val();
+				var password = $(this).find('input[name=password]').val();
+				$.post('./index.php?m=ajax&c=publish&a=create',{name:name,password:password},function(response){
+					if(response.code==1)
+					{
+						load('publish');
+						$('#publishModal').modal('hide');
+					}
+					else
+					{
+						bootbox.alert(response.result);
+					}
+				});
+				return false;
+			});
+		</script>
+	</body>
+</html>

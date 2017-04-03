@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="utf-8" />
+		<title>{%$page_title%}</title>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+       	<meta name="renderer" content="webkit">
+        <meta content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport" />
+        <!-- reset -->
+        <link rel="stylesheet" href="//cdn.bootcss.com/normalize/5.0.0/normalize.min.css">
+		<!-- 新 Bootstrap 核心 CSS 文件 -->
+        <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<!-- 可选的Bootstrap主题文件（一般不用引入） -->
+		<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
+		<!--icon-->
+		<link rel="stylesheet" href="{%$VIEW_ROOT%}/html/css/plugins/font-awesome/css/font-awesome.min.css">
+		<!--自定义css-->
+		<link rel="stylesheet" href="{%resource path='/html/css/global.css'%}">
+		<script type="text/javascript">
+			function lpad(num, n) {  
+				return Array(n>(''+num).length?(n-(''+num).length+1):0).join(0)+num;  
+			}
+		</script>
+	</head>
+	<body>
+		<div id="confirm" class="modal fade" tabindex="-1" data-width="760" data-backdrop="static" data-keyboard="false" data-attention-animation="false">
+            <form class="form-horizontal" role="form">
+               <div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-body">
+						<input type="hidden" name="id" value="">
+						<button type="button" class="bootbox-close-button close" data-dismiss="modal" aria-hidden="true" style="margin-top: -10px;">×</button>
+						<p> 您确定要删除这个分类吗？ </p>
+					</div>
+					<div class="modal-footer" style="padding: 0px;">
+						<div class="modal-button-group">
+							<div class="modal-button submit">确认</div>
+							<div data-dismiss="modal" class="modal-button">取消</div>
+						</div>
+					</div>
+				   </div>
+				</div>
+            </form>
+        </div>
+		<div id="createCategoryModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<input type="hidden" name="level" value="">
+					<form class="form-horizontal" role="form">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							<h4 class="modal-title" id="gridSystemModalLabel">添加/编辑分类</h4>
+						</div>
+						<div class="modal-body">
+							<input type="hidden" name="id" value="">
+							<div class="form-group">
+								<label class="col-md-2 control-label">分类名称</label>
+								<div class="col-md-9">
+									<input type="text" class="form-control" name="name">
+								</div>
+							</div>
+							<div class="form-group" id="up_category">
+								<label class="col-md-2 control-label">上级分类</label>
+								<div class="col-md-9">
+									<select class="form-control" name="bc_id"></select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-md-2 control-label">排序</label>
+								<div class="col-md-9">
+									<input type="text" class="form-control" name="sort">
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer" style="padding: 0px;">
+							<div class="modal-button-group">
+								<div class="modal-button submit">确认</div>
+								<div data-dismiss="modal" class="modal-button">取消</div>
+							</div>
+						</div>
+					</form>
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+		{%include file='html/public/header.html'%}
+		<div class="body container-fluid">
+			<div class="row">
+				{%include file='html/public/sidebar.html'%}
+				<div class="content">
+			  		<div class="content-body">
+			  			<div class="white-block">
+			  				<div class="wall-block">
+								<p>商品配置 - 商品分类</p>
+							</div>
+			  			</div>
+			  			<div class="divider"></div>
+			  			<div class="white-block">
+			  				<div class="row">
+								<div class="col-md-4">
+									<div class="select-multiple-search">
+										<input type="text" placeholder="输入名称查找" class="search">
+										<div class="icon">
+											<span class="glyphicon glyphicon-search"></span>
+										</div>
+									</div>
+									<div class="select-multiple-create" data-level="0">
+										<div class="icon">
+											<i class="fa fa-plus"></i>
+										</div>
+										添加一级分类
+									</div>
+									<div class="select-multiple font-dark">
+									</div>
+								</div>
+								<div class="col-md-4">
+									<div class="select-multiple-search">
+										<input type="text" placeholder="输入名称查找" class="search">
+										<div class="icon">
+											<span class="glyphicon glyphicon-search"></span>
+										</div>
+									</div>
+									<div class="select-multiple-create" data-level="1">
+										<div class="icon">
+											<i class="fa fa-plus"></i>
+										</div>
+										添加二级分类
+									</div>
+									<div class="select-multiple font-dark">
+									</div>
+								</div>
+								<div class="col-md-4">
+									<div class="select-multiple-search">
+										<input type="text" placeholder="输入名称查找" class="search">
+										<div class="icon">
+											<span class="glyphicon glyphicon-search"></span>
+										</div>
+									</div>
+									<div class="select-multiple-create" data-level="2">
+										<div class="icon">
+											<i class="fa fa-plus"></i>
+										</div>
+										添加三级分类
+									</div>
+									<div class="select-multiple font-dark">
+									</div>
+								</div>
+							</div>
+			  			</div>
+			  		</div>				  
+				</div>
+			</div>
+		</div>
+		<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+		<script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+		<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+		<script src="http://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		<!--alert-->
+		<script src="//cdn.bootcss.com/bootbox.js/4.4.0/bootbox.min.js"></script>
+		<script src="{%resource path='/html/js/global.js'%}"></script>
+		<script type="text/javascript">
+			$.ajaxSetup({
+				headers:{
+					'X-CSRF-TOKEN':'{%$x_csrf_token%}'
+				}
+			});
+			
+			//搜索分类
+			$('.search').on('keyup',function(){
+				if($.trim($(this).val()).length != 0)
+				{
+					var searchText = $.trim($(this).val());
+					$(this).parents('.col-md-4').find('.option').each(function(index,value){
+						if($(value).text().indexOf(searchText) >= 0)
+						{
+							$(value).show();
+						}
+						else
+						{
+							$(value).hide();
+						}
+					});
+				}
+				else
+				{
+					$(this).parents('.col-md-4').find('.option').each(function(index,value){
+						$(value).show();
+					});
+				}
+			});
+			
+			//点击分类项目的时候设置为选中状态
+			$('.select-multiple').on('click','.option',function(){
+				$(this).siblings().removeClass('active');
+				$(this).addClass('active');
+				loadCategory($(this).data('id'),parseInt($(this).data('level'))+1);
+				return false;
+			});
+			
+			//载入分类的统一的函数
+			function loadCategory(bc_id,c_level)
+			{
+                if (c_level == 1)
+                {
+                    $('.col-md-4:eq(2) .select-multiple').empty();
+                }
+                if (c_level == 0)
+                {
+                    $('.col-md-4:eq(1) .select-multiple').empty();
+                    $('.col-md-4:eq(2) .select-multiple').empty();
+                }
+				if(c_level>2)
+				{
+					return false;
+				}
+				else if(c_level==0)
+				{
+					bc_id = null;
+				}
+				$('.col-md-4:eq('+c_level+') .select-multiple').empty();
+				$.post('{%url m=ajax c=bcategory a=show%}',{bc_id:bc_id},function(response){
+					if(response.code==1)
+					{
+						for(var i=0;i<response.body.length;i++)
+						{
+							tpl = '<div class="option" data-id="'+response.body[i].id+'" data-level="'+c_level+'" data-sort="'+response.body[i].sort+'">'+response.body[i].name+'<div class="icon"><i class="fa fa-edit"></i><i class="fa fa-remove"></i></div></div>';
+							$('.col-md-4:eq('+c_level+') .select-multiple').append(tpl);
+						}
+					}
+					else
+					{
+						alert('异常！');
+					}
+				});
+				return false;
+			}
+			
+			//载入第一级分类
+			loadCategory(null,0);
+			
+			//点击修改按钮
+            $('.select-multiple').on('click','.fa-edit',function(){
+                var level = $(this).parents('.option').data('level');
+                if (level == 0)
+                {
+                    $('#up_category').hide();
+                    $('#createCategoryModal input[name=level]').val(0);
+                }
+                if (level == 1)
+                {
+                    $('#up_category').show();
+                    $('#up_category select').empty();
+                    if ($('.col-md-4:eq(0) .select-multiple .option').length==0) {
+                        $('#up_category select').append('<option value="" disabled="disabled" selected="selected">暂无上级分类</option>');
+                    }
+                    $('.col-md-4:eq(0) .select-multiple .option').each(function(index,value){
+                        var id = $(value).data('id');
+                        var name = $(value).text();
+                        $('#up_category select').append('<option value="'+id+'">'+name+'</option>');
+                    });
+                    $('#createCategoryModal input[name=level]').val(1);
+                }
+                if (level == 2)
+                {
+                    $('#up_category').show();
+                    $('#up_category select').empty();
+                    if ($('.col-md-4:eq(1) .select-multiple .option').length==0) {
+                        $('#up_category select').append('<option value="" disabled="disabled" selected="selected">暂无上级分类</option>');
+                    }
+                    $('.col-md-4:eq(1) .select-multiple .option').each(function(index,value){
+                        var id = $(value).data('id');
+                        var name = $(value).text();
+                        $('#up_category select').append('<option value="'+id+'">'+name+'</option>');
+                    });
+                    $('#createCategoryModal input[name=level]').val(2);
+                }
+                $.post('{%url m=ajax c=bcategory a=find%}',{id:$(this).parents('.option').data('id')},function(response){
+                    if (response.code==1) {
+                        $('#createCategoryModal input[name=name]').val(response.body.name);
+                        $('#createCategoryModal input[name=sort]').val(response.body.sort);
+                        $('#createCategoryModal input[name=id]').val(response.body.id);
+                        $('#createCategoryModal select[name=bc_id]').val(response.body.bc_id);
+                        $('#createCategoryModal').modal('show');
+                    }
+                });
+                return false;
+            });
+			
+			//点击按钮弹出创建分类的窗口
+            $('.select-multiple-create').on('click',function(){
+                if ($(this).data('level') == 0)
+                {
+                    $('#up_category').hide();
+                    $('#createCategoryModal input[name=level]').val(0);
+                }
+                if ($(this).data('level') == 1)
+                {
+                    $('#up_category').show();
+                    $('#up_category select').empty();
+                    if ($('.col-md-4:eq(0) .select-multiple .option').length==0) {
+                        $('#up_category select').append('<option value="" disabled="disabled" selected="selected">暂无上级分类</option>');
+                    }
+                    $('.col-md-4:eq(0) .select-multiple .option').each(function(index,value){
+                        var id = $(value).data('id');
+                        var name = $(value).text();
+                        if($(value).hasClass('active'))
+						{
+							$('#up_category select').append('<option value="'+id+'" selected="selected">'+name+'</option>');
+						}
+						else
+						{
+							$('#up_category select').append('<option value="'+id+'">'+name+'</option>');
+						}
+                    });
+                    $('#createCategoryModal input[name=level]').val(1);
+                }
+                if ($(this).data('level') == 2)
+                {
+                    $('#up_category').show();
+                    $('#up_category select').empty();
+                    if ($('.col-md-4:eq(1) .select-multiple .option').length==0) {
+                        $('#up_category select').append('<option value="" disabled="disabled" selected="selected">暂无上级分类</option>');
+                    }
+                    $('.col-md-4:eq(1) .select-multiple .option').each(function(index,value){
+                        var id = $(value).data('id');
+                        var name = $(value).text();
+						if($(value).hasClass('active'))
+						{
+							$('#up_category select').append('<option value="'+id+'" selected="selected">'+name+'</option>');
+						}
+						else
+						{
+							$('#up_category select').append('<option value="'+id+'">'+name+'</option>');
+						}
+                    });
+                    $('#createCategoryModal input[name=level]').val(2);
+                }
+                $('#createCategoryModal input[name=id]').val('');
+				$('#createCategoryModal input[name=name]').val('');
+                $('#createCategoryModal input[name=sort]').val('');
+                $('#createCategoryModal').modal('show');
+                return false;
+            });
+			
+			//确定添加分类
+			$('#createCategoryModal .submit').on('click',function(){
+                var name = $.trim($('#createCategoryModal input[name=name]').val());
+                var sort = parseInt($('#createCategoryModal input[name=sort]').val());
+                var bc_id = parseInt($('#createCategoryModal select[name=bc_id]').val());
+                var id = $('#createCategoryModal input[name=id]').val();
+                var level = $('#createCategoryModal input[name=level]').val();
+                if (id.length!=0) {
+                    url = '{%url m=ajax c=bcategory a=save%}';
+                    data = {id:id,name:name,sort:sort,bc_id:bc_id,level:level};
+                }
+                else
+                {
+                    url = '{%url m=ajax c=bcategory a=create%}';
+                    data = {name:name,sort:sort,bc_id:bc_id,level:level};
+                }
+                $.post(url,data,function(response){
+                    if(response.code==1)
+                    {
+                        if (id.length==0)
+                        {
+                            var inserted = false;
+                            $('.col-md-4:eq('+level+') .select-multiple .option').each(function(index,value){
+                                if(parseInt(response.body.sort) < parseInt($(value).data('sort')))
+                                {
+                                    tpl = '<div class="option" data-id="'+response.body.id+'" data-level="'+level+'" data-sort="'+response.body.sort+'">'+response.body.name+'<div class="icon"><i class="fa fa-edit"></i><i class="fa fa-remove"></i></div></div>';
+                                    $(tpl).insertBefore($(value));
+                                    inserted = true;
+                                    return false;
+                                }
+                            });
+                            if (!inserted)
+                            {
+                                tpl = '<div class="option" data-id="'+response.body.id+'" data-level="'+level+'" data-sort="'+response.body.sort+'">'+response.body.name+'<div class="icon"><i class="fa fa-edit"></i><i class="fa fa-remove"></i></div></div>';
+                                $('.col-md-4:eq('+level+') .select-multiple').append(tpl);
+                            }
+                        }
+                        else
+                        {
+                            if (level == 0)
+                            {
+                                var inserted = false;
+                                $('.option[data-id="'+id+'"]').siblings().each(function(index,value){
+                                    if (parseInt(sort) < parseInt($(value).data('sort')))
+                                    {
+                                        tpl = '<div class="option" data-id="'+id+'" data-level="'+level+'" data-sort="'+sort+'">'+name+'<div class="icon"><i class="fa fa-edit"></i><i class="fa fa-remove"></i></div></div>';
+                                        $('.option[data-id="'+id+'"]').remove();
+                                        $(tpl).insertBefore($(value));
+                                        inserted = true;
+                                        return false;
+                                    }
+                                });
+                                if (!inserted)
+                                {
+                                    tpl = '<div class="option" data-id="'+id+'" data-level="'+level+'" data-sort="'+sort+'">'+name+'<div class="icon"><i class="fa fa-edit"></i><i class="fa fa-remove"></i></div></div>';
+                                    $('.option[data-id="'+id+'"]').remove();
+                                    $('.col-md-4:eq('+level+') .select-multiple').append(tpl);
+                                }
+                            }
+                            else
+                            {
+                                if(bc_id != $('.col-md-4:eq('+(level-1)+') .option.active').data('id'))
+                                {
+                                    $('.option[data-id='+id+']').remove();
+                                }
+                                else
+                                {
+                                    var inserted = false;
+                                    $('.option[data-id="'+id+'"]').siblings().each(function(index,value){
+                                        if (parseInt(sort) < parseInt($(value).data('sort')))
+                                        {
+                                            tpl = '<div class="option" data-id="'+id+'" data-level="'+level+'" data-sort="'+sort+'">'+name+'<div class="icon"><i class="fa fa-edit"></i><i class="fa fa-remove"></i></div></div>';
+                                            $('.option[data-id="'+id+'"]').remove();
+                                            $(tpl).insertBefore($(value));
+                                            inserted = true;
+                                            return false;
+                                        }
+                                    });
+                                    if (!inserted)
+                                    {
+                                        tpl = '<div class="option" data-id="'+id+'" data-level="'+level+'" data-sort="'+sort+'">'+name+'<div class="icon"><i class="fa fa-edit"></i><i class="fa fa-remove"></i></div></div>';
+                                        $('.option[data-id="'+id+'"]').remove();
+                                        $('.col-md-4:eq('+level+') .select-multiple').append(tpl);
+                                    }
+                                }
+                            }
+                        }
+
+                        $('#createCategoryModal').modal('hide');
+                    }
+                    else
+                    {
+                        bootbox.alert(response.result);
+                    }
+                });
+            });
+			
+			//点击删除分类按钮
+			$('.select-multiple').on('click','.fa-remove',function(){
+				var option = $(this).parents('.option');
+				var id = option.data('id');
+                $('#confirm input[name=id]').val(id);
+                $('#confirm').modal('show');
+                return false;
+			});
+            
+            //确认删除
+            $('#confirm .submit').on('click',function(){
+                var id = $('#confirm input[name=id]').val();
+                var option = $('.option[data-id="'+id+'"]');
+                $.post('{%url m=ajax c=bcategory a=remove%}',{id:id},function(response){
+                    if(response.code==1)
+                    {
+                        option.remove();
+                        $('#confirm').modal('hide');
+                    }
+                    else
+                    {
+                        bootbox.alert(response.result);
+                    }
+                });
+                return false;
+            });
+		</script>
+	</body>
+</html>

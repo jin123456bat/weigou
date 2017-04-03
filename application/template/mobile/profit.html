@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>淘微购</title>
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-touch-fullscreen" content="yes" />
+    <meta name="full-screen" content="yes"/>
+    <meta name="screen-orientation" content="portrait"/>
+    <meta name="x5-fullscreen" content="true"/>
+    <link rel="stylesheet" type="text/css" href="{%$VIEW_ROOT%}/mobile/css/reset.css">
+    <link rel="stylesheet" type="text/css" href="{%$VIEW_ROOT%}/mobile/css/style.css">
+    <script type="text/javascript" src="{%$VIEW_ROOT%}/mobile/js/jquery-1.8.3.min.js"></script>
+    <script type="text/javascript" src="{%$VIEW_ROOT%}/mobile/js/resolution.js"></script>
+    <script type="text/javascript" src="{%$VIEW_ROOT%}/mobile/js/Chart.js"></script>
+</head>
+<body>
+    <div id="header">
+        <header>
+            <a href="javascript:history.go(-1);" class="left_btn"><i class="icon back"></i></a>
+            <h1>我的收益</h1>
+        </header>
+    </div>
+    <div id="content" style="padding-top: 50px;">
+        <div class="my_income">
+            <div class="yesterday">
+                <div class="y_up">
+                    <h3>昨日收益（元）</h3>
+                    <div class="money" id="y_profit">0</div>
+                    <h3>账户余额（元）</h3>
+                    <div class="sum" id="money">0</div>
+                </div>
+                <div class="y_down">
+                    <h3>累计收入（元）</h3>
+                    <div class="sum" id="profit">0</div>
+                </div>
+            </div>
+            <div class="row flex_box">
+                <div class="item flex">
+                    <div class="tt">提现中（元）</div>
+                    <div class="num" id="drawaling">0</div>
+                </div>
+                <div class="item flex">
+                    <div class="tt">已提现（元）</div>
+                    <div class="num" id="drawaled">0</div>
+                </div>
+            </div>
+            <div class="row flex_box">
+                <div class="item flex">
+                    <div class="tt">产品推广（元）</div>
+                    <div class="num" id="product">0</div>
+                </div>
+                <div class="item flex">
+                    <div class="tt">平台推广（元）</div>
+                    <div class="num" id="pintai">0</div>
+                </div>
+                <div class="item flex">
+                    <div class="tt">团队管理（元）</div>
+                    <div class="num" id="team">0</div>
+                </div>
+            </div>
+            <div class="trend_box">
+                <h3>七天收益趋势</h3>
+                <h4>{%($smarty.server.REQUEST_TIME - 7*3600*24)|date_format:'Y年m月d日'%} - {%($smarty.server.REQUEST_TIME - 3600*24)|date_format:'Y年m月d日'%}</h4>
+                <div class="cancon">
+                    <canvas id="canvas" height="450" width="600"></canvas>
+                </div>
+                <a id="drawalBtn" class="long_btn {%if $user.money<100%}disabled{%/if%}" {%if $user.money<100%}style="background-color:grey;"{%/if%}>提现</a>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript">
+   	
+	$('#drawalBtn').on('click',function(){
+		if(!$(this).hasClass('disabled'))
+		{
+			window.location = '{%url c=mobile a=drawal%}';
+		}
+		return false;
+	});
+	
+	$.get('{%url m=api c=user a=profit%}',function(response){
+		response = response.body;
+		$('#y_profit').html(response.y_profit);
+		$('#team').html(response.team);
+		$('#drawaling').html(response.drawaling);
+		$('#drawaled').html(response.drawaled);
+		$('#money').html(response.money);
+		$('#pintai').html(response.pintai);
+		$('#product').html(response.product);
+		$('#profit').html(response.profit);
+		var labels = [];
+		var values = [];
+		for(var i in response.profit7)
+		{
+			labels.push(i);
+			values.push(parseInt(response.profit7[i]));
+		}
+		var data = {
+			labels : labels,
+			datasets : [
+				{
+					label: "时间",
+					fillColor : "rgba(228, 149, 57,0.2)",
+					strokeColor : "rgba(228, 149, 57,0.8)",
+					pointColor : "rgba(228, 149, 57,0.8)",
+					pointStrokeColor : "#fff",
+					pointHighlightFill : "#fff",
+					pointHighlightStroke : "rgba(220,220,220,1)",
+					data : values
+				}
+			]
+		}
+		var ctx = document.getElementById("canvas").getContext("2d");
+        window.myLine = new Chart(ctx).Line(data, {
+            responsive: true
+        });
+	});
+
+    
+</script>
+</html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="utf-8" />
+		<title>{%$page_title%}</title>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+       	<meta name="renderer" content="webkit">
+        <meta content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport" />
+        <!-- reset -->
+        <link rel="stylesheet" href="//cdn.bootcss.com/normalize/5.0.0/normalize.min.css">
+		<!-- 新 Bootstrap 核心 CSS 文件 -->
+        <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<!-- 可选的Bootstrap主题文件（一般不用引入） -->
+		<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
+		<!--icon-->
+		<link rel="stylesheet" href="{%$VIEW_ROOT%}/html/css/plugins/font-awesome/css/font-awesome.min.css">
+		<!--自定义css-->
+		<link rel="stylesheet" href="{%resource path='/html/css/global.css'%}">
+		<script type="text/javascript">
+			function lpad(num, n) {  
+				return Array(n>(''+num).length?(n-(''+num).length+1):0).join(0)+num;  
+			}
+		</script>
+	</head>
+	<body>
+		{%include file='html/public/header.html'%}
+		<div class="body container-fluid">
+			<div class="row">
+				{%include file='html/public/sidebar.html'%}
+				<div class="content">
+			  		<div class="content-body">
+			  			<div class="white-block">
+			  				<div class="wall-block">
+								<p>库存 - 库存列表</p>
+							</div>
+			  			</div>
+			  			<div class="divider"></div>
+			  			<div class="white-block">
+			  				
+			  				<div class="wizard">
+			  					<div class="step active">
+			  						①  下载商品库存数据
+			  					</div>
+			  					<div class="step">
+			  						② 上传盘点数据
+			  					</div>
+			  					<div class="step">
+			  						③  完成
+			  					</div>
+			  				</div>
+			  				
+			  				<div style="padding-top: 100px;" id="step1">
+			  					<div class="center-block" style="width: 400px;">
+			  						<div>
+			  							<select class="form-control input-sm selector center-block" style="display: inline-block; width: 80%;">
+											<option>请选择...</option>
+										</select>
+										<label style="cursor: pointer;" class="control-label" id="downloadStockData">
+										<i class="fa fa-download"></i>
+										下载
+										</label>	
+			  						</div>
+			  					</div>
+			  				</div>
+			  				<div id="step2" class="display-none" style="padding-top: 100px;">
+			  					<div class="center-block" style="width: 200px;">
+									<button class="btn btn-success btn-lg center-block" style="border-radius: 0px;" id="selectFile"><i class="fa fa-upload"></i>&nbsp;选择文件</button>
+									<input type="file" class="display-none" name="file">
+									<span class="help-block center-block text-center">上传盘点数据</span>
+								</div>
+							</div>
+							<div id="step3" class="display-none" style="padding-top: 100px;">
+			  					<div class="center-block" style="width: 500px;font-size: 22px;word-wrap: nowrap;">
+									<i class="fa fa-check-circle" style="font-size: 40px;color: #66b052;"></i> 您的入库数据已成功导入<font id="success">0</font>条，失败<font color="red" id="failed">0</font>条
+								</div>
+							</div>
+							
+							<div class="line"></div>
+							<div class="center-block" style="width: 400px;">
+								<button class="btn btn-primary btn-lg" style="width: 160px;height: 56px;border-radius: 0px;" id="prev">上一步</button>
+								<button class="btn btn-primary btn-lg" style="width: 160px;height: 56px;border-radius: 0px;" id="next">下一步</button>
+							</div>
+			  				
+						</div>
+			  		</div>				  
+				</div>
+			</div>
+		</div>
+		<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+		<script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+		<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+		<script src="http://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		<!--alert-->
+		<script src="//cdn.bootcss.com/bootbox.js/4.4.0/bootbox.min.js"></script>
+		<script src="{%resource path='/html/js/global.js'%}"></script>
+		<script src="{%resource path='/html/js/selector.js'%}"></script>
+		<script type="text/javascript">
+			$.ajaxSetup({
+				headers:{
+					'X-CSRF-TOKEN':'{%$x_csrf_token%}'
+				}
+			});
+			
+			var selector = selector($('.selector'),{
+				ajax:{
+					url:'./index.php?m=ajax&c=bcategory&a=source'
+				},
+				position:function(select){
+					return select.parent();
+				}
+			});
+			
+			$('#downloadStockData').on('click',function(){
+				if(selector.val().length>0)
+				{
+					window.location = './index.php?c=export&a=stock_manager&bcategory='+selector.val();
+				}
+				else
+				{
+					bootbox.alert('请选择分类');
+				}
+			});
+			
+			$('#selectFile').on('click',function(){
+				var input = $('input[name=file]');
+				input.trigger('click');
+			});
+			
+			$('input[name=file]').on('change',function(){
+				$('.help-block').text($(this).val());
+			});
+			
+			$('#next').on('click',function(){
+				if($('.wizard .step.active').length==2)
+				{
+					//这里要上传
+					var input = $('input[name=file]');
+					var file = input[0].files[0];
+					if(!file)
+					{
+						bootbox.alert('请选择要上传的库存盘点文件');
+						return false;
+					}
+					var formData = new FormData();
+					formData.append('file_stock',file);
+					var xhr = new XMLHttpRequest();
+					xhr.open('POST','./index.php?m=ajax&c=product&a=import_base',true);
+					xhr.setRequestHeader('X-CSRF-TOKEN','{%$x_csrf_token%}');
+					xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
+					xhr.onload = function(){
+						if(xhr.status == 200 && xhr.readyState == 4)
+						{
+							var response = xhr.response;
+							response = $.parseJSON(response);
+							if(response.code==1)
+							{
+								$('.wizard .step.active:last').next('.step').addClass('active');
+								var num = $('.wizard .step.active').length;
+								$('#step'+num).removeClass('display-none');
+								$('#step'+(num-1)).addClass('display-none');
+							
+								
+								$('#success').html(response.body.success_stock.length);
+								$('#failed').html(response.body.failed_stock.length);
+							}
+						}
+					};
+					xhr.send(formData);
+					return false;
+				}
+				
+				
+				$('.wizard .step.active:last').next('.step').addClass('active');
+				
+				var num = $('.wizard .step.active').length;
+				
+				
+				$('#step'+num).removeClass('display-none');
+				$('#step'+(num-1)).addClass('display-none');
+				
+				if(num==2)
+				{
+					$('#next').html('上传').addClass('btn-success').removeClass('btn-primary');
+				}
+				else
+				{
+					$('#next').html('下一步').addClass('btn-primary').removeClass('btn-success');
+				}
+			});
+			
+			$('#prev').on('click',function(){
+				if($('.wizard .step.active').length==1)
+				{
+					return false;
+				}
+				$('.wizard .step.active:last').removeClass('active');
+				
+				var num = $('.wizard .step.active').length;
+				$('#step'+num).removeClass('display-none');
+				$('#step'+(num+1)).addClass('display-none');
+				
+				if(num==2)
+				{
+					$('#next').html('上传').addClass('btn-success').removeClass('btn-primary');
+				}
+				else
+				{
+					$('#next').html('下一步').addClass('btn-primary').removeClass('btn-success');
+				}
+			});
+		</script>
+	</body>
+</html>

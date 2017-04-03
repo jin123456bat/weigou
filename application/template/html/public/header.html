@@ -1,0 +1,30 @@
+<header>
+	<div class="nav">
+		<div class="left">
+			<div class="logo">LOGO</div>
+			<div class="version">V2.0</div>
+		</div>
+		<div class="center">
+			<div class="navigator {%if $menu.type==0%}active{%/if%}"><a href="./index.php?c=html&a={%$global_site_type_action[0]%}">平台</a></div>
+			<div class="navigator {%if $menu.type==1%}active{%/if%}"><a href="./index.php?c=html&a={%$global_site_type_action[1]%}">商城</a></div>
+			<div class="logout">
+				<a href="./index.php?c=admin&a=logout">
+					<span class="glyphicon glyphicon-off"></span>
+					退出
+				</a>
+			</div>
+			<div class="message">
+				<a href="">
+					<span class="glyphicon glyphicon-envelope"></span>
+					消息
+				</a>
+			</div>
+			<div class="admin">
+				<a href="">
+					<img src="{%$VIEW_ROOT%}/html/images/u88.png">
+					i'm coming
+				</a>
+			</div>	
+		</div>
+	</div>
+</header>

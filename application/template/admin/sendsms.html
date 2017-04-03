@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<!--[if IE 8]>
+<html lang="en" class="ie8 no-js"> <![endif]-->
+<!--[if IE 9]>
+<html lang="en" class="ie9 no-js"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en">
+<!--<![endif]-->
+<!-- BEGIN HEAD -->
+
+<head>
+    <meta charset="utf-8"/>
+    <title>群发短信</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1" name="viewport"/>
+    <meta content="" name="description"/>
+    <meta content="" name="author"/>
+    <!-- BEGIN GLOBAL MANDATORY STYLES -->
+    <link href="{%$VIEW_ROOT%}/assets/global/css/font.css" rel="stylesheet" type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/global/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet"
+          type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/global/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet"
+          type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/global/plugins/uniform/css/uniform.default.css" rel="stylesheet" type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css" rel="stylesheet"
+          type="text/css"/>
+    <!-- END GLOBAL MANDATORY STYLES -->
+    <!-- BEGIN THEME GLOBAL STYLES -->
+    <link href="{%$VIEW_ROOT%}/assets/global/css/components.min.css" rel="stylesheet" id="style_components"
+          type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/global/css/plugins.min.css" rel="stylesheet" type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/global/plugins/select2/css/select2.min.css" rel="stylesheet" type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/global/plugins/select2/css/select2-bootstrap.min.css" rel="stylesheet"
+          type="text/css"/>
+    <!-- END THEME GLOBAL STYLES -->
+    <!-- BEGIN THEME LAYOUT STYLES -->
+    <link href="{%$VIEW_ROOT%}/assets/layouts/layout/css/layout.min.css" rel="stylesheet" type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/layouts/layout/css/themes/darkblue.min.css" rel="stylesheet" type="text/css"
+          id="style_color"/>
+    <link href="{%$VIEW_ROOT%}/assets/layouts/layout/css/custom.min.css" rel="stylesheet" type="text/css"/>
+    <!-- END THEME LAYOUT STYLES -->
+    <link rel="shortcut icon" href="favicon.ico"/>
+</head>
+<!-- END HEAD -->
+
+<body class="page-header-fixed page-sidebar-closed-hide-logo page-content-white">
+<!-- BEGIN HEADER -->
+{%include file='admin/public/header.html'%}
+<!-- END HEADER -->
+<!-- BEGIN HEADER & CONTENT DIVIDER -->
+<div class="clearfix"></div>
+<!-- END HEADER & CONTENT DIVIDER -->
+<!-- BEGIN CONTAINER -->
+<div class="page-container">
+    <!-- BEGIN SIDEBAR -->
+    {%include file='admin/public/sidebar.html'%}
+    <!-- END SIDEBAR -->
+    <!-- BEGIN CONTENT -->
+    <div class="page-content-wrapper">
+        <!-- BEGIN CONTENT BODY -->
+        <div class="page-content">
+            <!-- BEGIN PAGE HEADER-->
+            <!-- BEGIN THEME PANEL -->
+            {%include file='admin/public/style.html'%}
+            <!-- END THEME PANEL -->
+            <!-- BEGIN PAGE BAR -->
+            <div class="page-bar">
+                <ul class="page-breadcrumb">
+                    <li>
+                        <a href="index.php">首页</a>
+                        <i class="fa fa-circle"></i>
+                    </li>
+                    <li>
+                        <span>小功能</span>
+                        <i class="fa fa-circle"></i>
+                    </li>
+                    <li>
+                        <span>群发短信</span>
+                    </li>
+                </ul>
+            </div>
+            <!-- END PAGE BAR -->
+            <!-- BEGIN PAGE TITLE-->
+            <h3 class="page-title"> 群发短信
+                <small>群发短信</small>
+            </h3>
+            <!-- END PAGE TITLE-->
+            <!-- END PAGE HEADER-->
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption font-dark">
+                        <i class="icon-settings font-dark"></i>
+                        <span class="caption-subject bold uppercase"> 群发短信</span>
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <div class="table-toolbar">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <input class="form-control content" name="name"/>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="btn-group">
+                                    <button id="create" class="btn sbold green"> 发送
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                    <span style="color: red">&nbsp;&nbsp;&nbsp;*尽量保证字数在55字以内</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <table class="table display-none">
+                        <thead>
+                        <tr>
+                            <td>手机号</td>
+
+
+                            <td>执行结果</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+
+                    <div class="custom-alerts alert alert-danger display-hide fade in">
+                        <i class="fa-lg fa fa-warning"></i>
+                        <span id="#alert"></span>
+                    </div>
+                    <table id="top" class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>发送内容</th>
+                            <th>发送成功</th>
+
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {%section name=product loop=$product%}
+                        <tr>
+                            <td>{%$product[product].content%}</td>
+                            <td>成功</td>
+                        </tr>
+                        {%/section%}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- END CONTENT BODY -->
+    </div>
+    <!-- END CONTENT -->
+    <!-- BEGIN QUICK SIDEBAR -->
+    {%include file='admin/public/quick_sidebar.html'%}
+    <!-- END QUICK SIDEBAR -->
+</div>
+<!-- END CONTAINER -->
+<!-- BEGIN FOOTER -->
+{%include file='admin/public/footer.html'%}
+<!-- END FOOTER -->
+<!--[if lt IE 9]>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/respond.min.js"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/excanvas.min.js"></script>
+<![endif]-->
+<!-- BEGIN CORE PLUGINS -->
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/jquery.min.js" type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/js.cookie.min.js" type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js"
+        type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js"
+        type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/jquery.blockui.min.js" type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/uniform/jquery.uniform.min.js" type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js"
+        type="text/javascript"></script>
+<!-- END CORE PLUGINS -->
+<!-- BEGIN THEME GLOBAL SCRIPTS -->
+<script src="{%$VIEW_ROOT%}/assets/global/scripts/app.min.js" type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/select2/js/select2.full.min.js" type="text/javascript"></script>
+<!-- END THEME GLOBAL SCRIPTS -->
+<!-- BEGIN THEME LAYOUT SCRIPTS -->
+<script src="{%$VIEW_ROOT%}/assets/layouts/layout/scripts/layout.min.js" type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/layouts/layout/scripts/demo.min.js" type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/layouts/global/scripts/quick-sidebar.min.js" type="text/javascript"></script>
+<!-- END THEME LAYOUT SCRIPTS -->
+<script type="text/javascript">
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': '{%$x_csrf_token%}'
+        }
+    });
+
+    $.fn.select2.defaults.set("theme", "bootstrap");
+
+    function formatRepo(repo) {
+
+        if (repo.loading) return '载入中...';
+
+        var markup = "<div class='select2-result-repository clearfix'>" +
+                "<div class='select2-result-repository__avatar'><img src='" + (repo.image == null ? 'http://placehold.it/50x50' : repo.image) + "' /></div>" +
+                "<div class='select2-result-repository__meta'>" +
+                "<div class='select2-result-repository__title'>" + repo.name + "</div>";
+
+        if (repo.short_description) {
+            markup += "<div class='select2-result-repository__description'>" + repo.short_description + "</div>";
+        }
+
+        markup += "<div class='select2-result-repository__statistics'>" +
+        "<div class='select2-result-repository__forks'><span class='glyphicon glyphicon-flash'></span> 销售:" + repo.sell + " </div>" +
+        "<div class='select2-result-repository__stargazers'><span class='glyphicon glyphicon-star'></span> 价格:" + repo.price + " </div>" +
+        "<div class='select2-result-repository__watchers'><span class='glyphicon glyphicon-eye-open'></span> 库存:" + repo.stock + " </div>" +
+        "</div>" +
+        "</div></div>";
+
+        return markup;
+    }
+
+
+    $('#create').on('click', function () {
+        var pid = $('input[name=name]').val();
+
+        if (pid == '' || pid == null) {
+            alert('发送内容不能为空');
+            return false;
+        }
+        $('#create').addClass("display-none");
+        $.post('{%url m=ajax c=admin a=sendsms%}', {content: pid}, function (response) {
+
+            if (response.code == 1) {
+                response = response.body;
+                $('.table').removeClass('display-none').find('tbody').empty();
+
+
+                for (var i = 0; i < response.length; i++) {
+
+                    $('.table').find('tbody').append('<tr><td>' + response[i].phone + '</td><td>成功</td></tr>');
+                }
+                $('#top').addClass('display-none')
+            }
+        })
+
+    });
+
+
+</script>
+</body>
+
+</html>

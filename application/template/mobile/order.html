@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>淘微购</title>
+    <meta name="viewport"
+          content="width=device-width, height=device-height, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=0"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-touch-fullscreen" content="yes"/>
+    <meta name="full-screen" content="yes"/>
+    <meta name="screen-orientation" content="portrait"/>
+    <meta name="x5-fullscreen" content="true"/>
+    <link rel="stylesheet" type="text/css" href="{%$VIEW_ROOT%}/mobile/css/reset.css">
+    <link rel="stylesheet" type="text/css" href="{%$VIEW_ROOT%}/mobile/css/style.css">
+    <link rel="stylesheet" type="text/css" href="{%$VIEW_ROOT%}/mobile/css/other.css">
+    <script type="text/javascript" src="{%$VIEW_ROOT%}/mobile/js/jquery-1.8.3.min.js"></script>
+    <script type="text/javascript" src="{%$VIEW_ROOT%}/mobile/js/resolution.js"></script>
+    <script type="text/javascript" src="{%$VIEW_ROOT%}/mobile/js/js.js"></script>
+</head>
+<style type="text/css">
+    .fixtop {
+        z-index: 1;
+    }
+
+    body {
+        background: #F0F0F0;
+    }
+
+    .order {
+        background: #FFFFFF;
+        margin-bottom: 10px;
+        display: block;
+        font-size: 13px;
+    }
+
+    .order .header {
+        height: 35px;
+        line-height: 35px;
+        margin-left: 2.5%;
+        display: block;
+        color: #525252;
+        border-bottom: 1px solid #eee;
+    }
+
+    .order .header .time {
+        display: inline;
+    }
+
+    .order .header .status {
+        margin-right: 2.5%;
+        float: right;
+        display: inline;
+    }
+
+    .order .body {
+        display: block;
+    }
+
+    .order .body .product {
+        height: 90px;
+        padding-left: 5%;
+        display: block;
+        border-bottom: 1px solid #eee;
+    }
+
+    .order .body .product .img {
+        width: 20%;
+        display: inline;
+    }
+
+    .order .body .product .img img {
+        width: 70px;
+        display: inline;
+    }
+
+    .order .body .product .detail {
+        position: absolute;
+        width: 70%;
+        display: inline;
+    }
+
+    .order .body .product .detail .detail-header {
+        width: 100%;
+        height: 30px;
+        display: block;
+    }
+
+    .order .body .product .detail .detail-header .task {
+        display: inline;
+    }
+
+    .order .body .product .detail .detail-header .name {
+        white-space: nowrap;
+        height: 30px;
+        line-height: 30px;
+        width: 100%;
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .order .body .product .detail .content {
+        height: 30px;
+        line-height: 30px;
+        display: block;
+    }
+
+    .order .body .product .detail .bottom {
+        line-height: 30px;
+        height: 30px;
+        display: block;
+    }
+
+    .order .body .product .detail .bottom div {
+        line-height: 30px;
+        height: 30px;
+        margin-left: 15px;
+        display: block;
+        float: left;
+    }
+
+    .order .body .product .detail .bottom .tax {
+        float: right;
+        display: inline;
+        height: 30px;
+        line-height: 30px;
+    }
+
+    .order .body .product .detail .bottom .price {
+        line-height: 30px;
+        height: 30px;
+        display: inline;
+    }
+
+    .order .body .product .detail .bottom .oldprice {
+        text-decoration: line-through;
+        color: grey;
+        line-height: 30px;
+        height: 30px;
+        display: inline;
+    }
+
+    .order .body .product .detail .bottom .num {
+        float: right;
+        line-height: 30px;
+        height: 30px;
+        display: inline;
+    }
+
+    .order .bottom {
+        display: block;
+        padding: 10px 0 7px;
+    }
+
+    .order .bottom .total {
+        height: 40px;
+        line-height: 40px;
+        font-size: 13px;
+        margin-right: 2.5%;
+        text-align: right;
+    }
+
+    .order .bottom .total .price {
+        display: inline;
+    }
+
+    .order .bottom .total .num {
+        margin-left: 10px;
+        display: inline;
+    }
+
+    .order .bottom .button {
+        margin-right: 2.5%;
+        overflow: hidden;
+    }
+
+    .order .bottom .button .btn {
+        margin-top: 2px;
+        padding: 3px 8px;
+        min-width: 70px;
+        display: inline-block;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        text-align: center;
+        line-height: 20px;
+
+        color: #fff;
+        box-sizing: border-box;
+        margin-left: 15px;
+        float: right;
+    }
+
+    .order .bottom .button .btn.red {
+        border: 1px solid red;
+        background-color: red;
+    }
+
+    .order .bottom .button .btn.grey {
+        border: 1px solid #a7a7a7;
+        color: #a7a7a7;
+    }
+
+    /* .order-text{
+         margin-left: 22%;
+         width: 75%;
+     }*/
+
+    /*修改自2016-08-05*/
+    .od-info {
+        font-size: 12px;
+        padding: 10px 3%;
+        overflow: hidden;
+        background: #fff;
+        line-height: 1.5;
+        margin: 10px 0;
+    }
+
+    .od-info img {
+        width: 15px;
+        margin-right: 6px;
+        margin-top: 1px;
+        float: left;
+    }
+
+    .new-order-wrap {
+        margin-left: 2.5%;
+        padding: 15px 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .color-red {
+        color: red !important;
+    }
+
+    .fixtop .orderTop li {
+        position: relative;
+    }
+
+    .tab-num {
+        width: 16px;
+        height: 16px;
+        line-height: 16px;
+        background: red;
+        border-radius: 8px;
+        font-size: 10px;
+        color: #fff;
+        text-align: center;
+        position: absolute;
+        right: 5%;
+        top: 10%;
+    }
+
+
+</style>
+<body>
+<div id="header">
+    <header>
+        <a href="{%url c=mobile a=account%}" class="left_btn"><i class="icon back"></i></a>
+
+        <h1>我的订单</h1>
+    </header>
+</div>
+<div id="content" style="padding-top: 50px;">
+    <div class="fixtop">
+        <ul class="orderTop flex_box">
+            <li class="flex active" id="tab1" onClick="return tabb(this,1);">
+                <a>全部</a>
+            </li>
+            <li class="flex" id="tab2" onClick="return tabb(this,2);">
+                <a>待付款</a>
+            </li>
+            <li class="flex" id="tab3" onClick="return tabb(this,3);">
+                <a>待发货</a>
+            </li>
+            <li class="flex" id="tab4" onClick="return tabb(this,4);">
+                <a>待收货</a>
+            </li>
+            <li class="flex" id="tab4" onClick="return tabb(this,5);">
+                <a>已完成</a>
+            </li>
+        </ul>
+    </div>
+    <div class="orderListCont" style="padding-top: 45px;">
+        <div class="orderListCont1 contitem">
+            {%if $is_note%}
+            <div class="od-info clearfix">
+                <a href="{%$note_url%}" style="color:#323232;"> <img src="{%$VIEW_ROOT%}/mobile/image/tz.png">{%$note_title%}</a>
+            </div>
+            {%/if%}
+            {%section name=order loop=$order%}
+            <div class="order" data-orderno="{%$order[order].orderno%}">
+                <div class="header">
+                    <div class="time">{%$order[order].createtime|date_format:'Y-m-d'%}</div>
+                    <div class="status">
+                        {%if $order[order].pay_status==2%}
+                        <font color="red" style="margin-right:5px;">(已退款)</font>
+                        {%else if $order[order].pay_status==4%}
+                        <font color="red" style="margin-right:5px;">(有退款)</font>
+                        {%/if%}
+                        {%if $order[order].status==0%}
+                        订单关闭
+                        {%else%}
+                        {%if $order[order].pay_status==0%}
+                        待支付
+                        {%elseif $order[order].way_status==0%}
+                        {%if $order[order].is_task%}
+
+                        {%if $order[order].tast_status==0%}
+                        待发货，未成团
+                        {%elseif $order[order].tast_status==1%}
+                        待发货
+                        {%else%}
+                        团购失败
+                        {%/if%}
+                        {%else%}
+                        待发货
+                        {%/if%}
+                        {%elseif $order[order].receive==0%}
+                        待收货
+                        {%else%}
+                        交易成功
+                        {%/if%}
+                        {%/if%}
+                    </div>
+                </div>
+                <div class="body">
+                    {%section name=product loop=$order[order].product%}
+
+                    <div class="new-order-wrap">
+
+
+                        <div class="order-detail clearfix productLink">
+                            <div class="order-img"><img src="{%$order[order].product[product].image%}"></div>
+                            <div class="order-text clearfix">
+                                <div class="order-text-right">
+                                    <div class="otr-itme1">￥{%$order[order].product[product].price%}</div>
+                                    <div class="otr-itme2">×{%$order[order].product[product].num%}</div>
+                                    {%if $order[order].product[product].outside==2 ||
+                                    $order[order].product[product].outside==3%}
+                                    <!--  <div class="tax">
+                                         税率:{%$order[order].product[product].tax * 100%}%
+                                     </div> -->
+                                    {%/if%}
+                                </div>
+                                <div class="order-text-left">
+                                    {%if $order[order].is_task%}
+                                    <div class="" style="display:inline; color:red;">团</div>
+                                    {%/if%}
+                                    <div class="otl-item1">{%$order[order].product[product].name%}</div>
+                                    <div class="otl-itme2">{%$order[order].product[product].content%}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {%/section%}
+                </div>
+                <div class="bottom clearfix">
+                    <div class="total">
+                        <div class="num">共{%$order[order].product_num%}件</div>
+                        <div class="price">&ensp;应付总额：<span class="color-red">￥{%$order[order].orderamount%}</span>
+                        </div>
+                    </div>
+                    <div class="button clearfix">
+                        {%if $order[order].status==1%}
+                        {%if $order[order].pay_status==0%}
+                        <div class="btn payed red" data-orderno="{%$order[order].orderno%}">立即支付</div>
+                        {%if !$order[order].is_task%}
+                        <div class="btn quit grey" data-orderno="{%$order[order].orderno%}">取消订单</div>
+                        {%/if%}
+                        {%/if%}
+                        {%if $order[order].pay_status==1 && $order[order].way_status==0%}
+                        <div class="btn wuliu grey" data-orderno="{%$order[order].orderno%}">订单跟踪</div>
+                        {%if !$order[order].is_task%}
+                        <div class="btn quit grey" data-orderno="{%$order[order].orderno%}">取消订单</div>
+                        {%/if%}
+
+                        {%/if%}
+
+
+                        {%if $order[order].way_status==1 && $order[order].receive==0%}
+                        <div class="btn receive red" data-orderno="{%$order[order].orderno%}">确认收货</div>
+                        <div class="btn wuliu grey" data-orderno="{%$order[order].orderno%}">订单跟踪</div>
+                        {%/if%}
+                        {%if $order[order].way_status==1 && $order[order].receive==1%}
+                        <div class="btn wuliu grey" data-orderno="{%$order[order].orderno%}">订单跟踪</div>
+                        <div class="btn del grey" data-orderno="{%$order[order].orderno%}">删除订单</div>
+                        {%/if%}
+                        {%else%}
+                        <div class="btn del grey" data-orderno="{%$order[order].orderno%}">删除订单</div>
+                        {%/if%}
+                    </div>
+                </div>
+            </div>
+            {%/section%}
+        </div>
+        <div class="orderListCont2 contitem hide">
+            {%section name=order loop=$order%}
+            {%if $order[order].pay_status==0 && $order[order].status==1%}
+            <div class="order" data-orderno="{%$order[order].orderno%}">
+                <div class="header">
+                    <div class="time">{%$order[order].createtime|date_format:'Y-m-d'%}</div>
+                    <div class="status">
+                        {%if $order[order].pay_status==2%}
+                        <font color="red" style="margin-right:5px;">(已退款)</font>
+                        {%else if $order[order].pay_status==4%}
+                        <font color="red" style="margin-right:5px;">(有退款)</font>
+                        {%/if%}
+                        {%if $order[order].status==0%}
+                        订单关闭
+                        {%else%}
+                        {%if $order[order].pay_status==0%}
+                        待支付
+                        {%elseif $order[order].way_status==0%}
+                        {%if $order[order].is_task%}
+
+                        {%if $order[order].tast_status==0%}
+                        待发货，未成团
+                        {%elseif $order[order].tast_status==1%}
+                        待发货
+                        {%else%}
+                        团购失败
+                        {%/if%}
+                        {%else%}
+                        待发货
+                        {%/if%}
+                        {%elseif $order[order].receive==0%}
+                        待收货
+                        {%else%}
+                        交易成功
+                        {%/if%}
+                        {%/if%}
+                    </div>
+                </div>
+                <div class="body">
+                    {%section name=product loop=$order[order].product%}
+                    <div class="new-order-wrap">
+                        <div class="order-detail clearfix productLink">
+                            <div class="order-img"><img src="{%$order[order].product[product].image%}"></div>
+                            <div class="order-text clearfix">
+                                <div class="order-text-right">
+                                    <div class="otr-itme1">￥{%$order[order].product[product].price%}</div>
+                                    <div class="otr-itme2">×{%$order[order].product[product].num%}</div>
+                                    {%if $order[order].product[product].outside==2 ||
+                                    $order[order].product[product].outside==3%}
+                                    <!-- <div class="tax">
+                                        税率:{%$order[order].product[product].tax * 100%}%
+                                    </div> -->
+                                    {%/if%}
+                                </div>
+                                <div class="order-text-left">
+                                    {%if $order[order].is_task%}
+                                    <div class="" style="display:inline; color:red;">团</div>
+                                    {%/if%}
+                                    <div class="otl-item1">{%$order[order].product[product].name%}</div>
+                                    <div class="otl-itme2">{%$order[order].product[product].content%}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {%/section%}
+                </div>
+                <div class="bottom clearfix">
+                    <div class="total">
+                        <div class="num">共{%$order[order].product_num%}件</div>
+                        <div class="price">&ensp;应付总额：<span class="color-red">￥{%$order[order].orderamount%}</span>
+                        </div>
+                    </div>
+                    <div class="button clearfix">
+                        {%if $order[order].status==1%}
+                        {%if $order[order].pay_status==0%}
+                        <div class="btn payed red" data-orderno="{%$order[order].orderno%}">立即支付</div>
+                        {%if !$order[order].is_task%}
+                        <div class="btn quit grey" data-orderno="{%$order[order].orderno%}">取消订单</div>
+                        {%/if%}
+                        {%/if%}
+                        {%if $order[order].pay_status==1 && $order[order].way_status==0%}
+                        <div class="btn wuliu grey" data-orderno="{%$order[order].orderno%}">订单跟踪</div>
+                        {%if !$order[order].is_task%}
+                        <div class="btn quit grey" data-orderno="{%$order[order].orderno%}">取消订单</div>
+                        {%/if%}
+
+                        {%/if%}
+
+
+                        {%if $order[order].way_status==1 && $order[order].receive==0%}
+                        <div class="btn receive red" data-orderno="{%$order[order].orderno%}">确认收货</div>
+                        <div class="btn wuliu grey" data-orderno="{%$order[order].orderno%}">订单跟踪</div>
+                        {%/if%}
+                        {%if $order[order].way_status==1 && $order[order].receive==1%}
+                        <div class="btn wuliu grey" data-orderno="{%$order[order].orderno%}">订单跟踪</div>
+                        <div class="btn del grey" data-orderno="{%$order[order].orderno%}">删除订单</div>
+                        {%/if%}
+                        {%else%}
+                        <div class="btn del grey" data-orderno="{%$order[order].orderno%}">删除订单</div>
+                        {%/if%}
+                    </div>
+                </div>
+            </div>
+            {%/if%}
+            {%/section%}
+        </div>
+        <div class="orderListCont3 contitem hide">
+            {%section name=order loop=$order%}
+            {%if $order[order].way_status==0 && ($order[order].pay_status==1 || $order[order].pay_status==4) &&
+            $order[order].status==1%}
+            <div class="order" data-orderno="{%$order[order].orderno%}">
+                <div class="header">
+                    <div class="time">{%$order[order].createtime|date_format:'Y-m-d'%}</div>
+                    <div class="status">
+                        {%if $order[order].pay_status==2%}
+                        <font color="red" style="margin-right:5px;">(已退款)</font>
+                        {%else if $order[order].pay_status==4%}
+                        <font color="red" style="margin-right:5px;">(有退款)</font>
+                        {%/if%}
+                        {%if $order[order].status==0%}
+                        订单关闭
+                        {%else%}
+                        {%if $order[order].pay_status==0%}
+                        待支付
+                        {%elseif $order[order].way_status==0%}
+                        {%if $order[order].is_task%}
+
+                        {%if $order[order].tast_status==0%}
+                        待发货，未成团
+                        {%elseif $order[order].tast_status==1%}
+                        待发货
+                        {%else%}
+                        团购失败
+                        {%/if%}
+                        {%else%}
+                        待发货
+                        {%/if%}
+                        {%elseif $order[order].receive==0%}
+                        待收货
+                        {%else%}
+                        交易成功
+                        {%/if%}
+                        {%/if%}
+                    </div>
+                </div>
+                <div class="body">
+                    {%section name=product loop=$order[order].product%}
+                    <div class="new-order-wrap">
+                        <div class="order-detail clearfix productLink">
+                            <div class="order-img"><img src="{%$order[order].product[product].image%}"></div>
+                            <div class="order-text clearfix">
+                                <div class="order-text-right">
+                                    <div class="otr-itme1">￥{%$order[order].product[product].price%}</div>
+                                    <div class="otr-itme2">×{%$order[order].product[product].num%}</div>
+                                    {%if $order[order].product[product].outside==2 ||
+                                    $order[order].product[product].outside==3%}
+                                    <!--  <div class="tax">
+                                         税率:{%$order[order].product[product].tax * 100%}%
+                                     </div> -->
+                                    {%/if%}
+                                </div>
+                                <div class="order-text-left">
+                                    {%if $order[order].is_task%}
+                                    <div class="" style="display:inline; color:red;">团</div>
+                                    {%/if%}
+                                    <div class="otl-item1">{%$order[order].product[product].name%}</div>
+                                    <div class="otl-itme2">{%$order[order].product[product].content%}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {%/section%}
+                </div>
+                <div class="bottom clearfix">
+                    <div class="total">
+                        <div class="num">共{%$order[order].product_num%}件</div>
+                        <div class="price">&ensp;应付总额：<span class="color-red">￥{%$order[order].orderamount%}</span>
+                        </div>
+                    </div>
+                    <div class="button clearfix">
+                        {%if $order[order].status==1%}
+                        {%if $order[order].pay_status==0%}
+                        <div class="btn payed red" data-orderno="{%$order[order].orderno%}">立即支付</div>
+                        {%if !$order[order].is_task%}
+                        <div class="btn quit grey" data-orderno="{%$order[order].orderno%}">取消订单</div>
+                        {%/if%}
+                        {%/if%}
+                        {%if $order[order].pay_status==1 && $order[order].way_status==0%}
+                        <div class="btn wuliu grey" data-orderno="{%$order[order].orderno%}">订单跟踪</div>
+                        {%if !$order[order].is_task%}
+                        <div class="btn quit grey" data-orderno="{%$order[order].orderno%}">取消订单</div>
+                        {%/if%}
+
+                        {%/if%}
+
+
+                        {%if $order[order].way_status==1 && $order[order].receive==0%}
+                        <div class="btn receive red" data-orderno="{%$order[order].orderno%}">确认收货</div>
+                        <div class="btn wuliu grey" data-orderno="{%$order[order].orderno%}">订单跟踪</div>
+                        {%/if%}
+                        {%if $order[order].way_status==1 && $order[order].receive==1%}
+                        <div class="btn wuliu grey" data-orderno="{%$order[order].orderno%}">订单跟踪</div>
+                        <div class="btn del grey" data-orderno="{%$order[order].orderno%}">删除订单</div>
+                        {%/if%}
+                        {%else%}
+                        <div class="btn del grey" data-orderno="{%$order[order].orderno%}">删除订单</div>
+                        {%/if%}
+                    </div>
+                </div>
+            </div>
+            {%/if%}
+            {%/section%}
+        </div>
+        <div class="orderListCont4 contitem hide">
+            {%section name=order loop=$order%}
+            {%if $order[order].receive==0 && $order[order].way_status==1 && $order[order].status==1%}
+            <div class="order" data-orderno="{%$order[order].orderno%}">
+                <div class="header">
+                    <div class="time">{%$order[order].createtime|date_format:'Y-m-d'%}</div>
+                    <div class="status">
+                        {%if $order[order].pay_status==2%}
+                        <font color="red" style="margin-right:5px;">(已退款)</font>
+                        {%else if $order[order].pay_status==4%}
+                        <font color="red" style="margin-right:5px;">(有退款)</font>
+                        {%/if%}
+                        {%if $order[order].status==0%}
+                        订单关闭
+                        {%else%}
+                        {%if $order[order].pay_status==0%}
+                        待支付
+                        {%elseif $order[order].way_status==0%}
+                        {%if $order[order].is_task%}
+
+                        {%if $order[order].tast_status==0%}
+                        待发货，未成团
+                        {%elseif $order[order].tast_status==1%}
+                        待发货
+                        {%else%}
+                        团购失败
+                        {%/if%}
+                        {%else%}
+                        待发货
+                        {%/if%}
+                        {%elseif $order[order].receive==0%}
+                        待收货
+                        {%else%}
+                        交易成功
+                        {%/if%}
+                        {%/if%}
+                    </div>
+                </div>
+                <div class="body">
+                    {%section name=product loop=$order[order].product%}
+                    <div class="new-order-wrap">
+                        <div class="order-detail clearfix productLink">
+                            <div class="order-img"><img src="{%$order[order].product[product].image%}"></div>
+                            <div class="order-text clearfix">
+                                <div class="order-text-right">
+                                    <div class="otr-itme1">￥{%$order[order].product[product].price%}</div>
+                                    <div class="otr-itme2">×{%$order[order].product[product].num%}</div>
+                                    {%if $order[order].product[product].outside==2 ||
+                                    $order[order].product[product].outside==3%}
+                                    <!--  <div class="tax">
+                                         税率:{%$order[order].product[product].tax * 100%}%
+                                     </div> -->
+                                    {%/if%}
+                                </div>
+                                <div class="order-text-left">
+                                    {%if $order[order].is_task%}
+                                    <div class="" style="display:inline; color:red;">团</div>
+                                    {%/if%}
+                                    <div class="otl-item1">{%$order[order].product[product].name%}</div>
+                                    <div class="otl-itme2">{%$order[order].product[product].content%}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {%/section%}
+                </div>
+                <div class="bottom clearfix">
+                    <div class="total">
+                        <div class="num">共{%$order[order].product_num%}件</div>
+                        <div class="price">&ensp;应付总额：<span class="color-red">￥{%$order[order].orderamount%}</span>
+                        </div>
+                    </div>
+                    <div class="button clearfix">
+                        {%if $order[order].status==1%}
+                        {%if $order[order].pay_status==0%}
+                        <div class="btn payed red" data-orderno="{%$order[order].orderno%}">立即支付</div>
+                        {%if !$order[order].is_task%}
+                        <div class="btn quit grey" data-orderno="{%$order[order].orderno%}">取消订单</div>
+                        {%/if%}
+                        {%/if%}
+                        {%if $order[order].pay_status==1 && $order[order].way_status==0%}
+                        <div class="btn wuliu grey" data-orderno="{%$order[order].orderno%}">订单跟踪</div>
+                        {%if !$order[order].is_task%}
+                        <div class="btn quit grey" data-orderno="{%$order[order].orderno%}">取消订单</div>
+                        {%/if%}
+
+                        {%/if%}
+
+
+                        {%if $order[order].way_status==1 && $order[order].receive==0%}
+                        <div class="btn receive red" data-orderno="{%$order[order].orderno%}">确认收货</div>
+                        <div class="btn wuliu grey" data-orderno="{%$order[order].orderno%}">订单跟踪</div>
+                        {%/if%}
+                        {%if $order[order].way_status==1 && $order[order].receive==1%}
+                        <div class="btn wuliu grey" data-orderno="{%$order[order].orderno%}">订单跟踪</div>
+                        <div class="btn del grey" data-orderno="{%$order[order].orderno%}">删除订单</div>
+                        {%/if%}
+                        {%else%}
+                        <div class="btn del grey" data-orderno="{%$order[order].orderno%}">删除订单</div>
+                        {%/if%}
+                    </div>
+                </div>
+            </div>
+            {%/if%}
+            {%/section%}
+        </div>
+        <div class="orderListCont5 contitem hide">
+            {%section name=order loop=$order%}
+            {%if $order[order].receive==1 && $order[order].way_status==1 && $order[order].status==1%}
+            <div class="order" data-orderno="{%$order[order].orderno%}">
+                <div class="header">
+                    <div class="time">{%$order[order].createtime|date_format:'Y-m-d'%}</div>
+                    <div class="status">
+                        {%if $order[order].pay_status==2%}
+                        <font color="red" style="margin-right:5px;">(已退款)</font>
+                        {%else if $order[order].pay_status==4%}
+                        <font color="red" style="margin-right:5px;">(有退款)</font>
+                        {%/if%}
+                        {%if $order[order].status==0%}
+                        订单关闭
+                        {%else%}
+                        {%if $order[order].pay_status==0%}
+                        待支付
+                        {%elseif $order[order].way_status==0%}
+                        {%if $order[order].is_task%}
+
+                        {%if $order[order].tast_status==0%}
+                        待发货，未成团
+                        {%elseif $order[order].tast_status==1%}
+                        待发货
+                        {%else%}
+                        团购失败
+                        {%/if%}
+                        {%else%}
+                        待发货
+                        {%/if%}
+                        {%elseif $order[order].receive==0%}
+                        待收货
+                        {%else%}
+                        交易成功
+                        {%/if%}
+                        {%/if%}
+                    </div>
+                </div>
+                <div class="body">
+                    {%section name=product loop=$order[order].product%}
+                    <div class="new-order-wrap">
+                        <div class="order-detail clearfix productLink">
+                            <div class="order-img"><img src="{%$order[order].product[product].image%}"></div>
+                            <div class="order-text clearfix">
+                                <div class="order-text-right">
+                                    <div class="otr-itme1">￥{%$order[order].product[product].price%}</div>
+                                    <div class="otr-itme2">×{%$order[order].product[product].num%}</div>
+                                    {%if $order[order].product[product].outside==2 ||
+                                    $order[order].product[product].outside==3%}
+                                    <!--  <div class="tax">
+                                         税率:{%$order[order].product[product].tax * 100%}%
+                                     </div> -->
+                                    {%/if%}
+                                </div>
+                                <div class="order-text-left">
+                                    {%if $order[order].is_task%}
+                                    <div class="" style="display:inline; color:red;">团</div>
+                                    {%/if%}
+                                    <div class="otl-item1">{%$order[order].product[product].name%}</div>
+                                    <div class="otl-itme2">{%$order[order].product[product].content%}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {%/section%}
+                </div>
+                <div class="bottom clearfix">
+                    <div class="total">
+                        <div class="num">共{%$order[order].product_num%}件</div>
+                        <div class="price">&ensp;应付总额：<span class="color-red">￥{%$order[order].orderamount%}</span>
+                        </div>
+                    </div>
+                    <div class="button clearfix">
+                        {%if $order[order].status==1%}
+                        {%if $order[order].pay_status==0%}
+                        <div class="btn payed red" data-orderno="{%$order[order].orderno%}">立即支付</div>
+                        {%if !$order[order].is_task%}
+                        <div class="btn quit grey" data-orderno="{%$order[order].orderno%}">取消订单</div>
+                        {%/if%}
+                        {%/if%}
+                        {%if $order[order].pay_status==1 && $order[order].way_status==0%}
+                        <div class="btn wuliu grey" data-orderno="{%$order[order].orderno%}">订单跟踪</div>
+                        {%if !$order[order].is_task%}
+                        <div class="btn quit grey" data-orderno="{%$order[order].orderno%}">取消订单</div>
+                        {%/if%}
+
+                        {%/if%}
+
+
+                        {%if $order[order].way_status==1 && $order[order].receive==0%}
+                        <div class="btn receive red" data-orderno="{%$order[order].orderno%}">确认收货</div>
+                        <div class="btn wuliu grey" data-orderno="{%$order[order].orderno%}">订单跟踪</div>
+                        {%/if%}
+                        {%if $order[order].way_status==1 && $order[order].receive==1%}
+                        <div class="btn wuliu grey" data-orderno="{%$order[order].orderno%}">订单跟踪</div>
+                        <div class="btn del grey" data-orderno="{%$order[order].orderno%}">删除订单</div>
+                        {%/if%}
+                        {%else%}
+                        <div class="btn del grey" data-orderno="{%$order[order].orderno%}">删除订单</div>
+                        {%/if%}
+                    </div>
+                </div>
+            </div>
+            {%/if%}
+            {%/section%}
+        </div>
+    </div>
+</div>
+
+<div id="black_bg" style="display: none">
+    <input type="hidden" id="orderno">
+    <input type="hidden" id="paytype" value="alipay">
+
+    <div class="order-payway" style="display: block;">
+        <div class="op-head"><img src="{%$VIEW_ROOT%}/mobile/image/close.png">
+
+            <p>支付方式</p></div>
+        <div class="op-itme-first clearfix">
+            <div class="op-itme3-1"><img src="{%$VIEW_ROOT%}/mobile/image/yes_w.png"></div>
+            <div class="op-itme1"><img src="{%$VIEW_ROOT%}/mobile/image/zhifubao.png"></div>
+            <div class="op-itme2">支付宝支付</div>
+        </div>
+        <div class="op-itme-second clearfix">
+            <div class="op-itme3-2"><img src="{%$VIEW_ROOT%}/mobile/image/yes_w.png"></div>
+            <div class="op-itme1"><img src="{%$VIEW_ROOT%}/mobile/image/weixin.png"></div>
+            <div class="op-itme2">微信支付</div>
+        </div>
+        <div class="op-check" id="submit">确认</div>
+    </div>
+
+</div>
+</body>
+<script type="text/javascript">
+    function tabb(obj, n) {
+        $(obj).siblings().removeClass('active');
+        $(obj).addClass('active');
+        var statusCur = n;
+        $('.contitem').hide();
+        $('.orderListCont' + statusCur).show();
+        return false;
+    }
+
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': '{%$x_csrf_token%}'
+        }
+    });
+
+    $('#submit').on('click', function () {
+        var orderno = $('#orderno').val();
+        var paytype = $('#paytype').val();
+        window.location = '{%url c=order a=payment%}&orderno=' + orderno + '&paytype=' + paytype;
+        return false;
+    });
+
+    $(".op-itme-second").click(function () {
+        $(".op-itme3-2 img").css("display", "block");
+        $(".op-itme3-1").hide();
+        $('#paytype').val('wechat');
+    })
+    $(".op-itme-first").click(function () {
+        $(".op-itme3-2 img").hide();
+        $(".op-itme3-1").show();
+        $('#paytype').val('alipay');
+    })
+
+    $(".payed").on('click', function () {
+        $("#black_bg").toggle();
+        $('#orderno').val($(this).data('orderno'));
+        return false;
+    })
+    $(".order-payway .op-head img").click(function () {
+        $("#black_bg").hide();
+        $('#orderno').val('');
+    })
+
+    $('.order').on('click', function () {
+        var orderno = $(this).data('orderno');
+        window.location = '{%url c=mobile a=orderinfo%}&orderno=' + orderno;
+        return false;
+    });
+
+
+    $('.wuliu').on('click', function () {
+        var orderno = $(this).data('orderno');
+        window.location = '{%url c=mobile a=wuliu%}&orderno=' + orderno;
+        return false;
+    });
+
+
+    $('.quit').on('click', function () {
+        var orderno = $(this).data('orderno');
+        var ths = $(this);
+        $.post('{%url m=ajax c=order a=quit%}', {orderno: orderno}, function (response) {
+            if (response.code == 1) {
+                msg('订单取消成功', function () {
+                    ths.parents('.order').find('.status').text('订单关闭');
+                    ths.parents('.order').find('.btn').remove();
+                });
+            } else {
+                msg(response.result);
+            }
+        });
+        return false;
+    });
+
+
+    $('.del').on('click', function () {
+        var orderno = $(this).data('orderno');
+        var ths = $(this);
+        window.confirm('您确认删除订单吗？',function(result){
+        	if(result)
+        	{
+        		$.post('{%url m=ajax c=order a=delete%}', {orderno: orderno}, function (response) {
+                    if(response.code==1)
+                   	{
+                   		ths.parents('.order').remove();
+                   	}
+                    else
+                   	{
+                   		msg(response.result);
+                   	}
+                });
+        	}
+        })
+        return false;
+    });
+
+    $('.receive').on('click', function () {
+        var orderno = $(this).data('orderno');
+        var ths = $(this);
+        $.post('{%url m=ajax c=order a=receive%}', {orderno: orderno}, function (response) {
+            if (response.code == 1) {
+                msg('确认收货成功', function () {
+                    ths.parents('.order').find('.status').text('交易成功');
+                    ths.parents('.order').find('.btn').remove();
+                });
+            }
+            else {
+                msg(response.result);
+            }
+        });
+        return false;
+    });
+
+    function GetQueryString(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+        var r = window.location.search.substr(1).match(reg);
+        if (r != null) return (r[2]);
+        return null;
+    }
+    if (GetQueryString("pay_status"))
+        $('#tab2').trigger("click");
+    if (GetQueryString("way_status"))
+        $('#tab3').trigger("click");
+    if (GetQueryString("complete"))
+        $('#tab4').trigger("click");
+</script>
+</html>

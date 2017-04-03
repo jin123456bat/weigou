@@ -1,0 +1,166 @@
+ 
+.head_top_1180 { height:28px; border-bottom:1px solid #D9D9D9; background-color:#F2F2F2; overflow:hidden; }
+.head_top_1180 dt { width:1180px; height:27px; margin:0 auto; }
+.head_top_1180 li { float:left; }
+.head_top_1180 dt ol li { height:26px; line-height:26px; color:#666; }
+.head_top_1180 dt ol a { color:#666; text-decoration:none; }
+.head_top_1180 dt ol span { padding:0 7px; }
+.head_top_1180 dt ul { float:right; }
+.head_top_1180 dt ul li { color:#666; }
+.head_top_1180 dt ul p { padding:0 8px; height:27px; line-height:27px; float:left; }
+.head_top_1180 dt ul a { color:#666; text-decoration:none; height:20px; line-height:27px; float:left; }
+.head_top_1180 dt ul a:hover { color:#F2776C; text-decoration:underline;  }
+.head_top_1180 .line { height:0; line-height:0; font-size:0; border-bottom:1px solid #FFF; }
+.head_logo_1180 { width:1180px; height:97px; margin:0 auto; overflow:hidden; }
+.head_logo_1180 dt { height:97px; float:left; overflow:hidden; }
+.head_logo_1180 dt li { height:97px; float:left; overflow:hidden; }
+.head_logo_1180 dd {
+	width: 234px;
+	height: 44px;
+	margin: 26px 0 0 0;
+	float: right;
+	background: url("http://img.zbird.cn/ww3/header/400.jpg");
+}
+.head_logo_1180 dd h1{display:none;}
+.jna_link{ background:url('http://img.zbird.cn/ww3/index/1180/icon_jna.jpg') left top no-repeat; width:66px; height:72px; display:inline-block; float:left; margin:20px 0 0 25px;}
+.jna_link:hover{background:url('http://img.zbird.cn/ww3/index/1180/icon_jna.jpg') right top no-repeat;}
+.head_nav_1180 { height:40px; margin:0 auto; overflow:hidden; background:url("http://img.zbird.cn/ww3/header/bg_nav.jpg") repeat-x; }
+.head_nav_1180 dd { width:1180px; height:40px; margin:0 auto; }
+.head_nav_1180 dd ol { float:right; }
+.head_nav_1180 dd ol li { padding:11px 0 0 18px; float:left; }
+.head_nav_1180 dd ol li a { padding-left:6px; float:left; color:#CCC; text-decoration:none; background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -722px -80px;}
+.head_nav_1180 dd ol li a:hover { color:#CE9386; }
+.head_nav_1180 dd ul { float:left; }
+.head_nav_1180 dd ul li { overflow:hidden; }
+.head_nav_1180 dd ul .sub { width:400px; margin:40px 0 0 0; display:none; position:absolute; z-index:1002; cursor:none; filter: Alpha(opacity=80); }
+.head_nav_1180 dd ul .sub ul { padding:0; padding:11px 13px 13px 20px; float:left; opacity:0.8; background:#3C3C3C; cursor:pointer;}
+.head_nav_1180 dd ul .sub ol { padding:0; padding:11px 30px 13px 0; float:left; opacity:0.8; background:#3C3C3C; cursor:pointer;filter: }
+.head_nav_1180 dd ul .sub li { line-height:24px; margin:0; padding:0; text-align:left; float:none; }
+.head_nav_1180 dd ul .sub a { padding:0; margin:0; color:#FFF; text-decoration:none; background-image:none; float:none; }
+.head_nav_1180 dd ul .sub a:hover { color:#CD9285; }
+.head_nav_1180 dd ul .sub span { padding-right:7px; }
+.head_nav_1180 dd ul .sub label { padding-left:20px; }
+.head_nav_1180 dd ul .nav_index_a { width:55px; height:40px; float:left; }
+.head_nav_1180 dd ul .nav_bg { width:110px; height:40px; float:left; } 
+.head_nav_1180 dd ul .new { width:21px; height:11px; margin:3px 0 0 0; padding:0; cursor:pointer; float:right; background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -644px 0; overflow:hidden; }
+.head_nav_1180 dd ul .new2 { padding-left:6px; margin:0; height:22px; line-height:22px; font-weight:bold; font-family:Arial, Helvetica, sans-serif; color:#CD9285; }
+.head_nav_1180 .nav_index { width:55px; height:40px; cursor:pointer; float:left; background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat 0 -225px; overflow:hidden; }
+.head_nav_1180 .nav_luozuan { width:90px; height:40px; cursor:pointer; float:left; background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -55px -225px; overflow:hidden; }
+.head_nav_1180 .nav_jiezhi { width:90px; height:40px; cursor:pointer; float:left; background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -145px -225px; overflow:hidden; }
+.head_nav_1180 .nav_duijie { width:90px; height:40px; cursor:pointer; float:left; background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -235px -225px; overflow:hidden; }
+.head_nav_1180 .nav_accessory { width:105px; height:40px; cursor:pointer; float:left; background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -325px -225px; overflow:hidden; }
+/*.head_nav_1180 .nav_diaozhui { width:90px; height:40px; cursor:pointer; float:left; background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -325px -225px; overflow:hidden; }
+.head_nav_1180 .nav_ershi { width:90px; height:40px; cursor:pointer; float:left; background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -415px -225px; overflow:hidden; }
+.head_nav_1180 .nav_bracelet { width:90px; height:40px; cursor:pointer; float:left; background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -505px -225px; overflow:hidden; }
+.head_nav_1180 .nav_zhubao { width:110px; height:40px; cursor:pointer; float:left; background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -505px -225px; overflow:hidden; }*/
+.head_nav_1180 .nav_teshe { width:110px; height:40px; cursor:pointer; float:left; background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -431px -225px; overflow:hidden; }
+.head_nav_1180 .nav_on_index { width:55px; height:40px; cursor:pointer; float:left; background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat 0 -265px; overflow:hidden; }
+.head_nav_1180 .nav_on_luozuan { width:90px; height:40px; cursor:pointer; float:left; background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -55px -265px; overflow:hidden; }
+.head_nav_1180 .nav_on_jiezhi { width:90px; height:40px; cursor:pointer; float:left; background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -145px -265px; overflow:hidden; }
+.head_nav_1180 .nav_on_duijie { width:90px; height:40px; cursor:pointer; float:left; background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -235px -265px; overflow:hidden; }
+.head_nav_1180 .nav_on_accessory { width:105px; height:40px; cursor:pointer; float:left; background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -325px -265px; overflow:hidden; }
+/*.head_nav_1180 .nav_on_diaozhui { width:90px; height:40px; cursor:pointer; float:left; background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -325px -265px; overflow:hidden; }
+.head_nav_1180 .nav_on_ershi { width:90px; height:40px; cursor:pointer; float:left; background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -415px -265px; overflow:hidden; }
+.head_nav_1180 .nav_on_bracelet { width:90px; height:40px; cursor:pointer; float:left; background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -505px -265px; overflow:hidden; }
+.head_nav_1180 .nav_on_zhubao { width:110px; height:40px; cursor:pointer; float:left; background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -505px -265px; overflow:hidden; }*/
+.head_nav_1180 .nav_on_teshe { width:110px; height:40px; cursor:pointer; float:left; background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -431px -265px; overflow:hidden; }
+.head_hot_1180 { height:33px; overflow:hidden; background-color:#EFEFEF; overflow:hidden; }
+.head_hot_1180 form { height:30px; margin-top:1px; border:1px solid #FFF; overflow:hidden; }
+.head_hot_1180 dd { width:1180px; height:30px; margin:0 auto; overflow:hidden; }
+.head_hot_1180 p { float:left; }
+.head_hot_1180 p span { height:28px; line-height:28px; padding:0 6px 0 8px; float:left; color:#666; font-weight:bold; }
+.head_hot_1180 p label { height:28px; line-height:28px; padding:0 20px; float:left; }
+.head_hot_1180 p a { height:28px; line-height:28px; float:left; color:#666; text-decoration:none; }
+.head_hot_1180 p a:hover { text-decoration:underline; }
+.head_hot_1180 ul { float:right; }
+.head_hot_1180 ul li { float:left; }
+.head_hot_1180 ul input { width:136px; height:22px; line-height:22px; padding-left:8px; margin:1px 4px 0 0; border-color:#CCC; color:#999; float:left; }
+.head_hot_1180 ul img { margin:1px 0 0 0; }
+.head_hot_1180 .searchBtn{ background:url("http://img.zbird.cn/ww3/header/header.png") no-repeat -471px 0px; width:50px; height:26px;}
+.head_top_1180 .weiboAdd{position:absolute;z-index:999;float:left;}
+.head_top_1180 .weiboAddTop{position:absolute;border: 1px solid #F3776E;border-bottom:none;width:79px;+width:84px;margin:3px -9px;margin:2px -9px\9;+margin:3px -108px;height:24px;height:24px\9;line-height:20px;text-align:center;z-index:1200;background:#FFF;}
+.head_top_1180 .weiboAddCont{position:absolute;z-index:999;top:24px;border: 1px solid #F3776E;width:153px;margin:3px -9px;margin:2px -9px\9;+margin:3px -108px;background:#FFF;}
+.head_top_1180 .weiboAddCont li{margin-bottom:5px;}
+.head_top_1180 .weiboAddCont li:hover{background:#FDF3EB;}
+.head_top_1180 .weiboAddCont li h5{margin-bottom:10px;text-align:left;padding:0 10px;font-weight:normal;}
+.head_top_1180 .weiboAddCont li h5 a{color:#3C98C7;}
+.head_top_1180 .weiboAddCont li h5 a:hover{color:#3C98C7;}
+.head_top_1180 .weiboAddCont li h5 img{vertical-align:top;}
+.head_top_1180 .weiboAddLine{border-bottom:solid 1px #CCC;padding-bottom:10px;}
+.head_top_1180 .weiboAddNoLine{padding-bottom:10px;}
+
+.head_top_1180 .tyzxAdd{position:absolute;height:280px;z-index:999;width:79px;+width:81px;margin:3px -9px;margin:2px -9px\9;+margin:3px -84px;line-height:20px;background:#FFF;;border: 1px solid #F3776E;}
+.head_top_1180 .tyzxAdd .tyzxAddTop{border-bottom:none;text-align:center}
+.head_top_1180 .tyzxAdd .tyzxAddTop span:hover{color:#F2776C; text-decoration: underline; cursor:pointer;}
+.head_top_1180 .tyzxAdd .tyzxAddCont{border-top:none;}
+.head_top_1180 .tyzxAdd .tyzxAddCont ul li h5{font-weight:normal;width:71px;+width:75px;cursor:pointer;text-align:left;padding-left:8px}
+.head_top_1180 .tyzxAdd .tyzxAddCont ul a{line-height:20px;}
+.head_top_1180 .tyzxAdd .tyzxAddCont ul li h5:hover{background:#FDF3EB;text-decoration: none;color:#F2776C;line-height:20px;}
+
+.head_top_1180 .arrow { width:11px; height:14px; margin:6px 1px ; border:0; float:left; cursor:pointer; background:url("http://res2.bridd.com/img/ww3/header/header.png") no-repeat -615px 3px; }
+.head_top_1180 .arrow_un { width:11px; height:14px; margin:2px 2px;+margin:-18px -1px;  border:0; float:right; cursor:pointer; background:url("http://res2.bridd.com/img/ww3/header/header.png") no-repeat -630px 3px; }
+#serviceOnlineDiv .max {
+	margin-top: 0px;
+}
+
+/*----------------------add 2014-08-27-----------------------------*/
+.shade_wrap_op {width: 100%;height: 100%;position: fixed;left: 0px;top: 0px;background: #000;filter: alpha(opacity=50);
+    -moz-opacity: 0.5;-khtml-opacity: 0.5;opacity: 0.5;z-index: 1000;cursor: pointer;display:none;}
+
+.shade_wrap{ width:100%; height:100%; position:relative; z-index:1500;display:none;}
+.gprs_wrap{ width:395px; height:409px; position:fixed;  padding:0; z-index:1600; left:50%; margin:-204px 0 0 -198px; right:0; top:50%; bottom:0;
+			background:url('http://img.zbird.cn/ww3/index/city_bg.jpg') no-repeat;text-align:center;}
+.gprs_wrap i{display:block;height:33px;cursor:pointer;}
+.gprs_wrap span{display:block;padding:180px 0 0;}
+/*.gprs_nanjing_wrap{background:url('http://img.zbird.cn/ww3/index/1180/gprs_nanjing.png') no-repeat; }
+.gprs_xian_wrap{background:url('http://img.zbird.cn/ww3/index/1180/gprs_xian.png') no-repeat; }
+.gprs_tianjin_wrap{background:url('http://img.zbird.cn/ww3/index/1180/gprs_tianjin.png') no-repeat; }
+.gprs_chongqing_wrap{background:url('http://img.zbird.cn/ww3/index/1180/gprs_chongqing.png') no-repeat; }
+.gprs_mianyang_wrap{background:url('http://img.zbird.cn/ww3/index/1180/gprs_mianyang.png') no-repeat; }
+.gprs_zhengzhou_wrap{background:url('http://img.zbird.cn/ww3/index/1180/gprs_zhengzhou.png') no-repeat; }
+.gprs_hefei_wrap{background:url('http://img.zbird.cn/ww3/index/1180/gprs_hefei.png') no-repeat; }
+.gprs_shanghai_wrap{background:url('http://img.zbird.cn/ww3/index/1180/gprs_shanghai.png') no-repeat; }
+.gprs_qingdao_wrap{background:url('http://img.zbird.cn/ww3/index/1180/gprs_qingdao.png') no-repeat; }
+.gprs_ningbo_wrap{background:url('http://img.zbird.cn/ww3/index/1180/gprs_ningbo.png') no-repeat; }
+.gprs_wuhan_wrap{background:url('http://img.zbird.cn/ww3/index/1180/gprs_wuhan.png') no-repeat; }
+.gprs_yancheng_wrap{background:url('http://img.zbird.cn/ww3/index/1180/gprs_yancheng.png') no-repeat; }*/
+.gprs_city_a{ width:203px; height:34px; display:inline-block;line-height:34px;color:#fff;text-align:center;background:#ff8a81;margin:35px 0 13px;}
+.gprs_index_a{ width:203px; height:34px; display:inline-block;line-height:34px;color:#fff;text-align:center;background:#feb8ae;
+				}
+.gprs_index_a:hover,.gprs_city_a:hover{  opacity:0.85;color:#fff;}
+
+
+/*
+.gprs_a_nanjing{ background:url('http://img.zbird.cn/ww3/index/1180/gprs_nanjing_a.jpg') no-repeat left top;}
+.gprs_a_nanjing:hover{background:url('http://img.zbird.cn/ww3/index/1180/gprs_nanjing_a.jpg') no-repeat right top;}
+
+.gprs_a_xian{ background:url('http://img.zbird.cn/ww3/index/1180/gprs_xian_a.jpg') no-repeat left top;}
+.gprs_a_xian:hover{background:url('http://img.zbird.cn/ww3/index/1180/gprs_xian_a.jpg') no-repeat right top;}
+
+.gprs_a_tianjin{ background:url('http://img.zbird.cn/ww3/index/1180/gprs_tianjin_a.jpg') no-repeat left top;}
+.gprs_a_tianjin:hover{background:url('http://img.zbird.cn/ww3/index/1180/gprs_tianjin_a.jpg') no-repeat right top;}
+
+.gprs_a_chongqing{ background:url('http://img.zbird.cn/ww3/index/1180/gprs_chongqing_a.jpg') no-repeat left top;}
+.gprs_a_chongqing:hover{background:url('http://img.zbird.cn/ww3/index/1180/gprs_chongqing_a.jpg') no-repeat right top;}
+
+.gprs_a_mianyang{ background:url('http://img.zbird.cn/ww3/index/1180/gprs_mianyang_a.jpg') no-repeat left top;}
+.gprs_a_mianyang:hover{background:url('http://img.zbird.cn/ww3/index/1180/gprs_mianyang_a.jpg') no-repeat right top;}
+
+.gprs_a_zhengzhou{ background:url('http://img.zbird.cn/ww3/index/1180/gprs_zhengzhou_a.jpg') no-repeat left top;}
+.gprs_a_zhengzhou:hover{background:url('http://img.zbird.cn/ww3/index/1180/gprs_zhengzhou_a.jpg') no-repeat right top;}
+
+.gprs_a_hefei{ background:url('http://img.zbird.cn/ww3/index/1180/gprs_hefei_a.jpg') no-repeat left top;}
+.gprs_a_hefei:hover{background:url('http://img.zbird.cn/ww3/index/1180/gprs_hefei_a.jpg') no-repeat right top;}
+
+.gprs_a_shanghai{ background:url('http://img.zbird.cn/ww3/index/1180/gprs_shanghai_a.jpg') no-repeat left top;}
+.gprs_a_shanghai:hover{background:url('http://img.zbird.cn/ww3/index/1180/gprs_shanghai_a.jpg') no-repeat right top;}
+.gprs_a_qingdao{ background:url('http://img.zbird.cn/ww3/index/1180/gprs_qingdao_a.jpg') no-repeat left top;}
+.gprs_a_qingdao:hover{background:url('http://img.zbird.cn/ww3/index/1180/gprs_qingdao_a.jpg') no-repeat right top;}
+.gprs_a_ningbo{ background:url('http://img.zbird.cn/ww3/index/1180/gprs_ningbo_a.jpg') no-repeat left top;}
+.gprs_a_ningbo:hover{background:url('http://img.zbird.cn/ww3/index/1180/gprs_ningbo_a.jpg') no-repeat right top;}
+.gprs_a_wuhan{ background:url('http://img.zbird.cn/ww3/index/1180/gprs_wuhan_a.jpg') no-repeat left top;}
+.gprs_a_wuhan:hover{background:url('http://img.zbird.cn/ww3/index/1180/gprs_wuhan_a.jpg') no-repeat right top;}
+.gprs_a_yancheng{ background:url('http://img.zbird.cn/ww3/index/1180/gprs_yancheng_a.jpg') no-repeat left top;}
+.gprs_a_yancheng:hover{background:url('http://img.zbird.cn/ww3/index/1180/gprs_yancheng_a.jpg') no-repeat right top;}*/
+
+/*----------------------------end------------------------------*/

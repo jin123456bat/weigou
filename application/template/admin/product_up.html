@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<!--[if IE 8]>
+<html lang="en" class="ie8 no-js"> <![endif]-->
+<!--[if IE 9]>
+<html lang="en" class="ie9 no-js"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en">
+<!--<![endif]-->
+<!-- BEGIN HEAD -->
+
+<head>
+    <meta charset="utf-8"/>
+    <title>供货商管理</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1" name="viewport"/>
+    <meta content="" name="description"/>
+    <meta content="" name="author"/>
+    <!-- BEGIN GLOBAL MANDATORY STYLES -->
+    <link href="{%$VIEW_ROOT%}/assets/global/css/font.css" rel="stylesheet" type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/global/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet"
+          type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/global/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet"
+          type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/global/plugins/uniform/css/uniform.default.css" rel="stylesheet" type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css" rel="stylesheet"
+          type="text/css"/>
+    <!-- END GLOBAL MANDATORY STYLES -->
+    <!-- BEGIN THEME GLOBAL STYLES -->
+    <link href="{%$VIEW_ROOT%}/assets/global/css/components.min.css" rel="stylesheet" id="style_components"
+          type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/global/css/plugins.min.css" rel="stylesheet" type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css" rel="stylesheet"
+          type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css" rel="stylesheet"
+          type="text/css"/>
+    <!-- END THEME GLOBAL STYLES -->
+    <!-- BEGIN THEME LAYOUT STYLES -->
+    <link href="{%$VIEW_ROOT%}/assets/layouts/layout/css/layout.min.css" rel="stylesheet" type="text/css"/>
+    <link href="{%$VIEW_ROOT%}/assets/layouts/layout/css/themes/darkblue.min.css" rel="stylesheet" type="text/css"
+          id="style_color"/>
+    <link href="{%$VIEW_ROOT%}/assets/layouts/layout/css/custom.min.css" rel="stylesheet" type="text/css"/>
+    <!-- END THEME LAYOUT STYLES -->
+    <link rel="shortcut icon" href="favicon.ico"/>
+</head>
+<!-- END HEAD -->
+
+<body class="page-header-fixed page-sidebar-closed-hide-logo page-content-white">
+<!-- BEGIN HEADER -->
+{%include file='admin/public/header.html'%}
+<!-- END HEADER -->
+<!-- BEGIN HEADER & CONTENT DIVIDER -->
+<div class="clearfix"></div>
+<!-- END HEADER & CONTENT DIVIDER -->
+<!-- BEGIN CONTAINER -->
+<div class="page-container">
+    <!-- BEGIN SIDEBAR -->
+    {%include file='admin/public/sidebar.html'%}
+    <!-- END SIDEBAR -->
+    <!-- BEGIN CONTENT -->
+    <div class="page-content-wrapper">
+        <!-- BEGIN CONTENT BODY -->
+        <div class="page-content">
+            <!-- BEGIN PAGE HEADER-->
+            <!-- BEGIN THEME PANEL -->
+            {%include file='admin/public/style.html'%}
+            <!-- END THEME PANEL -->
+            <!-- BEGIN PAGE BAR -->
+            <div class="page-bar">
+                <ul class="page-breadcrumb">
+                    <li>
+                        <a href="index.php">首页</a>
+                        <i class="fa fa-circle"></i>
+                    </li>
+                    <li>
+                        <span>商品管理</span>
+                        <i class="fa fa-circle"></i>
+                    </li>
+                    <li>
+                        <span>商品价格/库存同步</span>
+                    </li>
+
+                </ul>
+            </div>
+            <!-- END PAGE BAR -->
+            <!-- BEGIN PAGE TITLE-->
+            <h3 class="page-title"> 商品价格/库存同步
+                <small>商品价格/库存同步</small>
+            </h3>
+            {%include file='admin/public/quick_sidebar.html'%}
+            <!-- END QUICK SIDEBAR -->
+
+            <div>
+                <h4 style="color: #ff0000">{%$error%}</h4>
+
+                <div class="table-group-actions">
+                    <button class="btn blue btn-sm" style="width: 500px;" id="importProductBtnprice">导入商品价格</button>
+                    <button class="btn blue btn-sm" style="width: 500px;" id="importProductBtnnum">导入商品数量</button>
+
+                </div>
+                <div id="importProductModalprice" class="modal container fade" tabindex="-1">
+                    <form class="form-horizontal" id="importProductFormprice" enctype="multipart/form-data"
+                          method="POST">
+                        <input type="hidden" name="ls" id="ls" value="price">
+                        <input type="hidden" name="m" id="m" value="view">
+                        <input type="hidden" name="c" id="c" value="admin">
+                        <input type="hidden" name="a" id="a" value="product_up">
+
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                            <h4 class="modal-title">导入商品价格</h4>
+
+
+                        </div>
+
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label class="col-md-3 control-label">上传商品信息表</label>
+
+                                <div class="col-md-9">
+                                    <input type="file" name="file" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label">下载商品导入模板</label>
+
+                                <div class="col-md-9">
+                                    <button class="btn btn-sm btn-default" id="downloadProductTemplateprice">点击下载
+                                    </button>
+                                </div>
+                            </div>
+
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" data-dismiss="modal" class="btn btn-outline dark">关闭</button>
+                            <button type="submit" class="btn blue">开始上传</button>
+                        </div>
+                    </form>
+                </div>
+
+
+                <div id="importProductModalnum" class="modal container fade" tabindex="-1">
+                    <form class="form-horizontal" id="importProductFormnum" enctype="multipart/form-data"
+                          method="POST">
+                        <input type="hidden" name="ls" value="num">
+                        <input type="hidden" name="m" value="view">
+                        <input type="hidden" name="c" value="admin">
+                        <input type="hidden" name="a" value="product_up">
+
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                            <h4 class="modal-title">导入商品库存</h4>
+
+
+                        </div>
+
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label class="col-md-3 control-label">上传商品信息表</label>
+
+                                <div class="col-md-9">
+                                    <input type="file" name="file" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label">下载商品导入模板</label>
+
+                                <div class="col-md-9">
+                                    <button class="btn btn-sm btn-default" id="downloadProductTemplatenum">点击下载
+                                    </button>
+                                </div>
+                            </div>
+
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" data-dismiss="modal" class="btn btn-outline dark">关闭</button>
+                            <button type="submit" class="btn blue">开始上传</button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- END CONTAINER -->
+<!-- BEGIN FOOTER -->
+{%include file='admin/public/footer.html'%}
+<!-- END FOOTER -->
+<!--[if lt IE 9]>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/respond.min.js"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/excanvas.min.js"></script>
+<![endif]-->
+<!-- BEGIN CORE PLUGINS -->
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/jquery.min.js" type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap/js/bootstrap.min.js"
+        type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/js.cookie.min.js" type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js"
+        type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js"
+        type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/jquery.blockui.min.js" type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/uniform/jquery.uniform.min.js"
+        type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js"
+        type="text/javascript"></script>
+<!-- END CORE PLUGINS -->
+<!-- BEGIN THEME GLOBAL SCRIPTS -->
+<script src="{%$VIEW_ROOT%}/assets/global/scripts/app.min.js" type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-modal/js/bootstrap-modalmanager.js"
+        type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-modal/js/bootstrap-modal.js"
+        type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/jquery-validation/js/jquery.validate.min.js"
+        type="text/javascript"></script>
+<!-- END THEME GLOBAL SCRIPTS -->
+<!-- BEGIN THEME LAYOUT SCRIPTS -->
+<script src="{%$VIEW_ROOT%}/assets/layouts/layout/scripts/layout.min.js" type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/layouts/layout/scripts/demo.min.js" type="text/javascript"></script>
+<script src="{%$VIEW_ROOT%}/assets/layouts/global/scripts/quick-sidebar.min.js" type="text/javascript"></script>
+<!-- END THEME LAYOUT SCRIPTS -->
+<script type="text/javascript">
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': '{%$x_csrf_token%}'
+        }
+    });
+
+    $(document).on('click', '#importProductBtnprice', function () {
+        $('#importProductModalprice').modal('show');
+    });
+
+
+    $('#downloadProductTemplateprice').on('click', function () {
+        window.open('{%$VIEW_ROOT%}/xlsx/productprice.xlsx');
+        return false;
+    });
+
+    $(document).on('click', '#importProductBtnnum', function () {
+        $('#importProductModalnum').modal('show');
+    });
+
+    $('#downloadProductTemplatenum').on('click', function () {
+        window.open('{%$VIEW_ROOT%}/xlsx/productnum.xlsx');
+        return false;
+    });
+
+</script>
+</body>
+
+</html>

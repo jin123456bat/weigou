@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="utf-8" />
+		<title>{%$page_title%}</title>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+       	<meta name="renderer" content="webkit">
+        <meta content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport" />
+        <!-- reset -->
+        <link rel="stylesheet" href="//cdn.bootcss.com/normalize/5.0.0/normalize.min.css">
+		<!-- 新 Bootstrap 核心 CSS 文件 -->
+        <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<!-- 可选的Bootstrap主题文件（一般不用引入） -->
+		<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
+		<!--icon-->
+		<link rel="stylesheet" href="{%$VIEW_ROOT%}/html/css/plugins/font-awesome/css/font-awesome.min.css">
+		<!--自定义css-->
+		<link rel="stylesheet" href="{%resource path='/html/css/global.css'%}">
+		<script type="text/javascript">
+			function lpad(num, n) {  
+				return Array(n>(''+num).length?(n-(''+num).length+1):0).join(0)+num;  
+			}
+		</script>
+	</head>
+	<body>
+		<div id="setStockModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
+			<div class="modal-dialog" role="document" style="width: 370px;">
+				<div class="modal-content">
+					<form>
+					<input type="hidden" name="id">
+					<div class="center-block text-center" style="padding-top: 50px; padding-bottom: 20px;">
+						<h4><strong>库存临界值设定</strong></h4>
+					</div>
+					
+					<div class="center-block text-center">
+						<span id="category1">一级类目</span> &gt; <span id="category2">二级类目</span>
+					</div>
+					<input name="stock_limit" type="text" style="width: 35%; margin-top: 10px; margin-bottom: 30px;" class="form-control center-block text-center" placeholder="暂未设置">
+					
+					<div class="center-block text-center">
+						<div class="help-block">
+							请根据实际情况设置库存临界值；<br>输入的数值必须在0~100区间内。
+						</div>
+					</div>
+					
+					<button type="submit" class="btn btn-success center-block" style="width: 100px;margin-bottom: 100px; margin-top: 100px;">保存</button>
+					</form>
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+		{%include file='html/public/header.html'%}
+		<div class="body container-fluid">
+			<div class="row">
+				{%include file='html/public/sidebar.html'%}
+				<div class="content">
+			  		<div class="content-body">
+			  			<div class="white-block">
+			  				<div class="wall-block">
+								<p>商品管理 - 补货清单</p>
+							</div>
+			  			</div>
+			  			<div class="divider"></div>
+			  			<div class="white-block">
+			  				
+			  				<div class="tab">
+			  					<div class="tab-header">
+			  						<a class="tab-title active" href="#all">库存临界值/销售价格/税率设置</a>
+			  					</div>
+			  					<div class="tab-body">
+			  						<div class="tab-page active" id="all">
+			  							<div class="space"></div>
+										<div class="top-tips">
+											<div class="top-tips-title">
+												操作提示
+											</div>
+											<div class="top-tips-body">
+												<p>配置商品库存临界值、配置商品的销售价比例</p>
+											</div>
+										</div>
+										
+										<div class="line"></div>
+										<div class="row">
+											<div class="col-md-4">
+												<div class="select-multiple-search">
+													<input type="text" placeholder="输入名称查找" class="search">
+													<div class="icon">
+														<span class="glyphicon glyphicon-search"></span>
+													</div>
+												</div>
+												<div class="select-multiple font-dark">
+												
+												</div>
+											</div>
+											
+											<div class="col-md-4">
+												<div class="select-multiple-search">
+													<input type="text" placeholder="输入名称查找" class="search">
+													<div class="icon">
+														<span class="glyphicon glyphicon-search"></span>
+													</div>
+												</div>
+												<div class="select-multiple font-dark">
+													
+												</div>
+											</div>
+										</div>
+										
+										
+			  						</div>
+								</div>
+							</div>
+							
+			  			</div>
+			  		</div>				  
+				</div>
+			</div>
+		</div>
+		<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+		<script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+		<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+		<script src="http://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		<!--alert-->
+		<script src="//cdn.bootcss.com/bootbox.js/4.4.0/bootbox.min.js"></script>
+		<script src="{%resource path='/html/js/tab.js'%}"></script>
+		<script src="{%resource path='/html/js/global.js'%}"></script>
+		<script type="text/javascript">
+			$.ajaxSetup({
+				headers:{
+					'X-CSRF-TOKEN':'{%$x_csrf_token%}'
+				}
+			});
+			
+			//搜索分类
+			$('.search').on('keyup',function(){
+				if($.trim($(this).val()).length != 0)
+				{
+					var searchText = $.trim($(this).val());
+					$(this).parents('.col-md-4').find('.option').each(function(index,value){
+						if($(value).text().indexOf(searchText) >= 0)
+						{
+							$(value).show();
+						}
+						else
+						{
+							$(value).hide();
+						}
+					});
+				}
+				else
+				{
+					$(this).parents('.col-md-4').find('.option').each(function(index,value){
+						$(value).show();
+					});
+				}
+			});
+			//点击分类项目的时候设置为选中状态
+			$('.select-multiple').on('click','.option',function(){
+				$(this).siblings().removeClass('active');
+				$(this).addClass('active');
+				loadCategory($(this).data('id'),parseInt($(this).data('level'))+1);
+				return false;
+			});
+			//载入分类的统一的函数
+			function loadCategory(bc_id,c_level)
+			{
+				$_icon = '';
+				if (c_level == 1)
+                {
+                    $('.col-md-4:eq(2) .select-multiple').empty();
+					$_icon = '<div class="icon"><i class="fa fa-edit"></i></div>';
+                }
+                if (c_level == 0)
+                {
+                    $('.col-md-4:eq(1) .select-multiple').empty();
+                    $('.col-md-4:eq(2) .select-multiple').empty();
+                }
+				if(c_level>=2)
+				{
+					return false;
+				}
+				else if(c_level==0)
+				{
+					bc_id = null;
+				}
+				$('.col-md-4:eq('+c_level+') .select-multiple').empty();
+				$.post('{%url m=ajax c=bcategory a=show%}',{bc_id:bc_id},function(response){
+					if(response.code==1)
+					{
+						for(var i=0;i<response.body.length;i++)
+						{
+							tpl = '<div class="option" data-id="'+response.body[i].id+'" data-level="'+c_level+'" data-sort="'+response.body[i].sort+'">'+response.body[i].name+$_icon+'</div>';
+							$('.col-md-4:eq('+c_level+') .select-multiple').append(tpl);
+						}
+					}
+					else
+					{
+						alert('异常！');
+					}
+				});
+				return false;
+			}
+			
+			//载入第一级分类
+			loadCategory(null,0);
+			
+			$('.select-multiple').on('click','.fa-edit',function(){
+				id = $(this).parents('.option').data('id');
+				$.post('./index.php?m=ajax&c=bcategory&a=find',{id:id},function(response){
+					if(response.code==1)
+					{
+						$('#setStockModal').modal('show');
+						stock_limit = parseInt(response.body.stock_limit);
+						if(stock_limit==0)
+						{
+							$('#setStockModal input').val('');
+						}
+						else
+						{
+							$('#setStockModal input').val(stock_limit);
+						}
+						$('#category1').text($('.option.active:first').text());
+						$('#category2').text($('.option.active:last').text());
+						$('#setStockModal input[name=id]').val($('.option.active:last').data('id'));
+					}
+					else
+					{
+						bootbox.alert(response.result);
+					}
+				});
+				return false;
+			});
+			
+			$('#setStockModal form').on('submit',function(){
+				var data = {
+					id:$.trim($(this).find('input[name=id]').val()),
+					stock_limit:parseInt($.trim($(this).find('input[name=stock_limit]').val())),
+				};
+				$.post('./index.php?m=ajax&c=bcategory&a=setStockLimit',data,function(response){
+					if(response.code==1)
+					{
+						$('#setStockModal').modal('hide');
+					}
+					else
+					{
+						bootbox.alert(response.result);
+					}
+				});
+				return false;
+			});
+		</script>
+	</body>
+</html>

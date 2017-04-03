@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>淘微购</title>
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-touch-fullscreen" content="yes" />
+    <meta name="full-screen" content="yes"/>
+    <meta name="screen-orientation" content="portrait"/>
+    <meta name="x5-fullscreen" content="true"/>
+    <link rel="stylesheet" type="text/css" href="{%$VIEW_ROOT%}/mobile/css/reset.css">
+    <link rel="stylesheet" type="text/css" href="{%$VIEW_ROOT%}/mobile/css/style.css">
+    <script type="text/javascript" src="{%$VIEW_ROOT%}/mobile/js/jquery-1.8.3.min.js"></script>
+    <script type="text/javascript" src="{%$VIEW_ROOT%}/mobile/js/resolution.js"></script>
+</head>
+<body>
+	{%if !(isset($smarty.get.webview) && $smarty.get.webview==1)%}
+    <div id="header">
+        <header>
+            <a href="{%url c=mobile a=account%}" class="left_btn"><i class="icon back"></i></a>
+            <h1>精彩活动</h1>
+        </header>
+    </div>
+    {%/if%}
+    <div class="include clearfix" {%if isset($smarty.get.webview)&&$smarty.get.webview==1%}style="margin-top:0px;"{%/if%}>
+        <div class="in-box">
+            <div class="toux1"><img src=" {%$VIEW_ROOT%}/mobile/image/toux1.png"></div>
+            <div class="in-head clearfix">
+                <div class="in-headright">今天</div>
+                <div class="in-headleft">发现好物</div>
+            </div>
+            <div class="pic1">
+                <div class="pic1-box">
+                    <div class="pic1-p1">考拉尖货</div>
+                    <div class="pic1-hr"></div>
+                    <div class="pic1-p2">只为世上唯一的那个我</div>
+                    <div class="pic1-p3">Halloween 我的心情故事</div>
+                </div>
+            </div>
+            <div class="in-text">
+                <div class="in-text1">只为世上唯一的那个我</div>
+                <div class="in-text2">峰上的茶园里，正有二十多个苗家女子在认真的采摘茶枝间的嫩芽，一般是那种新出的丰美的两芽叶片。茶芽拈在那些美丽的苗家女子的指间，嫩绿的样子，映着白玉葱段似的指尖，泛着鹅黄嫩绿的色泽，如精雕的珠玉，如一件雅致的艺术品，有清幽的香气。这样的时间里，我有些恍惚，是苗家女子的美丽映衬了鹅黄嫩绿的茶芽子，抑或是幽香的茶芽子映衬了那些采茶忙的女子的美丽？</div>
+                <div class="in-text3">
+                    <div class="in-num">6859阅读</div>
+                    <img src="{%$VIEW_ROOT%}/mobile/image/icon.png">
+
+                </div>
+            </div>
+        </div>
+                <div class="in-box">
+            <div class="toux1"><img src=" {%$VIEW_ROOT%}/mobile/image/toux1.png"></div>
+            <div class="in-head clearfix">
+                <div class="in-headright">今天</div>
+                <div class="in-headleft">发现好物</div>
+            </div>
+            <div class="pic1">
+                <div class="pic1-box">
+                    <div class="pic1-p1">考拉尖货</div>
+                    <div class="pic1-hr"></div>
+                    <div class="pic1-p2">只为世上唯一的那个我</div>
+                    <div class="pic1-p3">Halloween 我的心情故事</div>
+                </div>
+            </div>
+            <div class="in-text">
+                <div class="in-text1">只为世上唯一的那个我</div>
+                <div class="in-text2">峰上的茶园里，正有二十多个苗家女子在认真的采摘茶枝间的嫩芽，一般是那种新出的丰美的两芽叶片。茶芽拈在那些美丽的苗家女子的指间，嫩绿的样子，映着白玉葱段似的指尖，泛着鹅黄嫩绿的色泽，如精雕的珠玉，如一件雅致的艺术品，有清幽的香气。这样的时间里，我有些恍惚，是苗家女子的美丽映衬了鹅黄嫩绿的茶芽子，抑或是幽香的茶芽子映衬了那些采茶忙的女子的美丽？</div>
+                <div class="in-text3">
+                    <div class="in-num">6859阅读</div>
+                    <img src="{%$VIEW_ROOT%}/mobile/image/icon.png">
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+    var str=$(".in-text2").text();
+    if(str.length>100)
+        $(".in-text2").text(str.substr(0,100)+"...");
+    </script>
+</body>
+</html>

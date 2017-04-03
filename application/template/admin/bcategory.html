@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8 no-js"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9 no-js"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en">
+    <!--<![endif]-->
+    <!-- BEGIN HEAD -->
+    <head>
+        <meta charset="utf-8" />
+        <title>后台分类</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta content="width=device-width, initial-scale=1" name="viewport" />
+        <meta content="" name="description" />
+        <meta content="" name="author" />
+        <!-- BEGIN GLOBAL MANDATORY STYLES -->
+        <link href="{%$VIEW_ROOT%}/assets/global/css/font.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/plugins/uniform/css/uniform.default.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css" rel="stylesheet" type="text/css" />
+        <!-- END GLOBAL MANDATORY STYLES -->
+        <!-- BEGIN THEME GLOBAL STYLES -->
+        <link href="{%$VIEW_ROOT%}/assets/global/css/components.min.css" rel="stylesheet" id="style_components" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/css/plugins.min.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css" rel="stylesheet" type="text/css" />
+        <!-- END THEME GLOBAL STYLES -->
+        <!-- BEGIN THEME LAYOUT STYLES -->
+        <link href="{%$VIEW_ROOT%}/assets/layouts/layout/css/layout.min.css" rel="stylesheet" type="text/css" />
+        <link href="{%$VIEW_ROOT%}/assets/layouts/layout/css/themes/darkblue.min.css" rel="stylesheet" type="text/css" id="style_color" />
+        <link href="{%$VIEW_ROOT%}/assets/layouts/layout/css/custom.min.css" rel="stylesheet" type="text/css" />
+        <!-- END THEME LAYOUT STYLES -->
+        <link rel="shortcut icon" href="favicon.ico" /> </head>
+    <!-- END HEAD -->
+
+    <body class="page-header-fixed page-sidebar-closed-hide-logo page-content-white">
+        <!-- BEGIN HEADER -->
+        {%include file='admin/public/header.html'%}
+        <!-- END HEADER -->
+        <!-- BEGIN HEADER & CONTENT DIVIDER -->
+        <div class="clearfix"> </div>
+        <!-- END HEADER & CONTENT DIVIDER -->
+        <!-- BEGIN CONTAINER -->
+        <div class="page-container">
+            <!-- BEGIN SIDEBAR -->
+            {%include file='admin/public/sidebar.html'%}
+            <!-- END SIDEBAR -->
+            <!-- BEGIN CONTENT -->
+            <div class="page-content-wrapper">
+                <!-- BEGIN CONTENT BODY -->
+                <div class="page-content">
+                    <!-- BEGIN PAGE HEADER-->
+                    <!-- BEGIN THEME PANEL -->
+                    {%include file='admin/public/style.html'%}
+                    <!-- END THEME PANEL -->
+                    <!-- BEGIN PAGE BAR -->
+                    <div class="page-bar">
+                        <ul class="page-breadcrumb">
+                            <li>
+                                <a href="index.php">首页</a>
+                                <i class="fa fa-circle"></i>
+                            </li>
+                            <li>
+                                <span>商品管理</span>
+                                <i class="fa fa-circle"></i>
+                            </li>
+                            <li>
+                                <span>分类管理</span>
+                                <i class="fa fa-circle"></i>
+                            </li>
+                            <li>
+                                <span>后台分类</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- END PAGE BAR -->
+                    <!-- BEGIN PAGE TITLE-->
+                    <h3 class="page-title"> 分类管理
+                        <small>后台分类管理</small>
+                    </h3>
+                    <!-- END PAGE TITLE-->
+                    <!-- END PAGE HEADER-->
+                    <div class="row">
+                    	<div class="col-md-4">
+                    		<div class="select-multiple-search">
+								<input type="text" placeholder="输入名称查找" class="search">
+								<div class="icon">
+									<span class="glyphicon glyphicon-search"></span>
+								</div>
+							</div>
+                    		<div class="select-multiple-create" data-level="0">
+								<div class="icon">
+									<i class="fa fa-plus"></i>
+								</div>
+								添加一级分类
+							</div>
+                    		<div class="select-multiple font-dark">
+                    		</div>
+                    	</div>
+                    	<div class="col-md-4">
+							<div class="select-multiple-search">
+								<input type="text" placeholder="输入名称查找" class="search">
+								<div class="icon">
+									<span class="glyphicon glyphicon-search"></span>
+								</div>
+							</div>
+                    		<div class="select-multiple-create" data-level="1">
+								<div class="icon">
+									<i class="fa fa-plus"></i>
+								</div>
+								添加二级分类
+							</div>
+                    		<div class="select-multiple font-dark">
+                    		</div>
+						</div>
+                  		<div class="col-md-4">
+							<div class="select-multiple-search">
+								<input type="text" placeholder="输入名称查找" class="search">
+								<div class="icon">
+									<span class="glyphicon glyphicon-search"></span>
+								</div>
+							</div>
+                    		<div class="select-multiple-create" data-level="2">
+								<div class="icon">
+									<i class="fa fa-plus"></i>
+								</div>
+								添加三级分类
+							</div>
+                    		<div class="select-multiple font-dark">
+                    		</div>
+						</div>
+                    </div>
+                    
+                </div>
+                <!-- END CONTENT BODY -->
+            </div>
+            <!-- END CONTENT -->
+            <!-- BEGIN QUICK SIDEBAR -->
+            {%include file='admin/public/quick_sidebar.html'%}
+            <!-- END QUICK SIDEBAR -->
+        </div>
+        <!-- END CONTAINER -->
+        <!-- BEGIN FOOTER -->
+        {%include file='admin/public/footer.html'%}
+        <!-- END FOOTER -->
+        <!--[if lt IE 9]>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/respond.min.js"></script>
+<script src="{%$VIEW_ROOT%}/assets/global/plugins/excanvas.min.js"></script> 
+<![endif]-->
+        <!-- BEGIN CORE PLUGINS -->
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/jquery.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/js.cookie.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/jquery.blockui.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/uniform/jquery.uniform.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js" type="text/javascript"></script>
+        <!-- END CORE PLUGINS -->
+        <!-- BEGIN THEME GLOBAL SCRIPTS -->
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/bootbox/bootbox.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-modal/js/bootstrap-modalmanager.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/plugins/bootstrap-modal/js/bootstrap-modal.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/global/scripts/app.js" type="text/javascript"></script>
+        <!-- END THEME GLOBAL SCRIPTS -->
+        <!-- BEGIN THEME LAYOUT SCRIPTS -->
+        <script src="{%$VIEW_ROOT%}/assets/layouts/layout/scripts/layout.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/layouts/layout/scripts/demo.min.js" type="text/javascript"></script>
+        <script src="{%$VIEW_ROOT%}/assets/layouts/global/scripts/quick-sidebar.min.js" type="text/javascript"></script>
+        <!-- END THEME LAYOUT SCRIPTS -->
+        <div id="confirm" class="modal fade" tabindex="-1" data-backdrop="static" data-keyboard="false" data-attention-animation="false">
+            <input type="hidden" name="id" value="">
+            <div class="modal-body">
+                <p> 您确定要删除这个分类吗？ </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" data-dismiss="modal" class="btn btn-outline dark">取消</button>
+                <button type="button" class="btn green submit">确认</button>
+            </div>
+        </div>
+        <div id="createCategoryModal" class="modal fade" tabindex="-1" data-width="760" data-backdrop="static" data-keyboard="false" data-attention-animation="false">
+            <input type="hidden" name="level" value="">
+            <form class="form-horizontal" role="form">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                    <h4 class="modal-title">添加分类</h4>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="id" value="">
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">分类名称</label>
+                        <div class="col-md-9">
+                            <input type="text" class="form-control" name="name">
+                        </div>
+                    </div>
+                    <div class="form-group" id="up_category">
+                        <label class="col-md-2 control-label">上级分类</label>
+                        <div class="col-md-9">
+                            <select class="form-control" name="bc_id"></select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">排序</label>
+                        <div class="col-md-9">
+                            <input type="text" class="form-control" name="sort">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="padding: 0px;">
+                    <div class="modal-button-group">
+                        <div class="modal-button submit">确认</div>
+                        <div data-dismiss="modal" class="modal-button">取消</div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <style>
+            .modal .modal-footer .modal-button-group{
+                height: 50px;
+            }
+            .modal .modal-footer .modal-button-group .modal-button{
+                display: inline-block;
+                line-height: 50px;
+                border-right: 1px solid #EFEFEF;
+                text-align: center;
+                width: 49%;
+                cursor: pointer;
+            }
+
+
+			.select-multiple{
+				border:1px solid #e5e5e5;
+			}
+			.select-multiple .option{
+				line-height: 30px;
+				padding: 10px;
+				background-color: #fff;
+				cursor: default;
+			}
+			.select-multiple .option .icon{
+				display: none;
+    			float: right;
+			}
+			.select-multiple .option .icon i{
+				padding: 5px;
+				font-size: 20px;
+			}
+			.select-multiple .option.active{
+				background-color: #eee;
+			}
+			.select-multiple .option.active .icon{
+				display: inline;
+			}
+			.select-multiple-create{
+				line-height: 30px;
+				padding: 10px;
+				background-color: #fff;
+				color:#5C9BD1;
+				cursor: pointer;
+				border: dotted 1px #E1E5EC;
+			}
+			.select-multiple-create .icon{
+				display: inline;
+			}
+			.select-multiple-search{
+				background-color: #fff;
+				cursor: pointer;
+				border: solid 1px #E5E5E5;
+				line-height: 40px;
+			}
+			.select-multiple-search .icon{
+				display: inline;
+				float:right;
+				margin-right: 20px;
+			}
+			.select-multiple-search .search{
+				border: none;
+				width: 90%;
+				height: 30px;
+				padding: 20px;
+				
+			}
+			.select-multiple-search .search:focus{
+				outline: none;
+			}
+		</style>
+        <script type="text/javascript">
+			$.ajaxSetup({
+				headers:{
+					'X-CSRF-TOKEN':'{%$x_csrf_token%}'
+				}
+			});
+
+            $.fn.modalmanager.defaults.resize = true;
+
+            //添加分类按钮
+            $('#createCategoryModal .submit').on('click',function(){
+                var name = $.trim($('#createCategoryModal input[name=name]').val());
+                var sort = parseInt($('#createCategoryModal input[name=sort]').val());
+                var bc_id = parseInt($('#createCategoryModal select[name=bc_id]').val());
+                var id = $('#createCategoryModal input[name=id]').val();
+                var level = $('#createCategoryModal input[name=level]').val();
+                if (id.length!=0) {
+                    url = '{%url m=ajax c=bcategory a=save%}';
+                    data = {id:id,name:name,sort:sort,bc_id:bc_id,level:level};
+                }
+                else
+                {
+                    url = '{%url m=ajax c=bcategory a=create%}';
+                    data = {name:name,sort:sort,bc_id:bc_id,level:level};
+                }
+                $.post(url,data,function(response){
+                    if(response.code==1)
+                    {
+                        if (id.length==0)
+                        {
+                            var inserted = false;
+                            $('.col-md-4:eq('+level+') .select-multiple .option').each(function(index,value){
+                                if(parseInt(response.body.sort) < parseInt($(value).data('sort')))
+                                {
+                                    tpl = '<div class="option" data-id="'+response.body.id+'" data-level="'+level+'" data-sort="'+response.body.sort+'">'+response.body.name+'<div class="icon"><i class="fa fa-edit"></i><i class="fa fa-remove"></i></div></div>';
+                                    $(tpl).insertBefore($(value));
+                                    inserted = true;
+                                    return false;
+                                }
+                            });
+                            if (!inserted)
+                            {
+                                tpl = '<div class="option" data-id="'+response.body.id+'" data-level="'+level+'" data-sort="'+response.body.sort+'">'+response.body.name+'<div class="icon"><i class="fa fa-edit"></i><i class="fa fa-remove"></i></div></div>';
+                                $('.col-md-4:eq('+level+') .select-multiple').append(tpl);
+                            }
+                        }
+                        else
+                        {
+                            if (level == 0)
+                            {
+                                var inserted = false;
+                                $('.option[data-id="'+id+'"]').siblings().each(function(index,value){
+                                    if (parseInt(sort) < parseInt($(value).data('sort')))
+                                    {
+                                        tpl = '<div class="option" data-id="'+id+'" data-level="'+level+'" data-sort="'+sort+'">'+name+'<div class="icon"><i class="fa fa-edit"></i><i class="fa fa-remove"></i></div></div>';
+                                        $('.option[data-id="'+id+'"]').remove();
+                                        $(tpl).insertBefore($(value));
+                                        inserted = true;
+                                        return false;
+                                    }
+                                });
+                                if (!inserted)
+                                {
+                                    tpl = '<div class="option" data-id="'+id+'" data-level="'+level+'" data-sort="'+sort+'">'+name+'<div class="icon"><i class="fa fa-edit"></i><i class="fa fa-remove"></i></div></div>';
+                                    $('.option[data-id="'+id+'"]').remove();
+                                    $('.col-md-4:eq('+level+') .select-multiple').append(tpl);
+                                }
+                            }
+                            else
+                            {
+                                if(bc_id != $('.col-md-4:eq('+(level-1)+') .option.active').data('id'))
+                                {
+                                    $('.option[data-id='+id+']').remove();
+                                }
+                                else
+                                {
+                                    var inserted = false;
+                                    $('.option[data-id="'+id+'"]').siblings().each(function(index,value){
+                                        if (parseInt(sort) < parseInt($(value).data('sort')))
+                                        {
+                                            tpl = '<div class="option" data-id="'+id+'" data-level="'+level+'" data-sort="'+sort+'">'+name+'<div class="icon"><i class="fa fa-edit"></i><i class="fa fa-remove"></i></div></div>';
+                                            $('.option[data-id="'+id+'"]').remove();
+                                            $(tpl).insertBefore($(value));
+                                            inserted = true;
+                                            return false;
+                                        }
+                                    });
+                                    if (!inserted)
+                                    {
+                                        tpl = '<div class="option" data-id="'+id+'" data-level="'+level+'" data-sort="'+sort+'">'+name+'<div class="icon"><i class="fa fa-edit"></i><i class="fa fa-remove"></i></div></div>';
+                                        $('.option[data-id="'+id+'"]').remove();
+                                        $('.col-md-4:eq('+level+') .select-multiple').append(tpl);
+                                    }
+                                }
+                            }
+                        }
+
+                        $('#createCategoryModal').modal('hide');
+                    }
+                    else
+                    {
+                        App.alert({
+                            container: $('#createCategoryModal .modal-body'), // alerts parent container 
+                            place: 'prepend', // append or prepent in container 
+                            type: 'danger', // alert's type 
+                            message: response.result, // alert's message
+                            close: false, // make alert closable 
+                            reset: true, // close all previouse alerts first 
+                            focus: false, // auto scroll to the alert after shown 
+                            closeInSeconds: 3, // auto close after defined seconds 
+                            icon:'fa fa-warning' // put icon class before the message 
+                        });
+                    }
+                });
+            });
+
+            //点击按钮弹出创建分类的窗口
+            $('.select-multiple-create').on('click',function(){
+                if ($(this).data('level') == 0)
+                {
+                    $('#up_category').hide();
+                    $('#createCategoryModal input[name=level]').val(0);
+                }
+                if ($(this).data('level') == 1)
+                {
+                    $('#up_category').show();
+                    $('#up_category select').empty();
+                    if ($('.col-md-4:eq(0) .select-multiple .option').length==0) {
+                        $('#up_category select').append('<option value="" disabled="disabled" selected="selected">暂无上级分类</option>');
+                    }
+                    $('.col-md-4:eq(0) .select-multiple .option').each(function(index,value){
+                        var id = $(value).data('id');
+                        var name = $(value).text();
+                        $('#up_category select').append('<option value="'+id+'">'+name+'</option>');
+                    });
+                    $('#createCategoryModal input[name=level]').val(1);
+                }
+                if ($(this).data('level') == 2)
+                {
+                    $('#up_category').show();
+                    $('#up_category select').empty();
+                    if ($('.col-md-4:eq(1) .select-multiple .option').length==0) {
+                        $('#up_category select').append('<option value="" disabled="disabled" selected="selected">暂无上级分类</option>');
+                    }
+                    $('.col-md-4:eq(1) .select-multiple .option').each(function(index,value){
+                        var id = $(value).data('id');
+                        var name = $(value).text();
+                        $('#up_category select').append('<option value="'+id+'">'+name+'</option>');
+                    });
+                    $('#createCategoryModal input[name=level]').val(2);
+                }
+                $('#createCategoryModal input[name=id]').val('');
+                $('#createCategoryModal').modal('show');
+                return false;
+            });
+			
+			//点击分类项目的时候设置为选中状态
+			$('.select-multiple').on('click','.option',function(){
+				$(this).siblings().removeClass('active');
+				$(this).addClass('active');
+				loadCategory($(this).data('id'),parseInt($(this).data('level'))+1);
+				return false;
+			});
+			
+			//搜索分类
+			$('.search').on('keyup',function(){
+				if($.trim($(this).val()).length != 0)
+				{
+					var searchText = $.trim($(this).val());
+					$(this).parents('.col-md-4').find('.option').each(function(index,value){
+						if($(value).text().indexOf(searchText) >= 0)
+						{
+							$(value).show();
+						}
+						else
+						{
+							$(value).hide();
+						}
+					});
+				}
+				else
+				{
+					$(this).parents('.col-md-4').find('.option').each(function(index,value){
+						$(value).show();
+					});
+				}
+			});
+
+            //点击修改按钮
+            $('.select-multiple').on('click','.fa-edit',function(){
+                var level = $(this).parents('.option').data('level');
+                if (level == 0)
+                {
+                    $('#up_category').hide();
+                    $('#createCategoryModal input[name=level]').val(0);
+                }
+                if (level == 1)
+                {
+                    $('#up_category').show();
+                    $('#up_category select').empty();
+                    if ($('.col-md-4:eq(0) .select-multiple .option').length==0) {
+                        $('#up_category select').append('<option value="" disabled="disabled" selected="selected">暂无上级分类</option>');
+                    }
+                    $('.col-md-4:eq(0) .select-multiple .option').each(function(index,value){
+                        var id = $(value).data('id');
+                        var name = $(value).text();
+                        $('#up_category select').append('<option value="'+id+'">'+name+'</option>');
+                    });
+                    $('#createCategoryModal input[name=level]').val(1);
+                }
+                if (level == 2)
+                {
+                    $('#up_category').show();
+                    $('#up_category select').empty();
+                    if ($('.col-md-4:eq(1) .select-multiple .option').length==0) {
+                        $('#up_category select').append('<option value="" disabled="disabled" selected="selected">暂无上级分类</option>');
+                    }
+                    $('.col-md-4:eq(1) .select-multiple .option').each(function(index,value){
+                        var id = $(value).data('id');
+                        var name = $(value).text();
+                        $('#up_category select').append('<option value="'+id+'">'+name+'</option>');
+                    });
+                    $('#createCategoryModal input[name=level]').val(2);
+                }
+                $.post('{%url m=ajax c=bcategory a=find%}',{id:$(this).parents('.option').data('id')},function(response){
+                    if (response.code==1) {
+                        $('#createCategoryModal input[name=name]').val(response.body.name);
+                        $('#createCategoryModal input[name=sort]').val(response.body.sort);
+                        $('#createCategoryModal input[name=id]').val(response.body.id);
+                        $('#createCategoryModal select[name=bc_id]').val(response.body.bc_id);
+                        $('#createCategoryModal').modal('show');
+                    }
+                });
+                return false;
+            });
+			
+			//点击删除分类按钮
+			$('.select-multiple').on('click','.fa-remove',function(){
+				var option = $(this).parents('.option');
+				var id = option.data('id');
+                $('#confirm input[name=id]').val(id);
+                $('#confirm').modal('show');
+                return false;
+			});
+            //确认删除
+            $('#confirm .submit').on('click',function(){
+                var id = $('#confirm input[name=id]').val();
+                var option = $('.option[data-id="'+id+'"]');
+                $.post('{%url m=ajax c=bcategory a=remove%}',{id:id},function(response){
+                    if(response.code==1)
+                    {
+                        option.remove();
+                        $('#confirm').modal('hide');
+                    }
+                    else
+                    {
+                        App.alert({
+                            container: $('#confirm .modal-body'), // alerts parent container 
+                            place: 'prepend', // append or prepent in container 
+                            type: 'danger', // alert's type 
+                            message: response.result, // alert's message
+                            close: false, // make alert closable 
+                            reset: true, // close all previouse alerts first 
+                            focus: false, // auto scroll to the alert after shown 
+                            closeInSeconds: 3, // auto close after defined seconds 
+                            icon:'fa fa-warning' // put icon class before the message 
+                        });
+                    }
+                });
+                return false;
+            });
+			
+			//载入第一级分类
+			loadCategory(null,0);
+			
+			//载入分类的统一的函数
+			function loadCategory(bc_id,c_level)
+			{
+                if (c_level == 1)
+                {
+                    $('.col-md-4:eq(2) .select-multiple').empty();
+                }
+                if (c_level == 0)
+                {
+                    $('.col-md-4:eq(1) .select-multiple').empty();
+                    $('.col-md-4:eq(2) .select-multiple').empty();
+                }
+				if(c_level>2)
+				{
+					return false;
+				}
+				else if(c_level==0)
+				{
+					bc_id = null;
+				}
+				$('.col-md-4:eq('+c_level+') .select-multiple').empty();
+				$.post('{%url m=ajax c=bcategory a=show%}',{bc_id:bc_id},function(response){
+					if(response.code==1)
+					{
+						for(var i=0;i<response.body.length;i++)
+						{
+							tpl = '<div class="option" data-id="'+response.body[i].id+'" data-level="'+c_level+'" data-sort="'+response.body[i].sort+'">'+response.body[i].name+'<div class="icon"><i class="fa fa-edit"></i><i class="fa fa-remove"></i></div></div>';
+							$('.col-md-4:eq('+c_level+') .select-multiple').append(tpl);
+						}
+					}
+					else
+					{
+						alert('异常！');
+					}
+				});
+				return false;
+			}
+		</script>
+    </body>
+
+</html>

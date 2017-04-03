@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="utf-8" />
+		<title>{%$page_title%}</title>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+       	<meta name="renderer" content="webkit">
+        <meta content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport" />
+        <!-- reset -->
+        <link rel="stylesheet" href="//cdn.bootcss.com/normalize/5.0.0/normalize.min.css">
+		<!-- 新 Bootstrap 核心 CSS 文件 -->
+        <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<!-- 可选的Bootstrap主题文件（一般不用引入） -->
+		<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
+		<!--icon-->
+		<link rel="stylesheet" href="{%$VIEW_ROOT%}/html/css/plugins/font-awesome/css/font-awesome.min.css">
+		<!--自定义css-->
+		<link rel="stylesheet" href="{%resource path='/html/css/global.css'%}">
+		<script type="text/javascript">
+			function lpad(num, n) {  
+				return Array(n>(''+num).length?(n-(''+num).length+1):0).join(0)+num;  
+			}
+		</script>
+	</head>
+	<body>
+		{%include file='html/public/header.html'%}
+		<div class="body container-fluid">
+			<div class="row">
+				{%include file='html/public/sidebar.html'%}
+				<div class="content">
+			  		<div class="content-body">
+			  			<div class="white-block">
+			  				<div class="wall-block">
+								<p>商品管理 - 到货通知短信模板</p>
+							</div>
+			  			</div>
+			  			<div class="divider"></div>
+			  			<div class="white-block">
+			  				
+			  				<div class="top-tips">
+								<div class="top-tips-title">
+									操作提示
+								</div>
+								<div class="top-tips-body">
+									<p>根据商品类目设定库存的临界值。</p>
+									<p>当商品的库存值低于临界值，起库存值将被归零。</p>
+								</div>
+							</div>
+							
+							<div class="line"></div>
+							
+							<form class="form-horizontal" role="form">
+								<div class="form-body">
+									<div class="form-group">
+										<label class="col-md-offset-3 col-md-1 control-label">
+											模板名称 <span class="required" aria-required="true">*</span>
+										</label>
+										<div class="col-md-5">
+											<input type="text" class="form-control" placeholder="请输入模板名称" value="" name="title" autocomplete="off">
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-md-offset-3 col-md-1 control-label">
+											短信内容 <span class="required" aria-required="true">*</span>
+										</label>
+										<div class="col-md-5">
+											<div class="textarea">
+												<textarea placeholder="请输入短信内容" class="form-control" name="content" rows="10" maxlength="200"></textarea>
+												<div class="textarea-footer">
+													<span class="label label-default clicked" data-value="product_name" style="cursor: pointer;">商品名</span>
+													<span class="label label-default clicked" data-value="user_name" style="cursor: pointer;">用户名</span>
+													<span class="label label-default clicked" data-value="user_telephone" style="cursor: pointer;">用户手机号</span>
+													<span class="label label-default clicked" data-value="date" style="cursor: pointer;">申请日期</span>
+													<span class="help-block pull-right" style="display: inline;">还可输入<span id="wordnum">200</span>字</span>
+												</div>
+											</div>
+											
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-md-5 col-md-offset-4">
+											<button type="submit" class="btn btn-success col-md-2" data-container="body" data-trigger="hover" data-toggle="popover" data-placement="right" data-content="请仔细核对短信内容">保存</button>
+										</div>
+									</div>
+								</div>
+							</form>
+			  			</div>
+			  		</div>				  
+				</div>
+			</div>
+		</div>
+		<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+		<script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+		<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+		<script src="http://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		<!--alert-->
+		<script src="//cdn.bootcss.com/bootbox.js/4.4.0/bootbox.min.js"></script>
+		<script src="{%resource path='/html/js/global.js'%}"></script>
+		<script type="text/javascript">
+			$.ajaxSetup({
+				headers:{
+					'X-CSRF-TOKEN':'{%$x_csrf_token%}'
+				}
+			});
+			
+			$('form').on('submit',function(){
+				var title = $.trim($(this)[0].title.value);
+				var content = $.trim($(this)[0].content.value);
+				if(title.length == 0)
+				{
+					bootbox.alert('请输入模板标题');
+					return false;
+				}
+				if(content.length == 0)
+				{
+					bootbox.alert('请输入短信内容');
+					return false;
+				}
+				var data = {
+					title:title,
+					content:content,
+				};
+				$.post('./index.php?m=ajax&c=product_notice_template&a=create',data,function(response){
+					if(response.code==1)
+					{
+						window.location = './index.php?c=html&a=product_notice#template';
+					}
+					else
+					{
+						bootbox.alert(response.result);
+					}
+				});
+				return false;
+			});
+			
+			$('.btn').popover();
+			
+			$('.clicked').on('click',function(){
+				$(this).parents('.textarea').find('textarea').append('{'+$(this).data('value')+'}');
+			});
+			
+			$('.textarea textarea').on('keyup change',function(){
+				$('#wordnum').text(parseInt($(this).prop('maxlength')) - $(this).val().length);
+			});
+		</script>
+	</body>
+</html>
