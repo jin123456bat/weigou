@@ -283,7 +283,7 @@ class model
 	public function where($sql, array $array = array(), $combine = 'and')
 	{
 		// where语句中的in操作符单独使用
-		if (substr_count($sql, ' in ') == 1)
+		if (substr_count($sql, ' in ') == 1 && substr_count($sql, '?') == 1)
 		{
 			if (empty($array))
 			{

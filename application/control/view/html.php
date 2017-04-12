@@ -115,14 +115,58 @@ class html extends view
 		$bcategory = $this->model('bcategory')->where('bc_id is null')->select();
 		$this->assign('bcategory', $bcategory);
 		
-		$this->assign('brand', $this->model('brand')->select());
-		
 		$this->assign('measurement', $this->model('dictionary')->where('type=?',['MeasurementUnit'])->select());
 		
 		$this->assign('publish', $this->model('publish')->where('isdelete=?',[0])->select());
 		
 		$this->assign('store', $this->model('store')->where('isdelete=?',[0])->select());
+		
+		$ztax = $this->model('tax')->select('id,name,gtax,xtax,ztax');
+		foreach ($ztax as &$tax)
+		{
+			$tax['tax'] = ($tax['xtax'] + $tax['ztax']) / (1 - $tax['xtax']) * 0.7;
+		}
+		$this->assign('ztax', $ztax);
+		
+		$postTaxNo = $this->model('posttaxno')->select([
+			'id','name','tax',
+		]);
+		$this->assign('posttaxno', $postTaxNo);
 		return $this;
+	}
+	
+	function product_edit()
+	{
+		$id = $this->get('id');
+		if (!empty($id))
+		{
+			$province = $this->model('province')->select();
+			$this->assign('province', $province);
+		
+			$bcategory = $this->model('bcategory')->where('bc_id is null')->select();
+			$this->assign('bcategory', $bcategory);
+		
+			$this->assign('measurement', $this->model('dictionary')->where('type=?',['MeasurementUnit'])->select());
+		
+			$this->assign('publish', $this->model('publish')->where('isdelete=?',[0])->select());
+		
+			$this->assign('store', $this->model('store')->where('isdelete=?',[0])->select());
+		
+			$ztax = $this->model('tax')->select('id,name,gtax,xtax,ztax');
+			foreach ($ztax as &$tax)
+			{
+				$tax['tax'] = ($tax['xtax'] + $tax['ztax']) / (1 - $tax['xtax']) * 0.7;
+			}
+			$this->assign('ztax', $ztax);
+		
+			$postTaxNo = $this->model('posttaxno')->select([
+				'id','name','tax',
+			]);
+			$this->assign('posttaxno', $postTaxNo);
+			
+			$this->assign('id', $id);
+			return $this;
+		}
 	}
 	
 	function orderdetail()
@@ -226,6 +270,30 @@ class html extends view
 	{
 		$ship = $this->model('ship')->select();
 		$this->assign('ship', $ship);
+		return $this;
+	}
+	
+	function edit_task()
+	{
+		$id = $this->get('id',0,'intval');
+		if (!empty($id))
+		{
+			$task = $this->model('task')->where('id=?',[$id])->find();
+			$task['product'] = $this->model('product')->where('id=?',[$task['pid']])->find();
+			$productHelper = new \application\helper\product();
+			$task['product']['logo'] = $productHelper->getListImage($task['pid']);
+			$this->assign('task', $task);
+			return $this;
+		}
+	}
+	
+	function admin_create()
+	{
+		$role = $this->model('role')->select('id,name');
+		$this->assign('role', $role);
+		
+		$privileges = $this->model('privileges')->select('id,name');
+		$this->assign('privileges', $privileges);
 		return $this;
 	}
 	

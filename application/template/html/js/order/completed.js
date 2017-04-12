@@ -5,6 +5,7 @@ var completed = datatables({
 		data:{
 			status:1,
 			receive:1,
+			isdelete:0,
 		},
 	},
 	sort:[{

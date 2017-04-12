@@ -6,6 +6,7 @@ var receiving = datatables({
 			status:1,
 			way_status:[1,2],
 			receive:0,
+			isdelete:0,
 		},
 	},
 	sort:[{

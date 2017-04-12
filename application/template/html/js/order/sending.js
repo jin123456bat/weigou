@@ -6,6 +6,7 @@ var sending = datatables({
 			status:1,
 			way_status:[0,2],
 			pay_status:[1,4],
+			isdelete:0,
 		},
 	},
 	sort:[{

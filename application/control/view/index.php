@@ -13,11 +13,6 @@ class index extends view
 		$this->_csrf_token_refresh = false;
 		parent::__construct();
 	}
-	
-	function test()
-	{
-		file_put_contents('./test', $_POST['a']);
-	}
 
 	function index()
 	{
@@ -153,28 +148,56 @@ class index extends view
 	 */
 	function upgrade()
 	{
-		$recover = $this->get('recover',false,'intval');
-		
 		$this->model('order')->transaction();
 		try {
-			//删除订单表的无用的字段
-			if (!$recover)
-			{
-				$sql = '
-					ALTER TABLE `order`
-					DROP `personal`,
-					DROP `personal_time`,
-					DROP `ordered`,
-					DROP `ordered_time`,
-					DROP `payed`,
-					DROP `payed_time`,
-					DROP `kouan`,
-					DROP `kouan_time`,
-					DROP `kouan_result`;
-				';
-				$this->model('order')->exec($sql);
-			}
 			
+			$sql = '
+				ALTER TABLE `order`
+				DROP `personal`,
+				DROP `personal_time`,
+				DROP `ordered`,
+				DROP `ordered_time`,
+				DROP `payed`,
+				DROP `payed_time`,
+				DROP `kouan`,
+				DROP `kouan_time`,
+				DROP `kouan_result`;
+			';
+			$this->model('order')->exec($sql);
+		
+			$sql = 'ALTER TABLE `product`
+			  DROP `categoryCode`,
+			  DROP `grossWeight`,
+			  DROP `goodsItemNo`,
+			  DROP `goodsModel`,
+			  DROP `currencyType`,
+			  DROP `purpose`,
+			  DROP `firstUnit`,
+			  DROP `productRecordNo`;';
+			$this->model('product')->exec($sql);
+			$sql = 'ALTER TABLE `product` ADD `weight` DOUBLE(10,2) NOT NULL COMMENT \'重量，单位KG\' ;';
+			$this->model('product')->exec($sql);
+			
+			//admin表中删除role的外键
+			$sql = 'ALTER TABLE `admin` DROP FOREIGN KEY `admin_ibfk_1`;';
+			$sql = 'ALTER TABLE `admin` DROP `role`;';
+			$sql = 'ALTER TABLE `admin` ADD `realname` VARCHAR(12) NOT NULL COMMENT \'姓名\' , ADD `telephone` CHAR(11) NOT NULL COMMENT \'手机号\' , ADD `create_aid` INT NOT NULL COMMENT \'创建人id\' , ADD `create_time` INT NOT NULL COMMENT \'创建时间\' , ADD `status` BOOLEAN NOT NULL DEFAULT \'1\' COMMENT \'状态，1有效，0无效\' ;';
+			$sql = 'DROP TABLE role';
+			$sql = 'CREATE TABLE IF NOT EXISTS `role` (
+					  `id` int(11) NOT NULL AUTO_INCREMENT,
+					  `name` varchar(32) NOT NULL COMMENT \'角色名称\',
+					  `description` varchar(256) NOT NULL COMMENT \'角色描述\',
+					  PRIMARY KEY (`id`)
+					) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;';
+			$sql = 'CREATE TABLE IF NOT EXISTS `admin_role` (
+					  `aid` int(11) NOT NULL,
+					  `rid` int(11) NOT NULL
+					) ENGINE=InnoDB DEFAULT CHARSET=utf8;';
+			
+			
+			
+			$sql = 'ALTER TABLE `product` DROP `package`;';
+			$this->model('product')->exec($sql);
 			
 			$sql = 'ALTER TABLE `order` ADD `erp_note` VARCHAR(256) NOT NULL COMMENT \'erp备注信息\' AFTER `erp_time`;';
 			$this->model('order')->exec($sql);
@@ -197,6 +220,16 @@ class index extends view
 			//删除category的alias
 			$sql = 'ALTER TABLE `category` drop `alias`';
 			$this->model('category')->exec($sql);
+			
+			//task的活动开始时间和活动结束时间
+			$sql = 'ALTER TABLE `task` ADD `starttime` DATE NULL DEFAULT NULL COMMENT \'活动开始时间\' , ADD `endtime` DATE NULL DEFAULT NULL COMMENT \'活动结束时间\' ;';
+			$this->model('task')->exec($sql);
+			
+			$sql = 'ALTER TABLE `product` ADD `examine_description` VARCHAR(512) NOT NULL COMMENT \'审核拒绝的详细描述\' AFTER `examine_result`, ADD `examine_time` INT NOT NULL COMMENT \'审核状态变化时间\' AFTER `examine_description`;';
+			$this->model('product')->exec($sql);
+			
+			$sql = 'ALTER TABLE `product` CHANGE `brand` `brand` INT(11) NULL DEFAULT NULL COMMENT \'品牌\';';
+			$this->model('product')->exec($sql);
 		}
 		catch (\Exception $e)
 		{

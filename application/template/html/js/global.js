@@ -56,3 +56,12 @@ if(getHref())
 {
 	$('a[href=#'+getHref()+']').trigger('click');
 }
+
+function loadScript(url){ 
+	var ga = document.createElement('script'); 
+    ga.type = 'text/javascript'; 
+    ga.async = true; 
+    ga.src = url; 
+    var s = document.getElementsByTagName('script')[0]; 
+    s.parentNode.insertBefore(ga, s); 
+} 

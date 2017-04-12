@@ -31,7 +31,7 @@
 			  		<div class="content-body">
 			  			<div class="white-block">
 			  				<div class="wall-block">
-								<p>商品管理 - 商品列表</p>
+								<p>{%$page_title_reverse%}</p>
 							</div>
 			  			</div>
 			  			<div class="divider"></div>
@@ -203,6 +203,7 @@
 					url:'{%url c=datatables a=product%}',
 					data:{
 						isdelete:0,
+						draft:0,
 					},
 				},
 				columns:[{
@@ -322,9 +323,9 @@
 				return false;
 			});
 			
-			var getSelectedCheckbox = function(){
+			var getSelectedCheckbox = function(table){
 				$_id = [];
-				$('#all table tbody input[type=checkbox]').each(function(index,value){
+				table.find('tbody input[type=checkbox]').each(function(index,value){
 					if($(value).is(':checked'))
 					{
 						$_id.push($(value).val());

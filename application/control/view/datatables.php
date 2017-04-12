@@ -163,7 +163,6 @@ class datatables extends view
 
 	function product()
 	{
-		
 		if ($this->post('customActionType') == 'group_action')
 		{
 			$post_id = $this->post('id');
@@ -198,40 +197,7 @@ class datatables extends view
 			$resultObj->data = array_slice($resultObj->data, $this->post('start'), $this->post('length'));
 		}
 		
-		foreach ($resultObj->data as &$product)
-		{
-			// 商品价格
-			$filter = [
-				'pid' => $product['id'],
-				'isdelete' => 0,
-				'available' => 1,
-				'parameter' => 'max(price),min(price),max(v1price),min(v1price),max(v2price),min(v2price),sum(stock)'
-			];
-			$price_collection = $this->model('collection')->fetch($filter);
-			if (! empty($price_collection))
-			{
-				if ($price_collection[0]['sum(stock)'] !== NULL)
-				{
-					$product['stock'] = $price_collection[0]['sum(stock)'];
-				}
-				if ($price_collection[0]['min(price)'] !== NULL && $price_collection[0]['max(price)'] !== NULL)
-				{
-					$product['price'] = $price_collection[0]['min(price)'] . '~' . $price_collection[0]['max(price)'];
-				}
-				if ($price_collection[0]['min(v1price)'] !== NULL && $price_collection[0]['max(v1price)'] !== NULL)
-				{
-					$product['v1price'] = $price_collection[0]['min(v1price)'] . '~' . $price_collection[0]['max(v1price)'];
-				}
-				if ($price_collection[0]['min(v2price)'] !== NULL && $price_collection[0]['max(v2price)'] !== NULL)
-				{
-					$product['v2price'] = $price_collection[0]['min(v2price)'] . '~' . $price_collection[0]['max(v2price)'];
-				}
-			}
-		}
-		$resultObj->recordsTotal = $this->model('product')
-			->where('product.isdelete=?', [
-			0
-		])
+		$resultObj->recordsTotal = $this->model('product')->where('product.isdelete=?', [0])
 			->count();
 		return new json($resultObj);
 	}
@@ -524,6 +490,11 @@ class datatables extends view
 		{
 			switch ($this->post('customActionName'))
 			{
+				case 'remove':
+					$this->model('order')->where('orderno in (?)',$this->post('id',array()))->update([
+						'isdelete' => 1,
+						'deletetime' => $_SERVER['REQUEST_TIME'],
+					]);
 				default:
 			}
 		}
@@ -784,6 +755,279 @@ class datatables extends view
 			$resultObj->data = array_slice($resultObj->data, $this->post('start'), $this->post('length'));
 		}
 		$resultObj->recordsTotal = $this->model('brand')->count();
+		return new json($resultObj);
+	}
+	
+	/**
+	 * 团购任务 v2.0
+	 */
+	function task()
+	{
+		$parameter = array();
+		$resultObj = new \stdClass();
+		$resultObj->draw = $this->post('draw');
+		
+		if ($this->post('customActionType') == 'group_action')
+		{
+			switch ($this->post('customActionName'))
+			{
+				case 'remove':
+					$this->model('task')->where('id in (?)',$this->post('id',array()))->update([
+						'isdelete'=>1,
+						'deletetime' =>$_SERVER['REQUEST_TIME'],
+					]);
+			}
+		}
+		
+		$columns = $this->post('columns',array());
+		$orders = $this->post('order',array());
+		$ajaxData = $this->post('ajaxData',array());
+		
+		foreach ($columns as $index => $column)
+		{
+			if (! empty($column['name']))
+			{
+				$parameter[] = $column['name'] . (empty($column['data']) ? '' : (' as ' . $column['data']));
+				foreach ($orders as $order)
+				{
+					if ($order['column'] == $index)
+					{
+						$this->model('task')->orderby($column['name'], $order['dir']);
+					}
+				}
+			}
+		}
+		foreach ($ajaxData as $key => $value)
+		{
+			$this->model('task')->where($key.'=?',[$value]);
+		}
+		$resultObj->data = $this->model('task')->table('product','left join','product.id=task.pid')
+		->select($parameter);
+		$resultObj->recordsFiltered = count($resultObj->data);
+		if ($this->post('length') != - 1)
+		{
+			$resultObj->data = array_slice($resultObj->data, $this->post('start',0), $this->post('length',10));
+		}
+		$resultObj->recordsTotal = $this->model('task')->where('isdelete=?',[0])->count();
+		return new json($resultObj);
+	}
+	
+	/**
+	 * 管理员列表V2.0
+	 */
+	function admin()
+	{
+		$parameter = array();
+		
+		$resultObj = new \stdClass();
+		$resultObj->draw = $this->post('draw');
+		
+		$columns = $this->post('columns',array());
+		$orders = $this->post('order',array());
+		$ajaxData = $this->post('ajaxData',array());
+		$keywords = $this->post('keywords','');
+		if (!empty($keywords))
+		{
+			$this->model('admin')->where('realname like ? or username like ? or telephone like ?',['%'.$keywords.'%','%'.$keywords.'%','%'.$keywords.'%']);
+		}
+		
+		foreach ($columns as $column)
+		{
+			if (! empty($column['name']))
+			{
+				$parameter[] = $column['name'] . (empty($column['data']) ? '' : (' as ' . $column['data']));
+			}
+		}
+		
+		foreach ($orders as $order)
+		{
+			$this->model('admin')->orderby($columns[$order['column']]['name'],$order['dir']);
+		}
+		
+		foreach ($ajaxData as $key => $value)
+		{
+			$this->model('admin')->where($key.'=?',[$value]);
+		}
+		
+		$resultObj->data = $this->model('admin')->select($parameter);
+		$resultObj->recordsFiltered = count($resultObj->data);
+		if ($this->post('length') != - 1)
+		{
+			$resultObj->data = array_slice($resultObj->data, $this->post('start',0), $this->post('length',10));
+		}
+		$resultObj->recordsTotal = $this->model('admin')->count();
+		return new json($resultObj);
+	}
+	
+	/**
+	 * 没有参加团购商品的商品 v2.0
+	 */
+	function product_untask()
+	{
+		$parameter = array();
+	
+		$resultObj = new \stdClass();
+		$resultObj->draw = $this->post('draw');
+	
+		$columns = $this->post('columns',array());
+		$orders = $this->post('order',array());
+		$ajaxData = $this->post('ajaxData',array());
+		$keywords = $this->post('keywords','');
+		if (!empty($keywords))
+		{
+			$this->model('product')->where('id=? or name like ?',[$keywords,'%'.$keywords.'%']);
+		}
+		$brand = $this->post('brand','');
+		if (!empty($brand))
+		{
+			$this->model('product')->where('brand=?',[$brand]);
+		}
+		$category = $this->post('category',array());
+		if (!empty($category))
+		{
+			$t = array_pop($category);
+			$temp_category = array($t);
+			$last_category = array($t);
+			while (!empty($last_category))
+			{
+				$c = array_shift($last_category);
+				$new_category = $this->model('category')->where('bc_id=?',[$c])->select('id');
+				foreach ($new_category as $nc)
+				{
+					$temp_category[] = $nc['id'];
+					$last_category[] = $nc['id'];
+				}
+			}
+			$product_id_array = [];
+			$product_id = $this->model('bcategory_product')->where('bc_id in (?)',$temp_category)->select('product_id');
+			foreach ($product_id as $ids)
+			{
+				$product_id_array[] = $ids['product_id'];
+			}
+			if (empty($product_id_array))
+			{
+				//为空的话故意选择没有任何结果集的商品
+				$this->model('product')->where('id<?',[0]);
+			}
+			else
+			{
+				$this->model('product')->where('id in (?)',$product_id_array);
+			}
+		}
+		foreach ($columns as $index => $column)
+		{
+			if (! empty($column['name']))
+			{
+				$parameter[] = $column['name'] . (empty($column['data']) ? '' : (' as ' . $column['data']));
+				foreach ($orders as $order)
+				{
+					if ($order['column'] == $index)
+					{
+						$this->model('product')->orderby($column['name'], $order['dir']);
+					}
+				}
+			}
+		}
+		foreach ($ajaxData as $key => $value)
+		{
+			$this->model('product')->where($key.'=?',[$value]);
+		}
+	
+		$this->model('product')->where('product.id not in (select pid from task where isdelete=0)');
+	
+		$resultObj->data = $this->model('product')->select($parameter);
+		$resultObj->recordsFiltered = count($resultObj->data);
+		if ($this->post('length') != - 1)
+		{
+			$resultObj->data = array_slice($resultObj->data, $this->post('start',0), $this->post('length',10));
+		}
+		$resultObj->recordsTotal = $this->model('product')->where('id not in (select pid from task where isdelete=0)')->count();
+		return new json($resultObj);
+	}
+	
+	/**
+	 * 不在首页商品中的商品 v2.0
+	 */
+	function product_untop()
+	{
+		$parameter = array();
+		
+		$resultObj = new \stdClass();
+		$resultObj->draw = $this->post('draw');
+		
+		$columns = $this->post('columns',array());
+		$orders = $this->post('order',array());
+		$ajaxData = $this->post('ajaxData',array());
+		$keywords = $this->post('keywords','');
+		if (!empty($keywords))
+		{
+			$this->model('product')->where('id=? or name like ?',[$keywords,'%'.$keywords.'%']);
+		}
+		$brand = $this->post('brand','');
+		if (!empty($brand))
+		{
+			$this->model('product')->where('brand=?',[$brand]);
+		}
+		$category = $this->post('category',array());
+		if (!empty($category))
+		{
+			$t = array_pop($category);
+			$temp_category = array($t);
+			$last_category = array($t);
+			while (!empty($last_category))
+			{
+				$c = array_shift($last_category);
+				$new_category = $this->model('category')->where('bc_id=?',[$c])->select('id');
+				foreach ($new_category as $nc)
+				{
+					$temp_category[] = $nc['id'];
+					$last_category[] = $nc['id'];
+				}
+			}
+			$product_id_array = [];
+			$product_id = $this->model('bcategory_product')->where('bc_id in (?)',$temp_category)->select('product_id');
+			foreach ($product_id as $ids)
+			{
+				$product_id_array[] = $ids['product_id'];
+			}
+			if (empty($product_id_array))
+			{
+				//为空的话故意选择没有任何结果集的商品
+				$this->model('product')->where('id<?',[0]);
+			}
+			else
+			{
+				$this->model('product')->where('id in (?)',$product_id_array);
+			}
+		}
+		foreach ($columns as $index => $column)
+		{
+			if (! empty($column['name']))
+			{
+				$parameter[] = $column['name'] . (empty($column['data']) ? '' : (' as ' . $column['data']));
+				foreach ($orders as $order)
+				{
+					if ($order['column'] == $index)
+					{
+						$this->model('product')->orderby($column['name'], $order['dir']);
+					}
+				}
+			}
+		}
+		foreach ($ajaxData as $key => $value)
+		{
+			$this->model('product')->where($key.'=?',[$value]);
+		}
+		
+		$this->model('product')->where('product.id not in (select pid as id from product_top)');
+		
+		$resultObj->data = $this->model('product')->select($parameter);
+		$resultObj->recordsFiltered = count($resultObj->data);
+		if ($this->post('length') != - 1)
+		{
+			$resultObj->data = array_slice($resultObj->data, $this->post('start',0), $this->post('length',10));
+		}
+		$resultObj->recordsTotal = $this->model('product')->where('id not in (select pid as id from product_top)')->count();
 		return new json($resultObj);
 	}
 	

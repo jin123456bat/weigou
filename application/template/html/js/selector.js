@@ -178,7 +178,7 @@ var selector = function(obj,args){
 		{
 			icon = 'Ⅲ';
 		}
-		var item = $('<div class="selector-item" value="'+value+'" data-level="'+level+'" style="cursor:pointer;height: 30px;line-height: 30px;"><div style="display: inline-block;height: 30px;width: 30px;text-align: center; border-right: 1px solid rgba(228, 228, 228, 1);">'+icon+'</div><div class="selector-item-text" style="display: inline-block;width: 90%;padding-left: 15px;">'+text+'</div></div>');
+		var item = $('<div class="selector-item" value="'+value+'" data-level="'+level+'" style="cursor:pointer;height: 30px;line-height: 30px;"><div style="display: inline-block;height: 30px;width: 30px;text-align: center; border-right: 1px solid rgba(228, 228, 228, 1);">'+icon+'</div><div class="selector-item-text" style="display: inline-block;padding-left: 15px;">'+text+'</div></div>');
 		item.on('mouseover',function(){
 			$(this).css('backgroundColor','rgba(247, 247, 247, 1)');
 		}).on('mouseout',function(){

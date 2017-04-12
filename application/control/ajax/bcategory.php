@@ -145,6 +145,10 @@ class bcategory extends ajax
 				'express' => empty($adminHelper->getAdminId()),
 				'redict' => './index.php?c=admin&a=login',
 			),
+			array(
+				'allow',
+				'actions' => '*',
+			)
 		);
 	}
 }

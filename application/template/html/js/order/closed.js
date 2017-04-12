@@ -4,6 +4,7 @@ var closed = datatables({
 		url:'./index.php?c=datatables&a=order',
 		data:{
 			status:0,
+			isdelete:0,
 		},
 	},
 	sort:[{

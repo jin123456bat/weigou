@@ -4,6 +4,7 @@ var all = datatables({
 		url:'./index.php?c=datatables&a=order',
 		data:{
 			status:1,
+			isdelete:0,
 		},
 	},
 	columns:[{

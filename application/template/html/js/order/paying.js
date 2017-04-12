@@ -5,6 +5,7 @@ var paying = datatables({
 		data:{
 			status:1,
 			pay_status:0,
+			isdelete:0,
 		},
 	},
 	sort:[{

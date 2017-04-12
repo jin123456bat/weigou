@@ -44,7 +44,36 @@ class productModel extends model
 		{
 			foreach($post['ajaxData'] as $key => $value)
 			{
-				$this->where($key.'=?',[$value]);
+				if ($key == 'where')
+				{
+					$this->where($value);
+				}
+				else
+				{
+					//假如是array的话使用or链接
+					if (is_array($value))
+					{
+						$sql = '';
+						$parameters = [];
+						foreach ($value as $v)
+						{
+							$parameters[] = $v;
+							if (empty($sql))
+							{
+								$sql .= $key.'=?';
+							}
+							else
+							{
+								$sql .= ' or '.$key.'=?';
+							}
+						}
+						$this->where($sql,$parameters);
+					}
+					else
+					{
+						$this->where($key.'=?',[$value]);
+					}
+				}
 			}
 		}
 		

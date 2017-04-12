@@ -5,15 +5,21 @@ use application\message\json;
 use application\helper\idcard;
 class address extends ajax
 {
+	private $_uid = null;
+	
 	function setHost()
 	{
 		$id = $this->post('id');
 		if(empty($id))
+		{
 			return new json(json::PARAMETER_ERROR);
+		}
 		
 		$address = $this->model('address')->where('id=? and isdelete=?',[$id,0])->find();
 		if(empty($address))
+		{
 			return new json(json::PARAMETER_ERROR);
+		}
 		
 		//取消所有的默认
 		$this->model('address')->where('uid=?',[$address['uid']])->update('host',0);
@@ -67,11 +73,6 @@ class address extends ajax
 	
 		$host = $this->post('host',0);
 	
-		$userHelper = new \application\helper\user();
-		$uid = $userHelper->isLogin();
-		if (empty($uid))
-			return new json(json::NOT_LOGIN);
-	
 		if (!empty($identify))
 		{
 			if (idcard::auth($name, $identify) == 0)
@@ -82,10 +83,11 @@ class address extends ajax
 		
 		if ($host==1)
 		{
-			$this->model('address')->where('uid=?',[$uid])->update('host',0);
+			$this->model('address')->where('uid=?',[$this->_uid])->update('host',0);
 		}
-	
-		$address = $userHelper->createUserAddress($uid, $province, $city, $county, $address, $name, $telephone);
+		
+		$userHelper = new \application\helper\user();
+		$address = $userHelper->createUserAddress($this->_uid, $province, $city, $county, $address, $name, $telephone);
 		$address['identify'] = $identify;
 		$address['zcode'] = $zcode;
 		$address['host'] = $host;
@@ -125,11 +127,6 @@ class address extends ajax
 		if (empty($id))
 			return new json(json::PARAMETER_ERROR,'地址参数错误');
 	
-		$userHelper = new \application\helper\user();
-		$uid = $userHelper->isLogin();
-		if(empty($uid))
-			return new json(json::NOT_LOGIN);
-	
 		$name = $this->post('name');
 		if(empty($name))
 			return new json(json::PARAMETER_ERROR,'请填写收获人姓名');
@@ -146,7 +143,6 @@ class address extends ajax
 		if (empty($county))
 		{
 		    return new json(json::PARAMETER_ERROR,'请选择地区');
-			//$county = NULL;
 		}
 	
 		$telephone = $this->post('telephone','','telephone');
@@ -176,9 +172,9 @@ class address extends ajax
 		$host = $this->post('host',0);
 		if ($host==1)
 		{
-			$this->model('address')->where('uid=?',[$uid])->update('host',0);
+			$this->model('address')->where('uid=?',[$this->_uid])->update('host',0);
 		}
-		if($this->model('address')->where('id=? and uid=?',[$id,$uid])->update([
+		if($this->model('address')->where('id=? and uid=?',[$id,$this->_uid])->update([
 			'name' => $name,
 			'telephone' => $telephone,
 			'identify' => $identify,
@@ -202,13 +198,12 @@ class address extends ajax
 	 */
 	function remove()
 	{
-		$userHelper = new \application\helper\user();
-		$uid = $userHelper->isLogin();
-		if (empty($uid))
-			return new json(json::NOT_LOGIN);
-	
 		$id = $this->post('id',NULL);
-		if($this->model('address')->where('id=? and uid=? and isdelete=?',[$id,$uid,0])->update([
+		if (empty($id))
+		{
+			return new json(json::PARAMETER_ERROR);
+		}
+		if($this->model('address')->where('id=? and uid=? and isdelete=?',[$id,$this->_uid,0])->update([
 			'isdelete' => 1,
 			'deletetime' => $_SERVER['REQUEST_TIME']
 		]))
@@ -220,14 +215,8 @@ class address extends ajax
 	
 	function mylists()
 	{
-		$userHelper = new \application\helper\user();
-		$uid = $userHelper->isLogin();
-		if (empty($uid))
-		{
-			return new json(json::NOT_LOGIN);
-		}
 		$filter = [
-			'uid' => $uid,
+			'uid' => $this->_uid,
 			'isdelete' => 0,
 			'parameter' => 'address.id,
 							address.name,
@@ -245,5 +234,20 @@ class address extends ajax
 		];
 		$address = $this->model('address')->fetchAll($filter);
 		return new json(json::OK,NULL,$address);
+	}
+	
+	function __access()
+	{
+		$userHelper = new \application\helper\user();
+		$this->_uid = $userHelper->isLogin();
+		return array(
+			array(
+				'deny',
+				'actions' => '*',
+				'message' => new json(json::NOT_LOGIN),
+				'express' => empty($this->_uid),
+				'redict' => './index.php?c=user&a=login',
+			),
+		);
 	}
 }

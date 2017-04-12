@@ -7,7 +7,7 @@ $('.tab').on('click','.tab-title',function(){
 	$(this).addClass('active');
 	
 	var href = $(this).attr('href') || $(this).data('href');
-	if($(href).length==1)
+	if($(href).length===1)
 	{
 		$(href).siblings().removeClass('active');
 		$(href).addClass('active');

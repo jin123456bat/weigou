@@ -135,6 +135,7 @@ class order extends view
 		])
 			->select([
 			'task.day', // 有效期
+			'task.endtime',//活动结束时间
 			'order.createtime', // 创建时间
 			'order.pay_status',
 			'order.orderno'
@@ -143,7 +144,7 @@ class order extends view
 		
 		foreach ($task_user as $main_order)
 		{
-			if ($_SERVER['REQUEST_TIME'] - $main_order['createtime'] > $main_order['day'] * 3600 * 24)
+			if (($_SERVER['REQUEST_TIME'] > strtotime('+1 day',strtotime($main_order['endtime']))) || ($_SERVER['REQUEST_TIME'] - $main_order['createtime'] > $main_order['day'] * 3600 * 24))
 			{
 				// 假如团购主任务超时
 				// 假如主订单已经支付,则退款

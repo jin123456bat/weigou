@@ -7,251 +7,110 @@ use application\helper\admin;
 use application\helper\productSearchEngine;
 use application\model\roleModel;
 
+/**
+ * @author jin12
+ *
+ */
 class product extends ajax
 {
+	private $_aid = NULL;
+	
+	function find()
+	{
+		$id = $this->post('id');
+		$product = $this->model('product')->where('id=?',[$id])->find();
+		if (empty($product))
+		{
+			return new json(json::PARAMETER_ERROR);
+		}
+		$category3 = $this->model('bcategory_product')->where('product_id=?',[$id])->scalar('bc_id');
+		$product['bcategory'] = array($category3);
+		while (!empty($category3))
+		{
+			$category2 = $this->model('bcategory')->where('id=?',[$category3])->scalar('bc_id');
+			if (empty($category2))
+			{
+				break;
+			}
+			else
+			{
+				array_unshift($product['bcategory'], $category2);
+				$category3 = $category2;
+			}
+		}
+		
+		$product['province'] = [];
+		$province = $this->model('product_province')->where('product_id=?',[$id])->select('province_id');
+		foreach ($province as $p)
+		{
+			$product['province'][] = $p['province_id'];
+		}
+		
+		$product['image'] = [];
+		$image = $this->model('product_img')->orderby('position','desc')->orderby('sort','asc')->where('pid=? and isdelete=?',[$id,0])->select();
+		foreach ($image as $img)
+		{
+			$path = $this->model('upload')->where('id=?',[$img['fid']])->scalar('path');
+			$product['image'][] = array(
+				'id' => $img['fid'],
+				'path' => $path,
+				'position' => $img['position'],
+			);
+		}
+		
+		$product['product_publish'] = $this->model('product_publish')->where('product_id=?',[$id])->select();
+		foreach ($product['product_publish'] as &$product_publish)
+		{
+			$product_publish['product_publish_price'] = $this->model('product_publish_price')->where('product_id=? and publish_id=?',[$product_publish['product_id'],$product_publish['publish_id']])->select();
+		}
+		
+		return new json(json::OK,NULL,$product);
+	}
+	
 	/**
 	 * 添加商品
 	 */
 	function create()
 	{
-		$admin = $this->session->id;
-		$this->model('product')->transaction();
-		$productHelper = new \application\helper\product();
 		
-		$product = $productHelper->createProductData($this->post());
+		$product = new \application\entity\product();
+		$data = $this->post();
 		
-		/* if (empty($product['store']))
+		if ($data['outside']==2)
 		{
-			$this->model("admin_log")->insertlog($admin, '商品管理，增加商品失败（请选择发货仓库）');
-			return new json(json::PARAMETER_ERROR, '请选择发货仓库');
-		} */
-		if ($product['outside'] == 2)
-		{
-			if (empty($product['ztax']))
-			{
-				return new json(json::PARAMETER_ERROR, '请填写综合税种');
-			}
+			$data['postTaxNo'] = NULL;
 		}
-		if ($product['outside'] == 3)
+		else if ($data['outside']==3)
 		{
-			if (empty($product['postTaxNo']))
-			{
-				return new json(json::PARAMETER_ERROR, '请选择行邮税号');
-			}
-		}
-		/* if ($product['status'] == 1)
-		{
-			if (floatval($product['inprice']) == 0)
-			{
-				return new json(json::PARAMETER_ERROR, '进价不能为0');
-			}
-		} */
-		
-		if (empty($product['barcode']))
-		{
-			return new json(json::PARAMETER_ERROR, '条形码不能为空');
-		}
-		if (empty($product['MeasurementUnit']*1))
-		{
-			return new json(json::PARAMETER_ERROR,'请填写计量单位');
-		}
-		/* if (intval($product['selled']) <= 0)
-		{
-			$this->model("admin_log")->insertlog($admin, '商品管理，增加商品失败（售卖数不能为空）');
-			return new json(json::PARAMETER_ERROR, '售卖数不能为空');
-		} */
-		
-		if ($this->model('product')
-			->where('barcode=? and isdelete=?', [
-			$product['barcode'],
-			0
-		])
-			->find())
-		{
-			return new json(json::PARAMETER_ERROR, '存在相同条形码的商品');
-		}
-		
-		if ($this->model('product')->insert($product))
-		{
-			$product_id = $this->model('product')->lastInsertId();
-			if (is_array($this->post('category')) && ! empty($this->post('category')))
-			{
-				foreach ($this->post('category') as $category)
-				{
-					if (! $this->model('category_product')->insert([
-						'cid' => $category,
-						'pid' => $product_id,
-						'createtime' => $_SERVER['REQUEST_TIME'],
-						'deletetime' => 0,
-						'isdelete' => 0
-					]))
-					{
-						$this->model('product')->rollback();
-						return new json(json::PARAMETER_ERROR, '分配分类错误');
-					}
-				}
-			}
-			
-			$hasListImage = false;
-			if (is_array($this->post('image')) && ! empty($this->post('image')))
-			{
-				
-				foreach ($this->post('image') as $image)
-				{
-					if ($image['position'] == 1)
-					{
-						$hasListImage = true;
-					}
-					if (! $this->model('product_img')->insert([
-						'pid' => $product_id,
-						'fid' => $image['id'],
-						'sort' => $image['sort'],
-						'position' => $image['position'],
-						'createtime' => $_SERVER['REQUEST_TIME'],
-						'deletetime' => 0,
-						'isdelete' => 0
-					]))
-					{
-						$this->model('product')->rollback();
-						return new json(json::PARAMETER_ERROR, '图片添加失败');
-					}
-				}
-			}
-			
-			if (! $hasListImage)
-			{
-				$this->model('product')->rollback();
-				return new json(json::PARAMETER_ERROR, '必须设置列表图');
-			}
-			
-			if (is_array($this->post('prototype')) && ! empty($this->post('prototype')))
-			{
-				foreach ($this->post('prototype') as $prototype)
-				{
-					if (! $this->model('prototype')->insert([
-						'pid' => $product_id,
-						'name' => $prototype['name'],
-						'type' => $prototype['type'],
-						'value' => $prototype['value'],
-						'createtime' => $_SERVER['REQUEST_TIME'],
-						'deletetime' => $_SERVER['REQUEST_TIME'],
-						'isdelete' => 0
-					]))
-					{
-						$this->model('product')->rollback();
-						return new json(json::PARAMETER_ERROR, '属性添加失败');
-					}
-				}
-			}
-			
-			if (is_array($this->post('collection')) && ! empty($this->post('collection')))
-			{
-				foreach ($this->post('collection') as $collection)
-				{
-					if (! $this->model('collection')->insert([
-						'pid' => $product_id,
-						'content' => $collection['content'],
-						'price' => $collection['price'],
-						'v1price' => $collection['v1price'],
-						'v2price' => $collection['v2price'],
-						'stock' => $collection['stock'],
-						'sku' => $collection['sku'],
-						'logo' => empty($collection['logo']) ? NULL : $collection['logo'],
-						'deletetime' => 0,
-						'createtime' => $_SERVER['REQUEST_TIME'],
-						'isdelete' => 0,
-						'available' => $collection['available']
-					]))
-					{
-						$this->model('product')->rollback();
-						return new json(json::PARAMETER_ERROR, '多属性添加失败');
-					}
-				}
-			}
-			
-			if (is_array($this->post('fee_province')) && ! empty($this->post('fee_province')))
-			{
-				foreach ($this->post('fee_province') as $province)
-				{
-					if (! $this->model('product_province')->insert([
-						'product_id' => $product_id,
-						'province_id' => $province
-					]))
-					{
-						$this->model('province')->rollback();
-						return new json(json::PARAMETER_ERROR, '添加配送城市失败');
-					}
-				}
-			}
-			
-			if (is_array($this->post('bind')) && ! empty($this->post('bind')))
-			{
-				foreach ($this->post('bind') as $bind)
-				{
-					if (empty($bind['num']) || empty($bind['unit']) || empty($bind['sort']) || empty($bind['price']) || empty($bind['inprice']) || empty($bind['v1price']) || empty($bind['v2price']))
-					{
-						continue;
-					}
-					if (! empty($this->model('bind')
-						->where('pid=? and content=? and num=?', [
-						$product_id,
-						$bind['content'],
-						$bind['num']
-					])
-						->find()))
-					{
-						$this->model('product')->rollback();
-						return new json(json::PARAMETER_ERROR, '无法捆绑相同数量的商品');
-					}
-					if (! $this->model('bind')->insert([
-						'pid' => $product_id,
-						'content' => $bind['content'],
-						'num' => $bind['num'],
-						'inprice' => $bind['inprice'],
-						'price' => $bind['price'],
-						'v1price' => $bind['v1price'],
-						'v2price' => $bind['v2price'],
-						'unit' => $bind['unit'],
-						'sort' => $bind['sort']
-					]))
-					{
-						$this->model('product')->rollback();
-						return new json(json::PARAMETER_ERROR, '商品捆绑添加失败');
-					}
-				}
-			}
-			
-			
-			if (is_array($this->post('product_publish')) && !empty($this->post('product_publish')))
-			{
-				foreach ($this->post('product_publish') as $publish)
-				{
-					$publish = json_decode(urldecode($publish),true);
-					$publish['product_id'] = $product_id;
-					if($this->model('product_publish')->insert($publish))
-					{
-						foreach ($publish['price'] as $price)
-						{
-							$price['product_id'] = $product_id;
-							$price['publish_id'] = $publish['publish_id'];
-							$price['num'] = $price['selled'];
-							$this->model('product_publish_price')->insert($price);
-						}
-					}
-				}
-			}
-			
-			
-			$this->model('product')->commit();
-			$this->model("admin_log")->insertlog($admin, '商品管理，增加商品成功，商品id：' . $product_id, 1);
-			$productHelper->cutPublish($product_id);
-			$this->call('search', 'rebuild',['id'=>$product_id]);
-			return new json(json::OK, NULL, $product_id);
+			$data['ztax'] = NULL;
 		}
 		else
 		{
-			$this->model('product')->rollback();
-			return new json(json::PARAMETER_ERROR, '添加失败');
+			$data['postTaxNo'] = NULL;
+			$data['ztax'] = NULL;
+		}
+		
+		$product->setData($data);
+		if ($product->validate())
+		{
+			if($product->save())
+			{
+				$this->model("admin_log")->insertlog($this->_aid, '商品管理，增加商品成功，商品id：' . $product->getPrimaryKey(), 1);
+				//切换商品的供应商等信息
+				$productHelper = new \application\helper\product();
+				$productHelper->cutPublish($product->getPrimaryKey());
+				//创建商品的索引
+				$this->call('search', 'rebuild',['id'=>$product->getPrimaryKey()]);
+				return new json(json::OK, NULL, $product->getPrimaryKey());
+			}
+			else
+			{
+				return new json(json::PARAMETER_ERROR, '添加失败');
+			}
+		}
+		else
+		{
+			return new json(json::PARAMETER_ERROR, $product->getErrors());
 		}
 	}
 
@@ -459,8 +318,6 @@ class product extends ajax
 	 */
 	function topmove()
 	{
-		$admin = $this->session->id;
-		
 		$id = $this->post('id');
 		$forward = $this->post('forward', 'up');
 		$line = $this->model('product_top')
@@ -477,12 +334,12 @@ class product extends ajax
 		
 		if ($flag == 0 && $forward == 'up')
 		{
-			$this->model("admin_log")->insertlog($admin, '商品管理，首页商品排序', 1);
+			$this->model("admin_log")->insertlog($this->_aid, '商品管理，首页商品排序', 1);
 			return new json(json::OK);
 		}
 		if ($flag == count($line) - 1 && $forward == 'down')
 		{
-			$this->model("admin_log")->insertlog($admin, '商品管理，首页商品排序', 1);
+			$this->model("admin_log")->insertlog($this->_aid, '商品管理，首页商品排序', 1);
 			return new json(json::OK);
 		}
 		if ($forward == 'up')
@@ -507,7 +364,7 @@ class product extends ajax
 				->limit(1)
 				->update('sort', $index);
 		}
-		$this->model("admin_log")->insertlog($admin, '商品管理，首页商品排序', 1);
+		$this->model("admin_log")->insertlog($this->_aid, '商品管理，首页商品排序', 1);
 		return new json(json::OK);
 	}
 
@@ -516,7 +373,6 @@ class product extends ajax
 	 */
 	function untop()
 	{
-		$admin = $this->session->id;
 		$id = $this->post('id');
 		if (! empty($id))
 		{
@@ -526,13 +382,11 @@ class product extends ajax
 			])
 				->delete())
 			{
-				$this->model("admin_log")->insertlog($admin, '商品管理，将商品从首页下架,商品id：' . $id, 1);
+				$this->model("admin_log")->insertlog($this->_aid, '商品管理，将商品从首页下架,商品id：' . $id, 1);
 				return new json(json::OK);
 			}
-			$this->model("admin_log")->insertlog($admin, '商品管理，将商品从首页下架（参数错误）');
 			return new json(json::PARAMETER_ERROR);
 		}
-		$this->model("admin_log")->insertlog($admin, '商品管理，将商品从首页下架（参数错误）');
 		return new json(json::PARAMETER_ERROR);
 	}
 
@@ -543,40 +397,34 @@ class product extends ajax
 	 */
 	function top()
 	{
-		$admin = $this->session->id;
-		$id = $this->post('id');
-		if (! empty($id))
+		$ids = $this->post('id',array());
+		if (! empty($ids))
 		{
-			if (empty($this->model('product_top')
-				->where('pid=?', [
-				$id
-			])
-				->find()))
+			$num = 0;
+			foreach ($ids as $id)
 			{
-				$total = $this->model('product_top')->select('count(*)');
-				
-				$data = [
-					'pid' => $id,
-					'sort' => $total[0]['count(*)'],
-					'time' => $_SERVER['REQUEST_TIME']
-				];
-				if ($this->model('product_top')->insert($data))
+				if($this->model('product_top')->insert([
+					'pid'=>$id,
+					'sort' =>1,
+					'time' =>time(),
+				]))
 				{
-					$data = $this->model('product_top')
-						->table('product', 'left join', 'product.id=product_top.pid')
-						->where('product.id=?', [
-						$id
-					])
-						->find('product.name,product.id,product_top.sort');
-					$this->model("admin_log")->insertlog($admin, '商品管理，将商品推送到首页，商品id:' . $id, 1);
-					return new json(json::OK, NULL, $data);
+					$num++;
 				}
-				$this->model("admin_log")->insertlog($admin, '商品管理，将商品推送到首页(请求参数错误)');
-				return new json(json::PARAMETER_ERROR);
 			}
-			$this->model("admin_log")->insertlog($admin, '商品管理，将商品推送到首页(商品已经存在)');
-			return new json(json::PARAMETER_ERROR, '已经存在了');
+			return new json(json::OK,NULL,$num);
 		}
+		return new json(json::PARAMETER_ERROR,'请选择商品');
+	}
+	
+	function top_sort()
+	{
+		$sort = $this->post('sort',array());
+		foreach ($sort as $index=>$pid)
+		{
+			$this->model('product_top')->where('pid=?',[$pid])->limit(1)->update('sort',$index);
+		}
+		return new json(json::OK);
 	}
 
 	/**
@@ -584,301 +432,44 @@ class product extends ajax
 	 */
 	function save()
 	{
-		$admin = $this->session->id;
-		$this->model('product')->transaction();
-		$productHelper = new \application\helper\product();
+		$product = new \application\entity\product();
+		$data = $this->post();
 		
-		$product = $productHelper->createProductData($this->post());
-		if (! isset($product['id']))
+		if ($data['outside']==2)
 		{
-			return new json(json::PARAMETER_ERROR, '商品id错误');
+			$data['postTaxNo'] = NULL;
 		}
-		
-		$product_id = $product['id'];
-		
-		// 保存的时候商品创建时间不做任何修改
-		unset($product['createtime']);
-		
-		// 商品修改时间
-		$product['modifytime'] = $_SERVER['REQUEST_TIME'];
-		
-		/* if (empty($product['store']))
+		else if ($data['outside']==3)
 		{
-			return new json(json::PARAMETER_ERROR, '请选择发货仓库');
-		} */
-		if ($product['outside'] == 2)
-		{
-			if (empty($product['ztax']))
-			{
-				$this->model("admin_log")->insertlog($admin, '商品管理，商品编辑(请填写综合税种)');
-				return new json(json::PARAMETER_ERROR, '请填写综合税种');
-			}
-		}
-		if ($product['outside'] == 3)
-		{
-			if (empty($product['postTaxNo']))
-			{
-				return new json(json::PARAMETER_ERROR, '请选择行邮税号');
-			}
-		}
-		if (empty($product['MeasurementUnit']*1))
-		{
-			return new json(json::PARAMETER_ERROR,'请填写计量单位');
-		}
-		/* if ($product['status'] == 1)
-		{
-			if (floatval($product['inprice']) == 0)
-			{
-				return new json(json::PARAMETER_ERROR, '进价不能为0');
-			}
-		} */
-		if (empty($product['barcode']))
-		{
-			return new json(json::PARAMETER_ERROR, '条形码不能为空');
-		}
-		/* if (intval($product['selled']) <= 0)
-		{
-			return new json(json::PARAMETER_ERROR, '售卖数不能为空');
-		} */
-		
-		/*
-		 * if ($this->model('product')->where('id!=? and barcode=? and isdelete=?', [$product_id, $product['barcode'], 0])->find()) {
-		 * $this->model("admin_log")->insertlog($admin, '商品管理，商品编辑(存在相同条形码的商品)');
-		 * return new json(json::PARAMETER_ERROR, '存在相同条形码的商品');
-		 * }
-		 */
-		
-		if ($this->model('product')
-			->where('id=?', [
-			$product_id
-		])
-			->update($product, '', true))
-		{
-			$this->model('category_product')
-				->where('pid=?', [
-				$product_id
-			])
-				->delete();
-			if (is_array($this->post('category')) && ! empty($this->post('category')))
-			{
-				foreach ($this->post('category') as $category)
-				{
-					if (! $this->model('category_product')->insert([
-						'cid' => $category,
-						'pid' => $product_id,
-						'createtime' => $_SERVER['REQUEST_TIME'],
-						'deletetime' => 0,
-						'isdelete' => 0
-					]))
-					{
-						$this->model('product')->rollback();
-						return new json(json::PARAMETER_ERROR, '分配分类错误');
-					}
-				}
-			}
-			
-			$hasListImage = false;
-			$this->model('product_img')
-				->where('pid=?', [
-				$product_id
-			])
-				->delete();
-			if (is_array($this->post('image')) && ! empty($this->post('image')))
-			{
-				foreach ($this->post('image') as $image)
-				{
-					if ($image['position'] == 1)
-					{
-						$hasListImage = true;
-					}
-					if (! $this->model('product_img')->insert([
-						'pid' => $product_id,
-						'fid' => $image['id'],
-						'sort' => $image['sort'],
-						'position' => $image['position'],
-						'createtime' => $_SERVER['REQUEST_TIME'],
-						'deletetime' => 0,
-						'isdelete' => 0
-					]))
-					{
-						$this->model('product')->rollback();
-						return new json(json::PARAMETER_ERROR, '图片添加失败');
-					}
-				}
-			}
-			if (! $hasListImage)
-			{
-				$this->model('product')->rollback();
-				return new json(json::PARAMETER_ERROR, '必须设置列表图');
-			}
-			
-			$this->model('prototype')
-				->where('pid=?', [
-				$product_id
-			])
-				->delete();
-			if (is_array($this->post('prototype')) && ! empty($this->post('prototype')))
-			{
-				foreach ($this->post('prototype') as $prototype)
-				{
-					if (! $this->model('prototype')->insert([
-						'pid' => $product_id,
-						'name' => $prototype['name'],
-						'type' => $prototype['type'],
-						'value' => $prototype['value'],
-						'createtime' => $_SERVER['REQUEST_TIME'],
-						'deletetime' => $_SERVER['REQUEST_TIME'],
-						'isdelete' => 0
-					]))
-					{
-						$this->model('product')->rollback();
-						return new json(json::PARAMETER_ERROR, '属性添加失败');
-					}
-				}
-			}
-			
-			$result = $this->model('collection')
-				->where('pid=?', [
-				$product_id
-			])
-				->find();
-			
-			if (! empty($result))
-			{
-				if (! $this->model('collection')
-					->where('pid=?', [
-					$product_id
-				])
-					->delete())
-				{
-					return new json(json::PARAMETER_ERROR, 'collection更新中断');
-				}
-			}
-			
-			if (is_array($this->post('collection')) && ! empty($this->post('collection')))
-			{
-				foreach ($this->post('collection') as $collection)
-				{
-					if (! $this->model('collection')->insert([
-						'pid' => $product_id,
-						'content' => $collection['content'],
-						'price' => $collection['price'],
-						'v1price' => $collection['v1price'],
-						'v2price' => $collection['v2price'],
-						'stock' => $collection['stock'],
-						'sku' => $collection['sku'],
-						'logo' => empty($collection['logo']) ? NULL : $collection['logo'],
-						'deletetime' => 0,
-						'createtime' => $_SERVER['REQUEST_TIME'],
-						'isdelete' => 0,
-						'available' => $collection['available']
-					]))
-					{
-						$this->model('product')->rollback();
-						return new json(json::PARAMETER_ERROR, '多属性添加失败');
-					}
-				}
-			}
-			
-			$this->model('product_province')
-				->where('product_id=?', [
-				$product_id
-			])
-				->delete();
-			if (is_array($this->post('fee_province')) && ! empty($this->post('fee_province')))
-			{
-				foreach ($this->post('fee_province') as $province)
-				{
-					if (! $this->model('product_province')->insert([
-						'product_id' => $product_id,
-						'province_id' => $province
-					]))
-					{
-						$this->model('province')->rollback();
-						return new json(json::PARAMETER_ERROR, '添加配送城市失败');
-					}
-				}
-			}
-			
-			$this->model('bind')
-				->where('pid=?', [
-				$product_id
-			])
-				->delete();
-			if (is_array($this->post('bind')) && ! empty($this->post('bind')))
-			{
-				foreach ($this->post('bind') as $bind)
-				{
-					if (empty($bind['sort']) || empty($bind['unit']) || empty($bind['num']) || empty($bind['price']) || empty($bind['inprice']) || empty($bind['v1price']) || empty($bind['v2price']))
-					{
-						continue;
-					}
-					
-					if (! empty($this->model('bind')
-						->where('pid=? and content=? and num=?', [
-						$product_id,
-						$bind['content'],
-						$bind['num']
-					])
-						->find()))
-					{
-						$this->model('product')->rollback();
-						return new json(json::PARAMETER_ERROR, '无法捆绑相同数量的商品');
-					}
-					
-					if (! $this->model('bind')->insert([
-						'pid' => $product_id,
-						'content' => $bind['content'],
-						'num' => $bind['num'],
-						'inprice' => $bind['inprice'],
-						'price' => $bind['price'],
-						'v1price' => $bind['v1price'],
-						'v2price' => $bind['v2price'],
-						'unit' => $bind['unit'],
-						'sort' => $bind['sort']
-					]))
-					{
-						$this->model('product')->rollback();
-						return new json(json::PARAMETER_ERROR, '商品捆绑添加失败');
-					}
-				}
-			}
-			
-			
-			$this->model('product_publish')->where('product_id=?',[$product_id])->delete();
-			$this->model('product_publish_price')->where('product_id=?',[$product_id])->delete();
-			if (is_array($this->post('product_publish')) && !empty($this->post('product_publish')))
-			{
-				foreach ($this->post('product_publish') as $publish)
-				{
-					$publish = json_decode(urldecode($publish),true);
-					$publish['product_id'] = $product_id;
-					if($this->model('product_publish')->insert($publish))
-					{
-						foreach ($publish['price'] as $price)
-						{
-							$price['product_id'] = $product_id;
-							$price['publish_id'] = $publish['publish_id'];
-							$price['num'] = $price['selled'];
-							$this->model('product_publish_price')->insert($price);
-						}
-					}
-				}
-			}
-			
-			// 顺便清空购物车中的相关商品
-			// $this->model('cart')->where('pid=?',[$product_id])->delete();
-			
-			$this->model('product')->commit();
-			$this->model("admin_log")->insertlog($admin, '商品保存成功:'.$product_id);
-			$productHelper->cutPublish($product_id);
-			$this->call('search', 'rebuild',['id'=>$product_id]);
-			return new json(json::OK, NULL, $product_id);
+			$data['ztax'] = NULL;
 		}
 		else
 		{
-			$this->model('product')->rollback();
-			return new json(json::PARAMETER_ERROR, '更新失败');
+			$data['postTaxNo'] = NULL;
+			$data['ztax'] = NULL;
+		}
+		
+		$product->setData($data);
+		if ($product->validate())
+		{
+			if($product->save())
+			{
+				$this->model("admin_log")->insertlog($this->_aid, '商品管理，保存商品成功，商品id：' . $product->getPrimaryKey(), 1);
+				//切换商品的供应商等信息
+				$productHelper = new \application\helper\product();
+				$productHelper->cutPublish($product->getPrimaryKey());
+				//创建商品的索引
+				$this->call('search', 'rebuild',['id'=>$product->getPrimaryKey()]);
+				return new json(json::OK, NULL, $product->getPrimaryKey());
+			}
+			else
+			{
+				return new json(json::PARAMETER_ERROR, '添加失败');
+			}
+		}
+		else
+		{
+			return new json(json::PARAMETER_ERROR, $product->getErrors());
 		}
 	}
 
@@ -889,39 +480,91 @@ class product extends ajax
 	 */
 	function remove()
 	{
-		$admin = $this->session->id;
 		$id = $this->post('id');
-		if ($this->model('product')
-			->where('id=?', [
-			$id
-		])
-			->update([
-			'isdelete' => 1,
-			'deletetime' => $_SERVER['REQUEST_TIME']
-		]))
+		if (!empty($id))
 		{
-			$this->model("admin_log")->insertlog($admin, '商品管理，删除商品成功，商品id：' . $id, 1);
-			return new json(json::OK);
+			if ($this->model('product')->where('id=?', [$id])->update([
+				'isdelete' => 1,
+				'deletetime' => $_SERVER['REQUEST_TIME']
+			]))
+			{
+				$this->model("admin_log")->insertlog($this->_aid, '商品管理，删除商品成功，商品id：' . $id, 1);
+				return new json(json::OK);
+			}
 		}
-		$this->model("admin_log")->insertlog($admin, '商品管理，删除商品失败（参数错误）');
 		return new json(json::PARAMETER_ERROR);
 	}
-
-	function restore()
+	
+	/**
+	 * 审核通过
+	 */
+	function examine_pass()
 	{
-		$admin = $this->session->id;
 		$id = $this->post('id');
-		if ($this->model('product')
-			->where('id=?', [
-			$id
-		])
-			->update('isdelete', 0))
+		if (empty($id))
 		{
-			$this->model("admin_log")->insertlog($admin, '商品管理，回收站商品恢复，商品id：' . $id, 1);
+			return new json(json::PARAMETER_ERROR);
+		}
+		
+		if($this->model('product')->where('id=?',[$id])->limit(1)->update([
+			'examine'=>1,
+			'status'=>1,
+			'examine_time' => $_SERVER['REQUEST_TIME'],
+		]))
+		{
+			$this->model("admin_log")->insertlog($this->_aid, '商品审核通过，商品id：' . $id, 1);
 			return new json(json::OK);
 		}
-		$this->model("admin_log")->insertlog($admin, '商品管理，回收站商品恢复失败（参数错误）');
-		return new json(json::PARAMETER_ERROR);
+		else
+		{
+			return new json(json::PARAMETER_ERROR);
+		}
+	}
+	
+	/**
+	 * 审核拒绝
+	 */
+	function examine_refuse()
+	{
+		$id = $this->post('id');
+		$result = $this->post('result','','htmlspecialchars');
+		$description = $this->post('description','','','htmlspecialchars');
+		if (empty($id))
+		{
+			return new json(json::PARAMETER_ERROR);
+		}
+		if($this->model('product')->where('id=?',[$id])->limit(1)->update([
+			'examine' => -1,
+			'examine_result' => $result,
+			'examine_description' => $description,
+			'examine_time' => $_SERVER['REQUEST_TIME']
+		]))
+		{
+			$this->model("admin_log")->insertlog($this->_aid, '商品审核拒绝，商品id：' . $id, 1);
+			return new json(json::OK);
+		}
+		else
+		{
+			return new json(json::PARAMETER_ERROR);
+		}
+	}
+
+	/**
+	 * 恢复商品从删除状态到未删除状态
+	 * @return \application\message\json
+	 */
+	function restore()
+	{
+		$id = $this->post('id');
+		if ($this->model('product')->where('id=?', [$id])->limit(1)->update('isdelete', 0))
+		{
+			$this->model("admin_log")->insertlog($this->_aid, '商品管理，回收站商品恢复，商品id：' . $id, 1);
+			return new json(json::OK);
+		}
+		else
+		{
+			return new json(json::PARAMETER_ERROR);
+		}
 	}
 	
 	/**
@@ -1334,359 +977,6 @@ class product extends ajax
 			return new json(json::NO_POWER);
 		}
 	}
-	
-	function import()
-	{
-		$emptyProduct = function($product)
-		{
-			foreach ($product as $value)
-			{
-				if (!empty(trim($value)))
-				{
-					return false;
-				}
-			}
-			return true;
-		};
-		
-		$adminHelper = new admin();
-		$aid = $adminHelper->getAdminId();
-		
-		$Ein = array(
-			"A",
-			"B",
-			"C",
-			"D",
-			"E",
-			"F",
-			"G",
-			"H",
-			"I",
-			"J",
-			"K",
-			"L",
-			"M",
-			"N",
-			"O",
-			"P",
-			"Q",
-			"R",
-			"S",
-			"T",
-			"U",
-			"V",
-			"W",
-			"X",
-			"Y",
-			"Z",
-			"AA",
-			"AB",
-			"AC"
-		);
-		
-		$products = [];
-		
-		$config = config('file');
-		$config->type = [
-			'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-			'application/vnd.ms-excel',
-			'application/vnd.ms-office',
-			'application/zip'
-		];
-		$config->size = 1024 * 1024 * 10;
-		// 接受文件
-		if (isset($_FILES['file']))
-		{
-			$file = $this->file->receive($_FILES['file'], $config);
-			if (is_file($file))
-			{
-				$phpexcel_root = ROOT . '/extends/PHPExcel';
-				include $phpexcel_root . '/PHPExcel/IOFactory.php';
-				$objReader = \PHPExcel_IOFactory::createReader('Excel2007');
-				if ($objReader->canRead($file))
-				{
-					try
-					{
-						$objPHPExcel = $objReader->load($file);
-						$sheet = $objPHPExcel->getSheet(0);
-						$rowNum = $sheet->getHighestRow();//文件行
-					}
-					catch (\Exception $e)
-					{
-						return new json(json::PARAMETER_ERROR, '文件解析失败');
-					}
-					for ($row = 2; $row <= $rowNum; $row ++)
-					{
-						// 行数是以第2行开始
-						$dataset = [];
-						for ($column = 0; $column < count($Ein); $column ++)
-						{
-							$dataset[] = $sheet->getCell($Ein[$column] . $row)->getCalculatedValue();
-						}
-						$products[] = $dataset;
-					}
-					
-					$response_body = [];
-					
-					foreach ($products as $index => $product)
-					{
-						if ($emptyProduct($product))
-						{
-							continue;
-						}
-						list(
-							$id,
-							$sku,
-							$barcode,
-							$inprice,
-							$selled,
-							$bind0_inprice,
-							$bind0_num,
-							$bind1_inprice,
-							$bind1_num,
-							$down_reason,
-							$name,
-							$outside,
-							$freetax,
-							$sort,
-							$oldprice,
-							$price,
-							$v1price,
-							$v2price,
-							$bind0_price,
-							$bind0_v1price,
-							$bind0_v2price,
-							$bind1_price,
-							$bind1_v1price,
-							$bind1_v2price,
-							$stock,
-							$status,
-							$fee,
-							$publish,
-							$unit
-						) = $product;
-						
-						$bind = ['num'=>$selled,'inprice'=>$inprice,'price'=>$price,'v1price'=>$v1price,'v2price'=>$v2price];
-						$bind1 = ['num'=>$bind0_num,'inprice'=>$bind0_inprice,'price'=>$bind0_price,'v1price'=>$bind0_v1price,'v2price'=>$bind0_v2price];
-						$bind2 = ['num'=>$bind1_num,'inprice'=>$bind1_inprice,'price'=>$bind1_price,'v1price'=>$bind1_v1price,'v2price'=>$bind1_v2price];
-					
-						switch (trim($outside))
-						{
-							case '普通商品':
-								$outside = 0;
-							break;
-							case '进口商品':
-								$outside = 1;
-								break;
-							case '直供商品':
-								$outside = 2;
-								break;
-							case '直邮商品':
-								$outside = 3;
-								break;
-							default:
-								$outside = 0;
-						}
-						
-						if (trim($freetax) == '是')
-						{
-							$freetax = 1;
-						}
-						else
-						{
-							$freetax = 0;
-						}
-						
-						
-						if (trim($status) == '上架')
-						{
-							$status = 1;
-						}
-						else
-						{
-							$status = 0;
-						}
-						
-						$publish = trim($publish);
-						$publish = $this->model('publish')
-						->where('name=?', [
-							$publish
-						])
-						->find();
-						if (! empty($publish))
-						{
-							$publish = $publish['id'];
-						}
-						else
-						{
-							$publish = NULL;
-						}
-						
-						if (!empty($bind))
-						{
-							$bind['unit'] = $unit;
-						}
-						if (!empty($bind1))
-						{
-							$bind1['unit'] = $unit;
-						}
-						if (!empty($bind2))
-						{
-							$bind2['unit'] = $unit;
-						}
-						
-						$data = [
-							'sku' => $sku,
-							'name'=> $name,
-							'down_reason' => $down_reason,
-							'barcode' => $barcode,
-							'inprice' => $inprice,
-							'selled' => $selled,
-							'outside' => $outside,
-							'freetax'=>$freetax,
-							'sort' => $sort,
-							'oldprice' => $oldprice,
-							'price' => $price,
-							'v1price' => $v1price,
-							'v2price' => $v2price,
-							'stock' => $stock,
-							'status' => $status,
-							'fee' => $fee,
-							'publish' => $publish,
-							'auto_status' => 0,
-						];
-						
-						
-						if (empty($id))
-						{
-							$productHelper = new \application\helper\product();
-							$data = $productHelper->createProductData($data);
-						
-							if($this->model('product')->insert($data))
-							{
-								$id = $this->model("product")->lastInsertId();
-								if (!empty($bind))
-								{
-									if (!empty($bind['num']) && !empty($bind['price']) && !empty($bind['v1price']) && !empty($bind['v2price']) && !empty($bind['inprice']))
-									{
-										$bind['pid'] = $id;
-										$bind['content'] = '';
-										$this->model('bind')->insert($bind);
-									}
-								}
-								if (!empty($bind1))
-								{
-									if (!empty($bind1['num']) && !empty($bind1['price']) && !empty($bind1['v1price']) && !empty($bind1['v2price']) && !empty($bind1['inprice']))
-									{
-										$bind1['pid'] = $id;
-										$bind1['content'] = '';
-										$this->model('bind')->insert($bind1);
-									}
-								}
-								if (!empty($bind2))
-								{
-									if (!empty($bind2['num']) && !empty($bind2['price']) && !empty($bind2['v1price']) && !empty($bind2['v2price']) && !empty($bind2['inprice']))
-									{
-										$bind2['pid'] = $id;
-										$bind2['content'] = '';
-										$this->model('bind')->insert($bind2);
-									}
-								}
-								$this->model("admin_log")->insertlog($aid, '导入商品信息成功,data:'.json_encode($data), 1);
-								$response_body[] = [
-									'id' => $id,
-									'sku'=> $sku,
-									'name' => $name,
-									'success'=>true,
-								];
-								//return new json(json::OK);
-							}
-							else
-							{
-								$response_body[] = [
-									'id' => $id,
-									'sku'=> $sku,
-									'name' => $name,
-									'success'=>false,
-								];
-								return new json(json::PARAMETER_ERROR,'第'.$index.'个商品添加失败');
-							}
-						}
-						else
-						{
-							$data['modifytime'] = $_SERVER['REQUEST_TIME'];
-							if($this->model('product')
-							->where('id=?', [
-								$id
-							])
-							->update($data))
-							{
-								$this->model('bind')->where('pid=?',[$id])->delete();
-								if (!empty($bind))
-								{
-									if (!empty($bind['num']) && !empty($bind['price']) && !empty($bind['v1price']) && !empty($bind['v2price']) && !empty($bind['inprice']))
-									{
-										$bind['pid'] = $id;
-										$bind['content'] = '';
-										$this->model('bind')->insert($bind);
-									}
-								}
-								if (!empty($bind1))
-								{
-									if (!empty($bind1['num']) && !empty($bind1['price']) && !empty($bind1['v1price']) && !empty($bind1['v2price']) && !empty($bind1['inprice']))
-									{
-										$bind1['pid'] = $id;
-										$bind1['content'] = '';
-										$this->model('bind')->insert($bind1);
-									}
-								}
-								if (!empty($bind2))
-								{
-									if (!empty($bind2['num']) && !empty($bind2['price']) && !empty($bind2['v1price']) && !empty($bind2['v2price']) && !empty($bind2['inprice']))
-									{
-										$bind2['pid'] = $id;
-										$bind2['content'] = '';
-										$this->model('bind')->insert($bind2);
-									}
-								}
-								
-								$data['id'] = $id;
-								$this->model("admin_log")->insertlog($aid, '导入商品信息成功,data:'.json_encode($data), 1);
-								$response_body[] = [
-									'id' => $id,
-									'sku'=> $sku,
-									'name' => $name,
-									'success'=>true,
-								];
-							}
-							else
-							{
-								$response_body[] = [
-									'id' => $id,
-									'sku'=> $sku,
-									'name' => $name,
-									'success'=>false,
-								];
-							}
-						}
-					}
-					return new json(json::OK,'导入成功',$response_body);
-				}
-				else
-				{
-					return new json(json::PARAMETER_ERROR,'文件无法读取');
-				}
-			}
-			else
-			{
-				return new json(json::PARAMETER_ERROR,'文件上传失败');
-			}
-		}
-		else
-		{
-			return new json(json::PARAMETER_ERROR, '文件下标错误');
-		}
-    }
     
     private function emptyArray($array)
     {
@@ -1697,5 +987,25 @@ class product extends ajax
     		}
     	}
     	return true;
+    }
+    
+    
+    function __access()
+    {
+    	$adminHelper = new \application\helper\admin();
+    	$this->_aid = $adminHelper->getAdminId();
+    	return array(
+    		array(
+    			'allow',
+    			'actions' => ['create','topmove','untop','top','top_sort','save','remove','examine_pass','examine_refuse','restore'],
+    			'express' => empty($this->_aid),
+    			'message' => new json(json::NOT_LOGIN,'请重新登录'),
+    			'httpCode' => 200,
+    		),
+    		array(
+    			'allow',
+    			'actions' => '*',
+    		)
+    	);
     }
 }

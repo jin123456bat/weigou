@@ -16,6 +16,7 @@
 		<link rel="stylesheet" href="{%$VIEW_ROOT%}/html/css/plugins/font-awesome/css/font-awesome.min.css">
 		<!--自定义css-->
 		<link rel="stylesheet" href="{%resource path='/html/css/global.css'%}">
+		<link rel="stylesheet" href="{%resource path='/html/css/brand-selector.css'%}">
 		<script type="text/javascript">
 			function lpad(num, n) {  
 				return Array(n>(''+num).length?(n-(''+num).length+1):0).join(0)+num;  
@@ -25,47 +26,52 @@
 	<body>
 		<div id="selectProductModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
 			<div class="modal-dialog" role="document" style="width: 900px;">
-				<div class="modal-content">
-					<form class="form-horizontal" role="form">
-						<div class="modal-header">
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-							<h4 class="modal-title" id="gridSystemModalLabel">选择商品</h4>
-						</div>
-						<div class="modal-body">
-							<form class="form-horizontal" role="form">
-								<div class="form-group">
-									<div class="col-md-3">
-										<select class="form-control">
-											<option disabled="disabled" selected="selected" value="">请选择分类</option>
-										</select>
-									</div>
-									<div class="col-md-3">
-										<select class="form-control">
-											<option disabled="disabled" selected="selected" value="">请选择品牌</option>
-										</select>
-									</div>
-									<div class="col-md-3">
-										<input type="text" class="form-control" placeholder="请输入关键字">
-									</div>
-									<div class="col-md-3" style="display: inline-block;float: inherit;">
-										<button class="btn btn-blue" style="background-color: rgba(98, 179, 255, 1); color: #FFFFFF;">确定</button>
-									</div>
+				<div class="modal-content" style="margin-top: 0px;">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title" id="gridSystemModalLabel">选择商品</h4>
+					</div>
+					<div class="modal-body">
+						<form class="form-horizontal" role="form" id="searchProductForm">
+							<div class="form-group">
+								<div class="col-md-5">
+									<select class="form-control" name="category" placeholder="请选择分类...">
+									</select>
 								</div>
-							</form>
-							<table class="table table-hover table-striped" id="product_selector">
-								<thead><tr><td></td><td>SPU</td><td>商品图片</td><td>商品名称</td><td>商品库存</td></tr></thead>
-								<tbody>
-									
-								</tbody>
-							</table>
-						</div>
-						<div class="modal-footer" style="padding: 0px;">
-							<div class="modal-button-group">
-								<div class="modal-button submit">确认</div>
-								<div data-dismiss="modal" class="modal-button">取消</div>
+								<div class="col-md-3">
+									<select class="form-control" name="brand" placeholder="请选择品牌...">
+									</select>
+								</div>
+								<div class="col-md-3">
+									<input type="text" name="keywords" class="form-control" placeholder="请输入关键字">
+								</div>
+								<div class="col-md-1" style="display: inline-block;float: inherit;">
+									<button type="submit" class="btn btn-blue" id="searchProduct" style="background-color: rgba(98, 179, 255, 1); color: #FFFFFF;">确定</button>
+								</div>
 							</div>
+						</form>
+						<table class="table table-hover table-striped table-bordered table-page" id="product_selector">
+							<thead>
+								<tr>
+									<td style="padding-right: 20px;padding-left: 20px;"><input type="checkbox" class="select-all"></td>
+									<td>SPU</td>
+									<td>商品图片</td>
+									<td>商品名称</td>
+									<td>商品库存</td>
+								</tr>
+							</thead>
+							<tbody>
+
+							</tbody>
+							<tfoot><tr><td colspan="10"></td></tr></tfoot>
+						</table>
+					</div>
+					<div class="modal-footer" style="padding: 0px;">
+						<div class="modal-button-group">
+							<div class="modal-button submit">确认</div>
+							<div data-dismiss="modal" class="modal-button">取消</div>
 						</div>
-					</form>
+					</div>
 				</div><!-- /.modal-content -->
 			</div><!-- /.modal-dialog -->
 		</div><!-- /.modal -->
@@ -77,7 +83,7 @@
 			  		<div class="content-body">
 			  			<div class="white-block">
 			  				<div class="wall-block">
-								<p>商品管理 - 商品列表</p>
+								<p>{%$page_title_reverse%}</p>
 							</div>
 			  			</div>
 			  			<div class="divider"></div>
@@ -160,6 +166,8 @@
 		<!--alert-->
 		<script src="//cdn.bootcss.com/bootbox.js/4.4.0/bootbox.min.js"></script>
 		<script src="{%resource path='/html/js/datatables.js'%}"></script>
+		<script src="{%resource path='/html/js/selector.js'%}"></script>
+		<script src="{%resource path='/html/js/brand-selector.js'%}"></script>
 		<script src="{%resource path='/html/js/global.js'%}"></script>
 		<script type="text/javascript">
 			$.ajaxSetup({
@@ -168,7 +176,40 @@
 				}
 			});
 			
+			var category_selector = selector($('#selectProductModal select[name=category]'),{
+				ajax:{
+					url:'./index.php?m=ajax&c=bcategory&a=source'
+				}
+			});
+			
+			var brand_selector = brand($('#selectProductModal select[name=brand]'),{
+				ajax:{
+					url:'./index.php?m=ajax&c=brand&a=source'
+				}
+			});
+			
+			$('#selectProductModal').on('click','.submit',function(){
+				var ids = getSelectedCheckbox($('#product_selector'));
+				$.post('./index.php?m=ajax&c=product&a=top',{id:ids},function(response){
+					if(response.code==1)
+					{
+						if(response.body!=ids.length)
+						{
+							bootbox.alert('成功添加'+response.body+'条,失败'+parseInt(ids.length-response.body)+'条');
+						}
+						$('#selectProductModal').modal('hide');
+						dt.reload();
+					}
+					else
+					{
+						bootbox.alert(response.result);
+					}
+				});
+				return false;
+			});
+			
 			$('.createTopProduct').on('click',function(){
+				selector.reload();
 				$('#selectProductModal').modal('show');
 			});
 			
@@ -185,6 +226,68 @@
 						$(value).prop('checked',false);
 					});
 				}
+				return false;
+			});
+			
+			var selector = datatables({
+				table:$('#product_selector'),
+				ajax:{
+					url:'{%url c=datatables a=product_untop%}',
+					data:{
+						isdelete:0,
+					},
+				},
+				empty:function(){
+					return '<tr><td colspan="10" style="text-align:center;">尚无数据</td></tr>';
+				},
+				columns:[{
+					data:'id',
+					name:'product.id',
+				},{
+					data:'id',
+					name:'product.id',
+				},{
+					data:'pic',
+					name:'(select upload.path from product_img left join upload on upload.id=product_img.fid where product_img.pid=product.id order by product_img.position asc limit 1)',
+				},{
+					data:'name',
+					name:'product.name',
+				},{
+					data:'stock',
+					name:'product.stock',
+				}],
+				sort:[{
+					column:0,
+					dir:'desc',
+				}],
+				columnDefs:[{
+					targets:0,
+					render:function(data,full){
+						return '<input type="checkbox" name="id[]" value="'+data+'">';
+					}
+				},{
+					targets:2,
+					render:function(data,full){
+						return '<img src="'+data+'" width="50px" height="50px" onerror="this.src=\'https://placeholdit.imgix.net/~text?txtsize=13&txt=%E6%AD%A4%E5%A4%84%E6%97%A0%E5%9B%BE&w=50&h=50\';">';
+					}
+				}],
+				pagesize:10,
+				onRowLoaded:function(row){
+					row.find('td:first').css({'padding-left':'20px','padding-right':'20px'});
+				},
+				afterTableLoaded:function(table){
+					//$('body').append(script);
+					//loadScript("{%resource path='/html/js/table-page.js'%}");
+				}
+			});
+			
+			$('#searchProductForm').on('submit',function(){
+				var category = category_selector.val();
+				var brand = brand_selector.val();
+				var keywords = $.trim($(this).find('input[name=keywords]').val());
+				selector.addAjaxParameter('category',category);
+				selector.addAjaxParameter('brand',brand);
+				selector.search(keywords);
 				return false;
 			});
 			
@@ -307,7 +410,8 @@
 					}
 				}],
 				pagesize:10,
-				onRowLoaded:function(row){
+				onRowLoaded:function(row,data){
+					row.prop('id',data.id);
 					row.find('td:last').css('text-align','center');
 					row.find('td:first').css({'padding-left':'20px','padding-right':'20px'});
 				}

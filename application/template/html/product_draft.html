@@ -21,20 +21,44 @@
 		</script>
 	</head>
 	<style>
-	table>thead>tr>th{
+	#draft table>thead>tr>th{
 		background-color: rgba(244, 245, 250, 1);
 		color: #5E5E5E;
 		font-size: 13px;
 		text-align: center;
 		height: 51px;
 	}
-	table>tbody>tr>td{
+	#draft table>tbody>tr>td{
 		text-align: center;
 		font-size: 13px;
 		height: 80px;
 	}
 	</style>
 	<body>
+		<div id="examineModal" class="modal fade bs-modal-sm" tabindex="-1" role="dialog" aria-hidden="true">
+			<div class="modal-dialog modal-sm">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+						<h4 class="modal-title">审核驳回</h4>
+					</div>
+					<div class="modal-body">
+						<input type="hidden" name="id" value="">
+						<input type="text" name="result" class="form-control input-sm" placeholder="驳回理由">
+						<div class="line"></div>
+						<textarea name="description" class="form-control input-sm" rows="5" placeholder="详细说明"></textarea>
+					</div>
+					<div class="modal-footer" style="padding: 0px;">
+						<div class="modal-button-group">
+							<div class="modal-button submit">确认</div>
+							<div data-dismiss="modal" class="modal-button">取消</div>
+						</div>
+					</div>
+				</div>
+				<!-- /.modal-content -->
+			</div>
+			<!-- /.modal-dialog -->
+		</div>
 		{%include file='html/public/header.html'%}
 		<div class="body container-fluid">
 			<div class="row">
@@ -43,14 +67,18 @@
 			  		<div class="content-body">
 			  			<div class="white-block">
 			  				<div class="wall-block">
-								<p>商品管理 - 商品发布</p>
+								<p>{%$page_title_reverse%}</p>
 							</div>
 			  			</div>
 			  			<div class="divider"></div>
 			  			<div class="white-block">
 			  				<div class="tab">
 			  					<div class="tab-header">
-			  						<a class="tab-title active" href="#draft">商品编辑列表</a>
+			  						<a class="tab-title active" href="#draft">商品创建列表</a>
+			  						<a class="tab-title" href="#examine">基础信息审核</a>
+			  						<a class="tab-title" href="#stock">完善库存信息</a>
+			  						<a class="tab-title" href="#price">完善价格信息</a>
+			  						<a class="tab-title" href="#status">上架审核</a>
 			  					</div>
 			  					<div class="tab-body">
 			  						<div class="tab-page active" id="draft">
@@ -68,7 +96,7 @@
 											<a href="./index.php?c=html&a=product_create" class="btn red btn-outline btn-small">创建商品</a>
 										</div>
 										<div class="">
-											<table id="product_draft" class="table table-hover table-bordered table-responsive">
+											<table class="table table-hover table-bordered table-responsive">
 												<thead>
 													<tr><th>SPU编号</th><th>商品名称</th><th>状态</th><th>商品类别</th><th>修改时间</th><th>编辑</th><th>删除</th></tr>
 												</thead>
@@ -77,6 +105,87 @@
 												</tbody>
 												<tfoot>
 													<tr><td colspan="10"></td></tr>
+												</tfoot>
+											</table>
+										</div>
+			  						</div>
+			  						<div class="tab-page" id="examine">
+			  							<div class="space"></div>
+			  							<div class="top-tips">
+											<div class="top-tips-title">
+												操作提示
+											</div>
+											<div class="top-tips-body">
+												<p>该页面展示了商城所有的商品信息，可对商品进行编辑修改操作。</p>
+												<p>可输入商品名称关键字进行搜索，侧边栏进行高级搜索。</p>
+											</div>
+										</div>
+										<div class="line">
+											<div class="btn-group">
+												<a class="btn red btn-outline btn-small dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+													导出 <span class="caret"></span>
+												</a>
+												<ul class="dropdown-menu red">
+													<li><a href="#">所有的商品</a></li>
+													<li><a href="#">搜索结果中的商品</a></li>
+													<li><a href="#">选中的商品</a></li>
+												</ul>
+											</div>
+										</div>
+		  								<div>
+											<table class="table table-hover table-bordered table-responsive">
+												<thead>
+													<tr>
+														<td width="2%" style="padding-left: 20px;padding-right: 20px;">
+															<input type="checkbox" class="select-all">
+														</td>
+														<td width="25%" style="min-width: 305px;">
+															商品名称
+														</td>
+														<td width="10%" style="min-width: 80px;">
+															SPU编号
+														</td>
+														<td width="10%" style="min-width: 65px;">
+															商品类型
+														</td>
+														<td width="10%" style="min-width: 115px;">
+															价格
+														</td>
+														<td width="10%" style="min-width: 115px;">
+															库存
+														</td>
+														<td width="10%" style="min-width: 80px;">
+															商品来源
+														</td>
+														<td width="5%" style="min-width: 40px;">
+															商品状态
+														</td>
+														<td style="text-align: center;">
+															操作
+														</td>
+													</tr>
+												</thead>
+												<tbody>
+
+												</tbody>
+												<tfoot>
+													<tr>
+														<td colspan="4">
+															<div class="col-md-4">
+																<select class="form-control" id="multipleSelect">
+																	<option>请选择...</option>
+																	<option value="delete">删除</option>
+																</select>
+
+															</div>
+															<div class="col-md-2">
+																<button class="btn" id="multipleBtn">确定</button>
+															</div>
+														</td>
+														<td id="split_page" colspan="5" style="text-align: right;">
+
+														</td>
+													</tr>
 												</tfoot>
 											</table>
 										</div>
@@ -99,138 +208,29 @@
 		<script src="{%resource path='/html/js/tab.js'%}"></script>
 		<script src="{%resource path='/html/js/global.js'%}"></script>
 		<script type="text/javascript">
-			var dt = datatables({
-				table:$('#product_draft'),
-				ajax:{
-					data:{
-						draft:0,
-					},
-					url:'{%url c=datatables a=product%}',
-				},
-				columns:[{
-					data:'id',
-					name:'product.id',
-				},{
-					data:'name',
-					name:'product.name',
-				},{
-					data:'examine',
-					name:'product.examine',
-				},{
-					data:'isnew',
-					name:'product.isnew',
-				},{
-					data:'modifytime',
-					name:'product.modifytime',
-				},{
-					data:'id',
-					name:'product.id',
-				},{
-					data:'id',
-					name:'product.id',
-				}
-				
-				,{
-					data:'status',
-					name:'product.status',
-					visible:false,
-				},{
-					data:'draft',
-					name:'product.draft',
-					visible:false,
-				},{
-					data:'stock',
-					name:'product.stock',
-					visible:false,
-				},{
-					data:'examine_result',
-					name:'product.examine_result',
-					visible:false,
-				},{
-					data:'downStatus',
-					name:'product.downStatus',
-					visible:false,
-				}],
-				columnDefs:[{
-					targets:2,
-					render:function(data,full){
-						if(full.status==1)
-						{
-							if(full.stock<=0)
-							{
-								return '销售中,库存不足';
-							}
-							else
-							{
-								return '销售中';
-							}
-						}
-						else
-						{
-							if(full.examine == -1)
-							{
-								tooltips = full.examine_result.length>0?'<br><div style="cursor:pointer;" data-toggle="tooltip" data-placement="bottom" title="'+full.examine_result+'">（提示）</div>':'';
-								return '<font style="color:#FF3300;font-weight: 700;">未通过'+tooltips+'</font>';
-							}
-							else if(full.examine == 0)
-							{
-								return '<font style="color:#FF6600;">待审核</font>';
-							}
-							else if(full.examine == 1)
-							{
-								if(full.downStatus == 1)
-								{
-									return '已下架,编辑中';
-								}
-								else
-								{
-									return '已下架';
-								}
-							}
-							else if(full.examine == 2)
-							{
-								return '审核中';
-							}
-						}
-						return data;
-					}
-				},{
-					targets:3,
-					render:function(data,full){
-						if(data == 1)
-						{
-							return '新增';
-						}
-						else
-						{
-							return '修改';
-						}
-					}
-				},{
-					targets:4,
-					render:function(data,full){
-						return unixtotime(data,true,8);
-					}
-				},{
-					targets:5,
-					render:function(data,full){
-						return '<button data-id="'+data+'" class="btn btn-outline btn-xs editBtn">编辑</button>';
-					}
-				},{
-					targets:6,
-					render:function(data,full){
-						return '<button data-id="'+data+'" class="btn btn-outline btn-xs removeBtn">删除</button>';
-					}
-				}],
-				pagesize:10,
-				onRowLoaded:function(row){
-					row.find('td:last').css('text-align','center');
-					row.find('td:last').prev('td').css('text-align','center');
-				},
-				afterTableLoaded:function(table){
-					table.find('[data-toggle="tooltip"]').tooltip();
+			$.ajaxSetup({
+				headers:{
+					'X-CSRF-TOKEN':'{%$x_csrf_token%}'
 				}
 			});
+			
+			$('table').on('change','input[type=checkbox].select-all',function(){
+				if($(this).is(':checked'))
+				{
+					$(this).closest('table').find('input[type=checkbox]:not(.select-all)').each(function(index,value){
+						$(value).prop('checked',true);
+					});
+				}
+				else
+				{
+					$(this).closest('table').find('input[type=checkbox]:not(.select-all)').each(function(index,value){
+						$(value).prop('checked',false);
+					});
+				}
+				return false;
+			});
 		</script>
+		<script type="text/javascript" src="{%resource path='/html/js/product/draft.js'%}"></script>
+		<script type="text/javascript" src="{%resource path='/html/js/product/examine.js'%}"></script>
 	</body>
 </html>

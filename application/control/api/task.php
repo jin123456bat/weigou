@@ -26,6 +26,7 @@ class task extends common
 		->where('(auto_stock=? and stock>?) or auto_stock=?',[1,0,0])
 		->where('product.isdelete=?',[0])
 		->where('(product.auto_status=? and product.status=?) or (product.auto_status=? and product.avaliabletime_from < ? and product.avaliabletime_to > ?)',[0,1,1,$_SERVER['REQUEST_TIME'],$_SERVER['REQUEST_TIME']])
+		->where('(task.starttime is null or task.starttime<=date_format(now(),\'%Y-%m-%d\')) and (task.endtime is null or task.endtime>=date_format(now(),\'%Y-%m-%d\'))')
 		->orderby('task.sort','asc')
 		->orderby('task.id','desc')
 		->limit($start,$length)
@@ -57,6 +58,7 @@ class task extends common
 		->where('(auto_stock=? and stock>?) or auto_stock=?',[1,0,0])
 		->where('product.isdelete=?',[0])
 		->where('(product.auto_status=? and product.status=?) or (product.auto_status=? and product.avaliabletime_from < ? and product.avaliabletime_to > ?)',[0,1,1,$_SERVER['REQUEST_TIME'],$_SERVER['REQUEST_TIME']])
+		->where('(task.starttime is null or task.starttime<=date_format(now(),\'%Y-%m-%d\')) and (task.endtime is null or task.endtime>=date_format(now(),\'%Y-%m-%d\'))')
 		->find('count(*)');
 		
 		$productReturnModel = [
@@ -142,7 +144,7 @@ class task extends common
 					$product['complete_order_num']++;
 				}
 			}
-		}
+		} 
 		
 		$total = $this->model('task_user')
 		->table('`order`','left join','order.orderno=task_user.orderno')
@@ -209,10 +211,15 @@ class task extends common
 		
 		
 
-		$task = $this->model('task')->where('id=? and isdelete=?',[$tid,0])->find();
+		$task = $this->model('task')
+		->where('id=? and isdelete=?',[$tid,0])
+		->where('(task.starttime is null or task.starttime<=date_format(now(),\'%Y-%m-%d\')) and (task.endtime is null or task.endtime>=date_format(now(),\'%Y-%m-%d\'))')
+		->find();
 		if (empty($task))
-			return new json(json::PARAMETER_ERROR);
-
+		{
+			return new json(json::PARAMETER_ERROR,'活动不存在或者活动已经下架');
+		}
+		
 		$productHelper = new \application\helper\product();
 		if(!$productHelper->canBuy($task['pid'], ''))
 		{

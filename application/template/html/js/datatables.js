@@ -83,31 +83,39 @@ var datatables = function(argments){
 		tr.prop('data-pk',pk);
 		if(argments.onRowLoaded)
 		{
-			argments.onRowLoaded(tr);
+			argments.onRowLoaded(tr,data);
 		}
 		return tr;
 	}
 
 	var load = function(start,length){
-		start = parseInt(start);
-		length = parseInt(length);
-
-		if(start<0)
+		if(length!=-1)
 		{
-			return false;
-		}
-		if(length<=0)
-		{
-			return false;
-		}
-		if(start >= $_total && start!=0)
-		{
-			return false;
-		}
+			start = parseInt(start);
+			length = parseInt(length);
 
-		$_start = start;
-		$_length = length;
+			if(start<0)
+			{
+				return false;
+			}
+			if(length<=0)
+			{
+				return false;
+			}
+			if(start >= $_total && start!=0)
+			{
+				return false;
+			}
 
+			$_start = start;
+			$_length = length;
+		}
+		else
+		{
+			start = 0;
+			length = -1;
+		}
+		
 		clear();
 
 		var columns = argments.columns;
@@ -132,7 +140,7 @@ var datatables = function(argments){
 				$_response = response;
 				
 				$_total = parseInt(response.recordsFiltered);
-
+				
 				tfooter($_total);
 				
 				if(response.data.length == 0)
@@ -164,6 +172,10 @@ var datatables = function(argments){
 
 
 	var tfooter = function(total){
+		if($_pagesize == -1)
+		{
+			return false;
+		}
 		
 		var split_page = argments.table.find('tfoot #split_page');
 		if(split_page.length == 0)

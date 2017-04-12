@@ -6,6 +6,12 @@ use application\helper\admin;
 
 class brand extends control
 {
+	function source()
+	{
+		$brand = $this->model('brand')->select('id,name_cn,name_en');
+		return new json($brand);
+	}
+	
 	function create()
 	{
 		$brand = new \application\entity\brand();
