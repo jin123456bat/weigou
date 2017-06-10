@@ -20,18 +20,18 @@ class product_notice_templateModel extends model
 		}
 	
 		$parameter = [];
-		foreach ($post['columns'] as $index => $columns)
+		foreach ($post['columns'] as $columns)
 		{
 			if (!empty($columns['name']))
 			{
 				$parameter[] = $columns['name'].(empty($columns['data'])?'':(' as '.$columns['data']));
-				foreach ($post['order'] as $order)
-				{
-					if ($order['column'] == $index)
-					{
-						$this->orderby($columns['name'],$order['dir']);
-					}
-				}
+			}
+		}
+		if (isset($post['order']))
+		{
+			foreach ($post['order'] as $order)
+			{
+				$this->orderby($columns[$order['column']]['name'],$order['dir']);
 			}
 		}
 		if (isset($post['keywords']) && !empty($post['keywords']))

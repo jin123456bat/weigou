@@ -89,7 +89,8 @@ class product extends ajax
 			$data['postTaxNo'] = NULL;
 			$data['ztax'] = NULL;
 		}
-		
+		$data['isnew'] = 1;
+		$data['source'] = $this->_aid;
 		$product->setData($data);
 		if ($product->validate())
 		{
@@ -500,6 +501,12 @@ class product extends ajax
 	 */
 	function examine_pass()
 	{
+		$adminHelper = new \application\helper\admin();
+		if(!$adminHelper->checkPower(0, 'button','examine_base_product'))
+		{
+			return new json(json::NO_POWER);
+		}
+		
 		$id = $this->post('id');
 		if (empty($id))
 		{
@@ -508,11 +515,10 @@ class product extends ajax
 		
 		if($this->model('product')->where('id=?',[$id])->limit(1)->update([
 			'examine'=>1,
-			'status'=>1,
 			'examine_time' => $_SERVER['REQUEST_TIME'],
 		]))
 		{
-			$this->model("admin_log")->insertlog($this->_aid, '商品审核通过，商品id：' . $id, 1);
+			$this->model("admin_log")->insertlog($this->_aid, '商品基础信息审核通过，商品id：' . $id, 1);
 			return new json(json::OK);
 		}
 		else
@@ -526,6 +532,12 @@ class product extends ajax
 	 */
 	function examine_refuse()
 	{
+		$adminHelper = new \application\helper\admin();
+		if(!$adminHelper->checkPower(0, 'button','examine_base_product'))
+		{
+			return new json(json::NO_POWER);
+		}
+		
 		$id = $this->post('id');
 		$result = $this->post('result','','htmlspecialchars');
 		$description = $this->post('description','','','htmlspecialchars');
@@ -540,7 +552,313 @@ class product extends ajax
 			'examine_time' => $_SERVER['REQUEST_TIME']
 		]))
 		{
-			$this->model("admin_log")->insertlog($this->_aid, '商品审核拒绝，商品id：' . $id, 1);
+			$this->model("admin_log")->insertlog($this->_aid, '商品基础信息审核拒绝，商品id：' . $id, 1);
+			return new json(json::OK);
+		}
+		else
+		{
+			return new json(json::PARAMETER_ERROR);
+		}
+	}
+	
+	/**
+	 * 库存信息审核通过
+	 * @return \application\message\json
+	 */
+	function examine_stock_pass()
+	{
+		$adminHelper = new \application\helper\admin();
+		if(!$adminHelper->checkPower(0, 'button','examine_stock_product'))
+		{
+			return new json(json::NO_POWER);
+		}
+		
+		$id = $this->post('id');
+		if (empty($id))
+		{
+			return new json(json::PARAMETER_ERROR);
+		}
+		
+		if($this->model('product')->where('id=?',[$id])->limit(1)->update([
+			'examine_stock'=>1,
+			'examine_stock_time' => $_SERVER['REQUEST_TIME'],
+		]))
+		{
+			$this->model("admin_log")->insertlog($this->_aid, '商品库存审核通过，商品id：' . $id, 1);
+			return new json(json::OK);
+		}
+		else
+		{
+			return new json(json::PARAMETER_ERROR);
+		}
+	}
+	
+	/**
+	 * 上架审核通过
+	 * @return \application\message\json
+	 */
+	function examine_status_pass()
+	{
+		$adminHelper = new \application\helper\admin();
+		if(!$adminHelper->checkPower(0, 'button','examine_up_product'))
+		{
+			return new json(json::NO_POWER);
+		}
+		
+		$id = $this->post('id');
+		if (empty($id))
+		{
+			return new json(json::PARAMETER_ERROR);
+		}
+	
+		if($this->model('product')->where('id=?',[$id])->limit(1)->update([
+			'status' => 1,
+			'examine_final'=>1,
+			'examine_final_time' => $_SERVER['REQUEST_TIME'],
+		]))
+		{
+			$this->model("admin_log")->insertlog($this->_aid, '上架审核通过，商品id：' . $id, 1);
+			return new json(json::OK);
+		}
+		else
+		{
+			return new json(json::PARAMETER_ERROR);
+		}
+	}
+	
+	/**
+	 * 上架审核拒绝
+	 * @return \application\message\json
+	 */
+	function examine_status_refuse()
+	{
+		$adminHelper = new \application\helper\admin();
+		if(!$adminHelper->checkPower(0, 'button','examine_up_product'))
+		{
+			return new json(json::NO_POWER);
+		}
+		
+		$id = $this->post('id');
+		$result = $this->post('result','','htmlspecialchars');
+		$description = $this->post('description','','','htmlspecialchars');
+		if (empty($id))
+		{
+			return new json(json::PARAMETER_ERROR);
+		}
+		if($this->model('product')->where('id=?',[$id])->limit(1)->update([
+			'examine_final' => -1,
+			'examine_final_result' => $result,
+			'examine_final_description' => $description,
+			'examine_final_time' => $_SERVER['REQUEST_TIME']
+		]))
+		{
+			$this->model("admin_log")->insertlog($this->_aid, '上架审核拒绝，商品id：' . $id, 1);
+			return new json(json::OK);
+		}
+		else
+		{
+			return new json(json::PARAMETER_ERROR);
+		}
+	}
+	
+	/**
+	 * 商品库存审核拒绝
+	 * @return \application\message\json
+	 */
+	function examine_stock_refuse()
+	{
+		$adminHelper = new \application\helper\admin();
+		if(!$adminHelper->checkPower(0, 'button','examine_stock_product'))
+		{
+			return new json(json::NO_POWER);
+		}
+		
+		$id = $this->post('id');
+		$result = $this->post('result','','htmlspecialchars');
+		$description = $this->post('description','','','htmlspecialchars');
+		if (empty($id))
+		{
+			return new json(json::PARAMETER_ERROR);
+		}
+		if($this->model('product')->where('id=?',[$id])->limit(1)->update([
+			'examine_stock' => -1,
+			'examine_stock_result' => $result,
+			'examine_stock_description' => $description,
+			'examine_stock_time' => $_SERVER['REQUEST_TIME']
+		]))
+		{
+			$this->model("admin_log")->insertlog($this->_aid, '商品库存审核拒绝，商品id：' . $id, 1);
+			return new json(json::OK);
+		}
+		else
+		{
+			return new json(json::PARAMETER_ERROR);
+		}
+	}
+	
+	/**
+	 * 商品价格信息审核通过
+	 * @return \application\message\json
+	 */
+	function examine_price_pass()
+	{
+		$adminHelper = new \application\helper\admin();
+		if(!$adminHelper->checkPower(0, 'button','examine_price_product'))
+		{
+			return new json(json::NO_POWER);
+		}
+		
+		$id = $this->post('id');
+		if (empty($id))
+		{
+			return new json(json::PARAMETER_ERROR);
+		}
+		
+		if($this->model('product')->where('id=?',[$id])->limit(1)->update([
+			'examine_price'=>1,
+			'examine_price_time' => $_SERVER['REQUEST_TIME'],
+		]))
+		{
+			$this->model("admin_log")->insertlog($this->_aid, '商品价格审核通过，商品id：' . $id, 1);
+			return new json(json::OK);
+		}
+		else
+		{
+			return new json(json::PARAMETER_ERROR);
+		}
+	}
+	
+	/**
+	 * 上架审核开始
+	 * @return \application\message\json
+	 */
+	function examine2_status()
+	{
+		$id = $this->post('id');
+		if (empty($id))
+		{
+			return new json(json::PARAMETER_ERROR);
+		}
+	
+		if($this->model('product')->where('id=?',[$id])->limit(1)->update([
+			'examine_final'=>2,
+			'examine_final_time' => $_SERVER['REQUEST_TIME'],
+		]))
+		{
+			$this->model("admin_log")->insertlog($this->_aid, '上架审核开始，商品id：' . $id, 1);
+			return new json(json::OK);
+		}
+		else
+		{
+			return new json(json::PARAMETER_ERROR);
+		}
+	}
+	
+	/**
+	 * 商品价格信息开始审核
+	 * @return \application\message\json
+	 */
+	function examine2_price()
+	{
+		$id = $this->post('id');
+		if (empty($id))
+		{
+			return new json(json::PARAMETER_ERROR);
+		}
+	
+		if($this->model('product')->where('id=?',[$id])->limit(1)->update([
+			'examine_price'=>2,
+			'examine_price_time' => $_SERVER['REQUEST_TIME'],
+		]))
+		{
+			$this->model("admin_log")->insertlog($this->_aid, '商品价格信息开始审核，商品id：' . $id, 1);
+			return new json(json::OK);
+		}
+		else
+		{
+			return new json(json::PARAMETER_ERROR);
+		}
+	}
+	
+	/**
+	 * 商品库存信息开始审核
+	 * @return \application\message\json
+	 */
+	function examine2_stock()
+	{
+		$id = $this->post('id');
+		if (empty($id))
+		{
+			return new json(json::PARAMETER_ERROR);
+		}
+	
+		if($this->model('product')->where('id=?',[$id])->limit(1)->update([
+			'examine_stock'=>2,
+			'examine_stock_time' => $_SERVER['REQUEST_TIME'],
+		]))
+		{
+			$this->model("admin_log")->insertlog($this->_aid, '商品库存信息开始审核，商品id：' . $id, 1);
+			return new json(json::OK);
+		}
+		else
+		{
+			return new json(json::PARAMETER_ERROR);
+		}
+	}
+	
+	/**
+	 * 商品基础信息开始审核
+	 * @return \application\message\json
+	 */
+	function examine2()
+	{
+		$id = $this->post('id');
+		if (empty($id))
+		{
+			return new json(json::PARAMETER_ERROR);
+		}
+	
+		if($this->model('product')->where('id=?',[$id])->limit(1)->update([
+			'examine'=>2,
+			'examine_time' => $_SERVER['REQUEST_TIME'],
+		]))
+		{
+			$this->model("admin_log")->insertlog($this->_aid, '商品基础信息开始审核，商品id：' . $id, 1);
+			return new json(json::OK);
+		}
+		else
+		{
+			return new json(json::PARAMETER_ERROR);
+		}
+	}
+	
+	/**
+	 * 商品价格审核拒绝
+	 * @return \application\message\json
+	 */
+	function examine_price_refuse()
+	{
+		$adminHelper = new \application\helper\admin();
+		if(!$adminHelper->checkPower(0, 'button','examine_price_product'))
+		{
+			return new json(json::NO_POWER);
+		}
+		
+		$id = $this->post('id');
+		$result = $this->post('result','','htmlspecialchars');
+		$description = $this->post('description','','','htmlspecialchars');
+		if (empty($id))
+		{
+			return new json(json::PARAMETER_ERROR);
+		}
+		if($this->model('product')->where('id=?',[$id])->limit(1)->update([
+			'examine_price' => -1,
+			'examine_price_result' => $result,
+			'examine_price_description' => $description,
+			'examine_price_time' => $_SERVER['REQUEST_TIME']
+		]))
+		{
+			$this->model("admin_log")->insertlog($this->_aid, '商品价格审核拒绝，商品id：' . $id, 1);
 			return new json(json::OK);
 		}
 		else
@@ -555,10 +873,86 @@ class product extends ajax
 	 */
 	function restore()
 	{
+		$adminHelper = new \application\helper\admin();
+		if(!$adminHelper->checkPower(0, 'button','recycle_product'))
+		{
+			return new json(json::NO_POWER);
+		}
 		$id = $this->post('id');
 		if ($this->model('product')->where('id=?', [$id])->limit(1)->update('isdelete', 0))
 		{
 			$this->model("admin_log")->insertlog($this->_aid, '商品管理，回收站商品恢复，商品id：' . $id, 1);
+			return new json(json::OK);
+		}
+		else
+		{
+			return new json(json::PARAMETER_ERROR);
+		}
+	}
+	
+	/**
+	 * 恢复商品为上架状态
+	 */
+	function sale()
+	{
+		$adminHelper = new \application\helper\admin();
+		if(!$adminHelper->checkPower(0, 'button','up_product'))
+		{
+			return new json(json::NO_POWER);
+		}
+		$id = $this->post('id');
+		$downStatus = $this->model('product')->where('id=?',[$id])->scalar('downStatus');
+		if ($downStatus == 0)
+		{
+			if ($this->model('product')->where('id=?', [$id])->limit(1)->update('status', 1))
+			{
+				$this->model("admin_log")->insertlog($this->_aid, '商品管理，商品上架，商品id：' . $id, 1);
+				return new json(json::OK);
+			}
+			else
+			{
+				return new json(json::PARAMETER_ERROR);
+			}
+		}
+		return new json(json::PARAMETER_ERROR,'不允许直接上架');
+	}
+	
+	/**
+	 * 商品下架
+	 */
+	function unshelf()
+	{
+		$adminHelper = new \application\helper\admin();
+		if(!$adminHelper->checkPower(0, 'button','down_product'))
+		{
+			return new json(json::NO_POWER);
+		}
+		$id = $this->post('id');
+		if($this->model('product')->where('id=?',[$id])->limit(1)->update([
+			'status' => 0,
+		]))
+		{
+			$this->model("admin_log")->insertlog($this->_aid, '商品管理，商品下架，商品id：' . $id, 1);
+			return new json(json::OK);
+		}
+		return new json(json::PARAMETER_ERROR);
+	}
+	
+	/**
+	 * 商品彻底删除
+	 * @return \application\message\json
+	 */
+	function clear_delete()
+	{
+		$adminHelper = new \application\helper\admin();
+		if(!$adminHelper->checkPower(0, 'button','delete_product'))
+		{
+			return new json(json::NO_POWER);
+		}
+		$id = $this->post('id');
+		if ($this->model('product')->where('id=?', [$id])->limit(1)->delete())
+		{
+			$this->model("admin_log")->insertlog($this->_aid, '商品管理，回收站商品彻底删除，商品id：' . $id, 1);
 			return new json(json::OK);
 		}
 		else
@@ -997,13 +1391,46 @@ class product extends ajax
     	return array(
     		array(
     			'allow',
-    			'actions' => ['create','topmove','untop','top','top_sort','save','remove','examine_pass','examine_refuse','restore'],
-    			'express' => empty($this->_aid),
+    			'actions' => [
+    				'create',
+    				'topmove',
+    				'untop',
+    				'top',
+    				'top_sort',
+    				'save',
+    				'remove',
+    				'restore',
+    				'find',
+    				'clear_delete',
+    				'import_base',
+    				'sale',
+    				'unshelf',
+    				
+    				'examine_pass',
+    				'examine_refuse',
+    				'examine_price_pass',
+    				'examine_price_refuse',
+    				'examine_stock_pass',
+    				'examine_stock_refuse',
+    				'examine_status_pass',
+    				'examine_status_refuse',
+    				'examine2',
+    				'examine2_price',
+    				'examine2_stock',
+    				'examine2_status',
+    			],
+    			'express' => !empty($this->_aid),
     			'message' => new json(json::NOT_LOGIN,'请重新登录'),
     			'httpCode' => 200,
     		),
     		array(
     			'allow',
+    			'actions' => [
+    				'search',
+    			],
+    		),
+    		array(
+    			'deny',
     			'actions' => '*',
     		)
     	);

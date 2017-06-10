@@ -4,6 +4,10 @@ namespace application\control\view;
 use system\core\view;
 use application\message\json;
 
+/**
+ * @author jin12
+ *
+ */
 class datatables extends view
 {
 
@@ -168,21 +172,49 @@ class datatables extends view
 			$post_id = $this->post('id');
 			if (is_array($post_id) && ! empty($post_id))
 			{
+				$adminHelper = new \application\helper\admin();
 				foreach ($post_id as $id)
 				{
 					switch ($this->post('customActionName'))
 					{
-						case 'remove':
+						case 'remove'://进入回收站
+							if($adminHelper->checkPower(0, 'button','recycle_product'))
+							{
+								$this->model('product')
+									->where('id=?', [
+									$id
+								])->limit(1)->update([
+									'isdelete' => 1,
+									'deletetime' => $_SERVER['REQUEST_TIME']
+								]);
+							}
+						break;
+						case 'examine_pass'://基础信息审核通过
 							$this->model('product')
-								->where('id=?', [
-								$id
-							])
-								->limit(1)
-								->update([
-								'isdelete' => 1,
-								'deletetime' => $_SERVER['REQUEST_TIME']
+							->where('id=?',[$id])
+							->limit(1)->update([
+								'examine' => 1,
+								'examine_time' => $_SERVER['REQUEST_TIME'],
 							]);
-						default:
+						break;
+						case 'clear_delete'://彻底删除
+							if($adminHelper->checkPower(0, 'button','delete_product'))
+							{
+								$this->model('product')->where('id=?',[$id])->limit(1)->delete();
+							}
+						break;
+						case 'sale'://上架
+							//上架的时候要保证必须不在下架编辑状态
+							if($adminHelper->checkPower(0, 'button','up_product'))
+							{
+								$this->model('product')->where('id=? and downStatus=?',[$id,0])->limit(1)->update('status',1);
+							}
+						break;
+						case 'unshelf'://下架
+							if($adminHelper->checkPower(0, 'button','down_product'))
+							{
+								$this->model('product')->where('id=?',[$id])->limit(1)->update('status',0);
+							}
 					}
 				}
 			}
@@ -191,6 +223,14 @@ class datatables extends view
 		$resultObj = new \stdClass();
 		$resultObj->draw = $this->post('draw');
 		$resultObj->data = $this->model('product')->datatables($this->post());
+		
+		$pk = array();
+		foreach ($resultObj->data as $data)
+		{
+			$pk[] = $data['id'];
+		}
+		$resultObj->pk = $pk;
+		
 		$resultObj->recordsFiltered = count($resultObj->data);
 		if ($this->post('length') != - 1)
 		{
@@ -294,17 +334,21 @@ class datatables extends view
 		return new json($resultObj);
 	}
 
+	/**
+	 * 用户列表 V2.0
+	 * @return \application\message\json
+	 */
 	function user()
 	{
 		$resultObj = new \stdClass();
-		if ($this->post('customActionType') == 'group_action')
-		{
-			switch ($this->post('customActionName'))
-			{
-			}
-		}
 		$resultObj->draw = $this->post('draw');
 		$resultObj->data = $this->model('user')->datatables($this->post());
+		$pk = array();
+		foreach ($resultObj->data as $data)
+		{
+			$pk[] = $data['id'];
+		}
+		$resultObj->pk = $pk;
 		$resultObj->recordsFiltered = count($resultObj->data);
 		if ($this->post('length') != - 1)
 		{
@@ -483,6 +527,10 @@ class datatables extends view
 		return new json($resultObj);
 	}
 
+	/**
+	 * 订单相关的 V2.0
+	 * @return \application\message\json
+	 */
 	function order()
 	{
 		$resultObj = new \stdClass();
@@ -558,27 +606,6 @@ class datatables extends view
 		return new json($resultObj);
 	}
 
-	function drawal()
-	{
-		$resultObj = new \stdClass();
-		if ($this->post('customActionType') == 'group_action')
-		{
-			switch ($this->post('customActionName'))
-			{
-				default:
-			}
-		}
-		$resultObj->draw = $this->post('draw');
-		$resultObj->data = $this->model('drawal')->datatables($this->post());
-		$resultObj->recordsFiltered = count($resultObj->data);
-		if ($this->post('length') != - 1)
-		{
-			$resultObj->data = array_slice($resultObj->data, $this->post('start'), $this->post('length'));
-		}
-		$resultObj->recordsTotal = $this->model('drawal')->count();
-		return new json($resultObj);
-	}
-
 	function feedback()
 	{
 		$resultObj = new \stdClass();
@@ -645,34 +672,109 @@ class datatables extends view
 		$resultObj->recordsTotal = $this->model('order_package')->count();
 		return new json($resultObj);
 	}
-
-	function viporder()
+	
+	/**
+	 * 提现列表 V2.0
+	 */
+	function drawal()
 	{
+		$parameter = array();
 		$resultObj = new \stdClass();
 		$resultObj->draw = $this->post('draw');
-		$resultObj->data = $this->model('vip_order')->datatables($this->post());
+		
+		$columns = $this->post('columns',array());
+		$orders = $this->post('order',array());
+		$ajaxData = $this->post('ajaxData',array());
+		$keywords = $this->post('keywords','');
+		$pk = $this->post('pk',array());
+		
+		foreach ($columns as $column)
+		{
+			if (! empty($column['name']))
+			{
+				$parameter[] = $column['name'] . (empty($column['data']) ? '' : (' as ' . $column['data']));
+			}
+		}
+		
+		foreach ($orders as $order)
+		{
+			$this->model('drawal')->orderby($columns[$order['column']]['name'],$order['dir']);
+		}
+		
+		if (!empty($pk))
+		{
+			foreach ($pk as $p)
+			{
+				$this->model('drawal')->where($p['key'].'=?',[$p['value']]);
+			}
+		}
+		
+		foreach ($ajaxData as $key => $value)
+		{
+			$this->model('drawal')->where($key.'=?',[$value]);
+		}
+		
+		if (!empty($keywords))
+		{
+			$this->model('drawal')->where(' uid in (select user.id from user where user.name like ? or user.telephone like ?)',['%'.trim($keywords).'%','%'.trim($keywords).'%']);
+		}
+		$this->model('drawal')->table('bankcard','left join','bankcard.id=drawal.bankcard');
+		$resultObj->data = $this->model('drawal')->select($parameter);
 		
 		$resultObj->recordsFiltered = count($resultObj->data);
-		
-		// 获取用户对应id username
-		$users = $this->model('user')->select([
-			'id',
-			'name'
-		]);
-		$user = array();
-		foreach ($users as $u)
+		if ($this->post('length') != - 1)
 		{
-			$user[$u['id']] = $u['name'];
+			$resultObj->data = array_slice($resultObj->data, $this->post('start',0), $this->post('length',10));
+		}
+		$resultObj->recordsTotal = $this->model('drawal')->count();
+		return new json($resultObj);
+	}
+
+	/**
+	 * VIP订单V2.0
+	 * @return \application\message\json
+	 */
+	function viporder()
+	{
+		$parameter = array();
+		$resultObj = new \stdClass();
+		$resultObj->draw = $this->post('draw');
+	
+		$columns = $this->post('columns',array());
+		$orders = $this->post('order',array());
+		$ajaxData = $this->post('ajaxData',array());
+		$keywords = $this->post('keywords','');
+	
+		foreach ($columns as $column)
+		{
+			if (! empty($column['name']))
+			{
+				$parameter[] = $column['name'] . (empty($column['data']) ? '' : (' as ' . $column['data']));
+			}
+		}
+	
+		foreach ($orders as $order)
+		{
+			$this->model('vip_order')->orderby($columns[$order['column']]['name'],$order['dir']);
+		}
+	
+		foreach ($ajaxData as $key => $value)
+		{
+			$this->model('vip_order')->where($key.'=?',[$value]);
 		}
 		
-		$resultObj->data = array_slice($resultObj->data, $this->post('start'), $this->post('length'));
-		
-		// 循环更改oid
-		foreach ($resultObj->data as &$ds)
+		if (!empty($keywords))
 		{
-			$ds['oid'] = empty($ds['oid']) ? '无' : $user[$ds['oid']];
+			$this->model('vip_order')->where(' uid in (select user.id from user where user.name like ? or user.telephone like ?)',['%'.trim($keywords).'%','%'.trim($keywords).'%']);
 		}
 		
+		$resultObj->data = $this->model('vip_order')->select($parameter);
+		
+		$resultObj->recordsFiltered = count($resultObj->data);
+		if ($this->post('length') != - 1)
+		{
+			$resultObj->data = array_slice($resultObj->data, $this->post('start',0), $this->post('length',10));
+		}
 		$resultObj->recordsTotal = $this->model('vip_order')->count();
 		return new json($resultObj);
 	}
@@ -730,20 +832,6 @@ class datatables extends view
 		return new json($resultObj);
 	}
 
-	function study()
-	{
-		$resultObj = new \stdClass();
-		$resultObj->draw = $this->post('draw');
-		$resultObj->data = $this->model('student_info')->datatables($this->post());
-		$resultObj->recordsFiltered = count($resultObj->data);
-		if ($this->post('length') != - 1)
-		{
-			$resultObj->data = array_slice($resultObj->data, $this->post('start'), $this->post('length'));
-		}
-		$resultObj->recordsTotal = $this->model('student_info')->count();
-		return new json($resultObj);
-	}
-
 	function brand()
 	{
 		$resultObj = new \stdClass();
@@ -755,6 +843,97 @@ class datatables extends view
 			$resultObj->data = array_slice($resultObj->data, $this->post('start'), $this->post('length'));
 		}
 		$resultObj->recordsTotal = $this->model('brand')->count();
+		return new json($resultObj);
+	}
+	
+	/**
+	 * 学生列表
+	 * @return \application\message\json
+	 */
+	function student()
+	{
+		$parameter = array();
+		$resultObj = new \stdClass();
+		$resultObj->draw = $this->post('draw');
+	
+		$columns = $this->post('columns',array());
+		$orders = $this->post('order',array());
+		$ajaxData = $this->post('ajaxData',array());
+		$keywords = $this->post('keywords','');
+	
+		foreach ($columns as $column)
+		{
+			if (! empty($column['name']))
+			{
+				$parameter[] = $column['name'] . (empty($column['data']) ? '' : (' as ' . $column['data']));
+			}
+		}
+	
+		foreach ($orders as $order)
+		{
+			$this->model('student_info')->orderby($columns[$order['column']]['name'],$order['dir']);
+		}
+	
+		foreach ($ajaxData as $key => $value)
+		{
+			$this->model('student_info')->where($key.'=?',[$value]);
+		}
+		
+		if (!empty($keywords))
+		{
+			$this->model('student_info')->where('user.name like ? or student_info.name like ? or user.telephone like ?',['%'.trim($keywords).'%','%'.trim($keywords).'%','%'.trim($keywords).'%']);
+		}
+		
+		$this->model('student_info')->table('user','left join','user.id=student_info.uid');
+		
+		$resultObj->data = $this->model('student_info')->select($parameter);
+		
+		$resultObj->recordsFiltered = count($resultObj->data);
+		if ($this->post('length') != - 1)
+		{
+			$resultObj->data = array_slice($resultObj->data, $this->post('start',0), $this->post('length',10));
+		}
+		$resultObj->recordsTotal = $this->model('student_info')->count();
+		return new json($resultObj);
+	}
+	
+	/**
+	 * 用户的资金流水导出 V2.0
+	 */
+	function swift()
+	{
+		$parameter = array();
+		$resultObj = new \stdClass();
+		$resultObj->draw = $this->post('draw');
+		
+		$columns = $this->post('columns',array());
+		$orders = $this->post('order',array());
+		$ajaxData = $this->post('ajaxData',array());
+		
+		foreach ($columns as $column)
+		{
+			if (! empty($column['name']))
+			{
+				$parameter[] = $column['name'] . (empty($column['data']) ? '' : (' as ' . $column['data']));
+			}
+		}
+		
+		foreach ($orders as $order)
+		{
+			$this->model('swift')->orderby($columns[$order['column']]['name'],$order['dir']);
+		}
+		
+		foreach ($ajaxData as $key => $value)
+		{
+			$this->model('swift')->where($key.'=?',[$value]);
+		}
+		$resultObj->data = $this->model('swift')->select($parameter);
+		$resultObj->recordsFiltered = count($resultObj->data);
+		if ($this->post('length') != - 1)
+		{
+			$resultObj->data = array_slice($resultObj->data, $this->post('start',0), $this->post('length',10));
+		}
+		$resultObj->recordsTotal = $this->model('swift')->count();
 		return new json($resultObj);
 	}
 	
@@ -783,20 +962,19 @@ class datatables extends view
 		$orders = $this->post('order',array());
 		$ajaxData = $this->post('ajaxData',array());
 		
-		foreach ($columns as $index => $column)
+		foreach ($columns as $column)
 		{
 			if (! empty($column['name']))
 			{
 				$parameter[] = $column['name'] . (empty($column['data']) ? '' : (' as ' . $column['data']));
-				foreach ($orders as $order)
-				{
-					if ($order['column'] == $index)
-					{
-						$this->model('task')->orderby($column['name'], $order['dir']);
-					}
-				}
 			}
 		}
+		
+		foreach ($orders as $order)
+		{
+			$this->model('task')->orderby($columns[$order['column']]['name'],$order['dir']);
+		}
+		
 		foreach ($ajaxData as $key => $value)
 		{
 			$this->model('task')->where($key.'=?',[$value]);
@@ -809,6 +987,53 @@ class datatables extends view
 			$resultObj->data = array_slice($resultObj->data, $this->post('start',0), $this->post('length',10));
 		}
 		$resultObj->recordsTotal = $this->model('task')->where('isdelete=?',[0])->count();
+		return new json($resultObj);
+	}
+	
+	/**
+	 * 角色列表V2.0
+	 */
+	function role()
+	{
+		$parameter = array();
+	
+		$resultObj = new \stdClass();
+		$resultObj->draw = $this->post('draw');
+	
+		$columns = $this->post('columns',array());
+		$orders = $this->post('order',array());
+		$ajaxData = $this->post('ajaxData',array());
+		$keywords = $this->post('keywords','');
+		if (!empty($keywords))
+		{
+			$this->model('role')->where('name like ?',['%'.$keywords.'%']);
+		}
+	
+		foreach ($columns as $column)
+		{
+			if (! empty($column['name']))
+			{
+				$parameter[] = $column['name'] . (empty($column['data']) ? '' : (' as ' . $column['data']));
+			}
+		}
+	
+		foreach ($orders as $order)
+		{
+			$this->model('role')->orderby($columns[$order['column']]['name'],$order['dir']);
+		}
+	
+		foreach ($ajaxData as $key => $value)
+		{
+			$this->model('role')->where($key.'=?',[$value]);
+		}
+	
+		$resultObj->data = $this->model('role')->select($parameter);
+		$resultObj->recordsFiltered = count($resultObj->data);
+		if ($this->post('length') != - 1)
+		{
+			$resultObj->data = array_slice($resultObj->data, $this->post('start',0), $this->post('length',10));
+		}
+		$resultObj->recordsTotal = $this->model('role')->count();
 		return new json($resultObj);
 	}
 	
@@ -914,19 +1139,17 @@ class datatables extends view
 				$this->model('product')->where('id in (?)',$product_id_array);
 			}
 		}
-		foreach ($columns as $index => $column)
+		foreach ($columns as $column)
 		{
 			if (! empty($column['name']))
 			{
 				$parameter[] = $column['name'] . (empty($column['data']) ? '' : (' as ' . $column['data']));
-				foreach ($orders as $order)
-				{
-					if ($order['column'] == $index)
-					{
-						$this->model('product')->orderby($column['name'], $order['dir']);
-					}
-				}
 			}
+		}
+		
+		foreach ($orders as $order)
+		{
+			$this->model('product')->orderby($columns[$order['column']]['name'],$order['dir']);
 		}
 		foreach ($ajaxData as $key => $value)
 		{
@@ -1053,21 +1276,17 @@ class datatables extends view
 		$ajaxData = $this->post('ajaxData',array());
 		
 		$parameter = array();
-		foreach ($columns as $index => $column)
+		foreach ($columns as $column)
 		{
 			if (! empty($column['name']))
 			{
 				$parameter[] = $column['name'] . (empty($column['data']) ? '' : (' as ' . $column['data']));
-				foreach ($orders as $order)
-				{
-					if ($order['column'] == $index)
-					{
-						$this->model('product_top')->orderby($column['name'], $order['dir']);
-					}
-				}
 			}
 		}
-		
+		foreach ($orders as $order)
+		{
+			$this->model('product_top')->orderby($columns[$order['column']]['name'],$order['dir']);
+		}
 		
 		$this->model('product_top')->table('product','left join','product.id=product_top.pid');
 		

@@ -4,64 +4,156 @@ use system\core\ajax;
 use application\message\json;
 class role extends ajax
 {
-	function role()
+	private $_aid;
+	
+	/**
+	 * 设置角色状态
+	 * @return \application\message\json
+	 */
+	function status()
 	{
 		$id = $this->post('id');
-		$name = $this->post('name');
-		if (empty($id) || empty($name))
-			return new json(json::PARAMETER_ERROR);
-		
-		$role = $this->model('role')->where('id=?',[$id])->find();
-		if($role[$name] == 15)
+		if (!empty($id))
 		{
-			if($this->model('role')->where('id=?',[$id])->update('`'.$name.'`',0))
+			$status = $this->post('status',0);
+			$this->model('role')->transaction();
+			$this->model('role')->where('id=?',[$id])->limit(1)->update('status',$status);
+			$this->model("admin_log")->insertlog($this->_aid, '管理员更改角色状态,被更改角色ID:'.$id.',更改后状态:'.$status, 1);
+			$this->model('role')->commit();
+			return new json(json::OK);
+		}
+		else
+		{
+			return new json(json::PARAMETER_ERROR);
+		}
+	}
+	
+	/**
+	 * 添加角色
+	 * @return \application\message\json
+	 */
+	function create()
+	{
+		$role = new \application\entity\role();
+		$data = $this->post();
+		$data['create_aid'] = $this->_aid;
+		$data['create_time'] = $_SERVER['REQUEST_TIME'];
+		$data['status'] = 1;
+		$role->setData($data);
+		if ($role->validate())
+		{
+			if($role->save())
 			{
+				$this->model("admin_log")->insertlog($this->_aid,'添加角色成功:'.$role->getPrimaryKey(), 1);
 				return new json(json::OK);
+			}
+			else
+			{
+				return new json(json::PARAMETER_ERROR,'保存失败');
 			}
 		}
 		else
 		{
-			if($this->model('role')->where('id=?',[$id])->update('`'.$name.'`',15))
-			{
-				return new json(json::OK);
-			}
+			return new json(json::PARAMETER_ERROR,$role->getErrors());
 		}
 	}
 	
-	function create()
-	{
-		$name = $this->post('name');
-		if (!empty($name))
-		{
-			$fields = $this->model('role')->getFields();
-			foreach ($fields['role'] as $index => $value)
-			{
-				if ($value == 'id')
-					continue;
-				$data[$value] = 15;
-			}
-			$data['name'] = $name;
-			if($this->model('role')->insert($data))
-			{
-				$data['id'] = $this->model('role')->lastInsertId();
-				return new json(json::OK,NULL,$data);
-			}
-			return new json(json::PARAMETER_ERROR);
-		}
-		return new json(json::PARAMETER_ERROR,'角色名不能为空');
-	}
-	
-	function remove()
+	/**
+	 * 载入角色的权限树
+	 * @return \application\message\json
+	 */
+	function load()
 	{
 		$id = $this->post('id');
-		if(!empty($this->model('admin')->where('role=?',[$id])->find()))
+		$type = $this->post('type');
+		if (!in_array($type, ['admin','role']))
 		{
-			return new json(json::PARAMETER_ERROR,'存在改角色下的管理员用户，无法删除该角色');
+			return new json(json::PARAMETER_ERROR);
 		}
-		if($this->model('role')->where('id=?',[$id])->delete())
+		
+		$page = $this->model('jstree_state')->where('id=? and type=?',[$id,$type])->select();
+		
+		if ($type=='role')
 		{
-			return new json(json::OK);
+			$button = $this->model($type.'_privileges')->where('rid=? and type=?',[$id,'button'])->select('pid');
+			
+			return new json(json::OK,NULL,array(
+				'page' => $page,
+				'button' => $button,
+			));
 		}
-		return new json(json::PARAMETER_ERROR);
+		else if ($type=='admin')
+		{
+			$button = $this->model($type.'_privileges')->where('aid=? and type=?',[$id,'button'])->select('pid');
+			
+			$role = [];
+			$admin_role = $this->model('admin_role')->where('aid=?',[$id])->select('rid');
+			foreach ($admin_role as $r)
+			{
+				$role[] = $r['rid'];
+			}
+			
+			$field = [];
+			$admin_field = $this->model('admin_fields')->where('aid=?',[$id])->select('field');
+			foreach ($admin_field as $f)
+			{
+				$field[] = $f['field'];
+			}
+			
+			return new json(json::OK,NULL,array(
+				'role' => $role,
+				'page' => $page,
+				'button' => $button,
+				'field'=>$field,
+			));
+		}
+		
+	}
+	
+	function save()
+	{
+		$role = new \application\entity\role();
+		$data = $this->post();
+		$role->setData($data);
+		if ($role->validate())
+		{
+			if($role->save())
+			{
+				$this->model("admin_log")->insertlog($this->_aid,'修改角色成功:'.$role->getPrimaryKey(), 1);
+				return new json(json::OK);
+			}
+			else
+			{
+				return new json(json::PARAMETER_ERROR,'保存失败');
+			}
+		}
+		else
+		{
+			return new json(json::PARAMETER_ERROR,$role->getErrors());
+		}
+	}
+	
+	function __access()
+	{
+		$adminHelper = new \application\helper\admin();
+		$this->_aid = $adminHelper->getAdminId();
+		return array(
+			array(
+				'allow',
+				'actions' => [
+					'remove',
+					'create',
+					'status',
+					'load',
+				],
+				'message' => new json(json::NOT_LOGIN),
+				'express' => !empty($this->_aid),
+				'redict' => './index.php?c=admin&a=login'
+			),
+			array(
+				'deny',
+				'actions' => '*',
+			)
+		);
 	}
 }

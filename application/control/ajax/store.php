@@ -11,12 +11,13 @@ class store extends ajax
 
 	function lists()
 	{
-		$result = $this->model('store')
-			->where('isdelete=?', [
-			0
-		])
-			->select();
-		return new json(json::OK, NULL, $result);
+		$publish_id = $this->get('publish_id');
+		
+		$store = $this->model('store')->where('isdelete=? and publish=?', [0,$publish_id])->select();
+		
+		$unselect = $this->model('store')->where('isdelete=? and publish is null',[0])->select();
+		
+		return new json(json::OK, NULL, array_merge($store,$unselect));
 	}
 
 	function find()
@@ -96,6 +97,14 @@ class store extends ajax
 		}
 		return new json(json::PARAMETER_ERROR);
 	}
+	
+	function setPublish()
+	{
+		$id = $this->post('id',NULL,'intval');
+		$publish = $this->post('publish',NULL,'intval');
+		$this->model('store')->where('id=?',[$id])->limit(1)->update('publish',$publish);
+		return new json(json::OK);
+	}
 
 	function save()
 	{
@@ -139,7 +148,8 @@ class store extends ajax
 					'find',
 					'create',
 					'save',
-					'remove'
+					'remove',
+					'setPublish'
 				],
 				'message' => new json(json::NOT_LOGIN),
 				'express' => empty($this->_aid),

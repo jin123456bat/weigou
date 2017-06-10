@@ -4,6 +4,7 @@ namespace application\control\ajax;
 use system\core\ajax;
 use application\message\json;
 use system\core\random;
+use application\helper\sms;
 
 /**
  *
@@ -22,13 +23,22 @@ class admin extends ajax
 		$adminHelper = new \application\helper\admin();
 		if ($admin = $adminHelper->auth($username, $password))
 		{
+			if ($admin['status'] == 0)
+			{
+				return new json(json::PARAMETER_ERROR,'账户已被禁止登录');
+			}
 			$adminHelper->saveAdminSession($admin);
 			$this->model("admin_log")->insertlog($this->_aid, '管理员登录成功', 1);
-			return new json(json::OK);
+			$action = $adminHelper->getDefaultTypeAction(1,false);
+			if (!$action)
+			{
+				$action = $adminHelper->getDefaultTypeAction(0);
+			}
+			return new json(json::OK,NULL,$action);
 		}
 		return new json(json::PARAMETER_ERROR, '用户名或密码错误');
 	}
-
+	
 	/**
 	 * 设置管理员账号状态
 	 * @return \application\message\json
@@ -50,25 +60,20 @@ class admin extends ajax
 	}
 
 	/**
-	 * 管理员修改自己的登录密码
+	 * 管理员修改自己的登录密码  预留 待html模板使用
 	 * 
 	 * @return \application\message\json
 	 */
 	function changeMyPwd()
 	{
 		$adminHelper = new \application\helper\admin();
-		$aid = $adminHelper->getAdminId();
-		if (empty($aid))
-		{
-			return new json(json::NOT_LOGIN);
-		}
 		
 		$old_password = $this->post('old_password');
 		$new_password = $this->post('new_password');
 		
 		$admin = $this->model('admin')
 			->where('id=?', [
-			$aid
+			$this->_aid
 		])
 			->find();
 		if ($admin['password'] == $adminHelper->encrypt($old_password, $admin['salt']))
@@ -77,7 +82,7 @@ class admin extends ajax
 			$new_password = $adminHelper->encrypt($new_password, $salt);
 			if ($this->model('admin')
 				->where('id=?', [
-				$aid
+				$this->_aid
 			])
 				->limit(1)
 				->update([
@@ -85,7 +90,7 @@ class admin extends ajax
 				'salt' => $salt
 			]))
 			{
-				$this->model("admin_log")->insertlog($aid, '管理员修改自己的密码', 1);
+				$this->model("admin_log")->insertlog($this->_aid, '管理员修改自己的密码', 1);
 				return new json(json::OK);
 			}
 		}
@@ -95,120 +100,72 @@ class admin extends ajax
 		}
 	}
 
-	function changePassword()
-	{
-		$adminHelper = new \application\helper\admin();
-		$aid = $adminHelper->getAdminId();
-		if (empty($aid))
-		{
-			return new json(json::NOT_LOGIN);
-		}
-		$id = $this->post('id');
-		$password = $this->post('password');
-		if (! empty($password))
-		{
-			if (strlen($password) <= 6)
-			{
-				return new json(json::PARAMETER_ERROR, '密码长度太短');
-			}
-			$salt = random::word(6);
-			$password = $adminHelper->encrypt($password, $salt);
-			if ($this->model('admin')
-				->where('id=?', [
-				$id
-			])
-				->limit(1)
-				->update([
-				'password' => $password,
-				'salt' => $salt
-			]))
-			{
-				$this->model("admin_log")->insertlog($aid, '管理员更改密码成功，用户id：' . $id, 1);
-				return new json(json::OK);
-			}
-			return new json(json::PARAMETER_ERROR);
-		}
-		else
-		{
-			return new json(json::OK);
-		}
-	}
-
-	/**
-	 * 删除管理员用户
-	 * 
-	 * @return \application\message\json
-	 */
-	function remove()
-	{
-		$adminHelper = new \application\helper\admin();
-		$aid = $adminHelper->getAdminId();
-		if (empty($aid))
-		{
-			return new json(json::NOT_LOGIN);
-		}
-		
-		$id = $this->post('id');
-		if ($this->model('admin')
-			->where('id=?', [
-			$id
-		])
-			->delete())
-		{
-			$this->model("admin_log")->insertlog($aid, '管理员删除失败，用户id：' . $id, 1);
-			return new json(json::OK);
-		}
-		return new json(json::PARAMETER_ERROR);
-	}
-
-	/**
-	 * 更改管理员角色
-	 */
-	function role()
-	{
-		$admin = $this->session->id;
-		$id = $this->post('id');
-		$role = $this->post('role');
-		$this->model('admin')
-			->where('id=?', [
-			$id
-		])
-			->limit(1)
-			->update('role', $role);
-		$this->model("admin_log")->insertlog($admin, '管理员更改用户组成功,用户id：' . $id . ',role：' . $role, 1);
-		
-		return new json(json::OK);
-	}
-
 	/**
 	 * 添加管理员账户
 	 */
 	function create()
 	{
-		$username = $this->post('username');
-		$password = $this->post('password');
-		$role = $this->post('role', '', 'intval');
-		if (strlen($password) < 6)
-			return new json(json::PARAMETER_ERROR, '密码长度太短');
-		
-		if (! empty($this->model('admin')
-			->where('username=?', [
-			$username
-		])
-			->find()))
-			return new json(json::PARAMETER_ERROR, '用户名已存在');
-		
-		if (empty($role))
-			return new json(json::PARAMETER_ERROR, '请选择权限组');
-		
-		$adminHelper = new \application\helper\admin();
-		$admin = $adminHelper->createAdminData($username, $password, $role);
-		if ($this->model('admin')->insert($admin))
+		$adminEntity = new \application\entity\admin();
+		$data = $this->post();
+		$data['create_aid'] = $this->_aid;
+		$data['create_time'] = $_SERVER['REQUEST_TIME'];
+		$data['status'] = 1;
+		$adminEntity->setRuleType('create');
+		$adminEntity->setData($data);
+		if ($adminEntity->validate())
 		{
-			$admin['id'] = $this->model('admin')->lastInsertId();
-			return new json(json::OK, NULL, $admin);
+			$adminEntity->init();
+			if($adminEntity->save())
+			{
+				$this->model("admin_log")->insertlog($this->_aid,'添加管理员成功:'.$adminEntity->getPrimaryKey(), 1);
+				return new json(json::OK);
+			}
+			else
+			{
+				return new json(json::PARAMETER_ERROR,'添加失败');
+			}
 		}
-		return new json(json::PARAMETER_ERROR, '用户名已经存在');
+		else
+		{
+			return new json(json::PARAMETER_ERROR,$adminEntity->getErrors());	
+		}
+	}
+	
+	/**
+	 * 保存管理员信息
+	 * @return \application\message\json
+	 */
+	function save()
+	{
+		$adminEntity = new \application\entity\admin();
+		$data = $this->post();
+		if (!isset($data['privileges']))
+		{
+			$data['privileges'] = array();
+		}
+		if (!isset($data['field']))
+		{
+			$data['field'] = array();
+		}
+		$adminEntity->setRuleType('save');
+		$adminEntity->setData($data);
+		if ($adminEntity->validate())
+		{
+			$adminEntity->init();
+			if($adminEntity->save())
+			{
+				$this->model("admin_log")->insertlog($this->_aid,'修改管理员成功:'.$adminEntity->getPrimaryKey(), 1);
+				return new json(json::OK);
+			}
+			else
+			{
+				return new json(json::PARAMETER_ERROR,'添加失败');
+			}
+		}
+		else
+		{
+			return new json(json::PARAMETER_ERROR,$adminEntity->getErrors());
+		}
 	}
 
 	/**
@@ -324,33 +281,175 @@ class admin extends ajax
 		return new json(json::OK, NULL, $body);
 	}
 	
-	function privileges_tree()
+	/**
+	 * 按钮级权限
+	 */
+	function privileges_button()
 	{
-		$id = $this->get('id',NULL,'intval');
-		if (empty($id))
+		$id = $this->post('id');
+		if ($id == 'type_0')
 		{
-			$privileges = $this->model('privileges')->where('pid is null')->select('id,name as text');
+			//平台中的所有权限
+			$privileges = $this->model('privileges')->where('mid in (select id from admin_menu where type=?)',[0])->select([
+				'id',
+				'name as text',
+				'mid',
+			]);
+			foreach($privileges as &$p)
+			{
+				$p['m_title'] = $this->model('admin_menu')->where('id=?',[$p['mid']])->scalar('name');
+			}
+			unset($p);
+		}
+		else if ($id == 'type_1')
+		{
+			$privileges = $this->model('privileges')->where('mid in (select id from admin_menu where type=?)',[1])->select([
+				'id',
+				'name as text',
+				'mid',
+			]);
 			
+			foreach($privileges as &$p)
+			{
+				$p['m_title'] = $this->model('admin_menu')->where('id=?',[$p['mid']])->scalar('name');
+			}
+			unset($p);
 		}
 		else
 		{
-			$privileges = $this->model('privileges')->where('pid=?',[$id])->select('id,name as text');
+			$total_id = [$id];
+			
+			$iteratoring_id = [$id];
+			$id = array_shift($iteratoring_id);
+			while (!empty($id))
+			{
+				$selected_id = $this->model('admin_menu')->where('u_link=?',[$id])->select('id');
+				foreach ($selected_id as $id)
+				{
+					$iteratoring_id[] = $id['id'];
+					$total_id[] = $id['id'];
+				}
+				$id = array_shift($iteratoring_id);
+			}
+			
+			$privileges = $this->model('privileges')->where('mid in (?)',$total_id)->select([
+				'id',
+				'name as text',
+				'mid',
+			]);
+			foreach($privileges as &$p)
+			{
+				$p['m_title'] = $this->model('admin_menu')->where('id=?',[$p['mid']])->scalar('name');
+			}
+			unset($p);
 		}
-		foreach ($privileges as &$p)
+		
+		$expect = $this->post('expect',array());
+		$remain = array();
+		foreach ($privileges as $p)
 		{
-			$children = $this->model('privileges')->where('pid=? and level!=?',[$p['id'],-1])->select('id,name as text');
-			if(!empty($children))
+			if (!in_array($p['mid'], $expect))
+			{
+				$remain[] = $p;
+			}
+		}
+		return new json($remain);
+	}
+	
+	/**
+	 * 页面级权限
+	 * @return \application\message\json
+	 */
+	function privileges_page()
+	{
+		$id = $this->get('id',NULL);
+		if (empty($id) || $id == '#')
+		{
+			$privileges = [
+				['id' => 'type_0','text' => '平台','type'=>'folder','children'=>true],
+				['id' => 'type_1','text' => '商城','type'=>'folder','children'=>true],
+			];
+			return new json($privileges);
+		}
+		else if (strtolower(substr(trim($id), 0,4)) == 'type')
+		{
+			list(,$type_id) = explode('_', strtolower(trim($id)));
+			$privileges = $this->model('admin_menu')->where('type=? and u_link is null and display=?',[$type_id,1])->select('id,name as text');
+			foreach ($privileges as &$p)
 			{
 				$p['children'] = true;
-				$p['type'] = 'default';
+				$p['type'] = 'folder';
 			}
-			else
-			{
-				$p['children'] = false;
-				$p['type'] = 'file';
-			}
+			return new json($privileges);
 		}
-		return new json($privileges);
+		else
+		{
+			$privileges = $this->model('admin_menu')->where('u_link=? and display=?',[$id,1])->select('id,name as text');
+			foreach ($privileges as &$p)
+			{
+				$num = $this->model('admin_menu')->where('u_link=? and display=?',[$p['id'],1])->count();
+				if ($num>0)
+				{
+					$p['children'] = true;
+					$p['type'] = 'folder';
+				}
+				else
+				{
+					$p['children'] = false;
+					$p['type'] = 'file';
+				}
+			}
+			return new json($privileges);
+		}
+	}
+	
+	/**
+	 * 加载节点下所有子级的页面级权限列表
+	 */
+	function privileges_page_children()
+	{
+		$id = $this->get('id');
+		if ($id == 'type_0')
+		{
+			$total_id = [];
+			$selected_id = $this->model('admin_menu')->where('type=?',[0])->select([
+				'id',
+			]);
+			foreach ($selected_id as $id)
+			{
+				$total_id[] = $id['id'];
+			}
+			return new json($total_id);
+		}
+		else if ($id == 'type_1')
+		{
+			$total_id = [];
+			$selected_id = $this->model('admin_menu')->where('type=?',[1])->select([
+				'id',
+			]);
+			foreach ($selected_id as $id)
+			{
+				$total_id[] = $id['id'];
+			}
+			return new json($total_id);
+		}
+		else
+		{
+			$total_id = [$id];
+			$iteratoring_id = [$id];
+			$id = array_shift($iteratoring_id);
+			while (!empty($id))
+			{
+				$selected_id = $this->model('admin_menu')->where('u_link=?',[$id])->find('id');
+				foreach ($selected_id as $id)
+				{
+					$total_id[] = $id;
+					$iteratoring_id[] = $id;
+				}
+				$id = array_shift($iteratoring_id);
+			}
+			return new json($total_id);
+		}
 	}
 
 	function __access()
@@ -363,11 +462,9 @@ class admin extends ajax
 				'actions' => [
 					'status',
 					'changeMyPwd',
-					'changePassword',
-					'remove',
-					'role',
+					'save',
 					'create',
-					'sendsms'
+					'sendsms',
 				],
 				'message' => new json(json::NOT_LOGIN),
 				'express' => empty($this->_aid),

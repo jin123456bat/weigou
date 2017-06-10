@@ -41,7 +41,6 @@
 			  					<div class="tab-header">
 			  						<a class="tab-title active" href="#all">全部商品</a>
 			  						<a class="tab-title" href="#sale">在售商品</a>
-			  						<a class="tab-title" href="#examine">待审核</a>
 			  						<a class="tab-title" href="#unshelf">已下架</a>
 			  						<a class="tab-title" href="#rubbish">回收站</a>
 			  					</div>
@@ -55,31 +54,38 @@
 											<div class="top-tips-body">
 												<p>该页面展示了商城所有的商品信息，可对商品进行编辑修改操作。</p>
 												<p>可输入商品名称关键字进行搜索，侧边栏进行高级搜索。</p>
+												<p>搜索结果和选中商品的导出一次最多2000条。</p>
 											</div>
 										</div>
-										<div class="line">
-											<a href="./index.php?c=html&a=product_create" class="btn red btn-outline btn-small">添加商品</a>
+										<div class="line" style="float: right;">
+											{%hasPower keyword=create_product_from_list type=button%}
+											<a href="./index.php?c=html&a=product_create&from=list" class="btn red btn-outline btn-small">添加商品</a>
+											{%/hasPower%}
+											{%hasPower keyword=multi_modify_product type=button%}
 											<a class="btn red btn-outline btn-small">批量修改商品信息</a>
-											<div class="btn-group">
+											{%/hasPower%}
+											{%hasPower keyword=export_product type=button%}
+											<div class="btn-group" id="exportBtn">
 												<a class="btn red btn-outline btn-small dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 													导出 <span class="caret"></span>
 												</a>
 												<ul class="dropdown-menu red">
-													<li><a href="#">所有的商品</a></li>
-													<li><a href="#">搜索结果中的商品</a></li>
-													<li><a href="#">选中的商品</a></li>
+													<li><a href="#" id="export_all">所有的商品</a></li>
+													<li><a href="#" id="export_search">搜索结果中的商品</a></li>
+													<li><a href="#" id="export_selected">选中的商品</a></li>
 												</ul>
 											</div>
-											<form class="form-inline pull-right" id="dt_search">
+											{%/hasPower%}
+											<form class="form-inline pull-right" id="all_search">
 												<div class="form-group">
 													<select class="input-sm form-control">
 														<option value="" selected="selected">商品状态</option>
-														<option value="examine:0">待审核</option>
-														<option value="examine:2">审核中</option>
-														<option value="examine:-1">审核未通过</option>
-														<option value="examine:1,status:0,downStatus:0">已下架</option>
-														<option value="status:0,downStatus:1">已下架，编辑中</option>
-														<option value="status:1,stock:1">销售中</option>
+														<option value="examine_final:0,examine:1,examine_stock:1,examine_price:1">待审核</option>
+														<option value="examine_final:2,examine:1,examine_stock:1,examine_price:1">审核中</option>
+														<option value="examine_final:-1,examine:1,examine_stock:1,examine_price:1">审核未通过</option>
+														<option value="status:0,examine_final:1,downStatus:0">已下架</option>
+														<option value="status:0,examine_final:1,downStatus:1">已下架，编辑中</option>
+														<option value="status:1">销售中</option>
 														<option value="status:1,stock:0">销售中，库存不足</option>
 													</select>
 												</div>
@@ -127,8 +133,16 @@
 														<td colspan="4">
 															<div class="col-md-4">
 																<select class="form-control" id="multipleSelect">
-																	<option>请选择...</option>
-																	<option value="delete">删除</option>
+																	<option value="">请选择...</option>
+																	{%hasPower keyword=up_product type=button%}
+																	<option value="sale">上架</option>
+																	{%/hasPower%}
+																	{%hasPower keyword=down_product type=button%}
+																	<option value="unshelf">下架</option>
+																	{%/hasPower%}
+																	{%hasPower keyword=recycle_product type=button%}
+																	<option value="remove">回收</option>
+																	{%/hasPower%}
 																</select>
 																
 															</div>
@@ -145,16 +159,288 @@
 										</div>
 									</div>
 			  						<div class="tab-page" id="sale">
-			  							
-			  						</div>
-			  						<div class="tab-page" id="examine">
-			  							
+			  							<div class="space"></div>
+										<div class="top-tips">
+											<div class="top-tips-title">
+												操作提示
+											</div>
+											<div class="top-tips-body">
+												<p>该页面展示了商城正在销售的商品信息。</p>
+												<p>操作商品必须先下架后才可以进行进一步操作。</p>
+												<p>可输入商品名称关键字进行搜索，侧边栏进行高级搜索。</p>
+												<p>搜索结果和选中商品的导出一次最多2000条。</p>
+											</div>
+										</div>
+										<div class="line" style="float: right;">
+											{%hasPower keyword=create_product_from_list type=button%}
+											<a href="./index.php?c=html&a=product_create&from=list" class="btn red btn-outline btn-small">添加商品</a>
+											{%/hasPower%}
+											{%hasPower keyword=multi_modify_product type=button%}
+											<a class="btn red btn-outline btn-small">批量修改商品信息</a>
+											{%/hasPower%}
+											{%hasPower keyword=export_product type=button%}
+											<div class="btn-group" id="exportBtn">
+												<a class="btn red btn-outline btn-small dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+													导出 <span class="caret"></span>
+												</a>
+												<ul class="dropdown-menu red">
+													<li><a href="#" id="export_all">所有的商品</a></li>
+													<li><a href="#" id="export_search">搜索结果中的商品</a></li>
+													<li><a href="#" id="export_selected">选中的商品</a></li>
+												</ul>
+											</div>
+											{%/hasPower%}
+											<form class="form-inline pull-right" id="sale_search">
+												<div class="form-group">
+													<select class="input-sm form-control">
+														<option value="" selected="selected">商品状态</option>
+														<option value="status:1,isdelete:0">销售中</option>
+														<option value="status:1,stock:0,isdelete:0">销售中，库存不足</option>
+													</select>
+												</div>
+												<div class="form-group">
+													<input type="text" name="search" class="form-control input-sm" placeholder="商品名称/SPU">
+												</div>
+												<button class="btn btn-small btn-orange pull-right" style="height: 30px; margin-left: 10px;">搜索</button>
+											</form>
+										</div>
+										<div class="">
+											<table class="table table-hover table-bordered table-responsive">
+												<thead>
+													<tr>
+			  											<td width="2%" style="padding-left: 20px;padding-right: 20px;">
+			  												<input type="checkbox" class="select-all">
+			  											</td>
+			  											<td width="25%" style="min-width: 305px;">
+			  												商品名称
+			  											</td>
+			  											<td width="10%" style="min-width: 80px;">
+			  												SPU编号
+			  											</td>
+			  											<td width="10%" style="min-width: 65px;">
+			  												商品类型
+			  											</td>
+			  											<td width="10%" style="min-width: 115px;">
+			  												价格
+			  											</td>
+			  											<td width="10%" style="min-width: 80px;">
+			  												商品来源
+			  											</td>
+			  											<td width="10%">
+			  												商品状态
+			  											</td>
+			  											<td style="text-align: center;">
+			  												操作
+			  											</td>
+			  										</tr>
+												</thead>
+												<tbody>
+													
+												</tbody>
+												<tfoot>
+													<tr>
+														<td colspan="4">
+															<div class="col-md-4">
+																<select class="form-control" id="multipleSelect">
+																	<option value="">请选择...</option>
+																	{%hasPower keyword=down_product type=button%}
+																	<option value="unshelf">下架</option>
+																	{%/hasPower%}
+																</select>
+																
+															</div>
+															<div class="col-md-2">
+																<button class="btn" id="multipleBtn">确定</button>
+															</div>
+														</td>
+														<td id="split_page" colspan="4" style="text-align: right;">
+			  											
+			  											</td>
+													</tr>
+												</tfoot>
+											</table>
+										</div>
 			  						</div>
 			  						<div class="tab-page" id="unshelf">
-			  							
+			  							<div class="space"></div>
+										<div class="top-tips">
+											<div class="top-tips-title">
+												操作提示
+											</div>
+											<div class="top-tips-body">
+												<p>该页面展示了商城所有的已下架商品信息，商品重新上架需要审核通过后将显示在前台。</p>
+												<p>可输入商品名称关键字进行搜索，侧边栏进行高级搜索。</p>
+												<p>搜索结果和选中商品的导出一次最多2000条。</p>
+											</div>
+										</div>
+										<div class="line" style="float: right;">
+											{%hasPower keyword=multi_modify_product type=button%}
+											<a class="btn red btn-outline btn-small">批量修改商品信息</a>
+											{%/hasPower%}
+											{%hasPower keyword=export_product type=button%}
+											<div class="btn-group" id="exportBtn">
+												<a class="btn red btn-outline btn-small dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+													导出 <span class="caret"></span>
+												</a>
+												<ul class="dropdown-menu red">
+													<li><a href="#" id="export_all">所有的商品</a></li>
+													<li><a href="#" id="export_search">搜索结果中的商品</a></li>
+													<li><a href="#" id="export_selected">选中的商品</a></li>
+												</ul>
+											</div>
+											{%/hasPower%}
+											<form class="form-inline pull-right" id="unshelf_search">
+												<div class="form-group">
+													<select class="input-sm form-control">
+														<option value="" selected="selected">商品状态</option>
+														<option value="status:0,examine_final:1,downStatus:0">已下架</option>
+														<option value="status:0,examine_final:1,downStatus:1">已下架，编辑中</option>
+													</select>
+												</div>
+												<div class="form-group">
+													<input type="text" name="search" class="form-control input-sm" placeholder="商品名称/SPU">
+												</div>
+												<button class="btn btn-small btn-orange pull-right" style="height: 30px; margin-left: 10px;">搜索</button>
+											</form>
+										</div>
+										<div class="">
+											<table class="table table-hover table-bordered table-responsive">
+												<thead>
+													<tr>
+			  											<td width="2%" style="padding-left: 20px;padding-right: 20px;">
+			  												<input type="checkbox" class="select-all">
+			  											</td>
+			  											<td width="25%" style="min-width: 305px;">
+			  												商品名称
+			  											</td>
+			  											<td width="10%" style="min-width: 80px;">
+			  												SPU编号
+			  											</td>
+			  											<td width="10%" style="min-width: 65px;">
+			  												商品类型
+			  											</td>
+			  											<td width="10%" style="min-width: 115px;">
+			  												价格
+			  											</td>
+			  											<td width="10%" style="min-width: 80px;">
+			  												商品来源
+			  											</td>
+			  											<td width="10%">
+			  												商品状态
+			  											</td>
+			  											<td style="text-align: center;">
+			  												操作
+			  											</td>
+			  										</tr>
+												</thead>
+												<tbody>
+													
+												</tbody>
+												<tfoot>
+													<tr>
+														<td colspan="4">
+															<div class="col-md-4">
+																<select class="form-control" id="multipleSelect">
+																	<option value="">请选择...</option>
+																	{%hasPower type=button keyword=recycle_product%}
+																	<option value="remove">回收</option>
+																	{%/hasPower%}
+																	{%hasPower type=button keyword=up_product%}
+																	<option value="sale">上架</option>
+																	{%/hasPower%}
+																</select>
+																
+															</div>
+															<div class="col-md-2">
+																<button class="btn" id="multipleBtn">确定</button>
+															</div>
+														</td>
+														<td id="split_page" colspan="4" style="text-align: right;">
+			  											
+			  											</td>
+													</tr>
+												</tfoot>
+											</table>
+										</div>
 			  						</div>
 			  						<div class="tab-page" id="rubbish">
-			  							
+			  							<div class="space"></div>
+										<div class="top-tips">
+											<div class="top-tips-title">
+												操作提示
+											</div>
+											<div class="top-tips-body">
+												<p>删除后的商品可在商品回收站保存。</p>
+												<p>可以进行商品还原，也可以彻底删除。</p>
+											</div>
+										</div>
+										<div class="line" style="float: right;">
+											<form class="form-inline pull-right" id="rubbish_search">
+												<div class="form-group">
+													<input type="text" name="search" class="form-control input-sm" placeholder="商品名称/SPU">
+												</div>
+												<button class="btn btn-small btn-orange pull-right" style="height: 30px; margin-left: 10px;">搜索</button>
+											</form>
+										</div>
+										<div class="">
+											<table class="table table-hover table-bordered table-responsive">
+												<thead>
+													<tr>
+			  											<td width="2%" style="padding-left: 20px;padding-right: 20px;">
+			  												<input type="checkbox" class="select-all">
+			  											</td>
+			  											<td width="25%" style="min-width: 305px;">
+			  												商品名称
+			  											</td>
+			  											<td width="10%" style="min-width: 80px;">
+			  												SPU编号
+			  											</td>
+			  											<td width="10%" style="min-width: 65px;">
+			  												商品类型
+			  											</td>
+			  											<td width="10%" style="min-width: 115px;">
+			  												价格
+			  											</td>
+			  											<td width="10%" style="min-width: 80px;">
+			  												商品来源
+			  											</td>
+			  											<td width="10%">
+			  												商品状态
+			  											</td>
+			  											<td style="text-align: center;">
+			  												操作
+			  											</td>
+			  										</tr>
+												</thead>
+												<tbody>
+													
+												</tbody>
+												<tfoot>
+													<tr>
+														<td colspan="4">
+															<div class="col-md-4">
+																<select class="form-control" id="multipleSelect">
+																	<option value="">请选择...</option>
+																	{%hasPower type=button keyword=recycle_product%}
+																	<option value="restore">还原</option>
+																	{%/hasPower%}
+																	{%hasPower type=button keyword=delete_product%}
+																	<option value="clear_delete">彻底删除</option>
+																	{%/hasPower%}
+																</select>
+																
+															</div>
+															<div class="col-md-2">
+																<button class="btn" id="multipleBtn">确定</button>
+															</div>
+														</td>
+														<td id="split_page" colspan="4" style="text-align: right;">
+			  											
+			  											</td>
+													</tr>
+												</tfoot>
+											</table>
+										</div>
 			  						</div>
 								</div>
 							</div>
@@ -181,6 +467,27 @@
 				}
 			});
 			
+			var $_edit_product = 0;//商品编辑权限
+			var $_recycle_product = 0;//商品回收权限
+			var $_delete_product = 0;//商品删除权限
+			var $_up_product = 0;//商品上架权限
+			var $_down_product = 0;//商品下架权限
+			{%hasPower type=button keyword=edit_product%}
+			$_edit_product = 1
+			{%/hasPower%}
+			{%hasPower type=button keyword=recycle_product%}
+			$_recycle_product = 1
+			{%/hasPower%}
+			{%hasPower type=button keyword=delete_product%}
+			$_delete_product = 1
+			{%/hasPower%}
+			{%hasPower type=button keyword=up_product%}
+			$_up_product = 1
+			{%/hasPower%}
+			{%hasPower type=button keyword=down_product%}
+			$_down_product = 1
+			{%/hasPower%}
+			
 			$('table').on('change','input[type=checkbox].select-all',function(){
 				if($(this).is(':checked'))
 				{
@@ -197,132 +504,6 @@
 				return false;
 			});
 			
-			var dt = datatables({
-				table:$('#all table'),
-				ajax:{
-					url:'{%url c=datatables a=product%}',
-					data:{
-						isdelete:0,
-						draft:0,
-					},
-				},
-				columns:[{
-					data:'id',
-					name:'product.id',
-				},{
-					data:'name',
-					name:'product.name',
-				},{
-					data:'id',
-					name:'product.id',
-				},{
-					data:'outside',
-					name:'product.outside',
-				},{
-					data:'price',
-					name:'product.price',
-				},{
-					data:'source',
-					name:'product.source',
-				},{
-					data:'status',
-					name:'product.status',
-				},{
-					data:'id',
-					name:'product.id',
-				},
-				
-				{
-					data:'v1price',
-					name:'product.v1price',
-					visible:false,
-				},{
-					data:'v2price',
-					name:'product.v2price',
-					visible:false,
-				},{
-					data:'pic',
-					name:'(select upload.path from product_img left join upload on upload.id=product_img.fid where product_img.pid=product.id order by product_img.position asc limit 1)',
-					visible:false,
-				},{
-					data:'brand',
-					name:'(select brand.name_cn from brand where brand.id=product.brand limit 1)',
-					visible:false,
-				}],
-				columnDefs:[{
-					targets:0,
-					render:function(data,full){
-						return '<input type="checkbox" name="id[]" value="'+data+'">';
-					}
-				},{
-					targets:1,
-					render:function(data,full){
-						return '<div style="display: inline-block;width: 70px;height: 60px;vertical-align:middle;"><img onerror="this.src=\'https://placeholdit.imgix.net/~text?txtsize=18&txt=%E6%AD%A4%E5%A4%84%E6%97%A0%E5%9B%BE&w=60&h=60\';" src="'+full.pic+'" width="60px" height="60px"></div><div style="display: inline-block;width: 70%;height: 60px;vertical-align:middle;"><div style="display: block;width: 100%;word-break: break-all;overflow: hidden;height: 40px;line-height: 20px;">'+data+'</div><div style="height:20px;line-height: 20px;width:100%;overflow: hidden;">品牌：'+(full.brand==null?'':full.brand)+'</div></div>';
-					}
-				},{
-					targets:3,
-					render:function(data,full){
-						if(data == 0)
-						{
-							return '普通商品';
-						}
-						else if(data == 1)
-						{
-							return '进口商品';
-						}
-						else if(data == 2)
-						{
-							return '直供商品';
-						}
-						else if(data == 3)
-						{
-							return '直邮商品';
-						}
-						alert('商品outside错误');
-					}
-				},{
-					targets:4,
-					render:function(data,full){
-						return '普通:'+data+'<br>白金:'+full.v1price+'<br>钻石:'+full.v2price;
-					}
-				},{
-					targets:5,
-					render:function(data,full){
-						if(data == 0)
-						{
-							return '总后台录入';
-						}
-						else if(data == 1)
-						{
-							return '上新专员';
-						}
-						alert("商品来源错误");
-					}
-				},{
-					targets:7,
-					render:function(data,full){
-						content = '<button class="btn btn-outline btn-xs" data-id="'+data+'">查看</button>';
-						content += '<div class="space"></div><button class="btn btn-outline btn-xs" data-id="'+data+'">编辑</button>';
-						content += '<div class="space"></div><button class="btn btn-outline btn-xs" data-id="'+data+'">审核</button>';
-						content += '<div class="space"></div><button class="btn btn-outline btn-xs" data-id="'+data+'">上架</button>';
-						content += '<div class="space"></div><button class="btn btn-outline btn-xs" data-id="'+data+'">下架</button>';
-						return content;
-					}
-				}],
-				pagesize:10,
-				onRowLoaded:function(row){
-					row.find('td:last').css('text-align','center');
-					row.find('td:first').css({'padding-left':'20px','padding-right':'20px'});
-				}
-			});
-			
-			
-			$('#dt_search').on('submit',function(){
-				dt.addAjaxParameter('status',$(this).find('select').val());
-				dt.search($(this).find('input').val());
-				return false;
-			});
-			
 			var getSelectedCheckbox = function(table){
 				$_id = [];
 				table.find('tbody input[type=checkbox]').each(function(index,value){
@@ -333,43 +514,100 @@
 				});
 				return $_id;
 			}
-			
-			//批量操作
-			$('#multipleBtn').on('click',function(){
-				var id = getSelectedCheckbox();
-				if($('#multipleSelect').val() == '')
-				{
-					return false;
-				}
-				if(id.length == 0)
-				{
-					bootbox.alert('请选择商品');
-					return false;
-				}
-				if($('#multipleSelect').val() == 'delete')
-				{
-					bootbox.confirm({
-						message:'确认删除?',
-						buttons:{
-							cancel:{
-								label: '<i class="fa fa-times"></i> 取消',
-							},
-							confirm:{
-								label:'<i class="fa fa-check"></i> 确定',
-							}
-						},
-						callback: function(result,a) {
-							if(result) {
-								dt.addAjaxParameter('customActionType','group_action');
-								dt.addAjaxParameter('id',id);
-								dt.addAjaxParameter('customActionName','remove');
-								dt.reload();
-							}
-						},
-					});
-				}
-				return false;
+		</script>
+		<script src="{%resource path='/html/js/product/all.js'%}"></script>
+		<script src="{%resource path='/html/js/product/sale.js'%}"></script>
+		<script src="{%resource path='/html/js/product/unshelf.js'%}"></script>
+		<script src="{%resource path='/html/js/product/rubbish.js'%}"></script>
+		<script type="text/javascript">
+			tab.on('tab.click.all',function(){
+				all.clearAjaxParameter();
+				all.reload();
+			}).on('tab.click.sale',function(){
+				sale.clearAjaxParameter();
+				sale.reload();
+			}).on('tab.click.unshelf',function(){
+				unshelf.clearAjaxParameter();
+				unshelf.reload();
+			}).on('tab.click.rubbish',function(){
+				rubbish.clearAjaxParameter();
+				rubbish.reload();
 			});
 		</script>
+		{%hasPower type=button keyword=export_product%}
+		<script type="text/javascript">
+			$('#all #exportBtn').on('click','#export_all',function(){
+				post("./index.php?c=export&a=product",{isdelete:0,examine_final:1});
+			}).on('click','#export_search',function(){
+				var ids = all.getResultPrimaryKey();
+				if(ids.length>0)
+				{
+					post('./index.php?c=export&a=product',{id:ids});
+				}
+				else
+				{
+					bootbox.alert('没有搜索结果');
+				}
+			}).on('click','#export_selected',function(){
+				var ids = getSelectedCheckbox($('#all'));
+				if(ids.length>0)
+				{
+					post('./index.php?c=export&a=product',{id:ids});
+				}
+				else
+				{
+					bootbox.alert('请选择商品');
+				}
+			});
+			
+			$('#sale #exportBtn').on('click','#export_all',function(){
+				post("./index.php?c=export&a=product",{isdelete:0,examine_final:1,status:1});
+			}).on('click','#export_search',function(){
+				var ids = all.getResultPrimaryKey();
+				if(ids.length>0)
+				{
+					post('./index.php?c=export&a=product',{id:ids});
+				}
+				else
+				{
+					bootbox.alert('没有搜索结果');
+				}
+			}).on('click','#export_selected',function(){
+				var ids = getSelectedCheckbox($('#all'));
+				if(ids.length>0)
+				{
+					post('./index.php?c=export&a=product',{id:ids});
+				}
+				else
+				{
+					bootbox.alert('请选择商品');
+				}
+			});
+			
+			$('#unshelf #exportBtn').on('click','#export_all',function(){
+				post("./index.php?c=export&a=product",{isdelete:0,examine_final:1,status:0});
+			}).on('click','#export_search',function(){
+				var ids = all.getResultPrimaryKey();
+				if(ids.length>0)
+				{
+					post('./index.php?c=export&a=product',{id:ids});
+				}
+				else
+				{
+					bootbox.alert('没有搜索结果');
+				}
+			}).on('click','#export_selected',function(){
+				var ids = getSelectedCheckbox($('#all'));
+				if(ids.length>0)
+				{
+					post('./index.php?c=export&a=product',{id:ids});
+				}
+				else
+				{
+					bootbox.alert('请选择商品');
+				}
+			});
+		</script>
+		{%/hasPower%}
 	</body>
 </html>

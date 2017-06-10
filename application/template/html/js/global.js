@@ -65,3 +65,26 @@ function loadScript(url){
     var s = document.getElementsByTagName('script')[0]; 
     s.parentNode.insertBefore(ga, s); 
 } 
+
+var post = function(url,data){
+	var form = $('<form action="'+url+'" method="post" targets="_blank"><button type="submit"></button></form>');
+	if(data)
+	{
+		$.each(data,function(index,value){
+			if('object' == typeof value)
+			{
+				$.each(value,function(key,val){
+					let tpl = '<input type="hidden" name="'+index+'[]" value="'+val+'">';
+					form.append(tpl);
+				});
+			}
+			else
+			{
+				let tpl = '<input type="hidden" name="'+index+'" value="'+value+'">';
+				form.append(tpl);
+			}
+		});
+	}
+	$(document.body).append(form);
+	form.submit();
+}

@@ -44,6 +44,7 @@
 					</div>
 					<div class="modal-body">
 						<input type="hidden" name="id" value="">
+						<input type="hidden" name="type" value="">
 						<input type="text" name="result" class="form-control input-sm" placeholder="驳回理由">
 						<div class="line"></div>
 						<textarea name="description" class="form-control input-sm" rows="5" placeholder="详细说明"></textarea>
@@ -75,10 +76,18 @@
 			  				<div class="tab">
 			  					<div class="tab-header">
 			  						<a class="tab-title active" href="#draft">商品创建列表</a>
+			  						{%hasPower type=button keyword=examine_base_product%}
 			  						<a class="tab-title" href="#examine">基础信息审核</a>
+			  						{%/hasPower%}
+			  						{%hasPower type=button keyword=examine_stock_product%}
 			  						<a class="tab-title" href="#stock">完善库存信息</a>
+			  						{%/hasPower%}
+			  						{%hasPower type=button keyword=examine_price_product%}
 			  						<a class="tab-title" href="#price">完善价格信息</a>
+			  						{%/hasPower%}
+			  						{%hasPower type=button keyword=examine_up_product%}
 			  						<a class="tab-title" href="#status">上架审核</a>
+			  						{%/hasPower%}
 			  					</div>
 			  					<div class="tab-body">
 			  						<div class="tab-page active" id="draft">
@@ -92,8 +101,11 @@
 												<p>可输入商品名称关键字进行搜索，侧边栏进行高级搜索。</p>
 											</div>
 										</div>
-										<div class="line">
-											<a href="./index.php?c=html&a=product_create" class="btn red btn-outline btn-small">创建商品</a>
+										<div class="line" style="float:right;">
+											{%hasPower type=button keyword=create_product_from_draft%}
+											<a href="./index.php?c=html&a=product_create&from=draft" class="btn red btn-outline btn-small">创建商品</a>
+											<a href="" class="btn red btn-outline btn-small">批量上新</a>
+											{%/hasPower%}
 										</div>
 										<div class="">
 											<table class="table table-hover table-bordered table-responsive">
@@ -109,6 +121,7 @@
 											</table>
 										</div>
 			  						</div>
+			  						{%hasPower type=button keyword=examine_base_product%}
 			  						<div class="tab-page" id="examine">
 			  							<div class="space"></div>
 			  							<div class="top-tips">
@@ -118,19 +131,33 @@
 											<div class="top-tips-body">
 												<p>该页面展示了商城所有的商品信息，可对商品进行编辑修改操作。</p>
 												<p>可输入商品名称关键字进行搜索，侧边栏进行高级搜索。</p>
+												<p>搜索结果导出和选择导出有数量限制，根据浏览器不同限制不同</p>
 											</div>
 										</div>
-										<div class="line">
-											<div class="btn-group">
+										<div class="line" style="float:right;">
+											<div class="btn-group" id="exportBtn">
 												<a class="btn red btn-outline btn-small dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 													导出 <span class="caret"></span>
 												</a>
 												<ul class="dropdown-menu red">
-													<li><a href="#">所有的商品</a></li>
-													<li><a href="#">搜索结果中的商品</a></li>
-													<li><a href="#">选中的商品</a></li>
+													<li><a href="#" id="export_all">所有的商品</a></li>
+													<li><a href="#" id="export_search">搜索结果中的商品</a></li>
+													<li><a href="#" id="export_selected">选中的商品</a></li>
 												</ul>
 											</div>
+											<form class="form-inline pull-right search">
+												<div class="form-group">
+													<select class="input-sm form-control">
+														<option value="" selected="selected">商品状态</option>
+														<option value="examine:0">待审核</option>
+														<option value="examine:2">审核中</option>
+													</select>
+												</div>
+												<div class="form-group">
+													<input type="text" name="search" class="form-control input-sm" placeholder="商品名称/SPU">
+												</div>
+												<button class="btn btn-small btn-orange pull-right" style="height: 30px; margin-left: 10px;">搜索</button>
+											</form>
 										</div>
 		  								<div>
 											<table class="table table-hover table-bordered table-responsive">
@@ -190,6 +217,289 @@
 											</table>
 										</div>
 			  						</div>
+			  						{%/hasPower%}
+			  						{%hasPower type=button keyword=examine_stock_product%}
+			  						<div class="tab-page" id="stock">
+										<div class="space"></div>
+			  							<div class="top-tips">
+											<div class="top-tips-title">
+												操作提示
+											</div>
+											<div class="top-tips-body">
+												<p>该页面展示了商城所有的商品信息，可对商品进行编辑修改操作。</p>
+												<p>可输入商品名称关键字进行搜索，侧边栏进行高级搜索。</p>
+												<p>搜索结果导出和选择导出有数量限制，根据浏览器不同限制不同</p>
+											</div>
+										</div>
+										<div class="line" style="float: right;">
+											<a class="btn red btn-outline btn-small">批量修改库存信息</a>
+											<div class="btn-group" id="exportBtn">
+												<a class="btn red btn-outline btn-small dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+													导出 <span class="caret"></span>
+												</a>
+												<ul class="dropdown-menu red">
+													<li><a href="#" id="export_all">所有的商品</a></li>
+													<li><a href="#" id="export_search">搜索结果中的商品</a></li>
+													<li><a href="#" id="export_selected">选中的商品</a></li>
+												</ul>
+											</div>
+											<form class="form-inline pull-right search">
+												<div class="form-group">
+													<select class="input-sm form-control">
+														<option value="" selected="selected">商品状态</option>
+														<option value="examine_stock:0">待审核</option>
+														<option value="examine_stock:2">审核中</option>
+													</select>
+												</div>
+												<div class="form-group">
+													<input type="text" name="search" class="form-control input-sm" placeholder="商品名称/SPU">
+												</div>
+												<button class="btn btn-small btn-orange pull-right" style="height: 30px; margin-left: 10px;">搜索</button>
+											</form>
+										</div>
+		  								<div>
+											<table class="table table-hover table-bordered table-responsive">
+												<thead>
+													<tr>
+														<td width="2%" style="padding-left: 20px;padding-right: 20px;">
+															<input type="checkbox" class="select-all">
+														</td>
+														<td width="25%" style="min-width: 305px;">
+															商品名称
+														</td>
+														<td width="10%" style="min-width: 80px;">
+															SPU编号
+														</td>
+														<td width="10%" style="min-width: 65px;">
+															商品类型
+														</td>
+														<td width="10%" style="min-width: 115px;">
+															价格
+														</td>
+														<td width="10%" style="min-width: 115px;">
+															库存
+														</td>
+														<td width="10%" style="min-width: 80px;">
+															商品来源
+														</td>
+														<td width="5%" style="min-width: 40px;">
+															商品状态
+														</td>
+														<td style="text-align: center;">
+															操作
+														</td>
+													</tr>
+												</thead>
+												<tbody>
+
+												</tbody>
+												<tfoot>
+													<tr>
+														<td colspan="4">
+															<div class="col-md-4">
+																<select class="form-control" id="multipleSelect">
+																	<option>请选择...</option>
+																	<option value="delete">删除</option>
+																</select>
+
+															</div>
+															<div class="col-md-2">
+																<button class="btn" id="multipleBtn">确定</button>
+															</div>
+														</td>
+														<td id="split_page" colspan="5" style="text-align: right;">
+
+														</td>
+													</tr>
+												</tfoot>
+											</table>
+										</div>
+									</div>
+									{%/hasPower%}
+									{%hasPower type=button keyword=examine_price_product%}
+									<div class="tab-page" id="price">
+										<div class="space"></div>
+			  							<div class="top-tips">
+											<div class="top-tips-title">
+												操作提示
+											</div>
+											<div class="top-tips-body">
+												<p>该页面展示了商城所有的商品信息，可对商品进行编辑修改操作。</p>
+												<p>可输入商品名称关键字进行搜索，侧边栏进行高级搜索。</p>
+												<p>搜索结果导出和选择导出有数量限制，根据浏览器不同限制不同</p>
+											</div>
+										</div>
+										<div class="line" style="float: right;">
+											<a class="btn red btn-outline btn-small">批量修改价格信息</a>
+											<div class="btn-group" id="exportBtn">
+												<a class="btn red btn-outline btn-small dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+													导出 <span class="caret"></span>
+												</a>
+												<ul class="dropdown-menu red">
+													<li><a href="#" id="export_all">所有的商品</a></li>
+													<li><a href="#" id="export_search">搜索结果中的商品</a></li>
+													<li><a href="#" id="export_selected">选中的商品</a></li>
+												</ul>
+											</div>
+											<form class="form-inline pull-right search">
+												<div class="form-group">
+													<select class="input-sm form-control">
+														<option value="" selected="selected">商品状态</option>
+														<option value="examine_price:0">待审核</option>
+														<option value="examine_price:2">审核中</option>
+													</select>
+												</div>
+												<div class="form-group">
+													<input type="text" name="search" class="form-control input-sm" placeholder="商品名称/SPU">
+												</div>
+												<button class="btn btn-small btn-orange pull-right" style="height: 30px; margin-left: 10px;">搜索</button>
+											</form>
+										</div>
+		  								<div>
+											<table class="table table-hover table-bordered table-responsive">
+												<thead>
+													<tr>
+														<td width="2%" style="padding-left: 20px;padding-right: 20px;">
+															<input type="checkbox" class="select-all">
+														</td>
+														<td width="25%" style="min-width: 305px;">
+															商品名称
+														</td>
+														<td width="10%" style="min-width: 80px;">
+															SPU编号
+														</td>
+														<td width="10%" style="min-width: 65px;">
+															商品类型
+														</td>
+														<td width="10%" style="min-width: 115px;">
+															价格
+														</td>
+														<td width="10%" style="min-width: 115px;">
+															库存
+														</td>
+														<td width="10%" style="min-width: 80px;">
+															商品来源
+														</td>
+														<td width="5%" style="min-width: 40px;">
+															商品状态
+														</td>
+														<td style="text-align: center;">
+															操作
+														</td>
+													</tr>
+												</thead>
+												<tbody>
+
+												</tbody>
+												<tfoot>
+													<tr>
+														<td colspan="4">
+															<div class="col-md-4">
+																<select class="form-control" id="multipleSelect">
+																	<option>请选择...</option>
+																	<option value="delete">删除</option>
+																</select>
+
+															</div>
+															<div class="col-md-2">
+																<button class="btn" id="multipleBtn">确定</button>
+															</div>
+														</td>
+														<td id="split_page" colspan="5" style="text-align: right;">
+
+														</td>
+													</tr>
+												</tfoot>
+											</table>
+										</div>
+									</div>
+									{%/hasPower%}
+									{%hasPower type=button keyword=examine_up_product%}
+									<div class="tab-page" id="status">
+										<div class="space"></div>
+			  							<div class="top-tips">
+											<div class="top-tips-title">
+												操作提示
+											</div>
+											<div class="top-tips-body">
+												<p>该页面展示了商城所有的商品信息，可对商品进行编辑修改操作。</p>
+												<p>可输入商品名称关键字进行搜索，侧边栏进行高级搜索。</p>
+											</div>
+										</div>
+										<div class="line" style="float: right;">
+											<form class="form-inline pull-right search">
+												<div class="form-group">
+													<select class="input-sm form-control">
+														<option value="" selected="selected">商品状态</option>
+														<option value="examine_status:0">待审核</option>
+														<option value="examine_status:2">审核中</option>
+													</select>
+												</div>
+												<div class="form-group">
+													<input type="text" name="search" class="form-control input-sm" placeholder="商品名称/SPU">
+												</div>
+												<button class="btn btn-small btn-orange pull-right" style="height: 30px; margin-left: 10px;">搜索</button>
+											</form>
+										</div>
+		  								<div>
+											<table class="table table-hover table-bordered table-responsive">
+												<thead>
+													<tr>
+														<td width="2%" style="padding-left: 20px;padding-right: 20px;">
+															<input type="checkbox" class="select-all">
+														</td>
+														<td width="25%" style="min-width: 305px;">
+															商品名称
+														</td>
+														<td width="10%" style="min-width: 80px;">
+															SPU编号
+														</td>
+														<td width="10%" style="min-width: 65px;">
+															商品类型
+														</td>
+														<td width="10%" style="min-width: 115px;">
+															价格
+														</td>
+														<td width="10%" style="min-width: 115px;">
+															库存
+														</td>
+														<td width="10%" style="min-width: 80px;">
+															商品来源
+														</td>
+														<td width="5%" style="min-width: 40px;">
+															商品状态
+														</td>
+														<td style="text-align: center;">
+															操作
+														</td>
+													</tr>
+												</thead>
+												<tbody>
+
+												</tbody>
+												<tfoot>
+													<tr>
+														<td colspan="4">
+															<div class="col-md-4">
+																<select class="form-control" id="multipleSelect">
+																	<option>请选择...</option>
+																	<option value="delete">删除</option>
+																</select>
+
+															</div>
+															<div class="col-md-2">
+																<button class="btn" id="multipleBtn">确定</button>
+															</div>
+														</td>
+														<td id="split_page" colspan="5" style="text-align: right;">
+
+														</td>
+													</tr>
+												</tfoot>
+											</table>
+										</div>
+									</div>
+									{%/hasPower%}
 								</div>
 			  				</div>
 			  			</div>
@@ -214,6 +524,18 @@
 				}
 			});
 			
+			var getSelectedCheckbox = function(table){
+				$_id = [];
+				table.find('tbody input[type=checkbox]').each(function(index,value){
+					if($(value).is(':checked'))
+					{
+						$_id.push($(value).val());
+					}
+				});
+				return $_id;
+			}
+
+			
 			$('table').on('change','input[type=checkbox].select-all',function(){
 				if($(this).is(':checked'))
 				{
@@ -229,8 +551,181 @@
 				}
 				return false;
 			});
+			
+			$('#examineModal').on('hidden.bs.modal',function(){
+				$('#examineModal input').val('');
+				$('#examineModal textarea').val('');
+			});
+			
+			$('#examineModal .submit').on('click',function(){
+				var id = $('#examineModal input[name=id]').val();
+				var type = $('#examineModal input[name=type]').val();
+				var result = $('#examineModal input[name=result]').val();
+				var description = $('#examineModal textarea[name=description]').val();
+				if(type==='examine')
+				{
+					$.post('./index.php?m=ajax&c=product&a=examine_refuse',{id:id,result:result,description:description},function(response){
+						if(response.code==1)
+						{
+							$('#examine .examineBtn[data-id='+id+']').parents('tr').remove();
+							$('#examineModal').modal('hide');
+						}
+						else
+						{
+							bootbox.alert(response.result);
+						}
+					});
+				}
+				else if(type == 'examine_stock')
+				{
+					$.post('./index.php?m=ajax&c=product&a=examine_stock_refuse',{id:id,result:result,description:description},function(response){
+						if(response.code==1)
+						{
+							$('#stock .examineBtn[data-id='+id+']').parents('tr').remove();
+							$('#examineModal').modal('hide');
+						}
+						else
+						{
+							bootbox.alert(response.result);
+						}
+					});
+				}
+				else if(type == 'examine_price')
+				{
+					$.post('./index.php?m=ajax&c=product&a=examine_price_refuse',{id:id,result:result,description:description},function(response){
+						if(response.code==1)
+						{
+							$('#price .examineBtn[data-id='+id+']').parents('tr').remove();
+							$('#examineModal').modal('hide');
+						}
+						else
+						{
+							bootbox.alert(response.result);
+						}
+					});
+				}
+				else if(type == 'examine_status')
+				{
+					$.post('./index.php?m=ajax&c=product&a=examine_status_refuse',{id:id,result:result,description:description},function(response){
+						if(response.code==1)
+						{
+							$('#status .examineBtn[data-id='+id+']').parents('tr').remove();
+							$('#examineModal').modal('hide');
+						}
+						else
+						{
+							bootbox.alert(response.result);
+						}
+					});
+				}
+				return false;
+			});
 		</script>
 		<script type="text/javascript" src="{%resource path='/html/js/product/draft.js'%}"></script>
+		{%hasPower type=button keyword=examine_base_product%}
 		<script type="text/javascript" src="{%resource path='/html/js/product/examine.js'%}"></script>
+		<script type="text/javascript">
+			$('#examine #exportBtn').on('click','#export_all',function(){
+				post("./index.php?c=export&a=product",{isdelete:0,draft:0,examine:[0,2],status:0});
+			}).on('click','#export_search',function(){
+				var ids = examine.getResultPrimaryKey();
+				if(ids.length>0)
+				{
+					post('./index.php?c=export&a=product',{id:ids});
+				}
+				else
+				{
+					bootbox.alert('没有搜索结果');
+				}
+			}).on('click','#export_selected',function(){
+				var ids = getSelectedCheckbox($('#examine'));
+				if(ids.length>0)
+				{
+					post('./index.php?c=export&a=product',{id:ids});
+				}
+				else
+				{
+					bootbox.alert('请选择商品');
+				}
+			});
+		</script>
+		{%/hasPower%}
+		{%hasPower type=button keyword=examine_stock_product%}
+		<script type="text/javascript" src="{%resource path='/html/js/product/examine_stock.js'%}"></script>
+		<script type="text/javascript">
+			$('#stock #exportBtn').on('click','#export_all',function(){
+				post("./index.php?c=export&a=product",{isdelete:0,draft:0,examine_stock:[0,2],status:0});
+			}).on('click','#export_search',function(){
+				var ids = examine_stock.getResultPrimaryKey();
+				if(ids.length>0)
+				{
+					post('./index.php?c=export&a=product',{id:ids});
+				}
+				else
+				{
+					bootbox.alert('没有搜索结果');
+				}
+			}).on('click','#export_selected',function(){
+				var ids = getSelectedCheckbox($('#stock'));
+				if(ids.length>0)
+				{
+					post('./index.php?c=export&a=product',{id:ids});
+				}
+				else
+				{
+					bootbox.alert('请选择商品');
+				}
+			});
+		</script>
+		{%/hasPower%}
+		{%hasPower type=button keyword=examine_price_product%}
+		<script type="text/javascript" src="{%resource path='/html/js/product/examine_price.js'%}"></script>
+		<script type="text/javascript">
+			$('#price #exportBtn').on('click','#export_all',function(){
+				post("./index.php?c=export&a=product",{isdelete:0,draft:0,examine_price:[0,2],status:0});
+			}).on('click','#export_search',function(){
+				var ids = price.getResultPrimaryKey();
+				if(ids.length>0)
+				{
+					post('./index.php?c=export&a=product',{id:ids});
+				}
+				else
+				{
+					bootbox.alert('没有搜索结果');
+				}
+			}).on('click','#export_selected',function(){
+				var ids = getSelectedCheckbox($('#price'));
+				if(ids.length>0)
+				{
+					post('./index.php?c=export&a=product',{id:ids});
+				}
+				else
+				{
+					bootbox.alert('请选择商品');
+				}
+			});
+		</script>
+		{%/hasPower%}
+		{%hasPower type=button keyword=examine_up_product%}
+		<script type="text/javascript" src="{%resource path='/html/js/product/examine_status.js'%}"></script>
+		{%/hasPower%}
+		<script type="text/javascript">
+			tab.on('tab.click.draft',function(){
+				dt.clearAjaxParameter();
+				dt.reload();
+			}).on('tab.click.examine',function(){
+				examine.clearAjaxParameter();
+				examine.reload();
+			}).on('tab.click.price',function(){
+				price.clearAjaxParameter();
+				price.reload();
+			}).on('tab.click.stock',function(){
+				examine_stock.clearAjaxParameter();
+				examine_stock.reload();
+			}).on('tab.click.status',function(){
+				examine_status.clearAjaxParameter();
+				examine_status.reload();
+			});
+		</script>
 	</body>
 </html>

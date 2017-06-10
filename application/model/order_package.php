@@ -33,11 +33,4 @@ class order_packageModel extends model
 		}
 		return $this->where('order_package.orderno=?',[$post['orderno']])->select($parameter);
 	}
-	
-	
-	function count()
-	{
-		$result = $this->find('count(*)');
-		return $result['count(*)']?$result['count(*)']:NULL;
-	}
 }

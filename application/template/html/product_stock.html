@@ -63,17 +63,18 @@
 											<div class="top-tips-body">
 												<p>库存不足，且正在销售的产品</p>
 												<p>这边和库存管理有点小区别（暂时记录）</p>
+												<p>选择导出和搜索结果导出有数量限制</p>
 											</div>
 										</div>
 										<div class="line">
-											<div class="btn-group">
+											<div class="btn-group" id="exportBtn">
 												<a class="btn red btn-outline btn-small dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 													导出 <span class="caret"></span>
 												</a>
 												<ul class="dropdown-menu red">
-													<li><a href="#">所有的商品</a></li>
-													<li><a href="#">搜索结果中的商品</a></li>
-													<li><a href="#">选中的商品</a></li>
+													<li><a href="#" id="export_all">所有的商品</a></li>
+													<li><a href="#" id="export_search">搜索结果中的商品</a></li>
+													<li><a href="#" id="export_selected">选中的商品</a></li>
 												</ul>
 											</div>
 											<form class="form-inline pull-right" id="dt_search">
@@ -193,6 +194,17 @@
 				return false;
 			});
 			
+			var getSelectedCheckbox = function(table){
+				$_id = [];
+				table.find('tbody input[type=checkbox]').each(function(index,value){
+					if($(value).is(':checked'))
+					{
+						$_id.push($(value).val());
+					}
+				});
+				return $_id;
+			}
+			
 			var dt = datatables({
 				table:$('#all table'),
 				ajax:{
@@ -273,6 +285,31 @@
 				dt.addAjaxParameter('status',$(this).find('select').val());
 				dt.search($(this).find('input').val());
 				return false;
+			});
+		</script>
+		<script type="text/javascript">
+			$('#all #exportBtn').on('click','#export_all',function(){
+				post("./index.php?c=export&a=product",{isdelete:0,stock:0,status:1});
+			}).on('click','#export_search',function(){
+				var ids = dt.getResultPrimaryKey();
+				if(ids.length>0)
+				{
+					post('./index.php?c=export&a=product',{id:ids});
+				}
+				else
+				{
+					bootbox.alert('没有搜索结果');
+				}
+			}).on('click','#export_selected',function(){
+				var ids = getSelectedCheckbox($('#all'));
+				if(ids.length>0)
+				{
+					post('./index.php?c=export&a=product',{id:ids});
+				}
+				else
+				{
+					bootbox.alert('请选择商品');
+				}
 			});
 		</script>
 	</body>

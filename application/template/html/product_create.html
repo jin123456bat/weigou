@@ -322,7 +322,7 @@
 								<div class="center-block" style="width: 50%;display: flex;display: -webkit-flex;flex-direction: row;flex-wrap: nowrap;justify-content:space-between;align-items:center;">
 									<button class="btn btn-primary" style="flex: 0 0 auto;" id="draft">保存草稿</button>
 									<button class="btn btn-success" style="flex: 0 0 auto;" id="overview">商品本地预览（非线上数据）</button>
-									<button class="btn btn-warning pull-right" style="flex: 0 0 auto;" id="submit">提交</button>
+									<button class="btn btn-warning pull-right" style="flex: 0 0 auto;" id="submit">提交审核</button>
 								</div>
 							</div>
 						</div>
@@ -520,7 +520,7 @@
 			});
 			
 			var umeditor = UM.getEditor('description');
-			umeditor.addListener('selectionchange',function(){
+			umeditor.addListener('contentChange',function(){
 				change = true;
 			});
 

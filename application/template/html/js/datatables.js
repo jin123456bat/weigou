@@ -75,7 +75,7 @@ var datatables = function(argments){
 
 			if(argments.columns[j].pk)
 			{
-				pk.push({key:argments.columns[j].data,value:data[column]});
+				pk.push({key:argments.columns[j].name,value:data[column]});
 			}
 		}
 		tr += '</tr>';
@@ -143,12 +143,14 @@ var datatables = function(argments){
 				
 				tfooter($_total);
 				
-				if(response.data.length == 0)
+				if(response.data.length === 0)
 				{
+					var empty = '<tr><td colspan="100" style="text-align:center;">尚无数据</td></tr>';
 					if(argments.empty)
 					{
-						argments.table.find('tbody').append(argments.empty);
+						empty = argments.empty;
 					}
+					argments.table.find('tbody').append(empty);
 				}
 				else
 				{
@@ -238,16 +240,21 @@ var datatables = function(argments){
 				load((page-1) * $_pagesize,$_pagesize);
 			}
 		});
-	}
+	};
 
 	var clear = function(){
 		argments.table.find('tbody').empty();
 		//argments.table.find('tfoot').empty();
-	}
+	};
 
 	var addAjaxParameter = function(key,value){
 		$_ajax_parameter[key] = value;
-	}
+	};
+	
+	var clearAjaxParameter = function(){
+		console.log('ajax parameter clear');
+		$_ajax_parameter = {};
+	};
 
 	load(0,$_pagesize);
 
@@ -261,6 +268,12 @@ var datatables = function(argments){
 		},
 		addAjaxParameter(key,value){
 			addAjaxParameter(key,value);
+		},
+		getResultPrimaryKey:function(){
+			return $_response.pk;
+		},
+		clearAjaxParameter:function(){
+			clearAjaxParameter();
 		}
 	};
 }

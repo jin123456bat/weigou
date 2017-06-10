@@ -17,17 +17,6 @@ class user extends base
 		
 		if ($this->session->role === 'user')
 			return $this->session->user_id;
-			// 用memcached代替
-			/*
-		 * if ($key = $this->cookie->__get("PHPSESSID")) {
-		 *
-		 * if ($user = $this->memcache->__get($key)) {
-		 * if ($user['role'] === 'user')
-		 * return $user['user_id'];
-		 * }
-		 *
-		 * }
-		 */
 		return 0;
 	}
 

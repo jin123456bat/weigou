@@ -19,11 +19,14 @@ textarea{
 a.btn{
 	color: #333;
 }
-/*.btn-group, .btn-group-vertical{
+/*.btn-group{
 	position: initial;
 }*/
 .btn-group-vertical>.btn, .btn-group>.btn{
 	position: initial;
+}
+.btn.btn-icon{
+	padding: 0px 4px !important;
 }
 /*修正bootbox中按钮的样式*/
 .bootbox{
@@ -95,6 +98,7 @@ a.btn{
 }
 .dropdown-sm{
 	min-width: 52px;
+	width: 100%;
 }
 .dropdown-sm a{
 	font-size: 12px;
@@ -434,6 +438,13 @@ button.btn-grey{
 .btn.default{
 	border:none;
 }
+.btn.btn-green{
+	background-color: #44B549;
+	color: #FFFFFF;
+}
+.btn.btn-width{
+	padding: 6px 39px;
+}
 .tab .tab-header{
 	width: 100%;
 	border-bottom: 1px rgba(98, 179, 255, 1) solid;
@@ -472,8 +483,7 @@ button.btn-grey{
 .tab .tab-body .tab-page.active{
 	display: block;
 }
-
-
+/*对于默认tab的定义  主要用在admin_create*/
 .tab.default .tab-header .tab-title{
 	border-radius: 0px;
 	border-color:#797979;
@@ -492,10 +502,20 @@ button.btn-grey{
 	border-radius: 0px;
 	border-bottom: none;
 }
-
+/*tab-outline 主要用于userinfo中订单列表中的tab*/
+.tab.tab-outline .tab-title{
+	border-color: #C9C9C9;
+	background-color: #FFFFFF;
+}
+.tab.tab-outline .tab-title.active{
+	border-color: rgba(98, 179, 255, 1);
+	color:rgba(98, 179, 255, 1);
+	background-color: #FFFFFF;
+}
 
 .line{
 	padding: 10px 0px;
+	width: 100%;
 }
 
 .rotate-180{
@@ -797,7 +817,6 @@ button.btn-grey{
 	text-align: center;
 	margin: 0px;
 	border-radius: 2px;
-	cursor: pointer;
 	padding: 0px 5px;
 	width: 53px;
 	line-height: 22px;
@@ -806,6 +825,12 @@ button.btn-grey{
 }
 .checkbox.active{
 	background-color: #66CC66;
+}
+.checkbox.active.blue{
+	background-color: #5BC0DE;
+}
+.checkbox.active.green{
+	background-color: #66CC00;
 }
 .control-label-sm{
 	font-size: 12px;

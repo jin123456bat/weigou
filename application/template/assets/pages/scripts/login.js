@@ -52,7 +52,7 @@ var Login = function() {
 				$.post(url,{username:username,password:password},function(response){
 					if(response.code==1)
 					{
-						window.location = 'index.php?c=admin&a=dashboard';
+						window.location = 'index.php?c=html&a='+response.body;
 					}
 					else
 					{

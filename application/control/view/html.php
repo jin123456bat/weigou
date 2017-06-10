@@ -21,15 +21,34 @@ class html extends view
 	{
 		$action = $this->get('a','');
 		
+		$adminHelper = new \application\helper\admin();
+		
 		//选中的当前菜单的信息
 		$menu = $this->model('admin_menu')->where('link=?',[$action])->find();
 		$this->assign('menu', $menu);
-		$global_site_type_action = [
-			0=>'user',
-			1=>'product',
+		
+		if ($action!='nopower' && !$adminHelper->checkPower($menu['id'], 'page'))
+		{
+			$this->response->setCode(302);
+			$this->response->addHeader('Location','./index.php?c=html&a=nopower');
+		}
+		
+		$global_site_column = [
+			array(
+				'action' => $adminHelper->getDefaultTypeAction(0),
+				'enable' => $adminHelper->checkPower(0, 'column'),
+				'active' => false,
+				'name' => '平台',
+			),
+			array(
+				'action' => $adminHelper->getDefaultTypeAction(1),
+				'enable' => $adminHelper->checkPower(1, 'column'),
+				'active' => false,
+				'name' => '商城',
+			),
 		];
-		$global_site_type_action[$menu['type']] = $action;
-		$this->assign('global_site_type_action', $global_site_type_action);
+		$global_site_column[$menu['type']]['active'] = true;
+		
 		
 		if (!empty($menu['extra']))
 		{
@@ -40,7 +59,9 @@ class html extends view
 		$menu1 = $this->model('admin_menu')->orderby('sort','asc')->where('type=? and display=? and u_link is null',[$menu['type'],1])->select();
 		foreach ($menu1 as &$m)
 		{
-			if ($m['id'] == $menu['u_link'] || $m['id'] == $extra['u_link'])
+			$m['enable'] = $adminHelper->checkPower($m['id'], 'page');
+			
+			if ($m['id'] == $menu['u_link'] || (isset($extra['u_link']) && $m['id'] == $extra['u_link'] ))
 			{
 				$m['active'] = true;
 			}
@@ -51,15 +72,26 @@ class html extends view
 			
 			if (empty($m['link']))
 			{
-				$m['link'] = $this->model('admin_menu')->where('host=1 and u_link=?',[$m['id']])->scalar('link');
+				$links = $this->model('admin_menu')->where('u_link=? and display=?',[$m['id'],1])->orderby('host','desc')->orderby('sort','asc')->select(['id','link']);
+				foreach ($links as $link)
+				{
+					if ($adminHelper->checkPower($link['id'], 'page'))
+					{
+						$m['link'] = $link['link'];
+						break;
+					}
+				}
 			}
 		}
 		$this->assign('menu1', $menu1);
 		
 		//所有2级菜单
-		$menu2 = $this->model('admin_menu')->orderby('sort','asc')->where('(u_link=? or u_link=?) and display=?',[$menu['u_link'],$extra['u_link'],1])->select();
+		$menu2 = $this->model('admin_menu')->orderby('sort','asc')->where('(u_link=? or u_link=?) and display=?',[$menu['u_link'],isset($extra['u_link'])?$extra['u_link']:NULL,1])->select();
 		foreach ($menu2 as &$m)
 		{
+			
+			$m['enable'] = $adminHelper->checkPower($m['id'], 'page');
+			
 			if ($m['link'] == $action || $m['link'] === $menu['extra'])
 			{
 				$m['active'] = true;
@@ -90,7 +122,10 @@ class html extends view
 		}
 		$this->assign('page_title_reverse', $page_title_reverse);
 		$this->assign('page_title', $page_title);
+		$this->assign('global_site_column', $global_site_column);
 	}
+	
+	
 	
 	function edit_brand()
 	{
@@ -109,6 +144,33 @@ class html extends view
 	
 	function product_create()
 	{
+		$from = $this->get('from');
+		if (!in_array($from, ['list','draft']))
+		{
+			exit('FROM ERROR');
+		}
+		
+		if ($from == 'list')
+		{
+			$adminHelper = new \application\helper\admin();
+			if(!$adminHelper->checkPower(0, 'button','create_product_from_list'))
+			{
+				$this->response->setCode(302);
+				$this->response->addHeader('Location','./index.php?c=html&a=nopower');
+				exit();
+			}
+		}
+		if ($from == 'draft')
+		{
+			$adminHelper = new \application\helper\admin();
+			if(!$adminHelper->checkPower(0, 'button','create_product_from_draft'))
+			{
+				$this->response->setCode(302);
+				$this->response->addHeader('Location','./index.php?c=html&a=nopower');
+				exit();
+			}
+		}
+		
 		$province = $this->model('province')->select();
 		$this->assign('province', $province);
 		
@@ -137,6 +199,68 @@ class html extends view
 	
 	function product_edit()
 	{
+		$type = $this->get('type','');
+		
+		if (!in_array($type, ['unshelf','draft','examine','examine_stock','examine_price','examine_status']))
+		{
+			exit("TYPE ERROR");
+		}
+		
+		if ($type == 'unshelf')
+		{
+			$adminHelper = new \application\helper\admin();
+			if(!$adminHelper->checkPower(0, 'button','edit_product'))
+			{
+				$this->response->setCode(302);
+				$this->response->addHeader('Location','./index.php?c=html&a=nopower');
+				exit();
+			}
+		}
+		
+		if ($type == 'examine')
+		{
+			$adminHelper = new \application\helper\admin();
+			if(!$adminHelper->checkPower(0, 'button','examine_base_product'))
+			{
+				$this->response->setCode(302);
+				$this->response->addHeader('Location','./index.php?c=html&a=nopower');
+				exit();
+			}
+		}
+		
+		if ($type == 'examine_stock')
+		{
+			$adminHelper = new \application\helper\admin();
+			if(!$adminHelper->checkPower(0, 'button','examine_stock_product'))
+			{
+				$this->response->setCode(302);
+				$this->response->addHeader('Location','./index.php?c=html&a=nopower');
+				exit();
+			}
+		}
+		
+		if ($type == 'examine_price')
+		{
+			$adminHelper = new \application\helper\admin();
+			if(!$adminHelper->checkPower(0, 'button','examine_price_product'))
+			{
+				$this->response->setCode(302);
+				$this->response->addHeader('Location','./index.php?c=html&a=nopower');
+				exit();
+			}
+		}
+		
+		if ($type == 'examine_status')
+		{
+			$adminHelper = new \application\helper\admin();
+			if(!$adminHelper->checkPower(0, 'button','examine_up_product'))
+			{
+				$this->response->setCode(302);
+				$this->response->addHeader('Location','./index.php?c=html&a=nopower');
+				exit();
+			}
+		}
+		
 		$id = $this->get('id');
 		if (!empty($id))
 		{
@@ -171,97 +295,129 @@ class html extends view
 	
 	function orderdetail()
 	{
-		$orderno = $this->get('orderno','');
-		$orderHelper = new order();
-		$order = $this->model('order')->where('orderno=?',[$orderno])->find();
-		$order['convertStatus'] = $orderHelper->convertStatus($order);
-		$order['user'] = $this->model('user')->where('id=?',[$order['uid']])->find();
-		
-		$order['user']['ouser'] = $this->model('user')->where('id=?',[$order['user']['oid']])->find();
-		$order['user']['omasteruser'] = $this->model('user')->where('id=?',[$order['user']['o_master']])->find();
-		
-		//订单商品
-		$product = [];
-		$productHelper = new \application\helper\product();
-		$package = $this->model('order_package')->where('orderno=?',[$orderno])->select();
-		foreach ($package as $pack)
+		$adminHelper = new \application\helper\admin();
+		if($adminHelper->checkPower(0, 'button','look_order'))
 		{
-			$products = $this->model('order_product')->where('package_id=?',[$pack['id']])->select();
-			foreach ($products as $p)
+			$orderno = $this->get('orderno','');
+			$orderHelper = new order();
+			$order = $this->model('order')->where('orderno=?',[$orderno])->find();
+			$order['convertStatus'] = $orderHelper->convertStatus($order);
+			$order['user'] = $this->model('user')->where('id=?',[$order['uid']])->find();
+			
+			$order['user']['ouser'] = $this->model('user')->where('id=?',[$order['user']['oid']])->find();
+			$order['user']['omasteruser'] = $this->model('user')->where('id=?',[$order['user']['o_master']])->find();
+			
+			//订单商品
+			$product = [];
+			$productHelper = new \application\helper\product();
+			$package = $this->model('order_package')->where('orderno=?',[$orderno])->select();
+			foreach ($package as $pack)
 			{
-				$p['image'] = $productHelper->getListImage($p['pid']);
-				
-				$temp_product = $this->model('product')->where('id=?',[$p['pid']])->find();
-				$p['brand'] = $this->model('brand')->where('id=?',[$temp_product['brand']])->scalar('name_cn');
-				$p['stock'] = $temp_product['stock'];
-				$p['status'] = $temp_product['status'];
-				
-				$p['ship_type'] = $pack['ship_type'];
-				$p['ship_number'] = $pack['ship_number'];
-				
-				//是否允许退款
-				if ($order['pay_status']==1 || $order['pay_status']==4)
+				$products = $this->model('order_product')->where('package_id=?',[$pack['id']])->select();
+				foreach ($products as $p)
 				{
-					if ($p['refund']==0)
-					{
-						$p['allowRefund'] = true;
-					}
-					else if ($p['refund']==1)
-					{
-						$p['allowRefund'] = false;
-					}
-				}
-				
-				//是否允许查看物流  是否允许更改物流信息
-				if ($pack['ship_status']==1)
-				{
-					$p['allowLogistics'] = true;
-					$p['changeWay'] = true;
-					$p['send'] = false;
-				}
-				else
-				{
-					$p['allowLogistics'] = false;
-					$p['changeWay'] = false;
-					$p['send'] = true;
-				}
-				
-				
+					$p['image'] = $productHelper->getListImage($p['pid']);
 					
-				$product[] = $p;
+					$temp_product = $this->model('product')->where('id=?',[$p['pid']])->find();
+					$p['brand'] = $this->model('brand')->where('id=?',[$temp_product['brand']])->scalar('name_cn');
+					$p['stock'] = $temp_product['stock'];
+					$p['status'] = $temp_product['status'];
+					
+					$p['ship_type'] = $pack['ship_type'];
+					$p['ship_number'] = $pack['ship_number'];
+					
+					//是否允许退款
+					if ($order['pay_status']==1 || $order['pay_status']==4)
+					{
+						if ($p['refund']==0)
+						{
+							$p['allowRefund'] = true;
+						}
+						else if ($p['refund']==1)
+						{
+							$p['allowRefund'] = false;
+						}
+					}
+					
+					//是否允许查看物流  是否允许更改物流信息
+					if ($pack['ship_status']==1)
+					{
+						$p['allowLogistics'] = true;
+						$p['changeWay'] = true;
+						$p['send'] = false;
+					}
+					else
+					{
+						$p['allowLogistics'] = false;
+						$p['changeWay'] = false;
+						$p['send'] = true;
+					}
+					
+					
+						
+					$product[] = $p;
+				}
 			}
+			$order['product'] = $product;
+			
+			$this->assign('order', $order);
+			
+			
+			$publish = $this->model('publish')->where('isdelete=?',[0])->select();
+			$this->assign('publish', $publish);
+			
+			$store = $this->model('store')->where('isdelete=?',[0])->select();
+			$this->assign('store', $store);
+			
+			$ship = $this->model('ship')->select();
+			$this->assign('ship', $ship);
+			
+			$log = $this->model('order_log')->orderby('time','desc')->where('orderno=?',[$orderno])->select();
+			foreach ($log as &$l)
+			{
+				$l['auser'] = $this->model('admin')->where('id=?',[$l['aid']])->find();
+			}
+			$this->assign('log', $log);
+			
+			return $this;
 		}
-		$order['product'] = $product;
-		
-		$this->assign('order', $order);
-		
-		
-		$publish = $this->model('publish')->where('isdelete=?',[0])->select();
-		$this->assign('publish', $publish);
-		
-		$store = $this->model('store')->where('isdelete=?',[0])->select();
-		$this->assign('store', $store);
-		
-		$ship = $this->model('ship')->select();
-		$this->assign('ship', $ship);
-		
-		$log = $this->model('order_log')->orderby('time','desc')->where('orderno=?',[$orderno])->select();
-		foreach ($log as &$l)
+		else
 		{
-			$l['auser'] = $this->model('admin')->where('id=?',[$l['aid']])->find();
+			$this->response->setCode(302);
+			$this->response->addHeader('Location','./index.php?c=html&a=nopower');
 		}
-		$this->assign('log', $log);
-		
-		return $this;
 	}
 	
 	function edit_product_notice_template()
 	{
-		$id = $this->get('id');
-		if (!empty($id))
+		$adminHelper = new \application\helper\admin();
+		if(!$adminHelper->checkPower(0, 'button','sms_template'))
 		{
-			$product_notice_template = $this->model('product_notice_template')->where('id=?',[$id])->find();
-			$this->assign('template', $product_notice_template);
+			$this->response->setCode(302);
+			$this->response->addHeader('Location','./index.php?c=html&a=nopower');
+		}
+		else 
+		{
+			$id = $this->get('id');
+			if (!empty($id))
+			{
+				$product_notice_template = $this->model('product_notice_template')->where('id=?',[$id])->find();
+				$this->assign('template', $product_notice_template);
+				return $this;
+			}
+		}
+	}
+	
+	function create_product_notice_template()
+	{
+		$adminHelper = new \application\helper\admin();
+		if(!$adminHelper->checkPower(0, 'button','sms_template'))
+		{
+			$this->response->setCode(302);
+			$this->response->addHeader('Location','./index.php?c=html&a=nopower');
+		}
+		else
+		{
 			return $this;
 		}
 	}
@@ -289,11 +445,75 @@ class html extends view
 	
 	function admin_create()
 	{
-		$role = $this->model('role')->select('id,name');
+		$role = $this->model('role')->where('status=?',[1])->select('id,name');
 		$this->assign('role', $role);
 		
-		$privileges = $this->model('privileges')->select('id,name');
-		$this->assign('privileges', $privileges);
+		return $this;
+	}
+	
+	function userinfo()
+	{
+		$adminHelper = new \application\helper\admin();
+		if(!$adminHelper->checkPower(0, 'button','user_look'))
+		{
+			$this->response->setCode(302);
+			$this->response->addHeader('Location','./index.php?c=html&a=nopower');
+		}
+		else 
+		{
+			$user = $this->model('user')->where('id=?',[$this->get('id',0)])->find();
+			$user['oid'] = $this->model('user')->where('id=?',[$user['oid']])->scalar('name');
+			$user['o_master'] = $this->model('user')->where('id=?',[$user['o_master']])->scalar('name');
+			$this->assign('user', $user);
+			
+			$profit_today = $this->model('swift')->where('source in (?)', [
+				2,
+				3,
+				4,
+				5,
+				6,
+				7
+			])->where('uid=? and time>?', [
+				$this->get('id',0,'intval'),
+				strtotime(date('Y-m-d'))
+			])->scalar('sum(money)');
+			$this->assign('profit_today', $profit_today);
+			
+			$profit = $this->model('swift')->where('source in (?)', [
+				2,
+				3,
+				4,
+				5,
+				6,
+				7
+			])->where('uid=?', [
+				$this->get('id',0,'intval'),
+			])->scalar('sum(money)');
+			$this->assign('profit', $profit);
+			return $this;
+		}
+	}
+	
+	function role_edit()
+	{
+		$id = $this->get('id');
+		
+		$role = $this->model('role')->where('id=?',[$id])->find();
+		$this->assign('role', $role);
+		
+		return $this;
+	}
+	
+	function admin_edit()
+	{
+		$id = $this->get('id');
+		
+		$admin = $this->model('admin')->where('id=?',[$id])->find();
+		$this->assign('admin', $admin);
+		
+		$role = $this->model('role')->where('status=?',[1])->select('id,name');
+		$this->assign('role', $role);
+		
 		return $this;
 	}
 	
@@ -308,6 +528,10 @@ class html extends view
 				'express' => empty($adminHelper->getAdminId()),
 				'redict' => './index.php?c=admin&a=login',
 			),
+			array(
+				'allow',
+				'actions'=>'*',
+			)
 		);
 	}
 }

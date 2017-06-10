@@ -9,7 +9,10 @@ use application\helper\idcard;
 
 class user extends ajax
 {
-
+	private $_uid;
+	
+	private $_aid;
+	
 	function wechat_set_telephone3()
 	{
 		if ($this->session->login_type == 'wechat' && isWechat())
@@ -399,7 +402,7 @@ class user extends ajax
 
 	/**
 	 * 修改登陆密码，已经登陆了的
-	 *
+	 * 
 	 * @return \application\message\json
 	 */
 	function setpassword()
@@ -638,16 +641,9 @@ class user extends ajax
 		if (empty($pay_password))
 			return new json(json::PARAMETER_ERROR, '请输入支付密码');
 		
-		$userHelper = new \application\helper\user();
-		$uid = $userHelper->isLogin();
-		if (empty($uid))
-		{
-			return new json(json::NOT_LOGIN);
-		}
-		
 		$user = $this->model('user')
 			->where('id=?', [
-			$uid
+			$this->_uid
 		])
 			->find();
 		if (empty($user))
@@ -660,8 +656,11 @@ class user extends ajax
 			->select('count(*)');
 		$error_num = isset($error_num['count(*)']) && ! empty($error_num['count(*)']) ? $error_num['count(*)'] : 0;
 		if ($error_num >= 5)
+		{
 			return new json(json::PARAMETER_ERROR, '密码尝试次数过多，请等待12小时后在来尝试');
+		}
 		
+		$userHelper = new \application\helper\user();
 		if ($userHelper->encrypt($pay_password, $user['pay_salt'], 'sha1') === $user['pay_password'])
 		{
 			$this->session->auth_paypassword = true;
@@ -669,7 +668,7 @@ class user extends ajax
 			
 			$this->model('auth_paypassword_log')
 				->where('uid=?', [
-				$uid
+				$this->_uid
 			])
 				->delete();
 			
@@ -679,25 +678,24 @@ class user extends ajax
 		$this->model('auth_paypassword_log')->insert([
 			'ip' => ip(),
 			'paypassword' => $pay_password,
-			'uid' => $uid,
+			'uid' => $this->_uid,
 			'time' => $_SERVER['REQUEST_TIME']
 		]);
 		
 		return new json(json::PARAMETER_ERROR, '密码错误');
 	}
 
+	/**
+	 * 修改用户名
+	 * @return \application\message\json
+	 */
 	function name()
 	{
-		$userHelper = new \application\helper\user();
-		$uid = $userHelper->isLogin();
-		if (empty($uid))
-			return new json(json::NOT_LOGIN);
-		$name = $this->post('name', '');
+		$name = $this->post('name', '','htmlspecialchars');
 		$this->model('user')
 			->where('id=?', [
-			$uid
-		])
-			->update('name', $name);
+			$this->_uid
+		])->update('name', $name);
 		return new json(json::OK);
 	}
 
@@ -713,16 +711,10 @@ class user extends ajax
 		if (strlen($pay_password) != 6)
 			return new json(json::PARAMETER_ERROR, '支付密码必须是6位');
 		
-		$userHelper = new \application\helper\user();
-		$uid = $userHelper->isLogin();
-		if (empty($uid))
-			return new json(json::NOT_LOGIN);
-		
 		$user = $this->model('user')
 			->where('id=?', [
-			$uid
-		])
-			->find();
+			$this->_uid,
+		])->find();
 		if (empty($user))
 		{
 			return new json(json::PARAMETER_ERROR, '系统错误');
@@ -738,6 +730,7 @@ class user extends ajax
 			}
 		}
 		
+		$userHelper = new \application\helper\user();
 		$salt = random::word(6);
 		$pay_password = $userHelper->encrypt($pay_password, $salt, 'sha1');
 		$data = [
@@ -747,17 +740,13 @@ class user extends ajax
 		
 		if ($this->model('user')
 			->where('id=?', [
-			$uid
-		])
-			->update($data))
+			$this->_uid
+		])->update($data))
 		{
-			
 			$this->model('auth_paypassword_log')
 				->where('uid=?', [
-				$uid
-			])
-				->delete();
-			
+				$this->_uid
+			])->delete();
 			return new json(json::OK);
 		}
 		return new json(json::PARAMETER_ERROR, '设置失败');
@@ -771,15 +760,9 @@ class user extends ajax
 	function setGravatar()
 	{
 		$file = $this->post('file');
-		
-		$userHelper = new \application\helper\user();
-		$uid = $userHelper->isLogin();
-		if (empty($uid))
-			return new json(json::NOT_LOGIN);
-		
 		if ($this->model('user')
 			->where('id=?', [
-			$uid
+			$this->_uid
 		])
 			->limit(1)
 			->update('gravatar', $file))
@@ -831,46 +814,6 @@ class user extends ajax
 		return new json(json::PARAMETER_ERROR, '密码错误');
 	}
 
-	function search()
-	{
-		$name = $this->get('keywords', '', 'trim');
-		$filter = [
-			'start' => $this->get('start', 0),
-			'length' => $this->get('length', 10),
-			'parameter' => [
-				'user.id',
-				'upload.path as gravatar',
-				'user.name',
-				'user.money',
-				'user.vip',
-				'user.master',
-				'user.telephone'
-			]
-		];
-		$user = $this->model('user')
-			->where('user.telephone like ?', [
-			'%' . $name . '%'
-		], 'or')
-			->where('user.name like ?', [
-			'%' . $name . '%'
-		], 'or')
-			->fetchAll($filter);
-		
-		$filter['parameter'] = 'count(*)';
-		unset($filter['start']);
-		unset($filter['length']);
-		$total = $this->model('user')->fetch($filter);
-		
-		$userReturnModel = [
-			'current' => count($user),
-			'total' => isset($total[0]['count(*)']) ? $total[0]['count(*)'] : 0,
-			'start' => $this->get('start', 0),
-			'length' => $this->get('length', 10),
-			'data' => $user
-		];
-		return new json(json::OK, NULL, $userReturnModel);
-	}
-
 	/**
 	 * 设置或者更改绑定的手机号
 	 */
@@ -896,14 +839,9 @@ class user extends ajax
 		
 		if ($this->model('smslog')->check($telephone, $sms_code))
 		{
-			$userHelper = new \application\helper\user();
-			$uid = $userHelper->isLogin();
-			if ($uid === NULL)
-				return new json(json::NOT_LOGIN, '尚未登陆');
-			
 			$this->model('user')
 				->where('id=?', [
-				$uid
+				$this->_uid
 			])
 				->update('telephone', $telephone);
 			return new json(json::OK);
@@ -921,24 +859,18 @@ class user extends ajax
 	 */
 	function description()
 	{
-		$userHelper = new \application\helper\user();
-		$uid = $userHelper->isLogin();
-		if (empty($uid))
-			return new json(json::NOT_LOGIN);
-		
 		$description = $this->post('description', NULL, 'htmlspecialchars');
 		if ($description === NULL)
 		{
 			$user = $this->model('user')
 				->where('id=?', [
-				$uid
-			])
-				->find();
+				$this->_uid
+			])->find();
 			return new json(json::OK, NULL, isset($user['description']) ? $user['description'] : '');
 		}
 		$this->model('user')
 			->where('id=?', [
-			$uid
+			$this->_uid
 		])
 			->update('description', $description);
 		return new json(json::OK);
@@ -951,24 +883,15 @@ class user extends ajax
 	 */
 	function password()
 	{
-		$admin = $this->session->id;
 		$userHelper = new \application\helper\user();
 		$id = $this->post('id');
 		$password = $this->post('password', '');
 		$paypassword = $this->post('paypassword', '');
 		
-		$adminHelper = new \application\helper\admin();
-		if (empty($adminHelper->getAdminId()))
-		{
-			$this->model("admin_log")->insertlog($admin, '会员修改密码失败（账户尚未登陆）');
-			return new json(json::NOT_LOGIN, '尚未登录');
-		}
-		
 		if (empty($id))
 			return new json(json::PARAMETER_ERROR);
 		if (strlen($password) < 6 && strlen($password) != 0)
 		{
-			$this->model("admin_log")->insertlog($admin, '会员修改密码失败（登陆密码最少6位）');
 			return new json(json::PARAMETER_ERROR, '登陆密码最少6位');
 		}
 		$data = [];
@@ -1011,22 +934,19 @@ class user extends ajax
 			])
 				->update($data))
 			{
-				$this->model("admin_log")->insertlog($admin, '会员修改密码成功，用户id：' . $id, 1);
+				$this->model("admin_log")->insertlog($this->_aid, '会员修改密码成功，用户id：' . $id, 1);
 				return new json(json::OK);
 			}
 		}
-		$this->model("admin_log")->insertlog($admin, '会员修改密码失败（参数错误）');
 		return new json(json::PARAMETER_ERROR);
 	}
 
 	/**
 	 * 管理员修改金额
-	 *
 	 * @return \application\message\json
 	 */
 	function money()
 	{
-		$admin = $this->session->id;
 		$id = $this->post('id');
 		$money = $this->post('money', 0);
 		$note = $this->post('note', '');
@@ -1046,7 +966,6 @@ class user extends ajax
 			if ($userMoney['money'] < 0)
 			{
 				$this->model('user')->rollback();
-				$this->model("admin_log")->insertlog($admin, '会员修改余额失败（用户余额不能减的太少了）');
 				return new json(json::PARAMETER_ERROR, '用户余额不能减的太少了');
 			}
 			if (! $this->model('swift')->insert([
@@ -1059,57 +978,16 @@ class user extends ajax
 			]))
 			{
 				$this->model('user')->rollback();
-				$this->model("admin_log")->insertlog($admin, '会员修改余额失败（记录流水失败）');
 				return new json(json::PARAMETER_ERROR, '记录流水失败');
 			}
 			$this->model('user')->commit();
-			$this->model("admin_log")->insertlog($admin, '会员修改余额成功，用户id:' . $id . "价钱：" . $money, 1);
+			$this->model("admin_log")->insertlog($this->_aid, '会员修改余额成功，用户id:' . $id . "价钱：" . $money, 1);
 			return new json(json::OK);
 		}
 		$this->model('user')->rollback();
-		$this->model("admin_log")->insertlog($admin, '会员修改余额失败（参数错误）');
 		return new json(json::PARAMETER_ERROR);
 	}
-
-	function vip()
-	{
-		return new json(json::PARAMETER_ERROR, '暂时关闭');
-		
-		$id = $this->post('id', 0, 'intval');
-		$vip = $this->post('vip', 0, 'intval');
-		$master = $this->post('master', 0, 'intval');
-		$this->model('user')
-			->where('id=?', [
-			$id
-		])
-			->limit(1)
-			->update([
-			'master' => $master,
-			'vip' => $vip
-		]);
-		return new json(json::OK);
-	}
-
-	function remove()
-	{
-		return new json(json::PARAMETER_ERROR, '暂时关闭');
-		
-		$id = $this->post('id');
-		if (! empty($id))
-		{
-			if ($this->model('user')
-				->where('id=?', [
-				$id
-			])
-				->delete())
-			{
-				return new json(json::OK);
-			}
-			return new json(json::PARAMETER_ERROR);
-		}
-		return new json(json::PARAMETER_ERROR);
-	}
-
+	
 	/**
 	 * 用户关系绑定
 	 */
@@ -1118,21 +996,15 @@ class user extends ajax
 		$invit = $this->post('invit');
 		if (empty($invit))
 			return new json(json::PARAMETER_ERROR, '请输入邀请码');
-		$userHelper = new \application\helper\user();
-		$uid = $userHelper->isLogin();
-		if (empty($uid))
-			return new json(json::NOT_LOGIN);
 		
 		$invit_user = $this->model('user')
 			->where('invit=?', [
 			$invit
-		])
-			->find();
+		])->find();
 		if (! empty($invit_user))
 		{
 			if ($invit_user['vip'] == 0 && $invit_user['school'] == 0)
 			{
-				
 				return new json(json::PARAMETER_ERROR, '邀请码错误');
 			}
 			
@@ -1147,7 +1019,7 @@ class user extends ajax
 			
 			if ($this->model('user')
 				->where('id=?', [
-				$uid
+				$this->_uid
 			])
 				->update([
 				'oid' => $invit_user['id'],
@@ -1164,11 +1036,6 @@ class user extends ajax
 
 	function team()
 	{
-		$userHelper = new \application\helper\user();
-		$uid = $userHelper->isLogin();
-		if (empty($uid))
-			return new json(json::NOT_LOGIN);
-		
 		$name = $this->post('name', '');
 		$whole = $this->post('whole', 0, 'intval'); // 是否是全部 否则是直属团队
 		$vip = $this->post('vip', NULL);
@@ -1187,7 +1054,7 @@ class user extends ajax
 		
 		$filter_string = 'oid=?';
 		$filter_array = [
-			$uid
+			$this->_uid
 		];
 		
 		if (! empty($name))
@@ -1233,8 +1100,8 @@ class user extends ajax
 			'(select sum(swift.money) from swift where swift.uid=user.id and swift.source in (2,3,4,5) and swift.time < ' . $endtime7 . ' and swift.time > ' . $starttime7 . ') as total7', // 最近7天收益
 			'(select count(*) from user as user2 where user2.oid=user.id) as team', // 团队发展总人数
 			'(select count(*) from user as user2 where user2.oid=user.id and user2.invittime < ' . $endtime7 . ' and user2.invittime > ' . $starttime7 . ') as team7'
-		]) // 团队发展最近7天人数
-;
+		]); // 团队发展最近7天人数
+
 		
 		if ($whole)
 		{
@@ -1287,8 +1154,8 @@ class user extends ajax
 						'(select sum(swift.money) from swift where swift.uid=user.id and swift.source in (2,3,4,5) and swift.time < ' . $endtime7 . ' and swift.time > ' . $starttime7 . ') as total7', // 最近7天收益
 						'(select count(*) from user as user2 where user2.oid=user.id) as team', // 团队发展总人数
 						'(select count(*) from user as user2 where user2.oid=user.id and user2.invittime < ' . $endtime7 . ' and user2.invittime > ' . $starttime7 . ') as team7'
-					]) // 团队发展最近7天人数
-;
+					]); // 团队发展最近7天人数
+
 					$temp = array_merge($temp, $temp_user);
 					$container = array_merge($container, $temp_user);
 				}
@@ -1314,7 +1181,6 @@ class user extends ajax
 
 	function wechat()
 	{
-		$admin = $this->session->id;
 		$id = $this->post('id');
 		$wechat = $this->post('wechat');
 		if (! empty($id))
@@ -1326,85 +1192,80 @@ class user extends ajax
 				->limit(1)
 				->update('wechat_no', $wechat);
 		}
-		$this->model("admin_log")->insertlog($admin, '用户帮顶微信号成功，用户id：' . $id, 1);
+		$this->model("admin_log")->insertlog($this->_aid, '用户帮顶微信号成功，用户id：' . $id, 1);
 		return new json(json::OK);
 	}
 
 	function close()
 	{
-		$admin = $this->session->id;
 		$adminHelper = new \application\helper\admin();
-		$aid = $adminHelper->getAdminId();
-		if (empty($aid))
+		if(!$adminHelper->checkPower(0, 'button','create_blacklist'))
 		{
-			$this->model("admin_log")->insertlog($admin, '用户封停失败（用户未登陆）');
-			return new json(json::NOT_LOGIN);
+			//$this->response->setCode(302);
+			//$this->response->addHeader('Location','./index.php?c=html&a=nopower');
+			return new json(json::NO_POWER);
 		}
-		$id = $this->post('id');
-		
-		$user = $this->model('user')
-			->where('id=?', [
-			$id
-		])
-			->find();
-		if (! empty($user))
+		else
 		{
-			if ($user['close'] == 0)
+			$id = $this->post('id');
+			
+			$user = $this->model('user')
+				->where('id=?', [
+				$id
+			])->find();
+			if (! empty($user))
 			{
-				if ($this->model('user')
-					->where('id=?', [
-					$id
-				])
-					->update([
-					'close' => 1
-				]))
+				if ($user['close'] == 0)
 				{
-					$this->model("admin_log")->insertlog($admin, '用户封停成功，用户id：' . $id, 1);
-					return new json(json::OK);
+					if ($this->model('user')
+						->where('id=?', [
+						$id
+					])
+						->update([
+						'close' => 1
+					]))
+					{
+						$this->model("admin_log")->insertlog($this->_aid, '用户封停成功，用户id：' . $id, 1);
+						return new json(json::OK);
+					}
+				}
+				else
+				{
+					if ($this->model('user')
+						->where('id=?', [
+						$id
+					])->update([
+						'close' => 0
+					]))
+					{
+						$this->model("admin_log")->insertlog($this->_aid, '用户解封成功，用户id：' . $id, 1);
+						return new json(json::OK);
+					}
 				}
 			}
-			else
-			{
-				if ($this->model('user')
-					->where('id=?', [
-					$id
-				])
-					->update([
-					'close' => 0
-				]))
-				{
-					$this->model("admin_log")->insertlog($admin, '用户解封成功，用户id：' . $id, 1);
-					return new json(json::OK);
-				}
-			}
+			return new json(json::PARAMETER_ERROR);
 		}
-		$this->model("admin_log")->insertlog($admin, '用户封停失败（参数错误）');
-		return new json(json::PARAMETER_ERROR);
 	}
 
 	function student()
 	{
-		$userHelper = new \application\helper\user();
-		$uid = $userHelper->isLogin();
-		if (empty($uid))
-			return new json(json::NOT_LOGIN);
 		$identify = $this->post("numberc", '', 'trim');
 		
 		$user = $this->model("user")
 			->where("id=?", [
-			$uid
+			$this->_uid
 		])
 			->find([
 			"school",
-			'vip',
+			'vip'
 		]);
 		if (empty($user))
 		{
-			return new json(json::PARAMETER_ERROR,'尚未注册');
+			return new json(json::PARAMETER_ERROR, '尚未注册');
 		}
-		if ($user['vip']!=0)
+		if ($user['vip'] != 0)
 		{
-			return new json(json::PARAMETER_ERROR,'会员用户不能申请学生信息');
+			return new json(json::PARAMETER_ERROR, '会员用户不能申请学生信息');
 		}
 		if ($user['school'] == 1)
 		{
@@ -1417,7 +1278,7 @@ class user extends ajax
 		
 		if (! empty($this->model('student_info')
 			->where('uid=?', [
-			$uid
+			$this->_uid
 		])
 			->find()))
 		{
@@ -1453,7 +1314,7 @@ class user extends ajax
 		
 		// 将学生信息保存到数据库
 		if ($this->model("student_info")->insert([
-			"uid" => $uid,
+			"uid" => $this->_uid,
 			"name" => $this->post("name"),
 			"school" => $this->post("scname"),
 			"card" => $this->post("num"),
@@ -1464,14 +1325,14 @@ class user extends ajax
 		{
 			// 获取用户信息
 			$user = $this->model("user")
-				->where('id=?', $uid)
+				->where('id=?', $this->_uid)
 				->find();
 			
 			if (empty($user['o_master']))
 			{
 				$this->model("user")
 					->where("id=?", [
-					$uid
+					$this->_uid
 				])
 					->update([
 					"o_master" => '269'
@@ -1481,7 +1342,7 @@ class user extends ajax
 			{
 				$this->model("user")
 					->where("id=?", [
-					$uid
+					$this->_uid
 				])
 					->update([
 					"oid" => '269'
@@ -1490,7 +1351,7 @@ class user extends ajax
 			// 将用户的school改为1
 			$this->model("user")
 				->where("id=?", [
-				$uid
+				$this->_uid
 			])
 				->limit(1)
 				->update([
@@ -1506,24 +1367,63 @@ class user extends ajax
 
 	function school()
 	{
-		$admin = $this->session->id;
 		$id = $this->post('id');
 		if ($id)
 		{
 			$this->model("user")
 				->where("id=?", [
 				$id
-			])
-				->update([
+			])->limit(1)->update([
 				"school" => 2
 			]);
-			$this->model("admin_log")->insertlog($admin, '学生权限拒绝失败,用户id：' . $id, 1);
+			$this->model("admin_log")->insertlog($this->_aid, '学生权限拒绝失败,用户id：' . $id, 1);
 			return new json(json::OK);
 		}
-		else
-		{
-			$this->model("admin_log")->insertlog($admin, '学生权限拒绝失败（修改失败，请重试）');
-            return new json(json::PARAMETER_ERROR, "修改失败，请重试");
-        }
+		return new json(json::PARAMETER_ERROR, "修改失败，请重试");
+	}
+
+	function __access()
+	{
+		$adminHelper = new admin();
+		$this->_aid = $adminHelper->getAdminId();
+		$userHelper = new \application\helper\user();
+		$this->_uid = $userHelper->isLogin();
+		return array(
+			array(
+				'deny',
+				'actions' => [
+					'close',
+					'money',
+					'password',
+					'school',
+					'wechat',
+				],
+				'message' => new json(json::NOT_LOGIN),
+				'express' => empty($this->_aid),
+				'redict' => './index.php?c=admin&a=login'
+			),
+			array(
+				'deny',
+				'actions' => [
+					'setpassword',
+					'auth_pay_password',
+					'name',
+					'setGravatar',
+					'description',
+					'invit',
+					'pay_password',
+					'telephone',
+					'team',
+					'student'
+				],
+				'message' => new json(json::NOT_LOGIN),
+				'express' => empty($this->_uid),
+				'redict' => './index.php?c=user&a=login'
+    		),
+    		array(
+    			'allow',
+    			'actions' => '*',
+    		)
+    	);
     }
 }

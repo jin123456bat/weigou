@@ -305,14 +305,18 @@ var sending = datatables({
 			}
 		}
 	},{
-		targets:22,
+		targets:24,
 		render:function(data,full){
 			showRefundBtn = false;
 			showErpBtn = false;
 			showWayBtn = false;
 			showLogisticsBtn = false;
 			
-			content = '<button class="btn btn-outline btn-xs orderdetail" data-id="'+data+'">查看</button>';
+			let content = '';
+			if($_look_order)
+			{
+				content += '<button class="btn btn-outline btn-xs orderdetail" data-id="'+data+'">查看</button>';
+			}
 			if(full.status==1)
 			{
 				if((full.pay_status == 1 || full.pay_status == 4) && full.receive==0)
@@ -346,9 +350,15 @@ var sending = datatables({
 					showLogisticsBtn = true;
 				}
 			}
-			content += '<div class="space '+(showRefundBtn?'':'display-none')+'"></div><button class="btn btn-outline btn-xs '+(showRefundBtn?'':'display-none')+' refundBtn" data-id="'+data+'">全额退款</button>';
+			if($_refund_order)
+			{
+				content += '<div class="space '+(showRefundBtn?'':'display-none')+'"></div><button class="btn btn-outline btn-xs '+(showRefundBtn?'':'display-none')+' refundBtn" data-id="'+data+'">全额退款</button>';
+			}
 			content += '<div class="space '+(showErpBtn?'':'display-none')+'"></div><button class="btn btn-outline btn-xs '+(showErpBtn?'':'display-none')+' erpBtn" data-id="'+data+'">推送ERP</button>';
-			content += '<div class="space '+(showWayBtn?'':'display-none')+'"></div><button class="btn btn-outline btn-xs '+(showWayBtn?'':'display-none')+' sendBtn" data-id="'+data+'">一键发货</button>';
+			if($_send_order)
+			{
+				content += '<div class="space '+(showWayBtn?'':'display-none')+'"></div><button class="btn btn-outline btn-xs '+(showWayBtn?'':'display-none')+' sendBtn" data-id="'+data+'">一键发货</button>';
+			}
 			content += '<div class="space '+(showLogisticsBtn?'':'display-none')+'"></div><button class="btn btn-outline btn-xs '+(showLogisticsBtn?'':'display-none')+' logisticsBtn" data-id="'+data+'">查看物流</button>';
 			return content;
 		}

@@ -259,19 +259,22 @@
 											<div class="top-tips-body">
 												<p>全部订单指全部有效订单，无效的订单暂不显示。</p>
 												<p>可输入商品名称关键字进行搜索，侧边栏进行高级搜索。</p>
+												<p>搜索结果导出和选择导出有数量限制，根据浏览器不同限制不同</p>
 											</div>
 										</div>
 										<div class="line">
-											<div class="btn-group">
+											{%hasPower type=button keyword=export_order%}
+											<div class="btn-group" id="exportBtn">
 												<a class="btn red btn-outline btn-small dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 													导出 <span class="caret"></span>
 												</a>
 												<ul class="dropdown-menu red">
-													<li><a href="#">所有的商品</a></li>
-													<li><a href="#">搜索结果中的商品</a></li>
-													<li><a href="#">选中的商品</a></li>
+													<li><a href="#" id="export_all">所有的商品</a></li>
+													<li><a href="#" id="export_search">搜索结果中的商品</a></li>
+													<li><a href="#" id="export_selected">选中的商品</a></li>
 												</ul>
 											</div>
+											{%/hasPower%}
 											<form class="form-inline pull-right" id="all_search">
 												<div class="form-group">
 													<select class="input-sm form-control">
@@ -355,19 +358,22 @@
 											<div class="top-tips-body">
 												<p>全部订单指全部有效订单，无效的订单暂不显示。</p>
 												<p>可输入商品名称关键字进行搜索，侧边栏进行高级搜索。</p>
+												<p>搜索结果导出和选择导出有数量限制，根据浏览器不同限制不同</p>
 											</div>
 										</div>
 										<div class="line">
-											<div class="btn-group">
+											{%hasPower type=button keyword=export_order%}
+											<div class="btn-group" id="exportBtn">
 												<a class="btn red btn-outline btn-small dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 													导出 <span class="caret"></span>
 												</a>
 												<ul class="dropdown-menu red">
-													<li><a href="#">所有的商品</a></li>
-													<li><a href="#">搜索结果中的商品</a></li>
-													<li><a href="#">选中的商品</a></li>
+													<li><a href="#" id="export_all">所有的商品</a></li>
+													<li><a href="#" id="export_search">搜索结果中的商品</a></li>
+													<li><a href="#" id="export_selected">选中的商品</a></li>
 												</ul>
 											</div>
+											{%/hasPower%}
 											<form class="form-inline pull-right" id="paying_search">
 												<div class="form-group">
 													<select class="input-sm form-control">
@@ -451,19 +457,22 @@
 											<div class="top-tips-body">
 												<p>全部订单指全部有效订单，无效的订单暂不显示。</p>
 												<p>可输入商品名称关键字进行搜索，侧边栏进行高级搜索。</p>
+												<p>搜索结果导出和选择导出有数量限制，根据浏览器不同限制不同</p>
 											</div>
 										</div>
 										<div class="line">
-											<div class="btn-group">
+											{%hasPower type=button keyword=export_order%}
+											<div class="btn-group" id="exportBtn">
 												<a class="btn red btn-outline btn-small dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 													导出 <span class="caret"></span>
 												</a>
 												<ul class="dropdown-menu red">
-													<li><a href="#">所有的商品</a></li>
-													<li><a href="#">搜索结果中的商品</a></li>
-													<li><a href="#">选中的商品</a></li>
+													<li><a href="#" id="export_all">所有的商品</a></li>
+													<li><a href="#" id="export_search">搜索结果中的商品</a></li>
+													<li><a href="#" id="export_selected">选中的商品</a></li>
 												</ul>
 											</div>
+											{%/hasPower%}
 											<form class="form-inline pull-right" id="sending_search">
 												<div class="form-group">
 													<select class="input-sm form-control">
@@ -547,19 +556,22 @@
 											<div class="top-tips-body">
 												<p>全部订单指全部有效订单，无效的订单暂不显示。</p>
 												<p>可输入商品名称关键字进行搜索，侧边栏进行高级搜索。</p>
+												<p>搜索结果导出和选择导出有数量限制，根据浏览器不同限制不同</p>
 											</div>
 										</div>
 										<div class="line">
-											<div class="btn-group">
+											{%hasPower type=button keyword=export_order%}
+											<div class="btn-group" id="exportBtn">
 												<a class="btn red btn-outline btn-small dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 													导出 <span class="caret"></span>
 												</a>
 												<ul class="dropdown-menu red">
-													<li><a href="#">所有的商品</a></li>
-													<li><a href="#">搜索结果中的商品</a></li>
-													<li><a href="#">选中的商品</a></li>
+													<li><a href="#" id="export_all">所有的商品</a></li>
+													<li><a href="#" id="export_search">搜索结果中的商品</a></li>
+													<li><a href="#" id="export_selected">选中的商品</a></li>
 												</ul>
 											</div>
+											{%/hasPower%}
 											<form class="form-inline pull-right" id="receiving_search">
 												<div class="form-group">
 													<select class="input-sm form-control">
@@ -643,19 +655,22 @@
 											<div class="top-tips-body">
 												<p>全部订单指全部有效订单，无效的订单暂不显示。</p>
 												<p>可输入商品名称关键字进行搜索，侧边栏进行高级搜索。</p>
+												<p>搜索结果导出和选择导出有数量限制，根据浏览器不同限制不同</p>
 											</div>
 										</div>
 										<div class="line">
-											<div class="btn-group">
+											{%hasPower type=button keyword=export_order%}
+											<div class="btn-group" id="exportBtn">
 												<a class="btn red btn-outline btn-small dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 													导出 <span class="caret"></span>
 												</a>
 												<ul class="dropdown-menu red">
-													<li><a href="#">所有的商品</a></li>
-													<li><a href="#">搜索结果中的商品</a></li>
-													<li><a href="#">选中的商品</a></li>
+													<li><a href="#" id="export_all">所有的商品</a></li>
+													<li><a href="#" id="export_search">搜索结果中的商品</a></li>
+													<li><a href="#" id="export_selected">选中的商品</a></li>
 												</ul>
 											</div>
+											{%/hasPower%}
 											<form class="form-inline pull-right" id="completed_search">
 												<div class="form-group">
 													<select class="input-sm form-control">
@@ -740,19 +755,22 @@
 											<div class="top-tips-body">
 												<p>全部订单指全部有效订单，无效的订单暂不显示。</p>
 												<p>可输入商品名称关键字进行搜索，侧边栏进行高级搜索。</p>
+												<p>搜索结果导出和选择导出有数量限制，根据浏览器不同限制不同</p>
 											</div>
 										</div>
 										<div class="line">
-											<div class="btn-group">
+											{%hasPower type=button keyword=export_order%}
+											<div class="btn-group" id="exportBtn">
 												<a class="btn red btn-outline btn-small dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 													导出 <span class="caret"></span>
 												</a>
 												<ul class="dropdown-menu red">
-													<li><a href="#">所有的商品</a></li>
-													<li><a href="#">搜索结果中的商品</a></li>
-													<li><a href="#">选中的商品</a></li>
+													<li><a href="#" id="export_all">所有的商品</a></li>
+													<li><a href="#" id="export_search">搜索结果中的商品</a></li>
+													<li><a href="#" id="export_selected">选中的商品</a></li>
 												</ul>
 											</div>
+											{%/hasPower%}
 											<form class="form-inline pull-right" id="closed_search">
 												<div class="form-group">
 													<select class="input-sm form-control">
@@ -852,6 +870,19 @@
 					'X-CSRF-TOKEN':'{%$x_csrf_token%}'
 				}
 			});
+			
+			var $_look_order = 0;
+			var $_refund_order = 0;
+			var $_send_order = 0;
+			{%hasPower type=button keyword=look_order%}
+			$_look_order = 1;
+			{%/hasPower%}
+			{%hasPower type=button keyword=refund_order%}
+			$_refund_order = 1;
+			{%/hasPower%}
+			{%hasPower type=button keyword=send_order%}
+			$_send_order = 1;
+			{%/hasPower%}
 			
 			//刷新同一个订单号的所有页面的数据
 			var flushTr = function(order){
@@ -976,10 +1007,58 @@
 			});
 		</script>
 		<script type="text/javascript" src="{%resource path='/html/js/order/all.js'%}"></script>
+		{%hasPower type=button keyword=export_order%}
+		<script type="text/javascript">
+			$('#all #exportBtn').on('click','#export_all',function(){
+				post("./index.php?c=export&a=order",{isdelete:0,status:1});
+			}).on('click','#export_search',function(){
+				var orderno = price.getResultPrimaryKey();
+				if(orderno.length>0)
+				{
+					post('./index.php?c=export&a=order',{orderno:orderno});
+				}
+				else
+				{
+					bootbox.alert('没有搜索结果');
+				}
+			}).on('click','#export_selected',function(){
+				var orderno = getSelectedCheckbox($('#all'));
+				if(orderno.length>0)
+				{
+					post('./index.php?c=export&a=product',{orderno:orderno});
+				}
+				else
+				{
+					bootbox.alert('请选择商品');
+				}
+			});
+		</script>
+		{%/hasPower%}
 		<script type="text/javascript" src="{%resource path='/html/js/order/paying.js'%}"></script>
 		<script type="text/javascript" src="{%resource path='/html/js/order/sending.js'%}"></script>
 		<script type="text/javascript" src="{%resource path='/html/js/order/receiving.js'%}"></script>
 		<script type="text/javascript" src="{%resource path='/html/js/order/completed.js'%}"></script>
 		<script type="text/javascript" src="{%resource path='/html/js/order/closed.js'%}"></script>
+		<script type="text/javascript">
+		tab.on('tab.click.all',function(){
+			all.clearAjaxParameter();
+			all.reload();
+		}).on('tab.click.paying',function(){
+			paying.clearAjaxParameter();
+			paying.reload();
+		}).on('tab.click.sending',function(){
+			sending.clearAjaxParameter();
+			sending.reload();
+		}).on('tab.click.receiving',function(){
+			receiving.clearAjaxParameter();
+			receiving.reload();
+		}).on('tab.click.completed',function(){
+			completed.clearAjaxParameter();
+			completed.reload();
+		}).on('tab.click.closed',function(){
+			close.clearAjaxParameter();
+			close.reload();
+		});
+		</script>
 	</body>
 </html>

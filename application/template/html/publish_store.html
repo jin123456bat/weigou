@@ -23,6 +23,35 @@
 		</script>
 	</head>
 	<body>
+		<div id="setPublishModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<form class="form-horizontal" role="form">
+						<input type="hidden" name="store_id" value="">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							<h4 class="modal-title">设置供货商</h4>
+						</div>
+						<div class="modal-body">
+							<div class="form-group">
+								<label class="col-md-2 control-label">供应商</label>
+								<div class="col-md-9">
+									<select class="form-control" name="publish">
+										<option value="" disabled="disabled" selected="selected">请选择供应商</option>								
+									</select>
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer" style="padding: 0px;">
+							<div class="modal-button-group">
+								<div class="modal-button submit">确认</div>
+								<div data-dismiss="modal" class="modal-button">取消</div>
+							</div>
+						</div>
+					</form>
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
 		<div id="publishModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
 			<div class="modal-dialog" role="document">
 				<div class="modal-content">
@@ -207,27 +236,49 @@
 			$('.select-multiple').on('click','.option',function(){
 				$(this).siblings().removeClass('active');
 				$(this).addClass('active');
+				if($(this).data('type') == 'publish')
+				{
+					load('store',$(this).data('id'));
+				}
 				return false;
 			});
 			//载入分类的统一的函数
-			function load(type)
+			function load(type,publish_id)
 			{
 				$('.col-md-4.'+type+' .select-multiple').empty();
-				$.get('./index.php?m=ajax&c='+type+'&a=lists',function(response){
+				$.get('./index.php?m=ajax&c='+type+'&a=lists',{publish_id:publish_id},function(response){
 					if(response.code==1)
 					{
 						for(var i=0;i<response.body.length;i++)
 						{
 							if(type=='store')
 							{
-								$_icon = '<div class="icon"><i class="fa fa-edit"></i><i class="fa fa-remove"></i></div>';
+								if(response.body[i].publish == null)
+								{
+									$_icon = '<span class="setPublish" style="cursor: pointer;font-size: 12px;color: grey;float: right;">尚未设置供应商</span>';
+								}
+								else
+								{
+									$_icon = '<div class="icon"><i class="fa fa-edit"></i><i class="fa fa-remove"></i></div>';
+								}
 							}
 							else
 							{
 								$_icon = '<div class="icon"><i class="fa fa-remove"></i></div>';
 							}
-							tpl = '<div class="option" data-type="'+type+'" data-id="'+response.body[i].id+'">'+response.body[i].name+$_icon+'</div>';
+							if(type=='store' && response.body[i].publish == null)
+							{
+								tpl = '<div style="background-color:rgba(255, 0, 0, 0.1);" class="option" data-type="'+type+'" data-id="'+response.body[i].id+'">'+response.body[i].name+$_icon+'</div>';
+							}
+							else
+							{
+								tpl = '<div class="option" data-type="'+type+'" data-id="'+response.body[i].id+'">'+response.body[i].name+$_icon+'</div>';
+							}
 							$('.col-md-4.'+type+' .select-multiple').append(tpl);
+							if(type=='publish')
+							{
+								$('select[name=publish]').append('<option value="'+response.body[i].id+'">'+response.body[i].name+'</option>');
+							}
 						}
 					}
 					else
@@ -240,8 +291,30 @@
 			
 			//载入publish
 			load('publish');
-			load('store');
 			
+			$('.store .select-multiple').on('click','.setPublish',function(){
+				$('#setPublishModal').modal('show');
+				$('#setPublishModal').find('input[name=store_id]').val($(this).parents('.option').data('id'));
+			});
+			
+			$('#setPublishModal .submit').on('click',function(){
+				let publish = $('#setPublishModal select[name=publish]').val();
+				let id = $('#setPublishModal input[name=store_id]').val();
+				$.post('./index.php?m=ajax&c=store&a=setPublish',{id:id,publish:publish},function(response){
+					if(response.code==1)
+					{
+						$('.store .option[data-id="'+id+'"]').remove();
+						$('#setPublishModal').modal('hide');
+					}
+					else
+					{
+						bootbox.alert(response.result);
+					}
+				});
+				
+			});
+			
+			//删除
 			$('.select-multiple').on('click','.fa-remove',function(){
 				var type = $(this).parents('.option').data('type');
 				var id = $(this).parents('.option').data('id');
@@ -273,6 +346,7 @@
 				});
 			});
 			
+			//编辑
 			$('.select-multiple').on('click','.fa-edit',function(){
 				id = $(this).parents('.option').data('id');
 				type = $(this).parents('.option').data('type');
@@ -296,6 +370,7 @@
 						{
 							$('#storeModal input[name=erp]').parents('.form-group').addClass('display-none');
 							$('#storeModal input[name=is_auto]').parents('.form-group').addClass('display-none');
+							$('#storeModal input[name=is_auto][value='+response.body.is_auto+']').prop('checked',true);
 						}
 					}
 				});

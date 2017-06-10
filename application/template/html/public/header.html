@@ -5,8 +5,12 @@
 			<div class="version">V2.0</div>
 		</div>
 		<div class="center">
-			<div class="navigator {%if $menu.type==0%}active{%/if%}"><a href="./index.php?c=html&a={%$global_site_type_action[0]%}">平台</a></div>
-			<div class="navigator {%if $menu.type==1%}active{%/if%}"><a href="./index.php?c=html&a={%$global_site_type_action[1]%}">商城</a></div>
+		
+			{%section name=global_site_column loop=$global_site_column%}
+			{%if $global_site_column[global_site_column].enable%}
+			<div class="navigator {%if $global_site_column[global_site_column].active%}active{%/if%}"><a href="./index.php?c=html&a={%$global_site_column[global_site_column].action%}">{%$global_site_column[global_site_column].name%}</a></div>
+			{%/if%}
+			{%/section%}
 			<div class="logout">
 				<a href="./index.php?c=admin&a=logout">
 					<span class="glyphicon glyphicon-off"></span>
@@ -22,7 +26,7 @@
 			<div class="admin">
 				<a href="">
 					<img src="{%$VIEW_ROOT%}/html/images/u88.png">
-					i'm coming
+					{%$smarty.session.username%}
 				</a>
 			</div>	
 		</div>

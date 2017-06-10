@@ -55,22 +55,6 @@ class admin extends view
 	function __construct()
 	{
 		parent::__construct();
-		
-		$action = $this->get('a');
-		
-		if (! in_array($action, $this->_power['nocheck'], true))
-		{
-			
-			if (isset($this->_power['forward'][$action]))
-				$action = $this->_power['forward'][$action];
-			$adminHelper = new \application\helper\admin();
-			$role = $adminHelper->getGroupId();
-			
-			if (! $this->model('role')->checkPower($role, $action, roleModel::POWER_ALL))
-			{
-				$this->setViewname('nopower');
-			}
-		}
 	}
 
 	function create_question()

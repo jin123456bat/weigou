@@ -501,12 +501,6 @@ class orderModel extends model
 		return $this->select($parameter);
 	}
 
-	function count()
-	{
-		$result = $this->find('count(*)');
-		return $result['count(*)'];
-	}
-
 	/*
 	 * 渠道订单总数
 	 */

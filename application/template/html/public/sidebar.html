@@ -7,21 +7,25 @@
 	<div class="menu">
 		<div class="menu1">
 			{%section name=menu1 loop=$menu1%}
+			{%if $menu1[menu1].enable%}
 			<div class="menu1-item {%if $menu1[menu1].active%}active{%/if%}">
 				<a href="{%if !empty($menu1[menu1].link)%}./index.php?c=html&a={%$menu1[menu1].link%}{%/if%}">
 					<img src="{%$VIEW_ROOT%}/html/images/u11.png">
 					{%$menu1[menu1].name%}
 				</a>
 			</div>
+			{%/if%}
 			{%/section%}
 		</div>
 		<div class="menu2">
 			{%section name=menu2 loop=$menu2%}
+			{%if $menu2[menu2].enable%}
 			<div class="menu2-item {%if $menu2[menu2].active%}active{%/if%}">
 				<a href="{%if !empty($menu2[menu2].link)%}./index.php?c=html&a={%$menu2[menu2].link%}{%/if%}">
 					•&nbsp;{%$menu2[menu2].name%}
 				</a>
 			</div>
+			{%/if%}
 			{%/section%}
 		</div>
 	</div>

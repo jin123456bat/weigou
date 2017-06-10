@@ -83,13 +83,14 @@ class productModel extends model
 			if (!empty($columns['name']))
 			{
 				$parameter[] = $columns['name'].(empty($columns['data'])?'':(' as '.$columns['data']));
-				foreach ($post['order'] as $order)
-				{
-					if ($order['column'] == $index)
-					{
-						$this->orderby($columns['name'],$order['dir']);
-					}
-				}
+			}
+		}
+		if (isset($post['order']))
+		{
+			$orders = $post['order'];
+			foreach ($orders as $order)
+			{
+				$this->model('swift')->orderby($columns[$order['column']]['name'],$order['dir']);
 			}
 		}
 		if (isset($post['keywords']) && !empty($post['keywords']))
@@ -102,15 +103,17 @@ class productModel extends model
 			foreach ($status as $stat)
 			{
 				list($name,$value) = explode(':', $stat);
-				$this->where($name.'=?',[$value]);
+				if (stripos($value, '|') == false)
+				{
+					$this->where($name.'=?',[$value]);
+				}
+				else
+				{
+					$value = explode('|', $value);
+					$this->where($name.' in (?)',$value);
+				}
 			}
 		}
 		return $this->select($parameter);
-	}
-	
-	function count()
-	{
-		$result = $this->select('count(*)');
-		return $result[0]['count(*)'];
 	}
 }

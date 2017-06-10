@@ -40,7 +40,7 @@ class bcategory extends ajax
 		return new json(json::OK,NULL,$this->model('bcategory')->where('id=?',[$this->post('id',0,'intval')])->find());
 	}
 	
-	function setStockLimit()
+	function setting()
 	{
 		$id = $this->post('id',0,'intval');
 		$stock_limit = $this->post('stock_limit',0,'intval');
@@ -48,8 +48,16 @@ class bcategory extends ajax
 		{
 			return new json(json::PARAMETER_ERROR,'必须在0到100之间');
 		}
+		$price_old = $this->post('price_old',0,'intval');
+		$price_v0 = $this->post('price_v0',0,'intval');
+		$price_v1 = $this->post('price_v1',0,'intval');
+		$price_v2 = $this->post('price_v2',0,'intval');
 		$this->model('bcategory')->where('id=?',[$id])->limit(1)->update([
 			'stock_limit'=>$stock_limit,
+			'price_old' => $price_old,
+			'price_v0' => $price_v0,
+			'price_v1' => $price_v1,
+			'price_v2' => $price_v2,
 		]);
 		return new json(json::OK);
 	}
@@ -140,7 +148,7 @@ class bcategory extends ajax
 		return array(
 			array(
 				'deny',
-				'actions' => ['create','setStockLimit','save','remove'],
+				'actions' => ['create','setting','save','remove'],
 				'message' => new json(json::NOT_LOGIN),
 				'express' => empty($adminHelper->getAdminId()),
 				'redict' => './index.php?c=admin&a=login',

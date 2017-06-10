@@ -1,4 +1,4 @@
-var closed = datatables({
+var close = datatables({
 	table:$('#closed table'),
 	ajax:{
 		url:'./index.php?c=datatables&a=order',
@@ -302,7 +302,11 @@ var closed = datatables({
 			showWayBtn = false;
 			showLogisticsBtn = false;
 			
-			content = '<button class="btn btn-outline btn-xs orderdetail" data-id="'+data+'">查看</button>';
+			let content = '';
+			if($_look_order)
+			{
+				content += '<button class="btn btn-outline btn-xs orderdetail" data-id="'+data+'">查看</button>';
+			}
 			if(full.status==1)
 			{
 				if((full.pay_status == 1 || full.pay_status == 4) && full.receive==0)
@@ -353,8 +357,8 @@ var closed = datatables({
 });
 
 $('#closed_search').on('submit',function(){
-	closed.addAjaxParameter('status',$(this).find('select').val());
-	closed.search($(this).find('input').val());
+	close.addAjaxParameter('status',$(this).find('select').val());
+	close.search($(this).find('input').val());
 	return false;
 });
 
@@ -385,10 +389,10 @@ $('#closed .multipleBtn').on('click',function(){
 			},
 			callback: function(result,a) {
 				if(result) {
-					closed.addAjaxParameter('customActionType','group_action');
-					closed.addAjaxParameter('id',id);
-					closed.addAjaxParameter('customActionName','remove');
-					closed.reload();
+					close.addAjaxParameter('customActionType','group_action');
+					close.addAjaxParameter('id',id);
+					close.addAjaxParameter('customActionName','remove');
+					close.reload();
 				}
 			},
 		});

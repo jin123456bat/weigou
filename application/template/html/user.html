@@ -39,11 +39,10 @@
 			  				
 			  				<div class="tab">
 			  					<div class="tab-header">
-			  						<a class="tab-title active" href="#all">全部商品</a>
-			  						<a class="tab-title" href="#sale">在售商品</a>
-			  						<a class="tab-title" href="#examine">待审核</a>
-			  						<a class="tab-title" href="#unshelf">已下架</a>
-			  						<a class="tab-title" href="#rubbish">回收站</a>
+			  						<a class="tab-title active" href="#all">会员列表</a>
+			  						{%hasPower type=button keyword=blacklist%}
+			  						<a class="tab-title" href="#blacklist">黑名单</a>
+			  						{%/hasPower%}
 			  					</div>
 			  					<div class="tab-body">
 			  						<div class="tab-page active" id="all">
@@ -53,38 +52,25 @@
 												操作提示
 											</div>
 											<div class="top-tips-body">
-												<p>该页面展示了商城所有的商品信息，可对商品进行编辑修改操作。</p>
-												<p>可输入商品名称关键字进行搜索，侧边栏进行高级搜索。</p>
+												<p>受浏览器限制，导出搜索结果和选中项目有最大数量限制:chrome浏览器2500个,其他未知。</p>
 											</div>
 										</div>
-										<div class="line">
-											<a href="./index.php?c=html&a=product_create" class="btn red btn-outline btn-small">添加商品</a>
-											<a class="btn red btn-outline btn-small">批量修改商品信息</a>
-											<div class="btn-group">
+										<div class="line" style="float: right;">
+											{%hasPower type=button keyword=export_user%}
+											<div class="btn-group" id="exportBtn">
 												<a class="btn red btn-outline btn-small dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 													导出 <span class="caret"></span>
 												</a>
 												<ul class="dropdown-menu red">
-													<li><a href="#">所有的商品</a></li>
-													<li><a href="#">搜索结果中的商品</a></li>
-													<li><a href="#">选中的商品</a></li>
+													<li><a href="#" id="export_all">所有的用户</a></li>
+													<li><a href="#" id="export_search">搜索结果中的用户</a></li>
+													<li><a href="#" id="export_selected">选中的用户</a></li>
 												</ul>
 											</div>
-											<form class="form-inline pull-right" id="dt_search">
+											{%/hasPower%}
+											<form class="form-inline pull-right" id="all_search">
 												<div class="form-group">
-													<select class="input-sm form-control">
-														<option value="" selected="selected">商品状态</option>
-														<option value="examine:0">待审核</option>
-														<option value="examine:2">审核中</option>
-														<option value="examine:-1">审核未通过</option>
-														<option value="examine:1,status:0,downStatus:0">已下架</option>
-														<option value="status:0,downStatus:1">已下架，编辑中</option>
-														<option value="status:1,stock:1">销售中</option>
-														<option value="status:1,stock:0">销售中，库存不足</option>
-													</select>
-												</div>
-												<div class="form-group">
-													<input type="text" name="search" class="form-control input-sm" placeholder="商品名称/SPU">
+													<input type="text" name="search" class="form-control input-sm" placeholder="会员名称/手机号">
 												</div>
 												<button class="btn btn-small btn-orange pull-right" style="height: 30px; margin-left: 10px;">搜索</button>
 											</form>
@@ -96,23 +82,38 @@
 			  											<td width="2%" style="padding-left: 20px;padding-right: 20px;">
 			  												<input type="checkbox" class="select-all">
 			  											</td>
-			  											<td width="25%" style="min-width: 305px;">
-			  												商品名称
+			  											<td>
+			  												头像
 			  											</td>
-			  											<td width="10%" style="min-width: 80px;">
-			  												SPU编号
+			  											<td>
+			  												用户昵称
 			  											</td>
-			  											<td width="10%" style="min-width: 65px;">
-			  												商品类型
+			  											<td>
+			  												等级
 			  											</td>
-			  											<td width="10%" style="min-width: 115px;">
-			  												价格
+			  											<td>
+			  												手机号
 			  											</td>
-			  											<td width="10%" style="min-width: 80px;">
-			  												商品来源
+			  											<td>
+			  												微信号
 			  											</td>
-			  											<td width="10%">
-			  												商品状态
+			  											<td>
+			  												上级导师
+			  											</td>
+			  											<td>
+			  												推广人
+			  											</td>
+			  											<td>
+			  												余额
+			  											</td>
+			  											<td>
+			  												个人推广码
+			  											</td>
+			  											<td>
+			  												注册时间
+			  											</td>
+			  											<td>
+			  												类型
 			  											</td>
 			  											<td style="text-align: center;">
 			  												操作
@@ -124,19 +125,7 @@
 												</tbody>
 												<tfoot>
 													<tr>
-														<td colspan="4">
-															<div class="col-md-4">
-																<select class="form-control" id="multipleSelect">
-																	<option>请选择...</option>
-																	<option value="delete">删除</option>
-																</select>
-																
-															</div>
-															<div class="col-md-2">
-																<button class="btn" id="multipleBtn">确定</button>
-															</div>
-														</td>
-														<td id="split_page" colspan="4" style="text-align: right;">
+														<td id="split_page" colspan="15" style="text-align: right;">
 			  											
 			  											</td>
 													</tr>
@@ -144,19 +133,97 @@
 											</table>
 										</div>
 									</div>
-			  						<div class="tab-page" id="sale">
-			  							
-			  						</div>
-			  						<div class="tab-page" id="examine">
-			  							
-			  						</div>
-			  						<div class="tab-page" id="unshelf">
-			  							
-			  						</div>
-			  						<div class="tab-page" id="rubbish">
-			  							
-			  						</div>
-								</div>
+		  							{%hasPower type=button keyword=blacklist%}
+			  						<div class="tab-page" id="blacklist">
+			  							<div class="space"></div>
+										<div class="top-tips">
+											<div class="top-tips-title">
+												操作提示
+											</div>
+											<div class="top-tips-body">
+												<p>受浏览器限制，导出搜索结果和选中项目有最大数量限制:chrome浏览器2500个,其他未知。</p>
+											</div>
+										</div>
+										<div class="line" style="float: right;">
+											{%hasPower type=button keyword=export_user%}
+											<div class="btn-group" id="export_user">
+												<a class="btn red btn-outline btn-small dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+													导出 <span class="caret"></span>
+												</a>
+												<ul class="dropdown-menu red">
+													<li><a href="#" id="export_all">所有的用户</a></li>
+													<li><a href="#" id="export_search">搜索结果中的用户</a></li>
+													<li><a href="#" id="export_selected">选中的用户</a></li>
+												</ul>
+											</div>
+											{%/hasPower%}
+											<form class="form-inline pull-right" id="blacklist_search">
+												<div class="form-group">
+													<input type="text" name="search" class="form-control input-sm" placeholder="会员名称/手机号">
+												</div>
+												<button class="btn btn-small btn-orange pull-right" style="height: 30px; margin-left: 10px;">搜索</button>
+											</form>
+										</div>
+										<div class="">
+											<table class="table table-hover table-bordered table-responsive">
+												<thead>
+													<tr>
+			  											<td width="2%" style="padding-left: 20px;padding-right: 20px;">
+			  												<input type="checkbox" class="select-all">
+			  											</td>
+			  											<td>
+			  												头像
+			  											</td>
+			  											<td>
+			  												用户昵称
+			  											</td>
+			  											<td>
+			  												等级
+			  											</td>
+			  											<td>
+			  												手机号
+			  											</td>
+			  											<td>
+			  												微信号
+			  											</td>
+			  											<td>
+			  												上级导师
+			  											</td>
+			  											<td>
+			  												推广人
+			  											</td>
+			  											<td>
+			  												余额
+			  											</td>
+			  											<td>
+			  												个人推广码
+			  											</td>
+			  											<td>
+			  												注册时间
+			  											</td>
+			  											<td>
+			  												类型
+			  											</td>
+			  											<td style="text-align: center;">
+			  												操作
+			  											</td>
+			  										</tr>
+												</thead>
+												<tbody>
+													
+												</tbody>
+												<tfoot>
+													<tr>
+														<td id="split_page" colspan="15" style="text-align: right;">
+			  											
+			  											</td>
+													</tr>
+												</tfoot>
+											</table>
+										</div>
+									</div>
+									{%/hasPower%}
+			  					</div>
 							</div>
 							
 			  			</div>
@@ -175,6 +242,12 @@
 		<script src="{%resource path='/html/js/tab.js'%}"></script>
 		<script src="{%resource path='/html/js/global.js'%}"></script>
 		<script type="text/javascript">
+			$.ajaxSetup({
+				headers:{
+					'X-CSRF-TOKEN':'{%$x_csrf_token%}'
+				}
+			});
+			
 			$('table').on('change','input[type=checkbox].select-all',function(){
 				if($(this).is(':checked'))
 				{
@@ -191,56 +264,53 @@
 				return false;
 			});
 			
-			var dt = datatables({
+			var all = datatables({
 				table:$('#all table'),
 				ajax:{
-					url:'{%url c=datatables a=product%}',
+					url:'{%url c=datatables a=user%}',
 					data:{
-						isdelete:0,
+						close:0
 					},
 				},
 				columns:[{
 					data:'id',
-					name:'product.id',
+					name:'user.id',
+				},{
+					data:'gravatar',
+					name:'(select upload.path from upload where upload.id=user.gravatar limit 1)',
 				},{
 					data:'name',
-					name:'product.name',
+					name:'user.name',
+				},{
+					data:'vip',
+					name:'user.vip',
+				},{
+					data:'telephone',
+					name:'user.telephone',
+				},{
+					data:'wechat_no',
+					name:'user.wechat_no',
+				},{
+					data:'o_master',
+					name:'(select u.name from user as u where u.id=user.o_master limit 1)',
+				},{
+					data:'oid',
+					name:'(select us.name from user as us where us.id=user.oid limit 1)',
+				},{
+					data:'money',
+					name:'user.money',
+				},{
+					data:'invit',
+					name:'user.invit',
+				},{
+					data:'regtime',
+					name:'user.regtime',
+				},{
+					data:'master',
+					name:'user.master',
 				},{
 					data:'id',
-					name:'product.id',
-				},{
-					data:'outside',
-					name:'product.outside',
-				},{
-					data:'price',
-					name:'product.price',
-				},{
-					data:'source',
-					name:'product.source',
-				},{
-					data:'status',
-					name:'product.status',
-				},{
-					data:'id',
-					name:'product.id',
-				},
-				
-				{
-					data:'v1price',
-					name:'product.v1price',
-					visible:false,
-				},{
-					data:'v2price',
-					name:'product.v2price',
-					visible:false,
-				},{
-					data:'pic',
-					name:'(select upload.path from product_img left join upload on upload.id=product_img.fid where product_img.pid=product.id order by product_img.position asc limit 1)',
-					visible:false,
-				},{
-					data:'brand',
-					name:'(select brand.name_cn from brand where brand.id=product.brand limit 1)',
-					visible:false,
+					name:'user.id',
 				}],
 				columnDefs:[{
 					targets:0,
@@ -250,55 +320,83 @@
 				},{
 					targets:1,
 					render:function(data,full){
-						return '<div style="display: inline-block;width: 70px;height: 60px;vertical-align:middle;"><img onerror="this.src=\'https://placeholdit.imgix.net/~text?txtsize=18&txt=%E6%AD%A4%E5%A4%84%E6%97%A0%E5%9B%BE&w=60&h=60\';" src="'+full.pic+'" width="60px" height="60px"></div><div style="display: inline-block;width: 70%;height: 60px;vertical-align:middle;"><div style="display: block;width: 100%;word-break: break-all;overflow: hidden;height: 40px;line-height: 20px;">'+data+'</div><div style="height:20px;line-height: 20px;width:100%;overflow: hidden;">品牌：'+(full.brand==null?'':full.brand)+'</div></div>';
+						return '<img src="'+data+'" onerror="this.src=\'https://placeholdit.imgix.net/~text?txtsize=13&txt=%E5%A4%B4%E5%83%8F&w=50&h=50\';" width="50" height="50" class="img-circle">';
 					}
 				},{
 					targets:3,
-					render:function(data,full){
-						if(data == 0)
+					render:function(data,type){
+						switch(parseInt(data))
 						{
-							return '普通商品';
+							case 0:return '普通';
+							case 1:return '白金';
+							case 2:return '钻石';
 						}
-						else if(data == 1)
-						{
-							return '进口商品';
-						}
-						else if(data == 2)
-						{
-							return '直供商品';
-						}
-						else if(data == 3)
-						{
-							return '直邮商品';
-						}
-						alert('商品outside错误');
-					}
-				},{
-					targets:4,
-					render:function(data,full){
-						return '普通:'+data+'<br>白金:'+full.v1price+'<br>钻石:'+full.v2price;
+						return '错误';
 					}
 				},{
 					targets:5,
-					render:function(data,full){
-						if(data == 0)
+					render:function(data,type){
+						if(data.length==0)
 						{
-							return '总后台录入';
+							return '<font color="BCBCBC">暂无</font>';
 						}
-						else if(data == 1)
+						return data;
+					}
+				},{
+					targets:6,
+					render:function(data,type){
+						if(data==null)
 						{
-							return '上新专员';
+							return '<font color="BCBCBC">暂无</font>';
 						}
-						alert("商品来源错误");
+						return data;
 					}
 				},{
 					targets:7,
+					render:function(data,type){
+						if(data==null)
+						{
+							return '<font color="BCBCBC">暂无</font>';
+						}
+						return data;
+					}
+				},{
+					targets:10,
+					render:function(data,type){
+						return unixtotime(data,true,8);
+					}
+				},{
+					targets:11,
+					render:function(data,type){
+						return '<div style="cursor:default;" class="checkbox '+(data==1?'active blue':'')+'">'+(data==1?'导师':'普通')+'</div>';
+					}
+				},{
+					targets:12,
 					render:function(data,full){
-						content = '<button class="btn btn-outline btn-xs" data-id="'+data+'">查看</button>';
-						content += '<div class="space"></div><button class="btn btn-outline btn-xs" data-id="'+data+'">编辑</button>';
-						content += '<div class="space"></div><button class="btn btn-outline btn-xs" data-id="'+data+'">审核</button>';
-						content += '<div class="space"></div><button class="btn btn-outline btn-xs" data-id="'+data+'">上架</button>';
-						content += '<div class="space"></div><button class="btn btn-outline btn-xs" data-id="'+data+'">下架</button>';
+						var look_disable = 'disabled="disabled"';
+						{%hasPower keyword=user_look type=button%}
+						look_disable = '';
+						{%/hasPower%}
+						
+						var blacklist_disable = 'disabled="disabled"';
+						{%hasPower keyword=create_blacklist type=button%}
+						blacklist_disable = '';
+						{%/hasPower%}
+						
+						
+						content = 
+						`
+						<div class="btn-group" role="group">
+							<button class="btn btn-default btn-xs look" data-id="${data}" ${look_disable}>
+								查看/编辑
+							</button>
+							<button class="btn btn-xs btn-default btn-icon dropdown-toggle" data-toggle="dropdown" ${blacklist_disable}>
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu dropdown-sm">
+							  <li><a class="blacklist" data-id="${data}" href="#">加入黑名单</a></li>
+							</ul>
+						</div>`;
 						return content;
 					}
 				}],
@@ -309,16 +407,236 @@
 				}
 			});
 			
+			{%hasPower type=button keyword=blacklist%}
+			var blacklist = datatables({
+				table:$('#blacklist table'),
+				ajax:{
+					url:'{%url c=datatables a=user%}',
+					data:{
+						close:1
+					},
+				},
+				columns:[{
+					data:'id',
+					name:'user.id',
+				},{
+					data:'gravatar',
+					name:'(select upload.path from upload where upload.id=user.gravatar limit 1)',
+				},{
+					data:'name',
+					name:'user.name',
+				},{
+					data:'vip',
+					name:'user.vip',
+				},{
+					data:'telephone',
+					name:'user.telephone',
+				},{
+					data:'wechat_no',
+					name:'user.wechat_no',
+				},{
+					data:'o_master',
+					name:'(select u.name from user as u where u.id=user.o_master limit 1)',
+				},{
+					data:'oid',
+					name:'(select us.name from user as us where us.id=user.oid limit 1)',
+				},{
+					data:'money',
+					name:'user.money',
+				},{
+					data:'invit',
+					name:'user.invit',
+				},{
+					data:'regtime',
+					name:'user.regtime',
+				},{
+					data:'master',
+					name:'user.master',
+				},{
+					data:'id',
+					name:'user.id',
+				}],
+				columnDefs:[{
+					targets:0,
+					render:function(data,full){
+						return '<input type="checkbox" name="id[]" value="'+data+'">';
+					}
+				},{
+					targets:1,
+					render:function(data,full){
+						return '<img src="'+data+'" onerror="this.src=\'https://placeholdit.imgix.net/~text?txtsize=13&txt=%E5%A4%B4%E5%83%8F&w=50&h=50\';" width="50" height="50" class="img-circle">';
+					}
+				},{
+					targets:3,
+					render:function(data,type){
+						switch(parseInt(data))
+						{
+							case 0:return '普通';
+							case 1:return '白金';
+							case 2:return '钻石';
+						}
+						return '错误';
+					}
+				},{
+					targets:5,
+					render:function(data,type){
+						if(data.length==0)
+						{
+							return '<font color="BCBCBC">暂无</font>';
+						}
+						return data;
+					}
+				},{
+					targets:6,
+					render:function(data,type){
+						if(data==null)
+						{
+							return '<font color="BCBCBC">暂无</font>';
+						}
+						return data;
+					}
+				},{
+					targets:7,
+					render:function(data,type){
+						if(data==null)
+						{
+							return '<font color="BCBCBC">暂无</font>';
+						}
+						return data;
+					}
+				},{
+					targets:10,
+					render:function(data,type){
+						return unixtotime(data,true,8);
+					}
+				},{
+					targets:11,
+					render:function(data,type){
+						return '<div style="cursor:default;" class="checkbox '+(data==1?'active blue':'')+'">'+(data==1?'导师':'普通')+'</div>';
+					}
+				},{
+					targets:12,
+					render:function(data,full){
+						var look_disable = 'disabled="disabled"';
+						{%hasPower keyword=user_look type=button%}
+						look_disable = '';
+						{%/hasPower%}
+						
+						var blacklist_disable = 'disabled="disabled"';
+						{%hasPower keyword=create_blacklist type=button%}
+						blacklist_disable = '';
+						{%/hasPower%}
+						
+						content = 
+						`
+						<div class="btn-group" role="group">
+							<button class="btn btn-default btn-xs look" data-id="${data}" ${look_disable}>
+								查看/编辑
+							</button>
+							<button class="btn btn-xs btn-default btn-icon dropdown-toggle" data-toggle="dropdown" ${blacklist_disable}>
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu dropdown-sm">
+							  <li><a class="unblacklist" data-id="${data}" href="#">移出黑名单</a></li>
+							</ul>
+						</div>`;
+						return content;
+					}
+				}],
+				pagesize:10,
+				onRowLoaded:function(row){
+					row.find('td:last').css('text-align','center');
+					row.find('td:first').css({'padding-left':'20px','padding-right':'20px'});
+				}
+			});
+			{%/hasPower%}
 			
-			$('#dt_search').on('submit',function(){
-				dt.addAjaxParameter('status',$(this).find('select').val());
-				dt.search($(this).find('input').val());
-				return false;
+			//点击tab的时候刷新
+			tab.on('tab.click.blacklist',function(){
+				blacklist.clearAjaxParameter();
+				blacklist.reload();
+			}).on('tab.click.all',function(){
+				all.clearAjaxParameter();
+				all.reload();
 			});
 			
-			var getSelectedCheckbox = function(){
+			$('#all_search').on('submit',function(){
+				all.search($(this).find('input').val());
+				return false;
+			});
+			{%hasPower type=button keyword=blacklist%}
+			$('#blacklist_search').on('submit',function(){
+				blacklist.search($(this).find('input').val());
+				return false;
+			});
+			{%/hasPower%}
+			{%hasPower type=button keyword=create_blacklist%}
+			$('#all table').on('click','.blacklist',function(){
+				var id =$(this).data('id');
+				var tr = $(this).parents('tr');
+				bootbox.confirm({
+					message:'确认把这个用户加入黑名单?',
+					buttons:{
+						cancel:{
+							label: '<i class="fa fa-times"></i> 取消',
+						},
+						confirm:{
+							label:'<i class="fa fa-check"></i> 确定',
+						}
+					},
+					callback: function(result) {
+						if(result) {
+							$.post('./index.php?m=ajax&c=user&a=close',{id:id},function(response){
+								if(response.code==1)
+								{
+									tr.remove();
+								}
+								else
+								{
+									bootbox.alert(response.result);
+								}
+							});
+						}
+					},
+				});
+				return false;
+			});
+			{%/hasPower%}
+			{%hasPower type=button keyword=user_look%}
+			$('#all table').on('click','.look',function(){
+				window.location = './index.php?c=html&a=userinfo&id='+$(this).data('id');
+			});
+			{%/hasPower%}
+			
+			{%hasPower type=button keyword=blacklist%}
+			{%hasPower type=button keyword=create_blacklist%}
+			$('#blacklist table').on('click','.unblacklist',function(){
+				var id =$(this).data('id');
+				var tr = $(this).parents('tr');
+				$.post('./index.php?m=ajax&c=user&a=close',{id:id},function(response){
+					if(response.code==1)
+					{
+						tr.remove();
+					}
+					else
+					{
+						bootbox.alert(response.result);
+					}
+				});
+				return false;
+			});
+			{%/hasPower%}
+			{%/hasPower%}
+			
+			{%hasPower type=button keyword=user_look%}			
+			$('#blacklist table').on('click','.look',function(){
+				window.location = './index.php?c=html&a=userinfo&id='+$(this).data('id');
+			});
+			{%/hasPower%}
+			
+			var getSelectedCheckbox = function(obj){
 				$_id = [];
-				$('#all table tbody input[type=checkbox]').each(function(index,value){
+				obj.find('table tbody input[type=checkbox]').each(function(index,value){
 					if($(value).is(':checked'))
 					{
 						$_id.push($(value).val());
@@ -326,43 +644,58 @@
 				});
 				return $_id;
 			}
-			
-			//批量操作
-			$('#multipleBtn').on('click',function(){
-				var id = getSelectedCheckbox();
-				if($('#multipleSelect').val() == '')
-				{
-					return false;
-				}
-				if(id.length == 0)
-				{
-					bootbox.alert('请选择商品');
-					return false;
-				}
-				if($('#multipleSelect').val() == 'delete')
-				{
-					bootbox.confirm({
-						message:'确认删除?',
-						buttons:{
-							cancel:{
-								label: '<i class="fa fa-times"></i> 取消',
-							},
-							confirm:{
-								label:'<i class="fa fa-check"></i> 确定',
-							}
-						},
-						callback: function(result,a) {
-							if(result) {
-								dt.addAjaxParameter('customActionType','group_action');
-								dt.addAjaxParameter('id',id);
-								dt.addAjaxParameter('customActionName','remove');
-								dt.reload();
-							}
-						},
-					});
-				}
-				return false;
-			});
 		</script>
+		{%hasPower type=button keyword=export_user%}
+		<script type="text/javascript">
+			$('#all #exportBtn').on('click','#export_all',function(){
+				post("./index.php?c=export&a=user",{close:0});
+			}).on('click','#export_search',function(){
+				var ids = all.getResultPrimaryKey();
+				if(ids.length>0)
+				{
+					post('./index.php?c=export&a=user',{id:ids});
+				}
+				else
+				{
+					bootbox.alert('没有搜索结果');
+				}
+			}).on('click','#export_selected',function(){
+				var ids = getSelectedCheckbox($('#all'));
+				if(ids.length>0)
+				{
+					post('./index.php?c=export&a=user',{id:ids});
+				}
+				else
+				{
+					bootbox.alert('请选择用户');
+				}
+			});
+			{%hasPower type=button keyword=blacklist%}
+			$('#blacklist #exportBtn').on('click','#export_all',function(){
+				post("./index.php?c=export&a=user",{close:1});
+			}).on('click','#export_search',function(){
+				var ids = blacklist.getResultPrimaryKey();
+				if(ids.length>0)
+				{
+					post('./index.php?c=export&a=user',{id:ids});
+				}
+				else
+				{
+					bootbox.alert('没有搜索结果');
+				}
+			}).on('click','#export_selected',function(){
+				var ids = getSelectedCheckbox($('#blacklist'));
+				if(ids.length>0)
+				{
+					post('./index.php?c=export&a=user',{id:ids});
+				}
+				else
+				{
+					bootbox.alert('请选择用户');
+				}
+			});
+			{%/hasPower%}
+		</script>
+		{%/hasPower%}
 	</body>
 </html>

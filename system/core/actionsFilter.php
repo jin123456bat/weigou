@@ -53,76 +53,65 @@ class actionsFilter
 				{
 					if (is_array($access['actions']))
 					{
-						if ($access['actions'] == ['*'] || in_array($this->_action, $access['actions']))
-						{
-							if ($access[0] == 'deny')
-							{
-								if ((isset($access['express']) && $access['express']) || !isset($access['express']))
-								{
-									if (isset($access['message']))
-									{
-										$this->_message = $access['message'];
-									}
-									else
-									{
-										$this->_message = 'Forbidden';
-									}
-									
-									if (isset($access['httpCode']))
-									{
-										$this->_rewrite_code = true;
-										$this->_http_code = $access['httpCode'];
-									}
-									else
-									{
-										$this->_http_code = 403;
-									}
-									
-									if (isset($access['redict']))
-									{
-										$this->_redict = $access['redict'];
-									}
-									return false;
-								}
-							}
-						}
+						$actions = $access['actions'];
 					}
-					else if (is_scalar($access['actions']))
+					else
 					{
-						if ($access['actions'] == '*' || $this->_action == $access['actions'])
-						{
-							if ($access[0]=='deny')
-							{
-								if ((isset($access['express']) && $access['express']) || !isset($access['express']))
-								{
-									if (isset($access['message']))
-									{
-										$this->_message = $access['message'];
-									}
-									else
-									{
-										$this->_message = 'Forbidden';
-									}
-									
-									if (isset($access['httpCode']))
-									{
-										$this->_rewrite_code = true;
-										$this->_http_code = $access['httpCode'];
-									}
-									else
-									{
-										$this->_http_code = 403;
-									}
-									
-									if (isset($access['redict']))
-									{
-										$this->_redict = $access['redict'];
-									}
-									return false;
-								}
-							}
-						}
+						$actions = [$access['actions']];
 					}
+				}
+				else
+				{
+					$actions = ['*'];
+				}
+				
+				if (!(in_array($this->_action, $actions,true) || $actions == ['*']))
+				{
+					continue;
+				}
+				
+				$express = true;
+				if(isset($access['express']) && $access['express'] == false)
+				{
+					$express = false;
+				}
+				if (!$express)
+				{
+					continue;
+				}
+				
+				if ($access[0] == 'deny')
+				{
+					if (isset($access['message']))
+					{
+						$this->_message = $access['message'];
+					}
+					else
+					{
+						$this->_message = 'Forbidden';
+					}
+						
+					if (isset($access['httpCode']))
+					{
+						$this->_rewrite_code = true;
+						$this->_http_code = $access['httpCode'];
+					}
+					else
+					{
+						$this->_http_code = 403;
+					}
+						
+					if (isset($access['redict']))
+					{
+						$this->_redict = $access['redict'];
+					}
+					
+					
+					return false;
+				}
+				else if ($access[0] == 'allow')
+				{
+					return true;
 				}
 			}
 		}

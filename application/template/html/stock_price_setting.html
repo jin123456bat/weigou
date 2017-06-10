@@ -23,31 +23,6 @@
 		</script>
 	</head>
 	<body>
-		<div id="setStockModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
-			<div class="modal-dialog" role="document" style="width: 370px;">
-				<div class="modal-content">
-					<form>
-					<input type="hidden" name="id">
-					<div class="center-block text-center" style="padding-top: 50px; padding-bottom: 20px;">
-						<h4><strong>库存临界值设定</strong></h4>
-					</div>
-					
-					<div class="center-block text-center">
-						<span id="category1">一级类目</span> &gt; <span id="category2">二级类目</span>
-					</div>
-					<input name="stock_limit" type="text" style="width: 35%; margin-top: 10px; margin-bottom: 30px;" class="form-control center-block text-center" placeholder="暂未设置">
-					
-					<div class="center-block text-center">
-						<div class="help-block">
-							请根据实际情况设置库存临界值；<br>输入的数值必须在0~100区间内。
-						</div>
-					</div>
-					
-					<button type="submit" class="btn btn-success center-block" style="width: 100px;margin-bottom: 100px; margin-top: 100px;">保存</button>
-					</form>
-				</div><!-- /.modal-content -->
-			</div><!-- /.modal-dialog -->
-		</div><!-- /.modal -->
 		{%include file='html/public/header.html'%}
 		<div class="body container-fluid">
 			<div class="row">
@@ -103,6 +78,70 @@
 													
 												</div>
 											</div>
+											
+											<div class="col-md-4">
+												<form id="setting" class="disabled">
+													<div class="panel panel-default">
+														<div class="panel-heading">
+															<h4 class="panel-title" style="font-size: 12px;">库存临界值设置</h4>
+														</div>
+														<div class="panel-body">
+															<div class="center-block" style="width: 70%;">
+																<input type="text" name="stock" class="form-control input-sm" style="margin-bottom: 5px;">
+																<span class="help-block" style="font-size: 12px;line-height: 14px;margin: 0px;">请根据实际情况设置库存临界值</span>
+																<span class="help-block" style="font-size: 12px;line-height: 14px;margin: 0px;">输入的数值必须在0~100区间内</span>
+															</div>
+														</div>
+													</div>
+
+													<div class="panel panel-default">
+														<div class="panel-heading">
+															<h4 class="panel-title" style="font-size: 12px;">销售价的比例设置</h4>
+														</div>
+														<div class="panel-body">
+															<div class="center-block" style="width: 70%;">
+																<table style="margin-bottom: 5px;">
+																	<tr style="margin-bottom: 5px;">
+																		<td style="text-align: center;">原价</td>
+																		<td></td>
+																		<td style="text-align: center;">普通</td>
+																		<td></td>
+																		<td style="text-align: center;">白金</td>
+																		<td></td>
+																		<td style="text-align: center;">钻石</td>
+																	</tr>
+																	<tr>
+																		<td><input type="text" name="price_old" class="form-control input-sm"></td>
+																		<td style="width: 10px;text-align: center;">:</td>
+																		<td><input type="text" name="price_v0" class="form-control input-sm"></td>
+																		<td style="width: 10px;text-align: center;">:</td>
+																		<td><input type="text" name="price_v1" class="form-control input-sm"></td>
+																		<td style="width: 10px;text-align: center;">:</td>
+																		<td><input type="text" name="price_v2" class="form-control input-sm"></td>
+																	</tr>
+																</table>
+
+																<span class="help-block" style="font-size: 12px;line-height: 14px;margin: 0px;">
+																	输入示例：“20：18：13：5”
+																</span>
+																<span class="help-block" style="font-size: 12px;line-height: 14px;margin: 0px;">
+																	原价 = 基准价*（100+ 20）%
+																</span>
+																<span class="help-block" style="font-size: 12px;line-height: 14px;margin: 0px;">
+																	普通价格 = 基准价*（100+18）%
+																</span>
+																<span class="help-block" style="font-size: 12px;line-height: 14px;margin: 0px;">
+																	白金价格 = 基准价*（100+13）%
+																</span>
+																<span class="help-block" style="font-size: 12px;line-height: 14px;margin: 0px;">
+																	钻石价格 = 基准价*（100+5）%
+																</span>
+															</div>
+														</div>
+													</div>
+													<button type="submit" class="btn btn-green btn-width center-block submit" disabled="disabled">保存</button>
+												</form>
+											</div>
 										</div>
 										
 										
@@ -155,24 +194,39 @@
 			});
 			//点击分类项目的时候设置为选中状态
 			$('.select-multiple').on('click','.option',function(){
-				$(this).siblings().removeClass('active');
-				$(this).addClass('active');
-				loadCategory($(this).data('id'),parseInt($(this).data('level'))+1);
+				if(!$(this).hasClass('active'))
+				{
+					$(this).siblings().removeClass('active');
+					$(this).addClass('active');
+					loadCategory($(this).data('id'),parseInt($(this).data('level'))+1,function(tpl,info){
+						tpl.on('click',function(){
+							$.post('./index.php?m=ajax&c=bcategory&a=find',{id:info.id},function(response){
+								if(response.code==1)
+								{
+									info=response.body;
+									$('input[name=stock]').val(info.stock_limit);
+									$('input[name=price_old]').val(info.price_old);
+									$('input[name=price_v0]').val(info.price_v0);
+									$('input[name=price_v1]').val(info.price_v1);
+									$('input[name=price_v2]').val(info.price_v2);
+
+									$('#setting').addClass('disabled');
+									$('#setting .submit').prop('disabled',true);
+								}
+								
+							});
+						});
+					});
+				}
 				return false;
 			});
 			//载入分类的统一的函数
-			function loadCategory(bc_id,c_level)
+			function loadCategory(bc_id,c_level,callback)
 			{
-				$_icon = '';
-				if (c_level == 1)
-                {
-                    $('.col-md-4:eq(2) .select-multiple').empty();
-					$_icon = '<div class="icon"><i class="fa fa-edit"></i></div>';
-                }
-                if (c_level == 0)
+				let $_icon = '';
+				if (c_level == 0)
                 {
                     $('.col-md-4:eq(1) .select-multiple').empty();
-                    $('.col-md-4:eq(2) .select-multiple').empty();
                 }
 				if(c_level>=2)
 				{
@@ -188,7 +242,15 @@
 					{
 						for(var i=0;i<response.body.length;i++)
 						{
-							tpl = '<div class="option" data-id="'+response.body[i].id+'" data-level="'+c_level+'" data-sort="'+response.body[i].sort+'">'+response.body[i].name+$_icon+'</div>';
+							if(c_level==1)
+							{
+								$_icon = '<span class="pull-right" style="color:#6B6B6B;">'+response.body[i].stock_limit+'</span>';
+							}
+							tpl = $('<div class="option" data-id="'+response.body[i].id+'" data-level="'+c_level+'" data-sort="'+response.body[i].sort+'">'+response.body[i].name+$_icon+'</div>');
+							if(callback)
+							{
+								callback(tpl,response.body[i]);
+							}
 							$('.col-md-4:eq('+c_level+') .select-multiple').append(tpl);
 						}
 					}
@@ -203,42 +265,43 @@
 			//载入第一级分类
 			loadCategory(null,0);
 			
-			$('.select-multiple').on('click','.fa-edit',function(){
-				id = $(this).parents('.option').data('id');
-				$.post('./index.php?m=ajax&c=bcategory&a=find',{id:id},function(response){
-					if(response.code==1)
-					{
-						$('#setStockModal').modal('show');
-						stock_limit = parseInt(response.body.stock_limit);
-						if(stock_limit==0)
-						{
-							$('#setStockModal input').val('');
-						}
-						else
-						{
-							$('#setStockModal input').val(stock_limit);
-						}
-						$('#category1').text($('.option.active:first').text());
-						$('#category2').text($('.option.active:last').text());
-						$('#setStockModal input[name=id]').val($('.option.active:last').data('id'));
-					}
-					else
-					{
-						bootbox.alert(response.result);
-					}
-				});
-				return false;
+			$('#setting input').on('keydown',function(event){
+				if($('.col-md-4:eq(1) .option.active').length==0)
+				{
+					return false;
+				}
+				if((event.which>=48 && event.which<=57) || event.which==8 || (event.which>=96 && event.which<=105))
+				{
+					$(this).parents('#setting').removeClass('disabled');
+					$('#setting .submit').prop('disabled',false);
+				}
 			});
 			
-			$('#setStockModal form').on('submit',function(){
-				var data = {
-					id:$.trim($(this).find('input[name=id]').val()),
-					stock_limit:parseInt($.trim($(this).find('input[name=stock_limit]').val())),
+			$('#setting').on('submit',function(){
+				if($('.col-md-4:eq(1) .option.active').length==0)
+				{
+					return false;
+				}
+				console.log($('#setting .submit').prop('disabled'));
+				if($('#setting .submit').prop('disabled'))
+				{
+					alert('123');
+					return false;
+				}
+				let data = {
+					stock_limit:$('input[name=stock]').val(),
+					price_old:$('input[name=price_old]').val(),
+					price_v0:$('input[name=price_v0]').val(),
+					price_v1:$('input[name=price_v1]').val(),
+					price_v2:$('input[name=price_v2]').val(),
+					id:$('.col-md-4:eq(1) .option.active').data('id'),
 				};
-				$.post('./index.php?m=ajax&c=bcategory&a=setStockLimit',data,function(response){
+				$.post('./index.php?m=ajax&c=bcategory&a=setting',data,function(response){
 					if(response.code==1)
 					{
-						$('#setStockModal').modal('hide');
+						$('#setting').find('.submit').prop('disabled',true);
+						$('#setting').addClass('disabled');
+						$('.col-md-4:eq(1) .option.active').find('span').text(parseInt(data.stock_limit));
 					}
 					else
 					{

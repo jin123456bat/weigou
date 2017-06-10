@@ -45,83 +45,31 @@ class userModel extends model
 	
 	function datatables($post)
 	{
-		$this->table('upload','left join','user.gravatar=upload.id');
+		if (isset($post['ajaxData']) && is_array($post['ajaxData']))
+		{
+			foreach($post['ajaxData'] as $key => $value)
+			{
+				$this->where($key.'=?',[$value]);
+			}
+		}
+	
 		$parameter = [];
-		foreach ($post['columns'] as $index => $columns)
+		foreach ($post['columns'] as $columns)
 		{
 			if (!empty($columns['name']))
 			{
 				$parameter[] = $columns['name'].(empty($columns['data'])?'':(' as '.$columns['data']));
-				foreach ($post['order'] as $order)
-				{
-					if ($order['column'] == $index)
-					{
-						$this->orderby($columns['name'],$order['dir']);
-					}
-				}
 			}
 		}
-		if (isset($post['action']) && $post['action'] === 'filter')
+		foreach ($post['order'] as $order)
 		{
-			if (!empty($post['username']))
-			{
-				$this->where('user.name like ?',['%'.trim($post['username']).'%']);
-			}
-			if (!empty($post['telephone']))
-			{
-				$this->where('telephone like ?',['%'.trim($post['telephone']).'%']);
-			}
-			if (!empty($post['invit']))
-			{
-				$this->where('invit like ?',['%'.trim($post['invit']).'%']);
-			}
-			if (!empty($post['regtime_from']))
-			{
-				$this->where('regtime >= ?',[strtotime($post['regtime_from'])]);
-			}
-			if (!empty($post['regtime_to']))
-			{
-				$this->where('regtime <= ?',[strtotime($post['regtime_to'])]);
-			}
-			if (!empty($post['money_from']))
-			{
-				$this->where('money >= ?',[$post['money_from']]);
-			}
-			if (!empty($post['money_to']))
-			{
-				$this->where('money <= ?',[$post['money_to']]);
-			}
-            if(isset($post['vip'])) {
-                if ($post['vip'] != '') {
-                    $this->where('vip=?', [$post['vip']]);
-                }
-            }
-            if (isset($post['master'])) {
-                if ($post['master'] != '') {
-                    $this->where('master=?', [$post['master']]);
-                }
-            }
-            if (isset($post['o_master'])) {
-                if (!empty(intval($post['o_master']))) {
-                    $this->where('o_master = ?', [intval($post['o_master'])]);
-                }
-            }
-			if (!empty(intval($post['oid'])))
-			{
-				$this->where('oid = ?',[intval($post['oid'])]);
-			}
-            if(isset($post['source'])) {
-                if ($post['source'] != '') {
-                    if ($post['source'] == '-1') {
-                        $this->where('user.source is null');
-                    } else {
-                        $this->where('user.source = ?', [$post['source']]);
-                    }
-                }
-            }
+			$this->orderby($columns[$order['column']]['name'],$order['dir']);
 		}
-		$result = $this->select($parameter);
-		return $result;
+		if (isset($post['keywords']) && !empty($post['keywords']))
+		{
+			$this->where('name like ? or telephone like ?',['%'.trim($post['keywords']).'%','%'.trim($post['keywords']).'%']);
+		}
+		return $this->select($parameter);
 	}
 	
 	/*

@@ -179,63 +179,25 @@ class view extends control
 			$this,
 			'resource'
 		));
-		$this->_smarty->registerPlugin('function', 'checkPower',array(
-			$this,
-			'checkPower',
-		));
-	}
-
-	/**
-	 * 页面中的权限检查
-	 */
-	function checkPower($parameter)
+		
+		$this->_smarty->registerPlugin('block','hasPower',array($this,'hasPower'));
+	}	
+	
+	function hasPower($params, $content, $smarty, &$repeat)
 	{
-		$keyword = $parameter['keyword'];
-		$level = isset($parameter['level'])?$parameter['level']:'';
-		if (empty($keyword))
+		$keyword = isset($params['keyword'])?$params['keyword']:'';
+		$pid = isset($params['pid'])?$params['pid']:NULL;
+		$type = isset($params['type'])?$params['type']:NULL;
+		
+		$adminHelper = new \application\helper\admin();
+		if($adminHelper->checkPower($pid, $type,$keyword))
 		{
-			return false;
+			if ($content)
+			{
+				return $content;
+			}
 		}
 		
-		$adminHelper = new admin();
-		$aid = $adminHelper->getAdminId();
-		if(!empty($aid))
-		{
-			$privileges = $this->model('privileges')->where('keyword=?',[$keyword])->find();
-			if (empty($privileges))
-			{
-				return false;
-			}
-			if (!empty($level))
-			{
-				if ($privileges['level']!=$level)
-				{
-					return false;
-				}
-			}
-			
-			//检查角色权限
-			$rids = $this->model('admin_role')->where('aid=?',[$aid])->select('rid');
-			foreach ($rids as $rid)
-			{
-				$pids = $this->model('role_privileges')->where('rid=?',[$rid])->select('pid');
-				foreach ($pids as $pid)
-				{
-					if ($privileges['id'] == $pid['pid'])
-					{
-						return true;
-					}
-				}
-			}
-			
-			//检查额外权限
-			$admin_privileges = $this->model('admin_privileges')->where('aid=? and pid=?',[$aid,$privileges['id']])->find();
-			if (!empty($admin_privileges))
-			{
-				return true;
-			}
-		}
-		return false;
 	}
 
 	/**

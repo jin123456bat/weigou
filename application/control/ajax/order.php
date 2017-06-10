@@ -4,13 +4,56 @@ namespace application\control\ajax;
 use system\core\ajax;
 use application\message\json;
 use application\helper\erpSender;
-use application\helper\pay;
 use application\helper\admin;
 use application\model\roleModel;
 
 class order extends ajax
 {
-
+	private $_aid;
+	
+	private $_uid;
+	
+	function __access()
+	{
+		$adminHelper = new \application\helper\admin();
+		$this->_aid = $adminHelper->getAdminId();
+		$userHelper = new \application\helper\user();
+		$this->_uid = $userHelper->isLogin();
+		return array(
+			array(
+				'allow',
+				'actions' => [
+					'changePackage',
+					'erp',
+					'note',
+					'refund',
+					'send',
+					'sendProduct',
+					'importWay',
+				],
+				'express' => !empty($this->_aid),
+				'message' => new json(json::NOT_LOGIN,'请重新登录'),
+				'httpCode' => 200,
+			),
+			array(
+				'allow',
+				'actions' =>[
+					'quit',
+					'receive',
+					'create',
+					'delete',
+				],
+				'express' => !empty($this->_uid),
+				'message' => new json(json::NOT_LOGIN),
+				'httpCode' => 200,
+			),
+			array(
+				'deny',
+				'actions' => '*',
+			)
+		);
+	}
+	
 	/**
 	 * 给订单添加备注信息，这个备注信息是给管理员看的
 	 * @return \application\message\json
@@ -382,8 +425,6 @@ class order extends ajax
 	 */
 	function quit()
 	{
-		$adminHelper = new \application\helper\admin();
-		$admin = $adminHelper->getAdminId();
 		$orderno = $this->post('orderno');
 		if (! empty($orderno))
 		{
@@ -404,31 +445,9 @@ class order extends ajax
 			])->find();
 			$orderStatus = $orderHelper->convertStatus($order);
 			
-			$userHelper = new \application\helper\user();
-			$uid = $userHelper->isLogin();
-			if (empty($uid))
+			if ($order['pay_status'] == 1 || $order['pay_status'] == 4)
 			{
-				if (empty($admin))
-				{
-					return new json(json::NOT_LOGIN);
-				}
-				else
-				{
-					if ($order['pay_status'] == 1 || $order['pay_status'] == 4)
-					{
-						$roleModel = $this->model('role');
-						$role = $adminHelper->getGroupId();
-						if (! $roleModel->checkPower($role, 'refund', roleModel::POWER_ALL))
-						{
-							return new json(json::PARAMETER_ERROR, '权限不足');
-						}
-						
-						if (! $orderHelper->refund($orderno))
-						{
-							return new json(json::PARAMETER_ERROR, '订单退款失败');
-						}
-					}
-				}
+				return new json(json::NO_POWER,'已经付款的订单请联系客服取消订单');
 			}
 			
 			$this->model('order')->transaction();
@@ -436,13 +455,9 @@ class order extends ajax
 			if ($orderHelper->quitOrder($orderno, false))
 			{
 				$this->model('order')->commit();
-				//add($orderno,$content,$aid,$status,$note = '')
 				
-				if (!empty($admin))
-				{
-					$this->model("admin_log")->insertlog($admin, '取消订单成功，订单号：' . $orderno, 1);
-					$this->model('order_log')->add($orderno,'订单取消',$admin,$orderStatus);
-				}
+				$this->model("admin_log")->insertlog($this->_aid, '取消订单成功，订单号：' . $orderno, 1);
+				$this->model('order_log')->add($orderno,'订单取消',$this->_aid,$orderStatus);
 				return new json(json::OK);
 			}
 			else
@@ -459,24 +474,6 @@ class order extends ajax
 	 */
 	function erp()
 	{
-		/* 权限 */
-		$adminHelper = new \application\helper\admin();
-		$aid = $adminHelper->getAdminId();
-		if (empty($aid))
-		{
-			return new json(json::NOT_LOGIN);
-		}
-		else
-		{
-			$roleModel = $this->model('role');
-			$role = $adminHelper->getGroupId();
-			if (! $roleModel->checkPower($role, 'order', roleModel::POWER_ALL))
-			{
-				$this->model("admin_log")->insertlog($aid, '订单审核失败（权限不足）');
-				return new json(json::PARAMETER_ERROR, '权限不足');
-			}
-		}
-		
 		$orderno = $this->post('orderno');
 		$note = $this->post('note','','htmlspecialchars');
 		if (! empty($orderno))
@@ -495,8 +492,8 @@ class order extends ajax
 			$result = $erpSender->doSendOrder($orderno);
 			if ($result)
 			{
-				$this->model("admin_log")->insertlog($aid, '订单审核成功,订单号:' . $orderno, 1);
-				$this->model('order_log')->add($orderno,'订单取消',$aid,$orderStatus,$note);
+				$this->model("admin_log")->insertlog($this->_aid, '订单审核成功,订单号:' . $orderno, 1);
+				$this->model('order_log')->add($orderno,'订单取消',$this->_aid,$orderStatus,$note);
 				return new json(json::OK);
 			}
 			else
@@ -512,12 +509,6 @@ class order extends ajax
 
 	function receive()
 	{
-		$userHelper = new \application\helper\user();
-		if(empty($userHelper->isLogin()))
-		{
-			return new json(json::NOT_LOGIN);
-		}
-		
 		$orderno = $this->post('orderno');
 		if (empty($orderno))
 		{
@@ -562,18 +553,10 @@ class order extends ajax
 	 */
 	function refund()
 	{
-		$adminHelper = new admin();
-		$admin = $adminHelper->getAdminId();
-		if (empty($admin))
+		$adminHelper = new \application\helper\admin();
+		if(!$adminHelper->checkPower(0, 'button','refund_order'))
 		{
-			return new json(json::NOT_LOGIN, '请重新登陆');
-		}
-		
-		$roleModel = $this->model('role');
-		$role = $adminHelper->getGroupId();
-		if (! $roleModel->checkPower($role, 'refund', roleModel::POWER_ALL))
-		{
-			return new json(json::PARAMETER_ERROR, '权限不足');
+			return new json(json::NO_POWER);
 		}
 		
 		$orderno = $this->post('orderno');
@@ -606,9 +589,9 @@ class order extends ajax
 							'refund_note' => $order['refund_reason'].'|'.$this->post('refund_note','','htmlentities'),
 						]);
 						
-						$this->model("admin_log")->insertlog($admin, '订单商品退款成功,订单商品：' . $orderno, 1);
+						$this->model("admin_log")->insertlog($this->_aid, '订单商品退款成功,订单商品：' . $orderno, 1);
 						
-						$this->model('order_log')->add($orderno, '订单确认收货',$admin,$orderStatus);
+						$this->model('order_log')->add($orderno, '订单确认收货',$this->_aid,$orderStatus);
 						return new json(json::OK, NULL, $order['pay_type'] == 'alipay' ? '正在退款' : '退款完成');
 					}
 					else
@@ -624,7 +607,7 @@ class order extends ajax
 						'refund_note' => $order['refund_reason'].'|'.$this->post('refund_note','','htmlentities'),
 					]);
 					
-					$this->model("admin_log")->insertlog($admin, '订单商品退款成功,订单商品：' . $orderno, 1);
+					$this->model("admin_log")->insertlog($this->_aid, '订单商品退款成功,订单商品：' . $orderno, 1);
 					
 					$this->model('order_log')->add($orderno, '订单确认收货',NULL,$orderStatus);
 					return new json(json::OK, NULL, $order['pay_type'] == 'alipay' ? '正在退款' : '退款完成');
@@ -1124,6 +1107,10 @@ class order extends ajax
 		return new json(json::OK);
 	}
 
+	/**
+	 * 导入物流单
+	 * @return \application\message\json
+	 */
 	function importWay()
 	{
 		$admin = $this->session->id;

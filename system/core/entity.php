@@ -11,6 +11,8 @@ class entity extends base
 	
 	private $_errors;
 	
+	private $_rule_type = '';
+	
 	/**
 	 * @param string $pk 主键名称
 	 */
@@ -22,6 +24,11 @@ class entity extends base
 	private function getClassName()
 	{
 		return end(explode('\\', get_class($this)));
+	}
+	
+	function setRuleType($type)
+	{
+		$this->_rule_type = $type;
 	}
 	
 	/**
@@ -236,25 +243,41 @@ class entity extends base
 		$entityFilter = new entityFilter();
 		foreach ($rules as $rule)
 		{
+			if (isset($rule['type']) && !empty($this->_rule_type))
+			{
+				if ($rule['type'] != $this->_rule_type)
+				{
+					continue;
+				}
+			}
 			$key = key($rule);
 			$current = current($rule);
 			$data = $this->getData();
 			$filters = explode(',', $current);
 			foreach ($filters as $filter)
 			{
-				$filterName = $filter.'Filter';
-				if (method_exists($entityFilter, $filterName))
+				switch (strtolower($filter))
 				{
-					if (isset($data[$key]))
-					{
-						$result = call_user_func([$entityFilter,$filterName],$data[$key],$rule);
-						if (!$result)
+					case 'unique':
+						if(!empty($this->model($this->getClassName())->where($key.'=?',[$data[$key]])->find()))
 						{
 							$this->addError($key, $rule['message']);
 							$validate_return = false;
 						}
-					}
+						break;
+					default:
+						$filterName = $filter.'Filter';
+						if (method_exists($entityFilter, $filterName))
+						{
+							$result = call_user_func([$entityFilter,$filterName],$data[$key],$rule);
+							if (!$result)
+							{
+								$this->addError($key, $rule['message']);
+								$validate_return = false;
+							}
+						}
 				}
+				
 			}
 		}
 		return $validate_return;

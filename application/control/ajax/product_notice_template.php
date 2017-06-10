@@ -90,11 +90,18 @@ class product_notice_template extends ajax
 		return array(
 			array(
 				'deny',
-				'actions' => ['host','create'],
+				'actions' => ['host','create','remove','save'],
 				'message' => new json(json::NOT_LOGIN),
 				'express' => empty($adminHelper->getAdminId()),
 				'redict' => './index.php?c=admin&a=login',
 			),
+			array(
+				'deny',
+				'actions' => ['host','create','remove','save'],
+				'message' => new json(json::NO_POWER),
+				'express' => !$adminHelper->checkPower(0, 'button','sms_template'),
+				'redict' => './index.php?c=html&a=nopower',
+			)
 		);
 	}
 }

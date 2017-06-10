@@ -56,7 +56,9 @@
 			  				<div class="tab">
 			  					<div class="tab-header">
 			  						<a class="tab-title active" href="#notice">商品到货通知</a>
+			  						{%hasPower type=button keyword=sms_template%}
 			  						<a class="tab-title" href="#template">短信模板</a>
+			  						{%/hasPower%}
 			  					</div>
 			  					<div class="tab-body">
 			  						<div class="tab-page active" id="notice">
@@ -121,6 +123,7 @@
 											</table>
 										</div>
 									</div>
+		  							{%hasPower type=button keyword=sms_template%}
 			  						<div class="tab-page" id="template">
 			  							<div class="space"></div>
 										<div class="top-tips">
@@ -178,9 +181,8 @@
 												</tfoot>
 											</table>
 										</div>
-										
-										
-			  						</div>
+									</div>
+			  						{%/hasPower%}
 								</div>
 							</div>
 							
@@ -383,7 +385,7 @@
 				},{
 					targets:5,
 					render:function(data,full){
-						content = '<div class="btn-group"><button class="btn btn-outline btn-xs editBtn" data-id="'+data+'">查看 / 编辑 </button><button class="btn btn-outline btn-xs dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button><ul class="dropdown-menu"><li><a data-id="'+data+'" class="setHostBtn">设为默认</a><a data-id="'+data+'" class="removeBtn '+(full.host==1?'display-none':'')+'">删除</a></li></div>';
+						content = '<div class="btn-group"><button class="btn btn-outline btn-xs editBtn" data-id="'+data+'">查看 / 编辑 </button><button class="btn btn-outline btn-xs dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button><ul class="dropdown-menu dropdown-sm"><li><a data-id="'+data+'" class="setHostBtn">设为默认</a><a data-id="'+data+'" class="removeBtn '+(full.host==1?'display-none':'')+'">删除</a></li></div>';
 						return content;
 					}
 				}],
