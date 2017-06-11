@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="utf-8" />
+		<title>{%$page_title%}</title>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+       	<meta name="renderer" content="webkit">
+        <meta content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport" />
+        <!-- reset -->
+        <link rel="stylesheet" href="//cdn.bootcss.com/normalize/5.0.0/normalize.min.css">
+		<!-- 新 Bootstrap 核心 CSS 文件 -->
+        <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<!-- 可选的Bootstrap主题文件（一般不用引入） -->
+		<link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
+		<!--icon-->
+		<link rel="stylesheet" href="{%$VIEW_ROOT%}/html/css/plugins/font-awesome/css/font-awesome.min.css">
+		<!--datepicker-->
+		<link href="//cdn.bootcss.com/bootstrap-datepicker/1.7.0-RC2/css/bootstrap-datepicker3.min.css" rel="stylesheet">
+		<!--自定义css-->
+		<link rel="stylesheet" href="{%resource path='/html/css/global.css'%}">
+		<link rel="stylesheet" href="{%resource path='/html/css/brand-selector.css'%}">
+		<script type="text/javascript">
+			function lpad(num, n) {  
+				return Array(n>(''+num).length?(n-(''+num).length+1):0).join(0)+num;  
+			}
+		</script>
+	</head>
+	<body>
+		<div id="selectProductModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
+			<div class="modal-dialog" role="document" style="width: 900px;">
+				<div class="modal-content" style="margin-top: 0px;">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title" id="gridSystemModalLabel">选择商品</h4>
+					</div>
+					<div class="modal-body">
+						<form class="form-horizontal" role="form" id="searchProductForm">
+							<div class="form-group">
+								<div class="col-md-5">
+									<select class="form-control" name="category" placeholder="请选择分类...">
+									</select>
+								</div>
+								<div class="col-md-3">
+									<select class="form-control" name="brand" placeholder="请选择品牌...">
+									</select>
+								</div>
+								<div class="col-md-3">
+									<input type="text" name="keywords" class="form-control" placeholder="请输入关键字">
+								</div>
+								<div class="col-md-1" style="display: inline-block;float: inherit;">
+									<button type="submit" class="btn btn-blue" id="searchProduct" style="background-color: rgba(98, 179, 255, 1); color: #FFFFFF;">确定</button>
+								</div>
+							</div>
+						</form>
+						<table class="table table-hover table-striped table-bordered table-page" id="product_selector">
+							<thead>
+								<tr>
+									<td style="padding-right: 20px;padding-left: 20px;"><input type="checkbox" class="select-all"></td>
+									<td>SPU</td>
+									<td>商品图片</td>
+									<td>商品名称</td>
+									<td>商品库存</td>
+								</tr>
+							</thead>
+							<tbody>
+
+							</tbody>
+							<tfoot><tr><td colspan="10"></td></tr></tfoot>
+						</table>
+					</div>
+					<div class="modal-footer" style="padding: 0px;">
+						<div class="modal-button-group">
+							<div class="modal-button submit">确认</div>
+							<div data-dismiss="modal" class="modal-button">取消</div>
+						</div>
+					</div>
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+		{%include file='html/public/header.html'%}
+		<div class="body container-fluid">
+			<div class="row">
+				{%include file='html/public/sidebar.html'%}
+				<div class="content">
+			  		<div class="content-body">
+			  			<div class="white-block">
+			  				<div class="wall-block">
+								<p>{%$page_title_reverse%}</p>
+							</div>
+			  			</div>
+			  			<div class="divider"></div>
+			  			<div class="white-block">
+			  				<div class="top-tips">
+			  					<div class="top-tips-title">
+			  						操作提示
+			  					</div>
+			  					<div class="top-tips-body">
+			  						<p>团购活动列表展示商品的团购相关信息。</p>
+									<p>可根据条件，如商品名称、店铺名称等搜索团购商品。</p>
+									<p>可查看团购商品的订单列表（可进行订单相关操作）。</p>
+									<p>可添加、编辑、删除或批量删除团购活动。</p>
+			  					</div>
+			  				</div>
+			  			</div>
+			  			<div class="divider"></div>
+			  			<div class="white-block">
+			  				<form class="form-horizontal" role="form" id="brandForm">
+			  					<div class="form-body">
+			  						<div class="form-group">
+										<label class="col-md-offset-3 col-md-1 control-label">
+											选择商品 <span class="required">*</span>
+										</label>
+										<div class="col-md-5">
+											<button class="btn btn-blue" id="selectProduct">选择参加促销的商品</button>
+										</div>
+									</div>
+			  						<div class="form-group">
+										<label class="col-md-offset-3 col-md-1 control-label">
+											已选择商品 <span class="required">*</span>
+										</label>
+										<div class="col-md-5">
+											<style>
+												#selectedProduct thead{
+													border:1px solid rgba(215, 215, 215, 1) !important;
+													background-color: #F1F1F1;
+												}
+												#selectedProduct thead tr td{
+													border-right: 1px solid rgba(215, 215, 215, 1) !important;
+													text-align: center;
+												}
+												#selectedProduct tbody tr td{
+													border-right: 1px solid rgba(215, 215, 215, 1) !important;
+													text-align: center;
+													border-top: 1px solid rgba(215, 215, 215, 1) !important;
+												}
+											</style>
+											<table id="selectedProduct" class="table table-bordered table-hover table-condensed">
+												<thead>
+												<tr><td>商品图片</td><td>商品编号</td><td>商品名称</td><td>操作</td></tr>
+												</thead>
+												<tbody>
+													
+												</tbody>
+											</table>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-md-offset-3 col-md-1 control-label">活动有效期</label>
+										<div class="col-md-5">
+											<div class="input-group input-daterange">
+												<input type="text" class="form-control" name="start" placeholder="开始时间">
+												<div class="input-group-addon">~</div>
+												<input type="text" class="form-control" name="end" placeholder="结束时间">
+											</div>
+											<span class="help-block"> 到达结束时间后自动移除，不填写代表不限制时间 </span>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-md-offset-3 col-md-1 control-label">
+											活动时间/天 <span class="required">*</span>
+										</label>
+										<div class="col-md-5">
+											<input type="text" class="form-control" name="day" placeholder="天">
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-md-offset-3 col-md-1 control-label">
+											团购价格 <span class="required">*</span>
+										</label>
+										<div class="col-md-5">
+											<input type="text" class="form-control" name="price" placeholder="￥">
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-md-offset-3 col-md-1 control-label">
+											团购人数  <span class="required">*</span>
+										</label>
+										<div class="col-md-5">
+											<input type="text" class="form-control" name="teamnum" placeholder="0">
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-md-offset-3 col-md-1 control-label">赠送经验值</label>
+										<div class="col-md-5">
+											<input type="text" class="form-control" name="score" placeholder="0">
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-md-offset-4 col-md-5">
+											<button type="submit" class="btn btn-blue col-md-2">保存</button>
+										</div>
+									</div>
+			  					</div>
+			  				</form>
+			  			</div>
+			  		</div>				  
+				</div>
+			</div>
+		</div>
+		<script type="text/html" id="selectedProductTemplate">
+			<tr data-id="[id]">
+				<td>
+					<img src="[img]" width="50px" height="50px">
+				</td>
+				<td>
+					[id]
+				</td>
+				<td>
+					[name]
+				</td>
+				<td>
+					<button class="btn btn-small btn-default remove" data-id="[id]">移除</button>
+				</td>
+			</tr>
+		</script>
+		<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+		<script src="//cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+		<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+		<script src="//cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		<!-- jquery validate -->
+		<script src="//cdn.bootcss.com/jquery-validate/1.16.0/jquery.validate.min.js"></script>
+		<!--alert-->
+		<script src="//cdn.bootcss.com/bootbox.js/4.4.0/bootbox.min.js"></script>
+		<!--datepicker-->
+		<script src="//cdn.bootcss.com/bootstrap-datepicker/1.7.0-RC2/js/bootstrap-datepicker.min.js"></script>
+		<script src="//cdn.bootcss.com/bootstrap-datepicker/1.7.0-RC2/locales/bootstrap-datepicker.zh-CN.min.js" charset="UTF-8"></script>
+		<script src="{%resource path='/html/js/datatables.js'%}"></script>
+		<script src="{%resource path='/html/js/selector.js'%}"></script>
+		<script src="{%resource path='/html/js/brand-selector.js'%}"></script>
+		<script src="{%resource path='/html/js/global.js'%}"></script>
+		<script type="text/javascript">
+			$.ajaxSetup({
+				headers:{
+					'X-CSRF-TOKEN':'{%$x_csrf_token%}'
+				}
+			});
+			
+			$('.input-daterange').datepicker({
+				format:'yyyy-mm-dd',
+				language: 'zh-CN',
+				clearBtn:true,
+				todayHighlight:true,
+			});
+			
+			setInterval(function(){
+				var datetimeController = new Date();
+				var date = datetimeController.getFullYear()+'-'+lpad(datetimeController.getMonth()+1,2)+'-'+lpad(datetimeController.getDate(),2);
+				$('.date').text(date);
+				
+				var time = lpad(datetimeController.getHours(),2)+':'+lpad(datetimeController.getMinutes(),2);
+				$('.time').text(time);
+			
+				var week = datetimeController.getDay();
+				var weekArray = ['日','一','二','三','四','五','六'];
+				var week = '星期'+weekArray[week];
+				$('.week').text(week);
+			},1000);
+			
+			var category_selector = selector($('#selectProductModal select[name=category]'),{
+				ajax:{
+					url:'./index.php?m=ajax&c=bcategory&a=source'
+				}
+			});
+			
+			var brand_selector = brand($('#selectProductModal select[name=brand]'),{
+				ajax:{
+					url:'./index.php?m=ajax&c=brand&a=source'
+				}
+			});
+			
+			$('#selectProduct').on('click',function(){
+				$('#selectProductModal').modal('show');
+				return false;
+			});
+			
+			$('#selectedProduct').on('click','.remove',function(){
+				$(this).parents('tr').remove();
+			});
+			
+			$('#selectProductModal').on('click','.submit',function(){
+				var product = [];
+				$('#selectProductModal').find('tbody input[type=checkbox]').each(function(index,value){
+					if($(value).is(':checked'))
+					{
+						product.push({
+							id:$(value).val(),
+							name:$(value).parents('tr').find('td:eq(3)').text(),
+							img:$(value).parents('tr').find('td:eq(2) img').attr('src'),
+						});
+						$(value).prop('checked',false);
+					}
+				});
+				
+				for(var i=0;i<product.length;i++)
+				{
+					if($('#selectedProduct tbody').find('tr[data-id='+product[i].id+']').length==0)
+					{
+						var template = $('#selectedProductTemplate').html();
+						var reg = new RegExp("\\[([^\\[\\]]*?)\\]", 'igm');
+						template = $(template.replace(reg, function (node, key) {
+							return product[i][key];
+						}));
+
+						$('#selectedProduct tbody').append(template);
+					}
+				}
+				
+				$('#selectProductModal').modal('hide');
+				return false;
+			});
+			
+			$('table').on('change','input[type=checkbox].select-all',function(){
+				if($(this).is(':checked'))
+				{
+					$(this).closest('table').find('input[type=checkbox]:not(.select-all)').each(function(index,value){
+						$(value).prop('checked',true);
+					});
+				}
+				else
+				{
+					$(this).closest('table').find('input[type=checkbox]:not(.select-all)').each(function(index,value){
+						$(value).prop('checked',false);
+					});
+				}
+				return false;
+			});
+			
+			var selector = datatables({
+				table:$('#product_selector'),
+				ajax:{
+					url:'{%url c=datatables a=product_untask%}',
+					data:{
+						isdelete:0,
+					},
+				},
+				empty:function(){
+					return '<tr><td colspan="10" style="text-align:center;">尚无数据</td></tr>';
+				},
+				columns:[{
+					data:'id',
+					name:'product.id',
+				},{
+					data:'id',
+					name:'product.id',
+				},{
+					data:'pic',
+					name:'(select upload.path from product_img left join upload on upload.id=product_img.fid where product_img.pid=product.id order by product_img.position asc limit 1)',
+				},{
+					data:'name',
+					name:'product.name',
+				},{
+					data:'stock',
+					name:'product.stock',
+				}],
+				sort:[{
+					column:0,
+					dir:'desc',
+				}],
+				columnDefs:[{
+					targets:0,
+					render:function(data,full){
+						return '<input type="checkbox" name="id[]" value="'+data+'">';
+					}
+				},{
+					targets:2,
+					render:function(data,full){
+						return '<img src="'+data+'" width="50px" height="50px" onerror="this.src=\'https://placeholdit.imgix.net/~text?txtsize=13&txt=%E6%AD%A4%E5%A4%84%E6%97%A0%E5%9B%BE&w=50&h=50\';">';
+					}
+				}],
+				pagesize:10,
+				onRowLoaded:function(row){
+					row.find('td:first').css({'padding-left':'20px','padding-right':'20px'});
+				},
+				afterTableLoaded:function(table){
+					//$('body').append(script);
+					//loadScript("{%resource path='/html/js/table-page.js'%}");
+				}
+			});
+			
+			$('#searchProductForm').on('submit',function(){
+				var category = category_selector.val();
+				var brand = brand_selector.val();
+				var keywords = $.trim($(this).find('input[name=keywords]').val());
+				selector.addAjaxParameter('category',category);
+				selector.addAjaxParameter('brand',brand);
+				selector.search(keywords);
+				return false;
+			});
+			
+			jQuery.validator.addMethod("positiveinteger", function(value, element) {
+				var aint=parseInt(value);	
+				return aint>0&& (aint+"")==value;   
+			}, "请输入正整数.");   
+			
+			var validate = $('#brandForm').validate({
+				errorElement: 'span', //default input error message container
+				errorClass: 'help-block', // default input error message class
+				focusInvalid: false, // do not focus the last invalid input
+				ignore: "",
+				rules: {
+					day: {
+						required: true,
+						positiveinteger:true,
+					},
+					price: {
+						required: true
+					},
+					teamnum: {
+						required: true,
+						positiveinteger:true,
+					},
+				},
+				messages:{
+					day: {
+						required: "请填写团购有效期",
+						positiveinteger:"团购有效期必须是正整数,单位是天",
+					},
+					price: {
+						required:  "请填写团购价格"
+					},
+					teamnum: {
+						required: "请填写团购人数",
+						positiveinteger:"人数必须是正整数",
+					}
+				},
+				highlight: function(element) { // hightlight error inputs
+					$(element).closest('.form-group').addClass('has-error'); // set error class to the control group
+				},
+				success: function(label) {
+					label.closest('.form-group').removeClass('has-error');
+					label.remove();
+				},
+				submitHandler:function(form){
+					if($('#selectedProduct tbody tr').length == 0)
+					{
+						bootbox.alert('请选择商品');
+						return false;
+					}
+					var product = [];
+					$('#selectedProduct tbody tr').each(function(index,value){
+						product.push($(value).data('id'));
+					});
+					var data = {
+						start:$(form).find('[name=start]').val(),
+						end:$(form).find('[name=end]').val(),
+						day:$(form).find('[name=day]').val(),
+						price:$(form).find('[name=price]').val(),
+						teamnum:$(form).find('[name=teamnum]').val(),
+						score:$(form).find('[name=score]').val(),
+						product:product,
+					};
+					$.post('./index.php?m=ajax&c=task&a=create',data,function(response){
+						if(response.code==1)
+						{
+							window.location = './index.php?c=html&a=task';
+						}
+						else
+						{
+							bootbox.alert(response.result);
+						}
+					});
+				}
+			});
+		</script>
+	</body>
+</html>

@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="utf-8" />
+		<title>{%$page_title%}</title>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+       	<meta name="renderer" content="webkit">
+        <meta content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport" />
+        <!-- reset -->
+        <link rel="stylesheet" href="//cdn.bootcss.com/normalize/5.0.0/normalize.min.css">
+		<!-- 新 Bootstrap 核心 CSS 文件 -->
+        <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<!-- 可选的Bootstrap主题文件（一般不用引入） -->
+		<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
+		<!--icon-->
+		<link rel="stylesheet" href="{%$VIEW_ROOT%}/html/css/plugins/font-awesome/css/font-awesome.min.css">
+		<!--自定义css-->
+		<link rel="stylesheet" href="{%resource path='/html/css/global.css'%}">
+		<script type="text/javascript">
+			function lpad(num, n) {  
+				return Array(n>(''+num).length?(n-(''+num).length+1):0).join(0)+num;  
+			}
+		</script>
+	</head>
+	<style>
+		.center-block .row{
+			margin-top: 15px;
+		}
+		.row:last-child{
+			margin-bottom: 100px;
+		}
+	</style>
+	<body>
+		{%include file='html/public/header.html'%}
+		<div class="body container-fluid">
+			<div class="row">
+				{%include file='html/public/sidebar.html'%}
+				<div class="content">
+			  		<div class="content-body">
+			  			<div class="white-block">
+			  				<div class="wall-block">
+								<p>{%$page_title_reverse%}</p>
+							</div>
+			  			</div>
+			  			<div class="divider"></div>
+			  			<div class="white-block">
+			  				
+			  				<div class="tab">
+			  					<div class="tab-header">
+			  						<a class="tab-title active" href="#base">基础信息</a>
+			  						<a class="tab-title" href="#order">查看订单</a>
+			  						<a class="tab-title" href="#team">团队详情</a>
+			  						<a class="tab-title" href="#swift">账目明细</a>
+			  					</div>
+			  					<div class="tab-body">
+			  						<div class="tab-page active" id="base">
+			  							<div class="space"></div>
+										<div class="top-tips">
+											<div class="top-tips-title">
+												操作提示
+											</div>
+											<div class="top-tips-body">
+												<p>该页面展示了商城所有的商品信息，可对商品进行编辑修改操作。</p>
+												<p>可输入商品名称关键字进行搜索，侧边栏进行高级搜索。</p>
+											</div>
+										</div>
+										
+										<div class="center-block" style="width: 50%;">
+											<div class="line"></div>
+											<div class="line"></div>
+											<div class="line"></div>
+											<div class="row" >
+												<div class="col-md-3" style="text-align: right;"> 会员等级: </div>
+												<div class="col-md-3"> {%if $user.vip==0%}普通{%elseif $user.vip==1%}白金{%elseif $user.vip==2%}钻石{%/if%} </div>
+												
+												<div class="col-md-3" style="text-align: right;"> 类型: </div>
+												<div class="col-md-3"> {%if $user.master==1%}导师{%else%}普通{%/if%} </div>
+											</div>
+											<div class="row" >
+												<div class="col-md-3" style="text-align: right;"> 昵称: </div>
+												<div class="col-md-3"> {%$user.name%} </div>
+												
+												<div class="col-md-3" style="text-align: right;"> 注册时间: </div>
+												<div class="col-md-3"> {%$user.regtime|date_format:'Y-m-d H:i:s'%} </div>
+											</div>
+											<div class="row" >
+												<div class="col-md-3" style="text-align: right;"> 性别: </div>
+												<div class="col-md-3">  </div>
+											</div>
+											<div class="row" >
+												<div class="col-md-3" style="text-align: right;"> 手机号码: </div>
+												<div class="col-md-3"> {%$user.telephone%} </div>
+											</div>
+											<div class="row" >
+												<div class="col-md-3" style="text-align: right;"> 微信号: </div>
+												<div class="col-md-3"> {%$user.wechat_no%} </div>
+											</div>
+											<div class="line"></div>
+											<div class="row" >
+												<div class="col-md-3" style="text-align: right;"> 上级导师: </div>
+												<div class="col-md-3"> {%$user.o_master%} </div>
+											</div>
+											<div class="row" >
+												<div class="col-md-3" style="text-align: right;"> 推广人: </div>
+												<div class="col-md-3"> {%$user.oid%} </div>
+											</div>
+											<div class="row" >
+												<div class="col-md-3" style="text-align: right;"> 个人推广码: </div>
+												<div class="col-md-3"> {%$user.invit%} </div>
+											</div>
+										</div>
+									</div>
+									<div class="tab-page" id="order">
+										<div class="space"></div>
+										<div class="top-tips">
+											<div class="top-tips-title">
+												操作提示
+											</div>
+											<div class="top-tips-body">
+												<p>该页面展示了商城所有的商品信息，可对商品进行编辑修改操作。</p>
+												<p>可输入商品名称关键字进行搜索，侧边栏进行高级搜索。</p>
+											</div>
+										</div>
+										<div class="line"></div>
+										<div class="tab tab-outline">
+											<div class="tab-header">
+												<a class="tab-title active" href="#order_all">全部订单</a>
+												<a class="tab-title" href="#order_paying">待付款</a>
+												<a class="tab-title" href="#order_waying">待发货</a>
+												<a class="tab-title" href="#order_receiving">待收货</a>
+												<a class="tab-title" href="#order_complete">已完成</a>
+											</div>
+											<div class="tab-body">
+												<div class="tab-page active" id="order_all">
+													<div class="line"></div>
+													<div class="">
+														<table class="table table-hover table-bordered table-responsive">
+															<thead>
+																<tr>
+																	<td width="2%" style="padding-left: 20px;padding-right: 20px;">
+																		<input type="checkbox" class="select-all">
+																	</td>
+																	<td width="13%" style="min-width: 160px;">
+																		订单号
+																	</td>
+																	<td width="13%" style="min-width: 128px;">
+																		下单时间
+																	</td>
+																	<td width="15%" style="min-width: 132px;">
+																		收货人信息
+																	</td>
+																	<td width="10%" style="min-width: 105px;">
+																		支付信息
+																	</td>
+																	<td width="10%" style="min-width: 80px;">
+																		应付金额
+																	</td>
+																	<td width="5%" style="min-width: 66px;">
+																		订单类型
+																	</td>
+																	<td width="10%" style="min-width: 100px; text-align: center;">
+																		订单状态
+																	</td>
+																	<td style="text-align: center; min-width: 240px;">
+																		操作
+																	</td>
+																</tr>
+															</thead>
+															<tbody>
+
+															</tbody>
+															<tfoot>
+																<tr>
+																	<td colspan="5">
+																		<div class="col-md-4">
+																			<select class="form-control multipleSelect">
+																				<option>请选择...</option>
+																				<option value="delete">删除</option>
+																			</select>
+
+																		</div>
+																		<div class="col-md-2">
+																			<button class="btn multipleBtn">确定</button>
+																		</div>
+																	</td>
+																	<td id="split_page" colspan="15" style="text-align: right;">
+
+																	</td>
+																</tr>
+															</tfoot>
+														</table>
+													</div>
+													
+												</div>
+												<div class="tab-page active" id="order_paying">
+													
+													<div class="line"></div>
+													<div class="">
+														<table class="table table-hover table-bordered table-responsive">
+															<thead>
+																<tr>
+																	<td width="2%" style="padding-left: 20px;padding-right: 20px;">
+																		<input type="checkbox" class="select-all">
+																	</td>
+																	<td width="13%" style="min-width: 160px;">
+																		订单号
+																	</td>
+																	<td width="13%" style="min-width: 128px;">
+																		下单时间
+																	</td>
+																	<td width="15%" style="min-width: 132px;">
+																		收货人信息
+																	</td>
+																	<td width="10%" style="min-width: 105px;">
+																		支付信息
+																	</td>
+																	<td width="10%" style="min-width: 80px;">
+																		应付金额
+																	</td>
+																	<td width="5%" style="min-width: 66px;">
+																		订单类型
+																	</td>
+																	<td width="10%" style="min-width: 100px; text-align: center;">
+																		订单状态
+																	</td>
+																	<td style="text-align: center; min-width: 240px;">
+																		操作
+																	</td>
+																</tr>
+															</thead>
+															<tbody>
+
+															</tbody>
+															<tfoot>
+																<tr>
+																	<td colspan="5">
+																		<div class="col-md-4">
+																			<select class="form-control multipleSelect">
+																				<option>请选择...</option>
+																				<option value="delete">删除</option>
+																			</select>
+
+																		</div>
+																		<div class="col-md-2">
+																			<button class="btn multipleBtn">确定</button>
+																		</div>
+																	</td>
+																	<td id="split_page" colspan="15" style="text-align: right;">
+
+																	</td>
+																</tr>
+															</tfoot>
+														</table>
+													</div>
+													
+												</div>
+												<div class="tab-page active" id="order_waying">
+													
+													<div class="line"></div>
+													<div class="">
+														<table class="table table-hover table-bordered table-responsive">
+															<thead>
+																<tr>
+																	<td width="2%" style="padding-left: 20px;padding-right: 20px;">
+																		<input type="checkbox" class="select-all">
+																	</td>
+																	<td width="13%" style="min-width: 160px;">
+																		订单号
+																	</td>
+																	<td width="13%" style="min-width: 128px;">
+																		下单时间
+																	</td>
+																	<td width="15%" style="min-width: 132px;">
+																		收货人信息
+																	</td>
+																	<td width="10%" style="min-width: 105px;">
+																		支付信息
+																	</td>
+																	<td width="10%" style="min-width: 80px;">
+																		应付金额
+																	</td>
+																	<td width="5%" style="min-width: 66px;">
+																		订单类型
+																	</td>
+																	<td width="10%" style="min-width: 100px; text-align: center;">
+																		订单状态
+																	</td>
+																	<td style="text-align: center; min-width: 240px;">
+																		操作
+																	</td>
+																</tr>
+															</thead>
+															<tbody>
+
+															</tbody>
+															<tfoot>
+																<tr>
+																	<td colspan="5">
+																		<div class="col-md-4">
+																			<select class="form-control multipleSelect">
+																				<option>请选择...</option>
+																				<option value="delete">删除</option>
+																			</select>
+
+																		</div>
+																		<div class="col-md-2">
+																			<button class="btn multipleBtn">确定</button>
+																		</div>
+																	</td>
+																	<td id="split_page" colspan="15" style="text-align: right;">
+
+																	</td>
+																</tr>
+															</tfoot>
+														</table>
+													</div>
+													
+												</div>
+												<div class="tab-page active" id="order_receiving">
+													
+													<div class="line"></div>
+													<div class="">
+														<table class="table table-hover table-bordered table-responsive">
+															<thead>
+																<tr>
+																	<td width="2%" style="padding-left: 20px;padding-right: 20px;">
+																		<input type="checkbox" class="select-all">
+																	</td>
+																	<td width="13%" style="min-width: 160px;">
+																		订单号
+																	</td>
+																	<td width="13%" style="min-width: 128px;">
+																		下单时间
+																	</td>
+																	<td width="15%" style="min-width: 132px;">
+																		收货人信息
+																	</td>
+																	<td width="10%" style="min-width: 105px;">
+																		支付信息
+																	</td>
+																	<td width="10%" style="min-width: 80px;">
+																		应付金额
+																	</td>
+																	<td width="5%" style="min-width: 66px;">
+																		订单类型
+																	</td>
+																	<td width="10%" style="min-width: 100px; text-align: center;">
+																		订单状态
+																	</td>
+																	<td style="text-align: center; min-width: 240px;">
+																		操作
+																	</td>
+																</tr>
+															</thead>
+															<tbody>
+
+															</tbody>
+															<tfoot>
+																<tr>
+																	<td colspan="5">
+																		<div class="col-md-4">
+																			<select class="form-control multipleSelect">
+																				<option>请选择...</option>
+																				<option value="delete">删除</option>
+																			</select>
+
+																		</div>
+																		<div class="col-md-2">
+																			<button class="btn multipleBtn">确定</button>
+																		</div>
+																	</td>
+																	<td id="split_page" colspan="15" style="text-align: right;">
+
+																	</td>
+																</tr>
+															</tfoot>
+														</table>
+													</div>
+													
+												</div>
+												<div class="tab-page active" id="order_complete">
+													
+													<div class="line"></div>
+													<div class="">
+														<table class="table table-hover table-bordered table-responsive">
+															<thead>
+																<tr>
+																	<td width="2%" style="padding-left: 20px;padding-right: 20px;">
+																		<input type="checkbox" class="select-all">
+																	</td>
+																	<td width="13%" style="min-width: 160px;">
+																		订单号
+																	</td>
+																	<td width="13%" style="min-width: 128px;">
+																		下单时间
+																	</td>
+																	<td width="15%" style="min-width: 132px;">
+																		收货人信息
+																	</td>
+																	<td width="10%" style="min-width: 105px;">
+																		支付信息
+																	</td>
+																	<td width="10%" style="min-width: 80px;">
+																		应付金额
+																	</td>
+																	<td width="5%" style="min-width: 66px;">
+																		订单类型
+																	</td>
+																	<td width="10%" style="min-width: 100px; text-align: center;">
+																		订单状态
+																	</td>
+																	<td style="text-align: center; min-width: 240px;">
+																		操作
+																	</td>
+																</tr>
+															</thead>
+															<tbody>
+
+															</tbody>
+															<tfoot>
+																<tr>
+																	<td colspan="5">
+																		<div class="col-md-4">
+																			<select class="form-control multipleSelect">
+																				<option>请选择...</option>
+																				<option value="delete">删除</option>
+																			</select>
+
+																		</div>
+																		<div class="col-md-2">
+																			<button class="btn multipleBtn">确定</button>
+																		</div>
+																	</td>
+																	<td id="split_page" colspan="15" style="text-align: right;">
+
+																	</td>
+																</tr>
+															</tfoot>
+														</table>
+													</div>
+													
+												</div>
+											</div>
+										</div>
+										
+									</div>
+									<div class="tab-page" id="team">
+										<div class="space"></div>
+										<div class="top-tips">
+											<div class="top-tips-title">
+												操作提示
+											</div>
+											<div class="top-tips-body">
+												<p>该页面展示了商城所有的商品信息，可对商品进行编辑修改操作。</p>
+												<p>可输入商品名称关键字进行搜索，侧边栏进行高级搜索。</p>
+											</div>
+										</div>
+										<div class="line">
+											<div class="btn-group">
+												<a class="btn red btn-outline btn-small dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+													导出 <span class="caret"></span>
+												</a>
+												<ul class="dropdown-menu red">
+													<li><a href="#">所有的用户</a></li>
+													<li><a href="#">搜索结果中的用户</a></li>
+													<li><a href="#">选中的用户</a></li>
+												</ul>
+											</div>
+											<form class="form-inline pull-right" id="team_search">
+												<div class="form-group">
+													<input type="text" name="search" class="form-control input-sm" placeholder="会员名称/手机号">
+												</div>
+												<button class="btn btn-small btn-orange pull-right" style="height: 30px; margin-left: 10px;">搜索</button>
+											</form>
+										</div>
+										<div class="">
+											<table class="table table-hover table-bordered table-responsive">
+												<thead>
+													<tr>
+			  											<td width="2%" style="padding-left: 20px;padding-right: 20px;">
+			  												<input type="checkbox" class="select-all">
+			  											</td>
+			  											<td>
+			  												头像
+			  											</td>
+			  											<td>
+			  												用户昵称
+			  											</td>
+			  											<td>
+			  												等级
+			  											</td>
+			  											<td>
+			  												手机号
+			  											</td>
+			  											<td>
+			  												微信号
+			  											</td>
+			  											<td>
+			  												上级导师
+			  											</td>
+			  											<td>
+			  												推广人
+			  											</td>
+			  											<td>
+			  												余额
+			  											</td>
+			  											<td>
+			  												个人推广码
+			  											</td>
+			  											<td>
+			  												注册时间
+			  											</td>
+			  											<td>
+			  												类型
+			  											</td>
+			  											<td style="text-align: center;">
+			  												操作
+			  											</td>
+			  										</tr>
+												</thead>
+												<tbody>
+													
+												</tbody>
+												<tfoot>
+													<tr>
+														<td id="split_page" colspan="15" style="text-align: right;">
+			  											
+			  											</td>
+													</tr>
+												</tfoot>
+											</table>
+										</div>
+										
+									</div>
+									<div class="tab-page" id="swift">
+										<div class="line"></div>
+										<div class="line"></div>
+										<div class="center-block" style="width: 13%; min-width: 212px;">
+											<div style="font-size: 12px;color:#656565;">今日收益</div>
+											<font style="font-family: '苹方 中等', '苹方';font-weight: 400;font-size: 60px;color:#282828;">{%$profit_today|default:'0.00'%}</font>
+											<font style="color:#989898;font-size: 20px;">RMB</font>
+											<div class="row">
+												<div class="col-md-6">
+													<div style="color: #989898;font-size: 12px;">总余额</div>
+													<div style="color:#656565;font-size: 16px;">{%$user.money%}</div>
+												</div>
+												<div class="col-md-6">
+													<div style="color: #989898;font-size: 12px;">累计收益</div>
+													<div style="color:#656565;font-size: 16px;">{%$profit|default:'0.00'%}</div>
+												</div>
+											</div>
+										</div>
+										<div class="line">
+											<div class="btn-group">
+												<a class="btn red btn-outline btn-small dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+													导出 <span class="caret"></span>
+												</a>
+												<ul class="dropdown-menu red">
+													<li><a href="#">所有的流水</a></li>
+													<li><a href="#">搜索结果中的流水</a></li>
+													<li><a href="#">选中的流水</a></li>
+												</ul>
+											</div>
+										</div>
+										<div class="">
+											<table class="table table-hover table-bordered table-responsive">
+												<thead>
+													<tr>
+			  											<td>
+			  												类型
+			  											</td>
+			  											<td>
+			  												时间
+			  											</td>
+			  											<td>
+			  												金额
+			  											</td>
+			  											<td>
+			  												说明
+			  											</td>
+			  											<td>
+			  												详情
+			  											</td>
+			  										</tr>
+												</thead>
+												<tbody>
+													
+												</tbody>
+												<tfoot>
+													<tr>
+														<td id="split_page" colspan="15" style="text-align: right;">
+			  											
+			  											</td>
+													</tr>
+												</tfoot>
+											</table>
+										</div>
+									
+									</div>
+								</div>
+							</div>
+
+			  			</div>
+			  		</div>				  
+				</div>
+			</div>
+		</div>
+		<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+		<script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+		<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+		<script src="http://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		<!--alert-->
+		<script src="//cdn.bootcss.com/bootbox.js/4.4.0/bootbox.min.js"></script>
+		<script src="{%resource path='/html/js/tab.js'%}"></script>
+		<script src="{%resource path='/html/js/datatables.js'%}"></script>
+		<script src="{%resource path='/html/js/global.js'%}"></script>
+		<script type="text/javascript">
+			var $_uid = '{%$smarty.get.id%}';
+			
+			$.ajaxSetup({
+				headers:{
+					'X-CSRF-TOKEN':'{%$x_csrf_token%}'
+				}
+			});
+			
+			$('table').on('change','input[type=checkbox].select-all',function(){
+				if($(this).is(':checked'))
+				{
+					$(this).closest('table').find('input[type=checkbox]:not(.select-all)').each(function(index,value){
+						$(value).prop('checked',true);
+					});
+				}
+				else
+				{
+					$(this).closest('table').find('input[type=checkbox]:not(.select-all)').each(function(index,value){
+						$(value).prop('checked',false);
+					});
+				}
+				return false;
+			});
+			
+			var getSelectedCheckbox = function(table){
+				$_id = [];
+				table.find('tbody input[type=checkbox]').each(function(index,value){
+					if($(value).is(':checked'))
+					{
+						$_id.push($(value).val());
+					}
+				});
+				return $_id;
+			}
+			
+			$('#order table').on('click','.look',function(){
+				window.open('./index.php?c=html&a=orderdetail&orderno='+$(this).data('id'));
+			});
+			
+			var warning = function(msg){
+				msg = msg||'错误的订单状态';
+				return '<font color="color:#FF3300;">'+msg+'</font>';
+			}
+			
+			tab.on('tab.click.order_all',function(){
+				all.reload();
+			}).on('tab.click.order_receiving',function(){
+				receiving.reload();
+			}).on('tab.click.order_paying',function(){
+				receiving.reload();
+			}).on('tab.click.order_waying',function(){
+				waying.reload();
+			}).on('tab.click.order_complete',function(){
+				complete.reload();
+			});
+		</script>
+		<script type="text/javascript" src="{%resource path='/html/js/user/order_all.js'%}"></script>
+		<script type="text/javascript" src="{%resource path='/html/js/user/order_paying.js'%}"></script>
+		<script type="text/javascript" src="{%resource path='/html/js/user/order_waying.js'%}"></script>
+		<script type="text/javascript" src="{%resource path='/html/js/user/order_receiving.js'%}"></script>
+		<script type="text/javascript" src="{%resource path='/html/js/user/order_complete.js'%}"></script>
+		<script type="text/javascript" src="{%resource path='/html/js/user/team.js'%}"></script>
+		<script type="text/javascript" src="{%resource path='/html/js/user/swift.js'%}"></script>
+	</body>
+</html>

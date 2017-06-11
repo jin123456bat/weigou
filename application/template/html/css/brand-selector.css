@@ -1,0 +1,85 @@
+@charset "utf-8";
+/* CSS Document */
+#pulldown_brand{
+	border-radius: 2px;
+	border:1px solid #D7D7D7;
+	background-color: #FFFFFF;
+	border-top-left-radius: 0px;
+	border-top-right-radius: 0px;
+	box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.149019607843137);
+	border-top: 0px;
+	box-sizing:border-box;
+	font-size: 12px;
+	color: #6B6B6B;
+	line-height: 22px;
+	padding: 5px;
+}
+#pulldown_brand #pulldown_head_search #pulldown_head_search_input{
+	display: inline-block;
+	width: 80%;
+	border: 1px solid rgba(215, 215, 215, 1);
+	outline: none;
+	border-top-left-radius: 2px;
+	border-bottom-left-radius: 2px;
+	padding-left: 5px;
+}
+#pulldown_brand #pulldown_head_search{
+	padding-bottom: 6px;
+	border-bottom: 1px dotted #CCCCCC;
+}
+#pulldown_brand #pulldown_head_search #pulldown_head_search_submit{
+	display: inline-block;
+	width: 20%;
+	border-left: none;
+	outline: none;
+	border: 1px solid rgba(215, 215, 215, 1);
+	background-color: rgba(215, 215, 215, 1);
+	border-top-right-radius: 2px;
+	border-bottom-right-radius: 2px;
+}
+#pulldown_brand #pulldown_brand_head_index .pulldown_brand_head_index_item{
+	background-color: #FFFFFF;
+	display:inline-block;
+	height:22px;
+	line-height:22px;
+	text-align:center;
+	cursor:pointer;
+	padding: 0px 6px;
+	min-width: 22px;
+}
+#pulldown_brand #pulldown_brand_head_index .pulldown_brand_head_index_item.active{
+	background-color: #31B4E1;
+}
+#pulldown_brand #pulldown_brand_body{
+	max-height: 210px;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+#pulldown_brand #pulldown_brand_body #pulldown_brand_body_quit{
+	color:#3399FF;
+	padding-top: 5px;
+	padding-left: 2px;
+	cursor: pointer;
+}
+#pulldown_brand #pulldown_brand_body .pulldown_brand_body_item{
+	height: 30px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	cursor: pointer;
+}
+#pulldown_brand #pulldown_brand_body .pulldown_brand_body_item .pulldown_brand_body_item_index{
+	display:inline-block;
+	width:30px;
+	text-align: center;
+	border-right: 2px solid #E4E4E4;
+	line-height: 20px;
+	float: left;
+}
+#pulldown_brand #pulldown_brand_body .pulldown_brand_body_item .pulldown_brand_body_item_body{
+	display: inline-block;
+	padding-left: 5px;
+	line-height: 20px;
+	white-space: nowrap;
+	overflow-x: hidden;
+	float: left;
+}

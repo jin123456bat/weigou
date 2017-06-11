@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="utf-8" />
+		<title>{%$page_title%}</title>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+       	<meta name="renderer" content="webkit">
+        <meta content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport" />
+        <link rel="stylesheet" href="{%$VIEW_ROOT%}/html/css/plugins/font-awesome/css/font-awesome.min.css">
+	</head>
+	<style>
+		body{
+			margin: 0px;
+			padding: 0px;
+			padding-top: 200px;
+		}
+		button{
+			background: orange;
+			border: none;
+			outline: none;
+			padding: 10px 45px;
+			color:#FFFFFF;
+			cursor: pointer;
+		}
+	</style>
+	<body>
+		<div style="width: 100%">
+			<div style="margin: 0 auto; width: 120px;">
+				<i class="fa fa-ban fa-fw fa-5x" style="margin: 0 auto; font-size: 120px; width: 120px; color: #f55a48;"></i>
+			</div>
+			<div class="" style="font-size: 100px;text-align: center;">
+				403
+			</div>
+			<div class="" style="font-size: 20px;text-align: center;font-weight: 600;margin-bottom: 20px;">
+				没有权限
+			</div>
+			<div style="text-align: center;font-size: 14px;">
+				您暂时没有权限访问该页面<br>建议您检查一下再试
+			</div>
+			<div class="" style="text-align: center; margin-top: 20px;">
+				<button onClick="window.history.go(-1);">返回上一页</button>
+			</div>
+		</div>		
+	</body>
+</html>

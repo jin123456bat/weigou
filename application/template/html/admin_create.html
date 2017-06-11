@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="utf-8" />
+		<title>{%$page_title%}</title>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+       	<meta name="renderer" content="webkit">
+        <meta content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport" />
+        <!-- reset -->
+        <link rel="stylesheet" href="//cdn.bootcss.com/normalize/5.0.0/normalize.min.css">
+		<!-- 新 Bootstrap 核心 CSS 文件 -->
+        <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<!-- 可选的Bootstrap主题文件（一般不用引入） -->
+		<link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
+		<link href="//cdn.bootcss.com/jstree/3.3.3/themes/default/style.min.css" rel="stylesheet">
+		<!--icon-->
+		<link rel="stylesheet" href="{%$VIEW_ROOT%}/html/css/plugins/font-awesome/css/font-awesome.min.css">
+		<!--自定义css-->
+		<link rel="stylesheet" href="{%resource path='/html/css/global.css'%}">
+		<script type="text/javascript">
+			function lpad(num, n) {  
+				return Array(n>(''+num).length?(n-(''+num).length+1):0).join(0)+num;  
+			}
+		</script>
+	</head>
+	<style>
+	.blue{
+		color: #3d93d7;
+	}
+	</style>
+	<body>
+		{%include file='html/public/header.html'%}
+		<div class="body container-fluid">
+			<div class="row">
+				{%include file='html/public/sidebar.html'%}
+				<div class="content">
+			  		<div class="content-body">
+			  			<div class="white-block">
+			  				<div class="wall-block">
+								<p>{%$page_title_reverse%}</p>
+							</div>
+			  			</div>
+			  			<div class="divider"></div>
+			  			<div class="white-block">
+			  				<h5>基本信息</h5>
+			  				<form class="form-horizontal" role="form" onSubmit="return false;">
+								<div class="form-group">
+									<label class="col-md-1 control-label control-label-sm">用户名</label>
+									<div class="col-md-2">
+										<input type="text" name="username" class="form-control input-sm">
+									</div>
+								</div>			  					
+			  					<div class="form-group">
+									<label class="col-md-1 control-label control-label-sm">密码</label>
+									<div class="col-md-2">
+										<input type="text" name="password" class="form-control input-sm">
+									</div>
+								</div>			  					
+			  					<div class="form-group">
+									<label class="col-md-1 control-label control-label-sm">姓名</label>
+									<div class="col-md-2">
+										<input type="text" name="realname" class="form-control input-sm">
+									</div>
+								</div>			  					
+			  					<div class="form-group">
+									<label class="col-md-1 control-label control-label-sm">手机号</label>
+									<div class="col-md-2">
+										<input type="text" name="telephone" class="form-control input-sm">
+									</div>
+								</div>			  					
+			  				</form>
+						</div>
+						<div class="line"></div>
+						<div class="white-block">
+							<h5>权限设置</h5>
+							
+							<div class="tab default">
+								<div class="tab-header">
+			  						<a class="tab-title active" href="#role">角色</a>
+			  						<a class="tab-title" href="#privileges">额外权限</a>
+			  						<a class="tab-title" href="#fields">字段</a>
+			  					</div>
+			  					<div class="tab-body">
+			  						<div class="tab-page active" id="role">
+			  							<div class="line"></div>
+			  							<div class="panel panel-default center-block">
+											<div class="panel-heading">
+												<h4 class="panel-title" style="font-size: 13px; text-align: center;">角色选择（完成编辑后请点击按钮保存设置）</h4>
+											</div>
+											<div class="panel-body" id="role_table">
+												{%section name=role loop=$role%}
+												<div class="col-md-3">
+													<label class="checkbox-for center-block">
+														<input type="checkbox" value="{%$role[role].id%}" {%if in_array($role[role].id,$admin_role)%}checked="checked"{%/if%}> {%$role[role].name%}
+													</label>
+												</div>
+												{%sectionelse%}
+												<div>没有任何角色，<a href="./index.php?c=html&a=role_create">点此</a>添加角色</div>
+												{%/section%}
+											</div>
+										</div>
+										
+									</div>
+									<div class="tab-page" id="privileges">
+										<div class="line"></div>
+										<div class="col-md-12">
+											<div class="col-md-3">
+												<div id="privileges_tree" style="border:1px solid #BCBCBC;padding: 10px;">
+
+												</div>
+											</div>
+											<div class="col-md-9">
+												<div class="panel panel-default center-block">
+													<div class="panel-heading">
+														<h4 class="panel-title" style="font-size: 13px; text-align: center;">权限选择</h4>
+													</div>
+													<div class="panel-body" id="privileges_table">
+
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="tab-page" id="fields">
+										
+		  							<div class="line"></div>
+			  							<div class="panel panel-default center-block">
+											<div class="panel-heading">
+												<h4 class="panel-title" style="font-size: 13px; text-align: center;">角色选择（完成编辑后请点击按钮保存设置）</h4>
+											</div>
+											<div class="panel-body" id="field_table">
+												<div class="col-md-3">
+													<label class="checkbox-for center-block">
+														<input type="checkbox" value="order.address_identify" checked="checked"> 身份证号
+													</label>
+												</div>
+												<div class="col-md-3">
+													<label class="checkbox-for center-block">
+														<input type="checkbox" value="order.address_telephone" checked="checked"> 手机号码
+													</label>
+												</div>
+												<div class="col-md-3">
+													<label class="checkbox-for center-block">
+														<input type="checkbox" value="order.address_name" checked="checked"> 真实姓名
+													</label>
+												</div>
+												<div class="col-md-3">
+													<label class="checkbox-for center-block">
+														<input type="checkbox" value="order.address_address" checked="checked"> 收货地址
+													</label>
+												</div>
+											</div>
+										</div>
+										
+									</div>
+								</div>
+							</div>
+							<div style="display: block; width: 100%;">
+								<div class="center-block" style="width: 20%;display: flex;flex-flow:row nowrap;justify-content:space-between;">
+									<button type="submit" class="btn btn-primary btn-lg submit" style="flex:0 0 auto;"> 保存 </button>
+									<button type="reset" class="btn default btn-lg" style="flex:0 0 auto;"> 取消 </button>
+								</div>
+							</div>
+						</div>
+			  		</div>				  
+				</div>
+			</div>
+		</div>
+		<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+		<script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+		<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+		<script src="http://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		<!--alert-->
+		<script src="//cdn.bootcss.com/bootbox.js/4.4.0/bootbox.min.js"></script>
+		<script src="//cdn.bootcss.com/jstree/3.3.3/jstree.min.js"></script>
+		<script src="{%resource path='/html/js/tab.js'%}"></script>
+		<script src="{%resource path='/html/js/global.js'%}"></script>
+		<script type="text/javascript">
+			$.ajaxSetup({
+				headers:{
+					'X-CSRF-TOKEN':'{%$x_csrf_token%}'
+				}
+			});
+			
+			var loaded_button_privileges = [];
+			
+			$('#privileges_tree').jstree({
+				plugins: [
+					"checkbox",  //checkbox
+					"types",// 不同的图标
+					'wholerow',
+					'conditionalselect',
+				],
+				conditionalselect : function (node, event) {
+					if(!node.state.selected)
+					{
+						//把选择节点的所有子权限都加载出来
+						$.post('./index.php?m=ajax&c=admin&a=privileges_button',{id:node.id,expect:loaded_button_privileges},function(response){
+							for(let i=0;i<response.length;i++)
+							{
+								if($('#privileges_table').find('.privilege-title[data-id='+response[i].mid+']').length==0)
+								{
+									let template1 = $(`<div class="col-md-12 privilege-title" data-id="${response[i].mid}"><h4><strong>${response[i].m_title}</strong></h4></div>`);
+									template1.appendTo($('#privileges_table'));
+								}
+								let template = 
+								$(`
+								<div class="col-md-3 privilege" data-parent="${response[i].mid}">
+									<label class="checkbox-for center-block">
+										<input type="checkbox" value="${response[i].id}"> ${response[i].text}
+									</label>
+								</div>
+								`);
+								template.find('input').prop('checked',true);
+								if($('#privileges_table').find('.privilege[data-parent='+response[i].mid+']').length==0)
+								{
+									template.insertAfter($('#privileges_table').find('.privilege-title[data-id='+response[i].mid+']'));
+								}
+								else
+								{
+									template.insertAfter($('#privileges_table').find('.privilege[data-parent='+response[i].mid+']:last'));
+								}
+								if($.inArray(response[i].mid,loaded_button_privileges)===-1)
+								{
+									loaded_button_privileges.push(response[i].mid);
+								}
+							}
+						});
+					}
+					else
+					{
+						$.get('./index.php?m=ajax&c=admin&a=privileges_page_children',{id:node.id},function(response){
+							for(let i=0;i<response.length;i++)
+							{
+								if(loaded_button_privileges.indexOf(response[i])!==-1)
+								{
+									loaded_button_privileges.splice(loaded_button_privileges.indexOf(response[i]),1);
+								}
+								$('#privileges_table').find('.privilege[data-parent='+response[i]+']').remove();
+								$('#privileges_table').find('.privilege-title[data-id='+response[i]+']').remove();
+							}
+						});
+					}
+					return true;
+				},
+				core: {
+					check_callback : true,
+					data : {
+						url : function (node) {
+						  return './index.php?m=ajax&c=admin&a=privileges_page';
+						},
+						data : function (node) {
+						  return { 'id' : node.id };
+						}
+					}
+					
+				},
+				types : {
+					folder : {
+						icon : "fa fa-folder blue"
+					},
+					file : {
+						icon : "fa fa-file blue"
+					}
+				},
+			});
+			
+			
+			$('.submit').on('click',function(){
+				var username = $.trim($('input[name=username]').val());
+				var password = $.trim($('input[name=password]').val());
+				var realname = $.trim($('input[name=realname]').val());
+				var telephone = $.trim($('input[name=telephone]').val());
+				
+				var role = [];
+				$('#role_table').find('input[type=checkbox]:checked').each(function(index,value){
+					role.push($(value).val());
+				});
+				
+				var button = [];//额外的权限 - 按钮级
+				$('#privileges_table').find('input[type=checkbox]:checked').each(function(index,value){
+					button.push($(value).val());
+				});
+				
+				//额外的权限 页面级
+				var page = $('#privileges_tree').jstree().get_checked();
+				var privileges = {
+					button:button,
+					page:page,
+				};
+				
+				var field = [];
+				$('#field_table input[type=checkbox]:checked').each(function(index,value){
+					field.push($(value).val());
+				});
+				
+				$.post('./index.php?m=ajax&c=admin&a=create',{username:username,password:password,realname:realname,telephone:telephone,role:role,privileges:privileges,field:field},function(response){
+					if(response.code==1)
+					{
+						window.location = './index.php?c=html&a=admin';
+					}
+					else
+					{
+						if('object' == typeof response.result)
+					   	{
+							$.each(response.result,function(index,value){
+								bootbox.alert(value[0]);
+								return false;
+							});
+					   	}
+						else
+					   	{
+						  	bootbox.alert(response.result);
+						}
+					}
+				});
+				return false;
+			});
+		</script>
+	</body>
+</html>

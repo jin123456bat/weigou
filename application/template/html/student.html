@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="utf-8" />
+		<title>{%$page_title%}</title>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+       	<meta name="renderer" content="webkit">
+        <meta content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport" />
+        <!-- reset -->
+        <link rel="stylesheet" href="//cdn.bootcss.com/normalize/5.0.0/normalize.min.css">
+		<!-- 新 Bootstrap 核心 CSS 文件 -->
+        <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<!-- 可选的Bootstrap主题文件（一般不用引入） -->
+		<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
+		<!--icon-->
+		<link rel="stylesheet" href="{%$VIEW_ROOT%}/html/css/plugins/font-awesome/css/font-awesome.min.css">
+		<!--自定义css-->
+		<link rel="stylesheet" href="{%resource path='/html/css/global.css'%}">
+		<script type="text/javascript">
+			function lpad(num, n) {  
+				return Array(n>(''+num).length?(n-(''+num).length+1):0).join(0)+num;  
+			}
+		</script>
+	</head>
+	<body>
+		{%include file='html/public/header.html'%}
+		<div class="body container-fluid">
+			<div class="row">
+				{%include file='html/public/sidebar.html'%}
+				<div class="content">
+			  		<div class="content-body">
+			  			<div class="white-block">
+			  				<div class="wall-block">
+								<p>{%$page_title_reverse%}</p>
+							</div>
+			  			</div>
+			  			<div class="divider"></div>
+			  			<div class="white-block">
+			  				<div class="tab">
+			  					<div class="tab-header">
+			  						<a class="tab-title active" href="#all">学生申请列表</a>
+			  					</div>
+			  					<div class="tab-body">
+			  						<div class="tab-page active" id="all">
+										<div class="space"></div>
+										<div class="top-tips">
+											<div class="top-tips-title">
+												操作提示
+											</div>
+											<div class="top-tips-body">
+												<p>该页面展示了商城所有的商品信息，可对商品进行编辑修改操作。</p>
+												<p>可输入商品名称关键字进行搜索，侧边栏进行高级搜索。</p>
+											</div>
+										</div>
+										<div class="line" style="float:right;">
+											<form class="form-inline pull-right" id="all_search">
+												<div class="form-group">
+													<input type="text" name="search" class="form-control input-sm" placeholder="会员名称/手机号">
+												</div>
+												<button class="btn btn-small btn-orange pull-right" style="height: 30px; margin-left: 10px;">搜索</button>
+											</form>
+										</div>
+										<div class="">
+											<table class="table table-hover table-bordered table-responsive">
+												<thead>
+													<tr>
+														<td width="2%" style="padding-left: 20px;padding-right: 20px;">
+															<input type="checkbox" class="select-all">
+														</td>
+														<td>
+															用户昵称
+														</td>
+														<td>
+															等级
+														</td>
+														<td>
+															真实姓名
+														</td>
+														<td>
+															手机号
+														</td>
+														<td>
+															学校
+														</td>
+														<td>
+															专业
+														</td>
+														<td>
+															年级
+														</td>
+														<td>
+															学生证
+														</td>
+														<td>
+															身份证
+														</td>
+														<td>
+															申请时间
+														</td>
+														<td>
+															状态
+														</td>
+														<td style="text-align: center;">
+															操作
+														</td>
+													</tr>
+												</thead>
+												<tbody>
+
+												</tbody>
+												<tfoot>
+													<tr>
+														<td id="split_page" colspan="15" style="text-align: right;">
+
+														</td>
+													</tr>
+												</tfoot>
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+			  			</div>
+			  		</div>				  
+				</div>
+			</div>
+		</div>
+		<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+		<script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+		<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+		<script src="http://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		<!--alert-->
+		<script src="//cdn.bootcss.com/bootbox.js/4.4.0/bootbox.min.js"></script>
+		<script src="{%resource path='/html/js/datatables.js'%}"></script>
+		<script src="{%resource path='/html/js/global.js'%}"></script>
+		<script type="text/javascript">
+			$.ajaxSetup({
+				headers:{
+					'X-CSRF-TOKEN':'{%$x_csrf_token%}'
+				}
+			});
+			
+			$('table').on('change','input[type=checkbox].select-all',function(){
+				if($(this).is(':checked'))
+				{
+					$(this).closest('table').find('input[type=checkbox]:not(.select-all)').each(function(index,value){
+						$(value).prop('checked',true);
+					});
+				}
+				else
+				{
+					$(this).closest('table').find('input[type=checkbox]:not(.select-all)').each(function(index,value){
+						$(value).prop('checked',false);
+					});
+				}
+				return false;
+			});
+			
+			
+			var all = datatables({
+				table:$('#all table'),
+				ajax:{
+					url:'{%url c=datatables a=student%}',
+					data:{
+						'user.close':0
+					},
+				},
+				columns:[{
+					data:'id',
+					name:'student_info.id',
+				},{
+					data:'username',
+					name:'user.name',
+				},{
+					data:'vip',
+					name:'user.vip',
+				},{
+					data:'realname',
+					name:'student_info.name',
+				},{
+					data:'telephone',
+					name:'user.telephone',
+				},{
+					data:'school',
+					name:'student_info.school',
+				},{
+					data:'zhuanye',
+					name:'student_info.zhuanye',
+				},{
+					data:'cl',
+					name:'student_info.cl',
+				},{
+					data:'card',
+					name:'student_info.card',
+				},{
+					data:'cartnum',
+					name:'student_info.cartnum',
+				},{
+					data:'created',
+					name:'student_info.created',
+				},{
+					data:'status',
+					name:'user.school',
+				},{
+					data:'user_id',
+					name:'user.id',
+				}],
+				columnDefs:[{
+					targets:0,
+					render:function(data,full){
+						return '<input type="checkbox" name="id[]" value="'+data+'">';
+					}
+				},{
+					targets:2,
+					render:function(data,type){
+						switch(parseInt(data))
+						{
+							case 0:return '普通';
+							case 1:return '白金';
+							case 2:return '钻石';
+						}
+						return '错误';
+					}
+				},{
+					targets:5,
+					render:function(data,type){
+						if(data.length==0)
+						{
+							return '<font color="BCBCBC">暂无</font>';
+						}
+						return data;
+					}
+				},{
+					targets:6,
+					render:function(data,type){
+						if(data==null)
+						{
+							return '<font color="BCBCBC">暂无</font>';
+						}
+						return data;
+					}
+				},{
+					targets:7,
+					render:function(data,type){
+						if(data==null)
+						{
+							return '<font color="BCBCBC">暂无</font>';
+						}
+						return data;
+					}
+				},{
+					targets:10,
+					render:function(data,type){
+						return data;
+					}
+				},{
+					targets:11,
+					render:function(data,type){
+						return '<div class="checkbox '+(data==1?'active green':'')+'">'+(data==1?'通过':'拒绝')+'</div>';
+					}
+				},{
+					targets:12,
+					render:function(data,full){
+						content = '';
+						if(full.status==1)
+						{
+							content = 
+							`
+							<button class="btn btn-outline red btn-xs refuse" data-id="${data}">拒绝</button>
+							`;
+						}						
+						return content;
+					}
+				}],
+				sort:[{
+					column:10,
+					dir:'desc',
+				}],
+				pagesize:10,
+				onRowLoaded:function(row){
+					row.find('td:last').css('text-align','center');
+					row.find('td:first').css({'padding-left':'20px','padding-right':'20px'});
+				}
+			});
+			
+			$('#all table').on('click','.refuse',function(){
+				var checkbox = $(this).parents('tr').find('.checkbox');
+				var btn = $(this);
+				var id = $(this).data('id');
+				bootbox.confirm({
+					message:'确认拒绝?',
+					buttons:{
+						cancel:{
+							label: '<i class="fa fa-times"></i> 取消',
+						},
+						confirm:{
+							label:'<i class="fa fa-check"></i> 确定',
+						}
+					},
+					callback: function(result) {
+						if(result) {
+							btn.addClass('disabled');
+							$.post('./index.php?m=ajax&c=user&a=school',{id:id},function(response){
+								if(response.code==1)
+								{
+									checkbox.removeClass('active').html('拒绝');
+									btn.remove();
+								}
+								else
+								{
+									btn.removeClass('disabled');
+									bootbox.alert(response.result);
+								}
+								
+							});
+						}
+					},
+				});
+				return false;
+			});
+			
+			$('#all_search').on('submit',function(){
+				all.search($(this).find('input').val());
+				return false;
+			});
+		</script>
+	</body>
+</html>

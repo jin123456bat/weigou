@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="utf-8" />
+		<title>{%$page_title%}</title>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+       	<meta name="renderer" content="webkit">
+        <meta content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport" />
+        <!-- reset -->
+        <link rel="stylesheet" href="//cdn.bootcss.com/normalize/5.0.0/normalize.min.css">
+		<!-- 新 Bootstrap 核心 CSS 文件 -->
+        <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<!-- 可选的Bootstrap主题文件（一般不用引入） -->
+		<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
+		<!--icon-->
+		<link rel="stylesheet" href="{%$VIEW_ROOT%}/html/css/plugins/font-awesome/css/font-awesome.min.css">
+		<!--自定义css-->
+		<link rel="stylesheet" href="{%resource path='/html/css/global.css'%}">
+		<script type="text/javascript">
+			function lpad(num, n) {  
+				return Array(n>(''+num).length?(n-(''+num).length+1):0).join(0)+num;  
+			}
+		</script>
+	</head>
+	<body>
+		{%include file='html/public/header.html'%}
+		<div class="body container-fluid">
+			<div class="row">
+				{%include file='html/public/sidebar.html'%}
+				<div class="content">
+			  		<div class="content-body">
+			  			<div class="white-block">
+			  				<div class="wall-block">
+								<p>{%$page_title_reverse%}</p>
+							</div>
+			  			</div>
+			  			<div class="divider"></div>
+			  			<div class="white-block">
+			  				
+			  				<div class="tab">
+			  					<div class="tab-header">
+			  						<a class="tab-title active" href="#all">全部</a>
+			  					</div>
+			  					<div class="tab-body">
+			  						<div class="tab-page active" id="all">
+			  							<div class="space"></div>
+										<div class="top-tips">
+											<div class="top-tips-title">
+												操作提示
+											</div>
+											<div class="top-tips-body">
+												<p>全部订单指全部有效订单，无效的订单暂不显示。</p>
+												<p>可输入商品名称关键字进行搜索，侧边栏进行高级搜索。</p>
+											</div>
+										</div>
+										<div class="line">
+											<a href="./index.php?c=html&a=role_create" class="btn red btn-outline btn-small">添加</a>
+											<form class="form-inline pull-right" id="dt_search">
+												<div class="form-group">
+													<input type="text" name="search" class="form-control input-sm" placeholder="角色名称">
+												</div>
+												<button class="btn btn-small btn-orange pull-right" style="height: 30px; margin-left: 10px;">搜索</button>
+											</form>
+										</div>
+										<div class="">
+											<table class="table table-hover table-bordered table-responsive">
+												<thead>
+													<tr>
+			  											<td>
+			  												角色ID
+			  											</td>
+			  											<td>
+			  												角色名称
+			  											</td>
+			  											<td>
+			  												创建人
+			  											</td>
+			  											<td>
+			  												创建时间
+			  											</td>
+			  											<td>
+			  												状态
+			  											</td>
+			  											<td style="text-align: center;">
+			  												操作
+			  											</td>
+			  										</tr>
+												</thead>
+												<tbody>
+													
+												</tbody>
+												<tfoot>
+													<tr>
+														<td id="split_page" colspan="10" style="text-align: right;">
+			  											
+			  											</td>
+													</tr>
+												</tfoot>
+											</table>
+										</div>
+									</div>
+			  					</div>
+							</div>
+						</div>
+			  		</div>				  
+				</div>
+			</div>
+		</div>
+		<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+		<script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+		<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+		<script src="http://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		<!--alert-->
+		<script src="//cdn.bootcss.com/bootbox.js/4.4.0/bootbox.min.js"></script>
+		<!--datatables-->
+		<script src="{%resource path='/html/js/datatables.js'%}"></script>
+		<script src="{%resource path='/html/js/tab.js'%}"></script>
+		<script src="{%resource path='/html/js/global.js'%}"></script>
+		<script type="text/javascript">
+			$.ajaxSetup({
+				headers:{
+					'X-CSRF-TOKEN':'{%$x_csrf_token%}'
+				}
+			});
+			
+			$('table').on('change','input[type=checkbox].select-all',function(){
+				if($(this).is(':checked'))
+				{
+					$(this).closest('table').find('input[type=checkbox]:not(.select-all)').each(function(index,value){
+						$(value).prop('checked',true);
+					});
+				}
+				else
+				{
+					$(this).closest('table').find('input[type=checkbox]:not(.select-all)').each(function(index,value){
+						$(value).prop('checked',false);
+					});
+				}
+				return false;
+			});
+			
+			var dt = datatables({
+				table:$('#all table'),
+				ajax:{
+					url:'{%url c=datatables a=role%}',
+				},
+				sort:[{
+					column:4,
+					dir:'desc',
+				},{
+					column:3,
+					dir:'asc',
+				}],
+				columns:[{
+					data:'id',
+					name:'role.id',
+				},{
+					data:'name',
+					name:'role.name',
+				},{
+					data:'create_aid',
+					name:'(select admin.realname from admin where create_aid=admin.id limit 1)',
+				},{
+					data:'create_time',
+					name:'role.create_time',
+				},{
+					data:'status',
+					name:'role.status',
+				},{
+					data:'id',
+					name:'role.id',
+				}],
+				columnDefs:[{
+					targets:3,
+					render:function(data,full){
+						return unixtotime(data,true,8);
+					}
+				},{
+					targets:4,
+					render:function(data,full){
+						return '<div data-id="'+full.id+'" class="checkbox '+(data==1?'active':'')+'">'+(data==1?'可用':'禁用')+'</div>';
+					}
+				},{
+					targets:5,
+					render:function(data,full){
+						var status = full.status==1?'禁用':'启用';
+						content = 
+						`
+						<div class="btn-group" role="group">
+							<button class="btn btn-default btn-xs look" data-id="${data}">
+								查看/编辑
+							</button>
+							<button class="btn btn-xs btn-default btn-icon dropdown-toggle" data-toggle="dropdown">
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu dropdown-sm">
+							  <li><a class="status" data-id="${data}" href="#">${status}</a></li>
+							</ul>
+						</div>`;
+						return content;
+					}
+				}],
+				pagesize:10,
+				onRowLoaded:function(row){
+					row.find('td:last').css('text-align','center');
+					row.find('td:first').css({'padding-left':'20px','padding-right':'20px'});
+				}
+			});
+			
+			
+			$('#dt_search').on('submit',function(){
+				dt.search($(this).find('input').val());
+				return false;
+			});
+			
+			$('#all table').on('click','.status',function(){
+				var btn = $(this);
+				if(btn.text()=='禁用')
+				{
+					data = {
+						id:$(this).data('id'),
+						status:0,
+					};
+					btn.parents('tr').find('.checkbox').removeClass('active').text('禁用');
+					btn.text('启用');
+					var rollback = function(){
+						btn.text('禁用');
+						btn.parents('tr').find('.checkbox').addClass('active').text('可用');
+					}
+				}
+				else
+				{
+					data = {
+						id:$(this).data('id'),
+						status:1,
+					};
+					btn.parents('tr').find('.checkbox').addClass('active').text('可用');
+					btn.text('禁用');
+					var rollback = function(){
+						btn.text('启用');
+						btn.parents('tr').find('.checkbox').removeClass('active').text('禁用');
+					}
+				}
+				$.post('./index.php?m=ajax&c=role&a=status',data,function(response){
+					if(response.code!=1)
+					{
+						rollback();
+						bootbox.alert(response.result);
+					}
+				});
+				return false;
+			}).on('click','.look',function(){
+				window.location = './index.php?c=html&a=role_edit&id='+$(this).data('id');
+			});
+		</script>
+	</body>
+</html>

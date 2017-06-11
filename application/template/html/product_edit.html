@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="utf-8" />
+		<title>{%$page_title%}</title>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+       	<meta name="renderer" content="webkit">
+        <meta content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport" />
+        <!-- reset -->
+        <link rel="stylesheet" href="//cdn.bootcss.com/normalize/5.0.0/normalize.min.css">
+		<!-- 新 Bootstrap 核心 CSS 文件 -->
+        <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <!--umeditor-->
+        <link href="{%resource path='/umeditor/themes/default/css/umeditor.min.css'%}" rel="stylesheet" type="text/css"/>
+        <!--自定义css-->
+		<link rel="stylesheet" href="{%resource path='/html/css/global.css'%}">
+		<link rel="stylesheet" href="{%resource path='/html/css/progress.css'%}">
+		<link rel="stylesheet" href="{%resource path='/html/css/brand-selector.css'%}">
+		<script type="text/javascript">
+			function lpad(num, n) {
+				return Array(n>(''+num).length?(n-(''+num).length+1):0).join(0)+num;  
+			}
+		</script>
+	</head>
+	<body id="{%$id%}">
+		{%include file='html/public/header.html'%}
+		<div class="body container-fluid">
+			<div class="row">
+				{%include file='html/public/sidebar.html'%}
+				<div class="content">
+			  		<div class="content-body">
+			  			<div class="white-block">
+			  				<div class="wall-block">
+								<p>{%$page_title_reverse%}</p>
+							</div>
+			  			</div>
+			  			<div class="divider"></div>
+			  			<div>
+							<div class="white-block">
+								<form class="form-horizontal" role="form" id="productForm">
+
+									<div class="panel panel-default center-block" style="width: 50%;">
+										<div class="panel-heading">
+											<h4 class="panel-title">商品关键信息</h4>
+										</div>
+										<div class="panel-body">
+											<div class="form-group">
+												<label class="control-label col-md-2">商品分类</label>
+												<div class="col-md-3">
+												  <select class="form-control" id="bcategory1">
+													<option value="" disabled="disabled" selected="selected">选择一级分类</option>
+													{%section name=bcategory loop=$bcategory%}
+														<option value="{%$bcategory[bcategory].id%}">{%$bcategory[bcategory].name%}</option>
+													{%/section%}
+												  </select>
+												</div>
+												<div class="col-md-3">
+												  <select class="form-control" id="bcategory2">
+													<option value="" disabled="disabled" selected="selected">选择二级分类</option>
+												  </select>
+												</div>
+												<div class="col-md-3">
+												  <select class="form-control" id="bcategory3">
+													<option value="" disabled="disabled" selected="selected">选择三级分类</option>
+												  </select>
+												</div>
+											</div>
+											<div class="form-group">
+												<label class="control-label col-md-2">商品类型</label>
+												<div class="col-md-9">
+												  <select class="form-control" id="outside">
+													<option value="0">普通商品</option>
+													<option value="1">进口商品</option>
+													<option value="2">直供商品</option>
+													<option value="3">直邮商品</option>
+												  </select>
+												</div>
+											</div>
+										</div>
+									</div>
+
+									<div class="line">
+									</div>
+
+									<div class="panel panel-default center-block" style="width: 50%;">
+										<div class="panel-heading">
+											<h4 class="panel-title">商品详细信息</h4>
+										</div>
+										<div class="panel-body">
+											<div class="form-group">
+												<label class="control-label col-md-2">商品标题</label>
+												<div class="col-md-9">
+													<input class="form-control" type="text" name="name" placeholder="请输入商品名称">
+												</div>
+											</div>
+											<div class="form-group">
+												<label class="control-label col-md-2">商品描述</label>
+												<div class="col-md-9">
+													<textarea class="form-control" name="short_description" placeholder="建议512字以内" rows="5"></textarea>
+												</div>
+											</div>
+											<div class="form-group">
+												<label class="control-label col-md-2">商品品牌</label>
+												<div class="col-md-4">
+													<select class="form-control" name="brand" placeholder="请选择品牌">
+													</select>
+												</div>
+											</div>
+											<div class="form-group">
+												<label class="control-label col-md-2">税率</label>
+												<div class="col-md-9">
+													<select class="form-control" name="ztax">
+														<option value="" disabled="disabled" selected="selected">请选择税率</option>
+														{%section name=ztax loop=$ztax%}
+															<option value="{%$ztax[ztax].id%}">{%$ztax[ztax].name%}({%$ztax[ztax].tax%})</option>
+														{%/section%}
+													</select>
+												</div>
+											</div>
+											<div class="form-group">
+												<label class="control-label col-md-2">税率</label>
+												<div class="col-md-9">
+													<select class="form-control" name="postTaxNo">
+														<option value="" disabled="disabled" selected="selected">请选择税率</option>
+														{%section name=posttaxno loop=$posttaxno%}
+															<option value="{%$posttaxno[posttaxno].id%}">{%$posttaxno[posttaxno].name%}({%$posttaxno[posttaxno].tax%})</option>
+														{%/section%}
+													</select>
+												</div>
+											</div>
+											<div class="form-group">
+												<label class="control-label col-md-2">包税</label>
+												<div class="col-md-3">
+													<label class="checkbox-inline">
+														<input type="checkbox" name="freetax"> 是否计算税费
+													</label>
+												</div>
+											</div>
+											<div class="form-group">
+												<label class="control-label col-md-2">运费</label>
+												<div class="col-md-9">
+													<input class="form-control" type="text" name="fee" placeholder="默认运费">
+												</div>
+											</div>
+											<div class="form-group">
+												<label class="col-md-2 control-label">包邮地区</label>
+												<div class="col-md-9">
+													<div class="checkbox-list">
+														<table width="100%" id="province">
+														<tr>
+														{%section name=province loop=$province%}
+														<td>
+														<label class="checkbox-inline">
+															<input type="checkbox" name="fee_province" value="{%$province[province].id%}"> {%$province[province].name|truncate:2:''%}
+														</label>
+														</td>
+														{%if ($smarty.section.province.index+1)%6 == 0%}
+														</tr><tr>
+														{%/if%}
+														{%/section%}
+														</tr>
+														</table>
+														<button class="btn btn-xs btn-outline" id="selectAll">全选</button>
+														<button class="btn btn-xs btn-outline" id="selectElse">反选</button>
+														<button class="btn btn-xs btn-outline" id="selectZJH">江浙沪</button>
+														<button class="btn btn-xs btn-outline" id="selectPIAN">偏远地区</button>
+													</div>
+												</div>
+											</div>
+											<div class="form-group">
+												<label class="col-md-2 control-label">商品图片</label>
+												<div class="col-md-9 imageArea">
+													<div class="circleProgress_wrapper display-none">
+														<div class="wrapper right">
+															<div class="circleProgress rightcircle"></div>
+														</div>
+														<font id="loading">loading</font>
+														<div class="wrapper left">
+															<div class="circleProgress leftcircle"></div>
+														</div>
+													</div>
+													<div class="upload-image">
+														<img width="100" height="100" class="img-responsive img-border" src="https://placeholdit.imgix.net/~text?txtsize=70&txt=%EF%BC%8B&w=100&h=100&bg=F6F6F6">
+													</div>
+
+												</div>
+											</div>
+
+										</div>
+									</div>
+
+									<div class="line"></div>
+
+									<div class="panel panel-default center-block" style="width: 50%;">
+										<div class="panel-heading">
+											<h4 class="panel-title">商品详情图</h4>
+										</div>
+										<div class="panel-body">
+											<script id="description" name="description" type="text/plain"></script>
+										</div>
+									</div>
+
+									<div class="line"></div>
+
+									<div class="panel panel-default center-block" style="width: 50%;">
+										<div class="panel-heading">
+											<h4 class="panel-title">商品基础信息</h4>
+										</div>
+										<div class="panel-body">
+											<div class="form-group">
+												<label class="control-label col-md-2">包装单位</label>
+												<div class="col-md-3">
+													<select class="form-control" name="measurement">
+														{%section name=measurement loop=$measurement%}
+														<option value="{%$measurement[measurement].id%}">{%$measurement[measurement].name%}</option>
+														{%/section%}
+													</select>
+												</div>
+												<label class="control-label col-md-2">条形码</label>
+												<div class="col-md-3">
+													<input type="text" class="form-control" name="barcode" placeholder="商品唯一ID">
+												</div>
+											</div>
+											<div class="form-group">
+												<label class="control-label col-md-2">重量（KG）</label>
+												<div class="col-md-3">
+													<input type="text" class="form-control" name="weight" placeholder="请输入商品重量/单件">
+												</div>
+											</div>
+										</div>
+									</div>
+
+									<div class="line"></div>
+
+									<div class="panel panel-default center-block priceTable" style="width: 50%;">
+										<div class="panel-heading">
+											<h4 class="panel-title">商品价格信息（<font id="priceTableId">1</font>） <div class="pull-right close-panel display-none" style="cursor: pointer;">x</div></h4>
+										</div>
+										<div class="panel-body">
+											<div class="form-group">
+												<label class="control-label col-md-2">SKU编号</label>
+												<div class="col-md-3">
+													<input type="text" class="form-control" name="sku" placeholder="供应商的唯一ID">
+												</div>
+
+												<label class="control-label col-md-2">供货商</label>
+												<div class="col-md-3">
+													<select class="form-control" name="publish">
+														{%section name=publish loop=$publish%}
+														<option value="{%$publish[publish].id%}">{%$publish[publish].name%}</option>
+														{%/section%}
+													</select>
+												</div>
+											</div>
+											<div class="form-group">
+												<label class="control-label col-md-2">发货仓库</label>
+												<div class="col-md-3">
+													<select class="form-control" name="store">
+													{%section name=store loop=$store%}
+													<option value="{%$store[store].id%}">{%$store[store].name%}</option>
+													{%/section%}
+													</select>
+												</div>
+												<label class="control-label col-md-2">库存量</label>
+												<div class="col-md-3">
+													<input type="text" class="form-control" name="stock" placeholder="总库存量">
+												</div>
+											</div>
+											<div class="form-group">
+												<label class="control-label col-md-2">成本价格</label>
+												<div class="col-md-9">
+													<style>
+														.table-bordered>tbody>tr>td:last-child{
+															border: none;
+														}
+													</style>
+													<table style="width: 30%; display: inline-block;" class="table table-bordered table-condensed table-responsive priceTableBase">
+														<tr><td width="40" align="center">数量</td><td><input type="text" class="form-control" name="num"></td><td rowspan="6"> <div class="circle plusPriceTable">+</div> </td></tr>
+														<tr><td width="40" align="center">成本</td><td><input type="text" class="form-control" name="inprice"></td></tr>
+														<tr><td width="40" align="center">原价</td><td><input type="text" class="form-control" name="oldprice"></td></tr>
+														<tr><td width="40" align="center">普通</td><td><input type="text" class="form-control" name="price"></td></tr>
+														<tr><td width="40" align="center">白金</td><td><input type="text" class="form-control" name="v1price"></td></tr>
+														<tr><td width="40" align="center">钻石</td><td><input type="text" class="form-control" name="v2price"></td></tr>
+													</table>
+													<div class="space"></div>
+													<table style="width: 30%; display: inline-block;" class="table table-bordered table-condensed table-responsive priceTableBase display-none">
+														<tr><td width="40" align="center">数量</td><td><input type="text" class="form-control" name="num"></td><td rowspan="6"> <div class="circle plusPriceTable">+</div><div class="circle minusPriceTable">-</div> </td></tr>
+														<tr><td width="40" align="center">成本</td><td><input type="text" class="form-control" name="inprice"></td></tr>
+														<tr><td width="40" align="center">原价</td><td><input type="text" class="form-control" name="oldprice"></td></tr>
+														<tr><td width="40" align="center">普通</td><td><input type="text" class="form-control" name="price"></td></tr>
+														<tr><td width="40" align="center">白金</td><td><input type="text" class="form-control" name="v1price"></td></tr>
+														<tr><td width="40" align="center">钻石</td><td><input type="text" class="form-control" name="v2price"></td></tr>
+													</table>
+													<div class="space"></div>
+													<table style="width: 30%; display: inline-block;" class="table table-bordered table-condensed table-responsive priceTableBase display-none">
+														<tr><td width="40" align="center">数量</td><td><input type="text" class="form-control" name="num"></td><td rowspan="6"> <div class="circle minusPriceTable">-</div> </td></tr>
+														<tr><td width="40" align="center">成本</td><td><input type="text" class="form-control" name="inprice"></td></tr>
+														<tr><td width="40" align="center">原价</td><td><input type="text" class="form-control" name="oldprice"></td></tr>
+														<tr><td width="40" align="center">普通</td><td><input type="text" class="form-control" name="price"></td></tr>
+														<tr><td width="40" align="center">白金</td><td><input type="text" class="form-control" name="v1price"></td></tr>
+														<tr><td width="40" align="center">钻石</td><td><input type="text" class="form-control" name="v2price"></td></tr>
+													</table>
+												</div>
+											</div>
+										</div>
+									</div>
+
+									<div class="line"></div>
+
+									<div class="panel btn panel-default center-block createPriceTable" style="width: 50%;">
+										<div class="panel-body text-center">
+											添加信息组
+											<div class="circle" style="cursor: default;">+</div>
+										</div>
+									</div>
+
+									<div class="line"></div>
+									<div class="line"></div>
+								</form>
+							</div>
+							<div class="white-block position-fixed position-bottom" style="display: block; width: 88%; border-top: 1px solid #ddd;">
+								<div class="center-block" style="width: 50%;display: flex;display: -webkit-flex;flex-direction: row;flex-wrap: nowrap;justify-content:space-between;align-items:center;">
+									{%if $smarty.get.type == unshelf%}
+									<button class="btn btn-primary" style="flex: 0 0 auto;" id="reedit">重新编辑</button>
+									{%else%}
+									<button class="btn btn-primary" style="flex: 0 0 auto;" id="draft">保存草稿</button>
+									{%/if%}
+									<button class="btn btn-success" style="flex: 0 0 auto;" id="overview">商品本地预览（非线上数据）</button>
+									<button class="btn btn-warning pull-right" style="flex: 0 0 auto;" id="submit">提交审核</button>
+								</div>
+							</div>
+						</div>
+			  		</div>				  
+				</div>
+			</div>
+		</div>
+		<script type="text/html" id="image">
+			<div class="image" id="[id]">
+				<div class="image-tools-up remove">删除</div>
+				<img width="100" height="100" class="img-responsive img-border" src="[path]">
+				<div class="image-tools-down listImage">设为列表图</div>
+			</div>
+		</script>
+		<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+		<script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+		<script src="{%resource path='/html/plugin/jquery-ui-1.12.1/jquery-ui.min.js'%}"></script>
+		<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+		<script src="http://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		<!--alert-->
+		<script src="//cdn.bootcss.com/bootbox.js/4.4.0/bootbox.min.js"></script>
+		<!--umeditor-->
+		<script src="{%resource path='/umeditor/umeditor.js'%}" type="text/javascript"></script>
+		<script src="{%resource path='/umeditor/umeditor.config.js'%}" type="text/javascript"></script>
+		<script type="text/javascript" src="{%resource path='/umeditor/lang/zh-cn/zh-cn.js'%}"></script>
+		<script type="text/javascript" src="{%resource path='/html/js/brand-selector.js'%}"></script>
+		<script src="{%resource path='/html/js/global.js'%}"></script>
+		
+		<script type="text/javascript">
+			$.ajaxSetup({
+				headers:{
+					'X-CSRF-TOKEN':'{%$x_csrf_token%}'
+				}
+			});
+			
+			var brand_selector = brand($('select[name=brand]'),{
+				ajax:{
+					url:'./index.php?m=ajax&c=brand&a=source'
+				}
+			});
+			
+			var change = false;
+			window.onbeforeunload = function(){
+				if(change)
+				{
+					return "您还有未保存的数据";
+				}
+			};
+			var updateChange = function(value,event){
+				change = value;
+			};
+			
+			$('#draft').on('click',function(){
+				if(product.validate()==false)
+				{
+					return false;
+				}
+				var data = product.getDraft();
+				data.id = $('body').attr('id');
+				$.post('./index.php?m=ajax&c=product&a=save',data,function(response){
+					if(response.code==1)
+					{
+						updateChange(false);
+						window.location = './index.php?c=html&a=product_draft';
+					}
+					else
+					{
+						bootbox.alert(response.result);
+					}
+				});
+				return false;
+			});
+			
+			$('#reedit').on('click',function(){
+				if(product.validate()==false)
+				{
+					return false;
+				}
+				var data = product.getReEdit();
+				data.id = $('body').attr('id');
+				$.post('./index.php?m=ajax&c=product&a=save',data,function(response){
+					if(response.code==1)
+					{
+						updateChange(false);
+						window.location = './index.php?c=html&a=product#unshelf';
+					}
+					else
+					{
+						bootbox.alert(response.result);
+					}
+				});
+				return false;
+			});
+			
+			/*$('#overview').on('click',function(){
+				$.post('./index.php?m=ajax&c=product&a=create',product.getOverview(),function(response){
+					if(response.code==1)
+					{
+						window.location = './index.php?c=html&a=product_draft';
+					}
+					else
+					{
+						bootbox.alert(response.result);
+					}
+				});
+			});*/
+			
+			$('#submit').on('click',function(){
+				if(product.validate()==false)
+				{
+					return false;
+				}
+				var data = product.getSubmit();
+				data.id = $('body').attr('id');
+				$.post('./index.php?m=ajax&c=product&a=save',data,function(response){
+					if(response.code==1)
+					{
+						updateChange(false);
+						window.location = './index.php?c=html&a=product_draft';
+					}
+					else
+					{
+						bootbox.alert(response.result);
+					}
+				});
+			});
+			
+			$('.imageArea').sortable({
+				items:'.image',
+				distance :100,
+			});
+			$('.imageArea').disableSelection();
+			
+			$('.imageArea').on('click','.remove',function(){
+				$(this).parents('.image').remove();
+				return false;
+			}).on('click','.listImage',function(){
+				$(this).addClass('display-none');
+				$(this).parents('.image').siblings().find('.listImage').removeClass('display-none');
+				$(this).parents('.image').siblings().find('img').removeClass('red');
+				$(this).parents('.image').find('img').addClass('red');
+				return false;
+			});
+			
+			
+			var price_v0 = null;
+			var price_v1 = null;
+			var price_v2 = null;
+			var proce_old = null;
+			var bcategory2 = [];
+			
+			$(document).on('keyup','input[name=inprice]',function(event){
+				if((event.which<=57 && event.which>=48) || event.which==8 || (event.which<=105 && event.which>=96))
+				{
+					inprice = parseFloat($(this).val());
+					if(inprice)
+					{
+						$(this).parents('tbody').find('input[name=oldprice]').val((inprice*(1+parseFloat(proce_old/100))).toFixed(2));
+						$(this).parents('tbody').find('input[name=v2price]').val((inprice*(1+parseFloat(price_v2/100))).toFixed(2));
+						$(this).parents('tbody').find('input[name=v1price]').val((inprice*(1+parseFloat(price_v1/100))).toFixed(2));
+						$(this).parents('tbody').find('input[name=price]').val((inprice*(1+parseFloat(price_v0/100))).toFixed(2));
+					}
+					else
+					{
+						$(this).parents('tbody').find('input[name=oldprice]').val('');
+						$(this).parents('tbody').find('input[name=v2price]').val('');
+						$(this).parents('tbody').find('input[name=v1price]').val('');
+						$(this).parents('tbody').find('input[name=price]').val('');
+					}
+				}
+				else
+				{
+					return false;
+				}
+			});
+			
+			$('#bcategory1').on('change',function(){
+				$.ajax({
+					url:'./index.php?m=ajax&c=bcategory&a=show',
+					method:'post',
+					async:false,
+					data:{bc_id:$(this).val()},
+					success:function(response){
+						if(response.code==1)
+						{
+							$('#bcategory2').empty().append('<option value="" disabled="disabled" selected="selected">选择二级分类</option>');
+							for(var i=0;i<response.body.length;i++)
+							{
+								$('#bcategory2').append('<option value="'+response.body[i].id+'">'+response.body[i].name+'</option>');
+								bcategory2[response.body[i].id] = response.body[i];
+							}
+						}
+					}
+				});
+			});
+			
+			$('#bcategory2').on('change',function(){
+				price_v0 = bcategory2[$(this).val()].price_v0;
+				price_v1 = bcategory2[$(this).val()].price_v1;
+				price_v2 = bcategory2[$(this).val()].price_v2;
+				proce_old = bcategory2[$(this).val()].proce_old;
+				$.ajax({
+					url:'./index.php?m=ajax&c=bcategory&a=show',
+					method:'post',
+					async:false,
+					data:{bc_id:$(this).val()},
+					success:function(response){
+						if(response.code==1)
+						{
+							$('#bcategory3').empty().append('<option value="" disabled="disabled" selected="selected">选择三级分类</option>');
+							for(var i=0;i<response.body.length;i++)
+							{
+								$('#bcategory3').append('<option value="'+response.body[i].id+'">'+response.body[i].name+'</option>');
+							}
+						}
+					}
+				});
+			});
+			
+			$(document).on('click','.plusPriceTable',function(){
+				$(this).parents('.priceTable').find('.priceTableBase.display-none:first').removeClass('display-none');
+				return false;
+			});
+			
+			$(document).on('click','.minusPriceTable',function(){
+				$(this).parents('.priceTable').find('.priceTableBase:not(.display-none):last').addClass('display-none');
+				return false;
+			});
+			
+			$('.createPriceTable').on('click',function(){
+				$('<div class="line"></div>').insertBefore($(this));
+				var priceTable = $('.priceTable:first').clone();
+				priceTable.find('input').val('');
+				priceTable.find('select').each(function(index,value){
+					$(value).find('option:first').prop('selected',true);
+				});
+				priceTable.find('.priceTableBase:not(:first)').addClass('display-none');
+				
+				var id = parseInt($('.priceTable').length);
+				id++;
+				priceTable.find('#priceTableId').text(id);
+				
+				priceTable.find('.close-panel.display-none').removeClass('display-none');
+				
+				priceTable.insertBefore($(this));
+				return false;
+			});
+			
+			var umeditor = UM.getEditor('description');
+			
+			$('.imageArea').on('click','.upload-image',function(){
+				var input = $('<input type="file">');
+				var upload_image = $(this);
+				input.on('change',function(){
+					var file = $(this)[0].files[0];
+					var formData = new FormData();
+					formData.append('file',file);
+					var xhr = new XMLHttpRequest();
+					xhr.open('POST','./index.php?m=api&c=common&a=upload',true);
+					xhr.upload.onloadstart = function(){
+						$('.circleProgress_wrapper').removeClass('display-none');
+						$('.circleProgress_wrapper #loading').text('0%');
+					}
+					xhr.upload.onprogress = function(event){
+						if (event.lengthComputable) {
+							$('.circleProgress_wrapper #loading').text(Math.round(event.loaded / event.total * 100) + "%");
+						}
+					};
+					xhr.onload = function(){
+						if(xhr.status == 200 && xhr.readyState == 4)
+						{
+							var response = xhr.response;
+							response = $.parseJSON(response);
+							var image = $('#image').html();
+							var reg = new RegExp("\\[([^\\[\\]]*?)\\]", 'igm');
+							image = $(image.replace(reg, function (node, key) {
+								return response.body[key];
+							}));
+							if($('.imageArea').find('.image').find('.img-border.red').length==0)
+							{
+								image.find('.img-border').addClass('red');
+								image.find('.listImage').addClass('display-none');
+							}
+							clickReplaceImage(image);
+							image.insertBefore(upload_image);
+							$('.circleProgress_wrapper').addClass('display-none');
+							updateChange(true);
+							upload_image.closest('.form-group').removeClass('has-error');
+						}
+					};
+					xhr.send(formData);
+				});
+				input.trigger('click');
+				return false;
+			});
+			
+			var clickReplaceImage = function(obj)
+			{
+				obj.find('img').on('click',function(){
+					var input = $('<input type="file">');
+					input.on('change',function(){
+						var file = $(this)[0].files[0];
+						var formData = new FormData();
+						formData.append('file',file);
+						var xhr = new XMLHttpRequest();
+						xhr.open('POST','./index.php?m=api&c=common&a=upload',true);
+						xhr.onload = function(){
+							if(xhr.status == 200 && xhr.readyState == 4)
+							{
+								var response = xhr.response;
+								response = $.parseJSON(response);
+								obj.find('img').attr('src',response.body.path);
+								obj.attr('id',response.body.id);
+							}
+						};
+						xhr.send(formData);
+					});
+					input.trigger('click');
+					return false;
+				});
+			}
+			
+			$('#selectAll').on('click',function(){
+				$('input[name=fee_province]').each(function(index, element) {
+                    $(element).parent().addClass('checked');
+					$(element).prop('checked',true);
+                });
+				return false;
+			});
+
+			var in_array = function(data,array){
+				for(var i=0;i<array.length;i++)
+				{
+					if(array[i] == data)
+					{
+						return true;
+					}
+				}
+				return false;
+			}
+
+			$('#selectPIAN').on('click',function(){
+				var province = [
+					5,21,26,28,29,30,31,32,33,34,35,
+				];
+				$('input[name=fee_province]').each(function(index, element) {
+					if(in_array($(element).val(),province))
+					{
+						$(element).parent().addClass('checked');
+						$(element).prop('checked',true);
+					}
+					else
+					{
+						$(element).parent().removeClass('checked');
+						$(element).prop('checked',false);
+					}
+                });
+				return false;
+			});
+
+			$('#selectZJH').on('click',function(){
+				var province = [9,10,11];
+				$('input[name=fee_province]').each(function(index, element) {
+					if(in_array($(element).val(),province))
+					{
+						$(element).parent().addClass('checked');
+						$(element).prop('checked',true);
+					}
+					else
+					{
+						$(element).parent().removeClass('checked');
+						$(element).prop('checked',false);
+					}
+                });
+				return false;
+			});
+
+			$('#selectElse').on('click',function(){
+				$('input[name=fee_province]').each(function(index, element) {
+                    if($(element).parent().hasClass('checked'))
+					{
+						$(element).parent().removeClass('checked');
+						$(element).prop('checked',false);
+					}
+					else
+					{
+						$(element).parent().addClass('checked');
+						$(element).prop('checked',true);
+					}
+                });
+				return false;
+			});
+			
+			$(document).on('click','.close-panel',function(){
+				$(this).parents('.panel').remove();
+				return false;
+			});
+			
+			$('select[name=ztax]').parents('.form-group').addClass('display-none');
+			$('select[name=postTaxNo]').parents('.form-group').addClass('display-none');
+			$('input[name=freetax]').parents('.form-group').addClass('display-none');
+			$('#outside').on('change',function(){
+				$('select[name=ztax]').parents('.form-group').addClass('display-none');
+				$('select[name=postTaxNo]').parents('.form-group').addClass('display-none');
+				$('input[name=freetax]').parents('.form-group').addClass('display-none');
+				if($(this).val()==2)
+				{
+					$('select[name=ztax]').parents('.form-group').removeClass('display-none');
+					$('input[name=freetax]').parents('.form-group').removeClass('display-none');
+				}
+				else if($(this).val()==3)
+				{
+					$('select[name=postTaxNo]').parents('.form-group').removeClass('display-none');
+					$('input[name=freetax]').parents('.form-group').removeClass('display-none');
+				}
+			});
+		</script>
+		<script src="{%resource path='/html/js/product/product.js'%}"></script>
+	</body>
+</html>

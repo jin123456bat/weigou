@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="utf-8" />
+		<title>{%$page_title%}</title>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+       	<meta name="renderer" content="webkit">
+        <meta content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport" />
+        <!-- reset -->
+        <link rel="stylesheet" href="//cdn.bootcss.com/normalize/5.0.0/normalize.min.css">
+		<!-- 新 Bootstrap 核心 CSS 文件 -->
+        <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<!-- 可选的Bootstrap主题文件（一般不用引入） -->
+		<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
+		<link href="//cdn.bootcss.com/jstree/3.3.3/themes/default/style.min.css" rel="stylesheet">
+		<!--icon-->
+		<link rel="stylesheet" href="{%$VIEW_ROOT%}/html/css/plugins/font-awesome/css/font-awesome.min.css">
+		<!--自定义css-->
+		<link rel="stylesheet" href="{%resource path='/html/css/global.css'%}">
+		<script type="text/javascript">
+			function lpad(num, n) {  
+				return Array(n>(''+num).length?(n-(''+num).length+1):0).join(0)+num;  
+			}
+		</script>
+	</head>
+	<style>
+	.blue{
+		color: #3d93d7;
+	}
+	</style>
+	<body>
+		{%include file='html/public/header.html'%}
+		<div class="body container-fluid">
+			<div class="row">
+				{%include file='html/public/sidebar.html'%}
+				<div class="content">
+			  		<div class="content-body">
+			  			<div class="white-block">
+			  				<div class="wall-block">
+								<p>{%$page_title_reverse%}</p>
+							</div>
+			  			</div>
+			  			<div class="divider"></div>
+			  			<div class="white-block">
+			  				<h5>角色信息</h5>
+			  				<form class="form-horizontal" role="form">
+								<div class="form-group">
+									<label class="col-md-1 control-label control-label-sm">角色名称</label>
+									<div class="col-md-2">
+										<input type="text" name="name" class="form-control input-sm" value="{%$role.name%}">
+									</div>
+								</div>
+			  					<div class="form-group">
+									<label class="col-md-1 control-label control-label-sm">备注</label>
+									<div class="col-md-2">
+										<input type="text" name="description" class="form-control input-sm" value="{%$role.description%}">
+									</div>
+								</div>
+			  				</form>
+			  				
+			  			</div>
+			  			<div class="line"></div>
+						<div class="white-block" style="float: left; width: 100%;">
+							<div class="line"></div>
+							<div class="col-md-12">
+								<div class="col-md-3">
+									<div id="privileges_tree" style="border:1px solid #BCBCBC;padding: 10px;">
+
+									</div>
+								</div>
+								<div class="col-md-9">
+									<div class="panel panel-default center-block">
+										<div class="panel-heading">
+											<h4 class="panel-title" style="font-size: 13px; text-align: center;">权限选择</h4>
+										</div>
+										<div class="panel-body" id="privileges_table">
+											
+										</div>
+									</div>
+								</div>
+							</div>
+							<div style="display: block; width: 100%;">
+								<div class="center-block" style="width: 20%;display: flex;flex-flow:row nowrap;justify-content:space-between;">
+									<button type="submit" class="btn btn-primary btn-lg submit" style="flex:0 0 auto;"> 保存 </button>
+									<button type="reset" class="btn default btn-lg" style="flex:0 0 auto;"> 取消 </button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+		<script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+		<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+		<script src="http://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		<!--alert-->
+		<script src="//cdn.bootcss.com/bootbox.js/4.4.0/bootbox.min.js"></script>
+		<script src="//cdn.bootcss.com/jstree/3.3.3/jstree.min.js"></script>
+		<script src="{%resource path='/html/js/global.js'%}"></script>
+		<script type="text/javascript">
+			$.ajaxSetup({
+				headers:{
+					'X-CSRF-TOKEN':'{%$x_csrf_token%}'
+				}
+			});
+			
+			var loaded_button_privileges = [];
+			
+			var load_privileges_button = function(id,checked_id){
+				$.ajax({
+					url:'./index.php?m=ajax&c=admin&a=privileges_button',
+					data:{
+						id:id,
+						expect:loaded_button_privileges,
+					},
+					method:'post',
+					dataType:'json',
+					async:false,
+					success:function(response){
+						for(let i=0;i<response.length;i++)
+						{
+							if($('#privileges_table').find('.privilege-title[data-id='+response[i].mid+']').length==0)
+							{
+								let template1 = $(`<div class="col-md-12 privilege-title" data-id="${response[i].mid}"><h4><strong>${response[i].m_title}</strong></h4></div>`);
+								template1.appendTo($('#privileges_table'));
+							}
+							let template = 
+							$(`
+							<div class="col-md-3 privilege" data-parent="${response[i].mid}">
+								<label class="checkbox-for center-block">
+									<input type="checkbox" value="${response[i].id}"> ${response[i].text}
+								</label>
+							</div>
+							`);
+							
+							if(checked_id)
+							{
+								if($.inArray(response[i].id,checked_id)!=-1)
+								{
+									template.find('input').prop('checked',true);
+								}
+							}
+							else
+							{
+								template.find('input').prop('checked',true);
+							}
+							
+							if($('#privileges_table').find('.privilege[data-parent='+response[i].mid+']').length==0)
+							{
+								template.insertAfter($('#privileges_table').find('.privilege-title[data-id='+response[i].mid+']'));
+							}
+							else
+							{
+								template.insertAfter($('#privileges_table').find('.privilege[data-parent='+response[i].mid+']:last'));
+							}
+							if($.inArray(response[i].mid,loaded_button_privileges)===-1)
+							{
+								loaded_button_privileges.push(response[i].mid);
+							}
+						}
+					}
+				});
+			};
+			
+			$('#privileges_tree').jstree({
+				plugins: [
+					"checkbox",  //checkbox
+					"types",// 不同的图标
+					'conditionalselect',
+				],
+				conditionalselect : function (node, event) {
+					if(!node.state.selected)
+					{
+						//把选择节点的所有子权限都加载出来
+						load_privileges_button(node.id);
+					}
+					else
+					{
+						$.get('./index.php?m=ajax&c=admin&a=privileges_page_children',{id:node.id},function(response){
+							for(let i=0;i<response.length;i++)
+							{
+								if(loaded_button_privileges.indexOf(response[i])!==-1)
+								{
+									loaded_button_privileges.splice(loaded_button_privileges.indexOf(response[i]),1);
+								}
+								$('#privileges_table').find('.privilege[data-parent='+response[i]+']').remove();
+								$('#privileges_table').find('.privilege-title[data-id='+response[i]+']').remove();
+							}
+						});
+					}
+					return true;
+				},
+				core: {
+					check_callback : true,
+					data : {
+						url : function (node) {
+						  return './index.php?m=ajax&c=admin&a=privileges_page';
+						},
+						data : function (node) {
+						  return { 'id' : node.id };
+						}
+					}
+				},
+				types : {
+					folder : {
+						icon : "fa fa-folder blue"
+					},
+					file : {
+						icon : "fa fa-file blue"
+					}
+				},
+			}).on('loaded.jstree',function(){
+				$('#privileges_tree').jstree().open_all();
+			}).on('ready.jstree',function(){
+				$.post('./index.php?m=ajax&c=role&a=load',{id:'{%$smarty.get.id%}',type:'role'},function(response){
+					if(response.code==1)
+					{
+						$_button = [];
+						$.each(response.body.button,function(index,value){
+							$_button.push(value.pid);
+						});
+						
+						$_check_node = [];
+						$.each(response.body.page,function(index,value){
+							$_check_node.push($('#privileges_tree').jstree("get_node", value.node_id));
+							load_privileges_button(value.node_id,$_button);
+						});
+						$('#privileges_tree').jstree().check_node($_check_node);
+					}
+					else
+					{
+						bootbox.alert(response.result);
+					}
+				});
+			});
+			
+			$('.submit').on('click',function(){
+				var name = $.trim($('input[name=name]').val());
+				var description = $.trim($('input[name=description]').val());
+				
+				var button = [];
+				$('#privileges_table').find('input[type=checkbox]:checked').each(function(index,value){
+					button.push($(value).val());
+				});
+				
+				var page = $('#privileges_tree').jstree().get_checked();
+				var privileges = {
+					button:button,
+					page:page,
+				};
+				$.post('./index.php?m=ajax&c=role&a=save',{id:'{%$smarty.get.id%}',name:name,description:description,privileges:privileges},function(response){
+					if(response.code==1)
+					{
+						window.location = './index.php?c=html&a=role';
+					}
+					else
+					{
+						if('object' == typeof response.result)
+					   	{
+							$.each(response.result,function(index,value){
+								bootbox.alert(value[0]);
+								return false;
+							});
+					   	}
+						else
+					   	{
+						  	bootbox.alert(response.result);
+						}
+					}
+				});
+				return false;
+			});
+		</script>
+	</body>
+</html>

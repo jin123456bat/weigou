@@ -1,0 +1,16 @@
+<div class="form-group">
+	<select class="input-sm form-control">
+		<option value="" selected="selected">商品状态</option>
+		<option value="examine:0">待审核</option>
+		<option value="examine:2">审核中</option>
+		<option value="examine:-1">审核未通过</option>
+		<option value="examine:1,status:0,downStatus:0">已下架</option>
+		<option value="status:0,downStatus:1">已下架，编辑中</option>
+		<option value="status:1,stock:1">销售中</option>
+		<option value="status:1,stock:0">销售中，库存不足</option>
+	</select>
+</div>
+<div class="form-group">
+	<input type="text" name="search" class="form-control input-sm" placeholder="商品名称/SPU">
+</div>
+<button class="btn btn-small btn-orange pull-right" style="height: 30px; margin-left: 10px;">搜索</button>
