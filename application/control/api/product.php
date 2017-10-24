@@ -4,6 +4,7 @@ namespace application\control\api;
 use application\message\json;
 use application\helper\user;
 use application\helper\productSearchEngine;
+use system\core\http;
 
 class product extends common
 {
@@ -14,6 +15,51 @@ class product extends common
 	{
 		parent::__construct();
 		$this->_response = $this->init();
+	}
+	
+	/**
+	 * 判断商品图片详情中是否有远程图片  有的话自动下载远程图片并且保存在本地  然后替换掉原来的地址
+	 */
+	function product_fix()
+	{
+		$hosts= array(
+			'twillg.com',
+			'www.twillg.com',
+		);
+		$products = $this->model('product')->where('product_description_image_fixed=0')->select();
+		foreach ($products as $product)
+		{
+			$result = 0;
+			$description = preg_replace_callback('/src="(?<src>[^"]*)"/', function($src) use($hosts,&$result){
+				$url = parse_url($src['src']);
+				if (!in_array($url['host'], $hosts))
+				{
+					$type = pathinfo($url['path'],PATHINFO_EXTENSION);
+					$response = http::get($src['src']);
+					$file = './application/upload/'.date('Y/m/d').'/'.md5($response).'.'.$type;
+					if(!is_dir('./application/upload/'.date('Y/m/d').'/'))
+					{
+						mkdir('./application/upload/'.date('Y/m/d').'/',0777,true);
+					}
+					if (!empty($response))
+					{
+						if(file_put_contents($file, $response))
+						{
+							$result = 1;
+							return 'src="'.$file.'"';
+						}
+					}
+				}
+				else
+				{
+					return 'src="'.$src['src'].'"';
+				}
+			}, $product['description']);
+			if ($result)
+			{
+				$this->model('product')->where('id=?',array($product['id']))->limit(1)->update(array('description'=>$description,'product_description_image_fixed'=>1));
+			}
+		}
 	}
 
 	/**

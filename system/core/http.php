@@ -297,11 +297,16 @@ class http
 		if (function_exists('curl_init'))
 		{
 			$curl = curl_init($url);
-			curl_setopt_array($curl, [
+			curl_setopt_array($curl, array(
 				CURLOPT_RETURNTRANSFER => 1,
-				CURLOPT_IPRESOLVE => CURL_IPRESOLVE_V4,
-				CURLOPT_SSL_VERIFYPEER => false
-			]);
+				CURLOPT_FOLLOWLOCATION => true,
+				CURLOPT_CONNECTTIMEOUT => 60,
+				CURLOPT_TIMEOUT => 60,
+				CURLOPT_POST => false,
+				CURLOPT_SSL_VERIFYHOST => false,
+				CURLOPT_SSL_VERIFYPEER => false,
+				CURLOPT_IPRESOLVE => CURL_IPRESOLVE_V4
+			));
 			return curl_exec($curl);
 		}
 		return file_get_contents($url);
